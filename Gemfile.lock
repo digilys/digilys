@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/mjbellantoni/formtastic-bootstrap.git
+  revision: a4b93029735aad7c79771cde1020859426fcd57f
+  ref: a4b93029735aad7c79771cde1020859426fcd57f
+  specs:
+    formtastic-bootstrap (2.0.1pre)
+      formtastic (~> 2.2)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -52,6 +60,8 @@ GEM
     font-awesome-sass-rails (3.0.2.2)
       railties (>= 3.1.1)
       sass-rails (>= 3.1.1)
+    formtastic (2.2.1)
+      actionpack (>= 3.0)
     haml (4.0.2)
       tilt
     haml-rails (0.4)
@@ -168,6 +178,7 @@ DEPENDENCIES
   bootstrap-sass (~> 2.3.1.0)
   coffee-rails (~> 3.2.1)
   devise (~> 2.2.3)
+  formtastic-bootstrap!
   haml-rails (~> 0.4)
   jquery-rails
   pg
