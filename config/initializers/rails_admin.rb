@@ -34,6 +34,8 @@ RailsAdmin.config do |config|
 
   # Label methods for model instances:
   # config.label_methods << :description # Default is [:name, :title]
+  
+  config.authorize_with :cancan, AdminAbility
 
 
   ################  Model configuration  ################
@@ -50,5 +52,8 @@ RailsAdmin.config do |config|
   # Now you probably need to tour the wiki a bit: https://github.com/sferik/rails_admin/wiki
   # Anyway, here is how RailsAdmin saw your application's models when you ran the initializer:
 
+  config.model "Role" do
+    visible false
+  end
 
 end

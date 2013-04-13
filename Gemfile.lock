@@ -41,6 +41,7 @@ GEM
     bootstrap-sass (2.3.1.0)
       sass (~> 3.2)
     builder (3.0.4)
+    cancan (1.6.9)
     coffee-rails (3.2.2)
       coffee-script (>= 2.2.0)
       railties (~> 3.2.0)
@@ -137,6 +138,7 @@ GEM
     rdoc (3.12.2)
       json (~> 1.4)
     remotipart (1.0.5)
+    rolify (3.2.0)
     rspec-core (2.13.1)
     rspec-expectations (2.13.0)
       diff-lcs (>= 1.1.3, < 2.0)
@@ -176,6 +178,7 @@ PLATFORMS
 
 DEPENDENCIES
   bootstrap-sass (~> 2.3.1.0)
+  cancan (~> 1.6.9)
   coffee-rails (~> 3.2.1)
   devise (~> 2.2.3)
   formtastic-bootstrap!
@@ -184,6 +187,7 @@ DEPENDENCIES
   pg
   rails (= 3.2.13)
   rails_admin (~> 0.4.6)
+  rolify (~> 3.2.0)
   rspec-rails (~> 2.0)
   sass-rails (~> 3.2.3)
   uglifier (>= 1.0.3)
