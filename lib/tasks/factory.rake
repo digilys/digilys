@@ -12,6 +12,35 @@ namespace :app do
         puts "New student: #{student.name}"
       end
     end
+
+    task suite: :environment do
+      num = (ENV["evaluations"] || 2).to_i
+      results = ENV["results"]
+
+      suite = FactoryGirl.create(:suite, name: "Årsklocka #{DateTime.now.strftime("%Y%m%d%H%M")}")
+
+      puts "New suite: #{suite.name}"
+
+      1.upto(num) do |i|
+        evaluation = FactoryGirl.create(:evaluation, name: "Test ##{i}", suite: suite)
+        puts "New evaluation: #{evaluation.name}"
+      end
+
+      if results
+        students = Student.order("random()").limit(10)
+
+        suite.evaluations.each do |evaluation|
+          puts "Results for #{evaluation.name}:"
+
+
+          students.each do |student|
+            result = rand(evaluation.max_result + 1)
+            FactoryGirl.create(:result, value: result, student: student, evaluation: evaluation)
+            puts "\t#{student.name}: #{result}"
+          end
+        end
+      end
+    end
   end
 end
 
