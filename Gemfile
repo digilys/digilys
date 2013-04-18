@@ -28,10 +28,10 @@ gem "bootstrap-sass", "~> 2.3.1.0"
 group :test, :development do
   gem "pry", "~> 0.9.12"
   gem "rspec-rails", "~> 2.0"
-end
-group :test do
   gem "factory_girl", "~> 4.2.0"
   gem "factory_girl_rails", "~> 4.2.1"
+end
+group :test do
   gem "shoulda-matchers", "~> 2.0.0"
 end
 
