@@ -4,6 +4,7 @@ sv:
       evaluation: Test
       student: Elev
       suite: Årsklocka
+      result: Resultat
       role: Roll
       user: Användare
     attributes:
@@ -13,6 +14,10 @@ sv:
         max_result: Maxresultat
         red_below: Rött under
         green_above: Grönt över
+      result:
+        evaluation: Test
+        student: Elev
+        value: Resultat
       student:
         name: Namn
       suite:

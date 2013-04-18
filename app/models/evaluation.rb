@@ -1,5 +1,6 @@
 class Evaluation < ActiveRecord::Base
   belongs_to :suite
+  has_many   :results
 
   attr_accessible :suite_id, :max_result, :name, :red_below, :green_above
 

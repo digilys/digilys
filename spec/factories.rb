@@ -20,4 +20,10 @@ FactoryGirl.define do
     red_below       15
     green_above     35
   end
+
+  factory :result do
+    evaluation
+    student
+    value 25
+  end
 end
