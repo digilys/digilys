@@ -1,9 +1,15 @@
 sv:
   activerecord:
     models:
-      user: Användare
+      student: Elev
+      suite: Årsklocka
       role: Roll
+      user: Användare
     attributes:
+      student:
+        name: Namn
+      suite:
+        name: Namn
       user:
         email: E-postadress
         password: Lösenord
