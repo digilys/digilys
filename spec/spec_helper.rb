@@ -25,6 +25,9 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = true
 
+  # Fixtures are only used for static data, so we always include them
+  config.global_fixtures = :all
+
   # If true, the base class of anonymous controllers will be inferred
   # automatically. This will be the default behavior in future versions of
   # rspec-rails.
@@ -35,4 +38,7 @@ RSpec.configure do |config|
   # the seed, which is printed after each run.
   #     --seed 1234
   config.order = "random"
+
+  # FactoryGirl
+  config.include FactoryGirl::Syntax::Methods
 end

@@ -26,4 +26,8 @@ group :test, :development do
   gem "pry", "~> 0.9.12"
   gem "rspec-rails", "~> 2.0"
 end
+group :test do
+  gem "factory_girl", "~> 4.2.0"
+  gem "factory_girl_rails", "~> 4.2.1"
+end
 
