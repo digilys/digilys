@@ -1,6 +1,7 @@
 class Evaluation < ActiveRecord::Base
   belongs_to :suite
   has_many   :results
+  has_many   :students, through: :results
 
   attr_accessible :suite_id, :max_result, :name, :red_below, :green_above
 
@@ -20,4 +21,8 @@ class Evaluation < ActiveRecord::Base
     greater_than_or_equal_to: :red_below,
     less_than_or_equal_to: :max_result
   }
+
+  def result_for(student)
+    results.where(:student_id => student).first
+  end
 end

@@ -1,0 +1,17 @@
+%h1= @suite.name
+
+%table.table.table-bordered.table-hover
+
+  %thead
+    %tr
+      %th
+      - @suite.evaluations.each do |evaluation|
+        %th= evaluation.name
+
+  %tbody
+    - @suite.students.each do |student|
+      %tr
+        %th= student.name
+        - @suite.evaluations.each do |evaluation|
+          - result = evaluation.result_for(student)
+          %td{class: result_color_class(result)}= result.value

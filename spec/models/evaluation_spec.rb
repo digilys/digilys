@@ -30,4 +30,18 @@ describe Evaluation do
       it { should_not allow_value(31).for(:red_below) }
     end
   end
+
+  context ".result_for" do
+    let(:students)   { create_list(:student, 3) }
+    let(:student)    { students.second }
+    let(:evaluation) { create(:evaluation) }
+    before           { students.each_with_index { |student, i| create(:result, evaluation: evaluation, student: student, value: (i+1)*10) } }
+
+    it "should return the correct result" do
+      evaluation.result_for(student).value.should == 20
+    end
+    it "should return nil when the result cannot be found" do
+      evaluation.result_for(create(:student)).should be_nil
+    end
+  end
 end

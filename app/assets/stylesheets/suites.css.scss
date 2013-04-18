@@ -1,0 +1,28 @@
+// Place all the styles related to the suites controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+$red:    #da4f49;
+$yellow: #faa732;
+$green:  #5bb75b;
+
+td.result-red {
+    background-color: $red;
+}
+td.result-yellow {
+    background-color: $yellow;
+}
+td.result-green {
+    background-color: $green;
+}
+
+.table-hover tbody tr {
+    &:hover > td.result-red {
+        background-color: darken($red, 5%);
+    }
+    &:hover > td.result-yellow {
+        background-color: darken($yellow, 5%);
+    }
+    &:hover > td.result-green {
+        background-color: darken($green, 5%);
+    }
+}

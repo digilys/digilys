@@ -1,7 +1,9 @@
 Digilys::Application.routes.draw do
+  resources :suites, only: :show
+
   devise_for :users
 
-  mount RailsAdmin::Engine => '/admin', :as => 'rails_admin'
+  mount RailsAdmin::Engine => "/admin", as: "rails_admin"
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
