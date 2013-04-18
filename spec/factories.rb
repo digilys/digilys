@@ -12,4 +12,12 @@ FactoryGirl.define do
   factory :suite do
     sequence(:name) { |i| "Suite #{i}" }
   end
+
+  factory :evaluation do
+    suite
+    sequence(:name) { |i| "Evaluation #{i}" }
+    max_result      50
+    red_below       15
+    green_above     35
+  end
 end

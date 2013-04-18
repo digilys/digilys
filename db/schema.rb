@@ -11,7 +11,17 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130418120848) do
+ActiveRecord::Schema.define(:version => 20130418121730) do
+
+  create_table "evaluations", :force => true do |t|
+    t.integer  "suite_id"
+    t.string   "name"
+    t.integer  "max_result"
+    t.integer  "red_below"
+    t.integer  "green_above"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
 
   create_table "rails_admin_histories", :force => true do |t|
     t.text     "message"

@@ -1,11 +1,18 @@
 sv:
   activerecord:
     models:
+      evaluation: Test
       student: Elev
       suite: Årsklocka
       role: Roll
       user: Användare
     attributes:
+      evaluation:
+        suite: Årsklocka
+        name: Namn
+        max_result: Maxresultat
+        red_below: Rött under
+        green_above: Grönt över
       student:
         name: Namn
       suite:
