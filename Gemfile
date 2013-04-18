@@ -19,12 +19,16 @@ gem "passenger", "~> 3.0.19", require: false
 group :assets do
   gem "sass-rails",   "~> 3.2.3"
   gem "coffee-rails", "~> 3.2.1"
-  gem "uglifier", ">= 1.0.3"
+  gem "uglifier",     ">= 1.0.3"
+  gem "therubyracer", "~> 0.11.4", require: "v8"
 end
 
 gem "jquery-rails"
 gem "bootstrap-sass", "~> 2.3.1.0"
 
+group :development do
+  gem "capistrano", "~> 2.14.2"
+end
 group :test, :development do
   gem "pry", "~> 0.9.12"
   gem "rspec-rails", "~> 2.0"
