@@ -1,0 +1,19 @@
+sv:
+  activerecord:
+    models:
+      user: Användare
+      role: Roll
+    attributes:
+      user:
+        email: E-postadress
+        password: Lösenord
+        roles: Roller
+        password_confirmation: Bekräfta lösenord
+        remember_me: Kom ihåg mig
+        reset_password_sent_at: Återställ lösenord skickades
+        remember_created_at: Kom ihåg skapades
+        sign_in_count: Antal inloggningar
+        current_sign_in_at: Nuvarande inloggning
+        last_sign_in_at: Senaste inloggningen
+        current_sign_in_ip: Nuvarande IP-adress
+        last_sign_in_ip: Senaste IP-adress
