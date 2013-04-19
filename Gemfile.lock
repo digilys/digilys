@@ -50,6 +50,7 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.6.2)
+    daemon_controller (1.1.2)
     devise (2.2.3)
       bcrypt-ruby (~> 3.0)
       orm_adapter (~> 0.1)
@@ -64,6 +65,7 @@ GEM
     factory_girl_rails (4.2.1)
       factory_girl (~> 4.2.0)
       railties (>= 3.0.0)
+    fastthread (1.0.7)
     font-awesome-sass-rails (3.0.2.2)
       railties (>= 3.1.1)
       sass-rails (>= 3.1.1)
@@ -99,6 +101,11 @@ GEM
     nested_form (0.3.2)
     nokogiri (1.5.9)
     orm_adapter (0.4.0)
+    passenger (3.0.19)
+      daemon_controller (>= 1.0.0)
+      fastthread (>= 1.0.1)
+      rack
+      rake (>= 0.8.1)
     pg (0.15.1)
     polyglot (0.3.3)
     pry (0.9.12)
@@ -198,6 +205,7 @@ DEPENDENCIES
   formtastic-bootstrap!
   haml-rails (~> 0.4)
   jquery-rails
+  passenger (~> 3.0.19)
   pg
   pry (~> 0.9.12)
   rails (= 3.2.13)

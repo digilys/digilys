@@ -11,6 +11,9 @@ gem "rolify", "~> 3.2.0"
 
 gem "formtastic-bootstrap", git: "https://github.com/mjbellantoni/formtastic-bootstrap.git", ref: "a4b93029735aad7c79771cde1020859426fcd57f"
 
+# Servers
+gem "passenger", "~> 3.0.19", require: false
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
