@@ -5,24 +5,25 @@ $red:    #da4f49;
 $yellow: #faa732;
 $green:  #5bb75b;
 
-td.result-red {
-    background-color: $red;
-}
-td.result-yellow {
-    background-color: $yellow;
-}
-td.result-green {
-    background-color: $green;
-}
+table.suite-results {
+    .result {
+        ul {
+            margin: 0;
+            list-style-type: none;
 
-.table-hover tbody tr {
-    &:hover > td.result-red {
-        background-color: darken($red, 5%);
+            li { display: none; }
+        }
     }
-    &:hover > td.result-yellow {
-        background-color: darken($yellow, 5%);
-    }
-    &:hover > td.result-green {
-        background-color: darken($green, 5%);
+    &.suite-show-value   .value   { display: block; }
+    &.suite-show-stanine .stanine { display: block; }
+
+    .result-red    { background-color: $red; }
+    .result-yellow { background-color: $yellow; }
+    .result-green  { background-color: $green; }
+
+    &.table-hover tbody tr {
+        &:hover > .result-red    { background-color: darken($red, 5%); }
+        &:hover > .result-yellow { background-color: darken($yellow, 5%); }
+        &:hover > .result-green  { background-color: darken($green, 5%); }
     }
 }

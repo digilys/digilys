@@ -1,10 +1,13 @@
 %h1= @suite.name
 
-%table.table.table-bordered.table-hover
+%table.table.table-bordered.table-hover.suite-results.suite-show-value
 
   %thead
     %tr
       %th
+        .btn-group.result-toggles
+          %button.btn.active(data-value="value") Resultat
+          %button.btn(data-value="stanine") Stanine
       - @suite.evaluations.each do |evaluation|
         %th= evaluation.name
 
@@ -14,4 +17,7 @@
         %th= student.name
         - @suite.evaluations.each do |evaluation|
           - result = evaluation.result_for(student)
-          %td{class: result_color_class(result)}= result.value
+          %td{class: "result #{result_color_class(result)}"}
+            %ul
+              %li.value= result.value
+              %li.stanine= result.stanine
