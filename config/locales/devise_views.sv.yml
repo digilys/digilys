@@ -1,0 +1,31 @@
+sv:
+  devise:
+    sessions:
+      sign_in: Logga in
+      sign_in_provider: Logga in med %{provider}
+    registrations:
+      sign_up: Registrering
+      settings: Inställningar
+      password_hint: Lämna lösenordet tomt om du inte vill ändra det
+      current_password_hint: Ange ditt nuvarande lösenord för att bekräfta dina ändringar
+      update: Uppdatera
+      unhappy: Ledsen?
+      cancel: Avregistrera mig
+      cancel_confirmation: Är du säker?
+    passwords:
+      forgot_password: Har du glömt ditt lösenord?
+      request_instructions: Skicka instruktioner till min e-postadress om hur jag återställer mitt lösenord
+      new_password: Nytt lösenord
+      password_confirmation: Bekräfta lösenordet
+      update: Ändra lösenordet
+    unlocks:
+      instructions_missing: Fick du inte upplåsningsinstruktionerna?
+      request_instructions: Skicka upplåsningsinstruktionerna igen
+    confirmations:
+      instructions_missing: Fick du inte aktiveringsinstruktionerna?
+      request_instructions: Skicka aktiveringsinstruktionerna igen
+
+    providers:
+      facebook: Facebook
+      google_oauth2: Google
+      twitter: Twitter

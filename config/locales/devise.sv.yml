@@ -1,0 +1,58 @@
+sv:
+  devise:
+    confirmations:
+      confirmed: "Ditt konto har bekräftats. Du är nu inloggad."
+      send_instructions: "Du kommer att få ett mejl med instruktioner om hur du kan bekräfta ditt konto inom några minuter."
+      send_paranoid_instructions: "Om din e-postadress är i vår databas, kommer du att få ett mejl med instruktioner om hur du ska aktivera ditt konto inom några minuter."
+    failure:
+      already_authenticated: "Du har redan loggat in."
+      inactive: "Ditt konto har inte aktiverats ännu."
+      invalid: "Ogiltig e-postadress eller lösenord."
+      invalid_token: "Ogiltig token för autentisering."
+      locked: "Ditt konto är låst."
+      not_found_in_database: ""
+      timeout: "Din session är inte längre giltig, vänligen logga in igen för att fortsätta."
+      unauthenticated: "Du måste logga in eller skapa ett konto innan du kan fortsätta."
+      unconfirmed: "Du måste bekräfta ditt konto innan du kan fortsätta."
+    mailer:
+      confirmation_instructions:
+        subject: "Instruktioner om bekräftning av konto"
+      reset_password_instructions:
+        subject: "Instruktioner om återställning av lösenord"
+      unlock_instructions:
+        subject: "Instruktioner om upplåsning av konto"
+    omniauth_callbacks:
+      failure: "Kunde inte autentisera dig med %{kind} för \"%{reason}\"."
+      success: "Loggade in med %{kind}."
+    passwords:
+      no_token: "Du har inte tillgång till den här sidan om du inte kommer från ett mejl med en lösenordsåterställning. Om du kommer från ett sådant mejl, var god kontrollera att du använder hela URL:en i mejlet."
+      send_instructions: "Du kommer få mejl med instruktioner om hur du kan återställa ditt lösenord inom några minuter."
+      send_paranoid_instructions: "Om din e-postadress är i vår databas, kommer du att få en lösenordslänk till din mail."
+      updated: "Ditt lösenord har uppdaterats. Du är nu inloggad."
+      updated_not_active: "Ditt lösenord har uppdaterats."
+    registrations:
+      destroyed: "Hej då! Ditt konto har avregistrerats. Vi hoppas få se dig snart igen."
+      signed_up: "Välkommen! Du är nu inloggad."
+      signed_up_but_inactive: "Du är nu registrerad, men du är inte inloggad eftersom ditt konto inte är aktiverat."
+      signed_up_but_locked: "Du är nu registrerad, men du är inte inloggad eftersom ditt konto är låst."
+      signed_up_but_unconfirmed: "En bekräftelse med en bekräftelselänk har skickats till din e-postadress. Öppna länken för att aktivera ditt konto."
+      update_needs_confirmation: "Ditt konto har uppdaterats, men vi behöver bekräfta din e-postadress. Var god kontrollera din mejl och klicka på bekräftelselänken för att bekräfta din nya e-postadress."
+      updated: "Ditt konto har uppdaterats."
+    sessions:
+      signed_in: "Loggade in."
+      signed_out: "Loggade ut."
+    unlocks:
+      send_instructions: "Du kommer få ett mejl med instruktioner om hur du kan låsa upp ditt konto inom några minuter."
+      send_paranoid_instructions: "Om ditt konto finns, kommer du att få ett mejl med instruktioner om hur du låser upp det inom några minuter."
+      unlocked: "Ditt konto har låsts upp. Du är nu inloggad."
+  errors:
+    messages:
+      already_confirmed: "är redan bekräftad, vänligen logga in igen"
+      confirmation_period_expired: "måste bekräftas inom %{period}, var god begär en ny"
+      expired: "har löpt ut, var god begär en ny"
+      not_found: "hittades inte"
+      not_locked: "var inte låst"
+      not_saved:
+        one: "1 fel hindrade denna %{resource} från att sparas:"
+        other: "%{count} fel hindrade denna %{resource} från att sparas:"
+
