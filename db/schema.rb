@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130418124015) do
+ActiveRecord::Schema.define(:version => 20130419090020) do
 
   create_table "evaluations", :force => true do |t|
     t.integer  "suite_id"
@@ -21,6 +21,14 @@ ActiveRecord::Schema.define(:version => 20130418124015) do
     t.integer  "green_above"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
+    t.integer  "stanine1"
+    t.integer  "stanine2"
+    t.integer  "stanine3"
+    t.integer  "stanine4"
+    t.integer  "stanine5"
+    t.integer  "stanine6"
+    t.integer  "stanine7"
+    t.integer  "stanine8"
   end
 
   create_table "rails_admin_histories", :force => true do |t|

@@ -20,4 +20,9 @@ class Result < ActiveRecord::Base
       :yellow
     end
   end
+
+  def stanine
+    val = self.value
+    @stanine ||= self.evaluation.stanines.take_while { |i| i < val }.length + 1
+  end
 end

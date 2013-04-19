@@ -39,4 +39,27 @@ describe Result do
       create(:result, evaluation: evaluation, value: 8).color.should == :green
     end
   end
+
+  context ".stanine" do
+    let(:stanine_limits) { [10, 20, 30, 40, 50, 60, 70, 80] }
+    let(:evaluation) { create(:evaluation, max_result: 90, stanines: stanine_limits) }
+
+    # Boundaries for the stanine values given the stanine limits above
+    {
+      1 => [0,10],
+      2 => [11,20],
+      3 => [21,30],
+      4 => [31,40],
+      5 => [41,50],
+      6 => [51,60],
+      7 => [61,70],
+      8 => [71,80],
+      9 => [81,90]
+    }.each_pair do |stanine, values|
+      it "correctly gives stanine #{stanine}" do
+        create(:result, evaluation: evaluation, value: values.first ).stanine.should == stanine
+        create(:result, evaluation: evaluation, value: values.second).stanine.should == stanine
+      end
+    end
+  end
 end

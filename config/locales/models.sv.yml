@@ -14,6 +14,14 @@ sv:
         max_result: Maxresultat
         red_below: Rött under
         green_above: Grönt över
+        stanine1: Stanine 1
+        stanine2: Stanine 2
+        stanine3: Stanine 3
+        stanine5: Stanine 5
+        stanine6: Stanine 6
+        stanine7: Stanine 7
+        stanine8: Stanine 8
+        stanine9: Stanine 9
       result:
         evaluation: Test
         student: Elev
