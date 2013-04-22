@@ -228,7 +228,7 @@ DEPENDENCIES
   haml-rails (~> 0.4)
   jquery-rails
   passenger (~> 3.0.19)
-  pg
+  pg (~> 0.15.1)
   pry (~> 0.9.12)
   rails (= 3.2.13)
   rails_admin (~> 0.4.6)
