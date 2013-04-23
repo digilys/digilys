@@ -7,8 +7,7 @@ gem "rails_admin", "~> 0.4.6"
 gem "devise",      "~> 2.2.3"
 gem "cancan",      "~> 1.6.9"
 gem "rolify",      "~> 3.2.0"
-
-gem "formtastic-bootstrap", git: "https://github.com/mjbellantoni/formtastic-bootstrap.git", ref: "a4b93029735aad7c79771cde1020859426fcd57f"
+gem "kaminari",    "~> 0.14.1"
 
 # Servers
 gem "passenger", "~> 3.0.19", require: false
@@ -23,7 +22,10 @@ group :assets do
 end
 
 gem "jquery-rails"
-gem "bootstrap-sass", "~> 2.3.1.0"
+gem "bootstrap-sass",     "~> 2.3.1.0"
+gem "kaminari-bootstrap", "~> 0.1.3"
+
+gem "formtastic-bootstrap", git: "https://github.com/mjbellantoni/formtastic-bootstrap.git", ref: "a4b93029735aad7c79771cde1020859426fcd57f"
 
 group :development do
   gem "capistrano", "~> 2.14.2"
