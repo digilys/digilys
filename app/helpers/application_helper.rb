@@ -27,4 +27,22 @@ module ApplicationHelper
     end
     flash_messages.join("\n").html_safe
   end
+
+  # Bootstrap "active" class generator
+  def active_if(condition)
+    condition ? "active" : ""
+  end
+
+  # Checks if all the keys and values in any of +parameters+
+  # match the current params
+  def params?(*parameters)
+    param_array = params.to_a
+
+    # http://stackoverflow.com/a/7585278
+    parameters.each do |ps|
+      return true if (ps.stringify_keys.to_a - param_array).empty?
+    end
+
+    return false
+  end
 end
