@@ -26,6 +26,18 @@
             %li{class: active_if(is_admin ||= false)}
               %a{href: index_admin_path()}= t(:".administration")
 
+          - if Conf.feedback
+            %ul.nav.pull-right
+              %li
+                %a(href="#feedback-modal" role="button" data-toggle="modal")= t(:".feedback")
+                #feedback-modal.modal.hide.fade(role="dialog" aria-hidden="true" aria-labelledby="feedback-modal-header")
+                  .modal-header
+                    %button.close(data-dismiss="modal" aria-hidden="true") x
+                    %h3#feedback-modal-header= t(:".feedback")
+                  .modal-body
+                    %iframe{src:Conf.feedback.url, width:"760", height:"500", frameborder:"0", marginheight:"0", marginwidth:"0"}
+
+
 
     .container-fluid
 

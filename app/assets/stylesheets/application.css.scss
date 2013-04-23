@@ -11,4 +11,15 @@
  *= require formtastic-bootstrap
  *= require_self
  *= require_tree .
- */
+*/
+
+#feedback-modal {
+    width:       800px;
+    height:      600px;
+    margin-left: -400px;
+
+    .modal-body {
+        height:     600px;
+        max-height: 600px;
+    }
+}

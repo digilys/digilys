@@ -1,5 +1,7 @@
 sv:
   layouts:
+    application:
+      feedback: "Feedback"
     admin:
       administration: Administrera
   shared:
