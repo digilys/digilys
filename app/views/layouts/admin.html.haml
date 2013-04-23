@@ -2,6 +2,9 @@
   .sidebar.span3
     .well
       %ul.nav.nav-list
+        %li.nav-header= t(:".administration")
+        %li{class: active_if(params?(controller: "suites"))}
+          %a{href: suites_path()}= t(:"suites.title")
 
   .content.span9
     = content_for?(:admin_content) ? yield(:admin_content) : yield

@@ -1,5 +1,5 @@
 Digilys::Application.routes.draw do
-  resources :suites, only: :show
+  resources :suites
 
   devise_for :users
 

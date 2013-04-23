@@ -1,0 +1,6 @@
+- content_for :title do
+  - t(:".title")
+
+%ul.nav.nav-tabs
+  %li{class: active_if(active == :new)}
+    %a{href:new_suite_path()}= t(:".new_action")

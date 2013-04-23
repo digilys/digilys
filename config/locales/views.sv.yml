@@ -1,0 +1,9 @@
+sv:
+  layouts:
+    admin:
+      administration: Administrera
+
+  suites:
+    title: Årsklockor
+    create:
+      success: Årsklockan skapades

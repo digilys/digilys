@@ -199,3 +199,9 @@ sv:
       <<: *errors
 
   wait: "Var god vänta..."
+
+  # Basic common actions
+  # These are not put under a sub-key because we want i18n cascading to work
+  new_action:    "Skapa ny"
+  save_action:   "Spara"
+  cancel_action: "Avbryt"

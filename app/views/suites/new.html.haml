@@ -1,0 +1,14 @@
+%h1= t(:".title")
+
+= render partial: "navigation", locals: { active: :new }
+
+= semantic_form_for @suite do |f|
+
+  = f.inputs do
+
+    = f.input :name, required: true, input_html: { required: true, autofocus: true }
+
+  = f.actions do
+    = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
+    %a.btn{href:suites_path()}= t(:".cancel_action")
+
