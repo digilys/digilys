@@ -22,11 +22,10 @@ group :assets do
   gem "therubyracer", "~> 0.11.4", require: "v8"
 end
 
-gem "jquery-rails"
-gem "bootstrap-sass",     "~> 2.3.1.0"
-gem "kaminari-bootstrap", "~> 0.1.3"
-
-gem "formtastic-bootstrap", git: "https://github.com/mjbellantoni/formtastic-bootstrap.git", ref: "a4b93029735aad7c79771cde1020859426fcd57f"
+gem "jquery-rails",         "~> 2.2.1"
+gem "bootstrap-sass",       "~> 2.3.1.0"
+gem "kaminari-bootstrap",   "~> 0.1.3"
+gem "formtastic-bootstrap", "~> 2.1.1"
 
 group :development do
   gem "capistrano", "~> 2.14.2"
