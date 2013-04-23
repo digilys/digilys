@@ -1,6 +1,14 @@
 class SuitesController < ApplicationController
   layout "admin"
 
+  def index
+    @suites = Suite.order(:name).page(params[:page])
+  end
+
+  def show
+    @suite = Suite.find(params[:id])
+  end
+
   def new
     @suite = Suite.new
   end

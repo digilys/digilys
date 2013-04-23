@@ -1,0 +1,20 @@
+%h1= t(:".title")
+
+= render partial: "navigation", locals: { active: :index }
+
+%table.table.table-striped.suites-table
+  %thead
+    %tr
+      %th.name= Suite.human_attribute_name(:name)
+      %th.actions &nbsp;
+  %tbody
+    - @suites.each do |suite|
+      %tr
+        %td.name= suite.name
+        %td.actions
+          .btn-group
+            %a.btn.btn-mini{href: suite_path(suite)}=                            t(:".show_action")
+            %a.btn.btn-mini{href: edit_suite_path(suite)}=                       t(:".edit_action")
+            %a.btn.btn-mini.btn-danger{href: confirm_destroy_suite_path(suite)}= t(:".destroy_action")
+
+= paginate(@suites)
