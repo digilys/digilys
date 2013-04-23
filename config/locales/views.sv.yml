@@ -14,6 +14,18 @@ sv:
       continue_action:   "Fortsätt leta"
       start_over_action: "Börja om från början"
 
+  index:
+    index:
+      title: "Välkommen till DigiLys!"
+      body_html: |
+        <p></p>
+    admin:
+      title: "Administrationssektion"
+      body_html: |
+        <p>Det här är administrationssektionen i DigiLys. Här kan du skapa
+        Årsklockor, test och hantera registret över elever.</p>
+        <h3>Börja genom att göra ett val till vänster!</h3>
+
   suites:
     title: Årsklockor
     show:

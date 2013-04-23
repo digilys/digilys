@@ -1,4 +1,8 @@
 Digilys::Application.routes.draw do
+  # Landing pages
+  get "index/index"
+  get "index/admin"
+
   resources :suites do
     member do
       get :confirm_destroy
@@ -62,7 +66,7 @@ Digilys::Application.routes.draw do
 
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
-  root :to => "suites#index"
+  root :to => "index#index"
 
   # See how all your routes lay out with "rake routes"
 

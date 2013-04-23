@@ -9,4 +9,4 @@
   .content.span9
     = content_for?(:admin_content) ? yield(:admin_content) : yield
 
-= render template: "layouts/application"
+= render template: "layouts/application", locals: { is_admin: true }

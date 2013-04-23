@@ -20,10 +20,12 @@
             %span.icon-bar
             %span.icon-bar
             %span.icon-bar
-          %a.brand(href="#")
+          %a.brand{href: root_url()}
             DigiLys
-            - if content_for?(:title)
-              %small= yield(:title)
+          %ul.nav
+            %li{class: active_if(is_admin ||= false)}
+              %a{href: index_admin_path()}= t(:".administration")
+
 
     .container-fluid
 
