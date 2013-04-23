@@ -1,0 +1,9 @@
+- content_for :content do
+  .sidebar.span3
+    .well
+      %ul.nav.nav-list
+
+  .content.span9
+    = content_for?(:admin_content) ? yield(:admin_content) : yield
+
+= render template: "layouts/application"
