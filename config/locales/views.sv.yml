@@ -2,6 +2,17 @@ sv:
   layouts:
     admin:
       administration: Administrera
+  shared:
+    "404":
+      title: Ojdå!
+      body_html: |
+        <p>Det verkar som att du letar efter något som inte finns. Det kan vara
+        så att det du letar efter är borttaget, eller så kanske du har skrivit
+        in en knasig adress.</p>
+        <h3>Vad vill du göra nu?</h3>
+      back_action:       "Ta mig tillbaka"
+      continue_action:   "Fortsätt leta"
+      start_over_action: "Börja om från början"
 
   suites:
     title: Årsklockor
