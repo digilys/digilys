@@ -1,0 +1,5 @@
+%h1= @suite.name_was
+
+= render partial: "navigation", locals: { suite: @suite, active: :edit }
+
+= render partial: "form", object: @suite, as: :suite

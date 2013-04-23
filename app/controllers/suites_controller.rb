@@ -19,4 +19,19 @@ class SuitesController < ApplicationController
       render action: "new"
     end
   end
+
+  def edit
+    @suite = Suite.find(params[:id])
+  end
+
+  def update
+    @suite = Suite.find(params[:id])
+
+    if @suite.update_attributes(params[:suite])
+      flash[:success] = t(:"suites.update.success")
+      redirect_to @suite
+    else
+      render action: "edit"
+    end
+  end
 end

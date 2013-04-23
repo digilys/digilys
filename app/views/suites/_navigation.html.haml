@@ -1,6 +1,14 @@
+- active ||= nil
+- suite  ||= nil
+
 - content_for :title do
   - t(:".title")
 
 %ul.nav.nav-tabs
-  %li{class: active_if(active == :new)}
-    %a{href:new_suite_path()}= t(:".new_action")
+  - if suite
+    %li{class: active_if(active == :edit)}
+      %a{href:edit_suite_path(suite)}= t(:".edit_action")
+
+  - else
+    %li{class: active_if(active == :new)}
+      %a{href:new_suite_path()}= t(:".new_action")

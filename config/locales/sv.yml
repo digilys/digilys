@@ -203,5 +203,6 @@ sv:
   # Basic common actions
   # These are not put under a sub-key because we want i18n cascading to work
   new_action:    "Skapa ny"
+  edit_action:   "Ändra"
   save_action:   "Spara"
   cancel_action: "Avbryt"

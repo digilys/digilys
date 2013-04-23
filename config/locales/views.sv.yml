@@ -7,3 +7,5 @@ sv:
     title: Årsklockor
     create:
       success: Årsklockan skapades
+    update:
+      success: Årsklockan uppdaterades
