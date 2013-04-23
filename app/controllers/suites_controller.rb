@@ -34,4 +34,15 @@ class SuitesController < ApplicationController
       render action: "edit"
     end
   end
+
+  def confirm_destroy
+    @suite = Suite.find(params[:id])
+  end
+  def destroy
+    suite = Suite.find(params[:id])
+    suite.destroy
+
+    flash[:success] = t(:"suites.destroy.success")
+    redirect_to suites_url()
+  end
 end

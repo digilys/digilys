@@ -9,3 +9,7 @@ sv:
       success: Årsklockan skapades
     update:
       success: Årsklockan uppdaterades
+    confirm_destroy:
+      confirmation: Om du raderar årsklockan raderas även alla tillhörande tester och testresultat.
+    destroy:
+      success: Årsklockan och tillhörande information raderades

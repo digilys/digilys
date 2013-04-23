@@ -1,5 +1,9 @@
 Digilys::Application.routes.draw do
-  resources :suites
+  resources :suites do
+    member do
+      get :confirm_destroy
+    end
+  end
 
   devise_for :users
 
