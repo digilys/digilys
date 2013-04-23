@@ -1,12 +1,24 @@
 sv:
   activerecord:
     models:
-      evaluation: Test
-      student: Elev
-      suite: Årsklocka
-      result: Resultat
-      role: Roll
-      user: Användare
+      evaluation:
+        one: Test
+        other: Test
+      student:
+        one: Elev
+        other: Elever
+      suite:
+        one: Årsklocka
+        other: Årsklockor
+      result:
+        one: Resultat
+        other: Resultat
+      role:
+        one: Roll
+        other: Roller
+      user:
+        one: Användare
+        other: Användare
     attributes:
       evaluation:
         suite: Årsklocka

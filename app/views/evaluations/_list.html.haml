@@ -1,0 +1,10 @@
+%table.table.table-striped.suites-table
+  %thead
+    %tr
+      %th.name= Evaluation.human_attribute_name(:name)
+      %th.actions &nbsp;
+  %tbody
+    - evaluations.each do |evaluation|
+      %tr
+        %td.name= evaluation.name
+        %td.actions &nbsp;

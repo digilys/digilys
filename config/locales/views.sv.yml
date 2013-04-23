@@ -5,6 +5,9 @@ sv:
 
   suites:
     title: Årsklockor
+    show:
+      visualize: "Visualisera"
+      color_chart: "Färgkarta"
     create:
       success: Årsklockan skapades
     update:

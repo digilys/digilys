@@ -6,6 +6,8 @@
 
 %ul.nav.nav-tabs
   - if suite
+    %li{class: active_if(active == :show)}
+      %a{href:suite_path(suite)}= t(:".show_action")
     %li{class: active_if(active == :edit)}
       %a{href:edit_suite_path(suite)}= t(:".edit_action")
     %li{class: active_if(active == :destroy)}

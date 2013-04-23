@@ -1,0 +1,15 @@
+%h1= @suite.name
+
+= render partial: "navigation", locals: { suite: @suite, active: :show }
+
+.row-fluid
+  .span9
+    %h3= Evaluation.model_name.human(:count => 2)
+    = render partial: "evaluations/list", object: @suite.evaluations, as: :evaluations
+
+  .span3.sidebar
+    .well
+      %ul.nav.nav-list
+        %li.nav-header= t(:".statistics")
+        %li
+          %a{href:visualize_suite_path(@suite)}= t(:".color_chart")
