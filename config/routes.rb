@@ -5,6 +5,10 @@ Digilys::Application.routes.draw do
     end
   end
 
+  namespace :visualize do
+    resources :suites, only: :show
+  end
+
   devise_for :users
 
   mount RailsAdmin::Engine => "/admin", as: "rails_admin"

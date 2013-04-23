@@ -1,9 +1,5 @@
 class SuitesController < ApplicationController
-  layout "admin", except: :show
-
-  def show
-    @suite = Suite.find(params[:id])
-  end
+  layout "admin"
 
   def new
     @suite = Suite.new
