@@ -16,6 +16,7 @@
 
 # Sensitive info
 /config/database.yml
+/config/app/*.private.yml
 
 # CTags
 /tags
