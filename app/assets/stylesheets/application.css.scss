@@ -25,3 +25,12 @@
         max-height: 600px;
     }
 }
+
+.details-table {
+    th {
+        white-space: nowrap;
+    }
+    td {
+        width: 99%;
+    }
+}

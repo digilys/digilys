@@ -1,12 +1,17 @@
-%table.table.table-striped.suites-table
+- hide_suite ||= false
+%table.table.table-striped.evaluations-table
   %thead
     %tr
       %th.name= Evaluation.human_attribute_name(:name)
+      - unless hide_suite
+        %th.suite= Suite.model_name.human
       %th.actions &nbsp;
   %tbody
     - evaluations.each do |evaluation|
       %tr
         %td.name= evaluation.name
+        - unless hide_suite
+          %td.suite= evaluation.suite.name
         %td.actions
           .btn-group
             %a.btn.btn-mini{href: evaluation_path(evaluation)}=                            t(:".show_action")

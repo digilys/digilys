@@ -1,6 +1,14 @@
 class EvaluationsController < ApplicationController
   layout "admin"
 
+  def index
+    @evaluations = Evaluation.includes(:suite).order(:name).page(params[:page])
+  end
+
+  def show
+    @evaluation = Evaluation.find(params[:id])
+  end
+
   def new
     @suite            = Suite.find(params[:suite_id])
     @evaluation       = Evaluation.new

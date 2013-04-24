@@ -1,3 +1,35 @@
-// Place all the styles related to the evaluations controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+@import "variables";
+
+.color-ranges-list {
+    margin: 0;
+
+    li {
+        display: inline-block;
+        @include ie7-inline-block();
+        padding: 0.5em 1em;
+    }
+    .red {
+        background: $red;
+    }
+    .yellow {
+        background: $yellow;
+    }
+    .green {
+        background: $green;
+    }
+}
+
+.stanine-ranges-list {
+    margin: 0;
+
+    li {
+        display: inline-block;
+        @include ie7-inline-block();
+        margin-right: 1em;
+        text-align: center;
+
+        strong {
+            display: block;
+        }
+    }
+}

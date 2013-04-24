@@ -46,11 +46,12 @@ sv:
 
   evaluations:
     title: Test
+    color_ranges: Färgintervall
+    stanines: Stanine-värden
     navigation:
       return_to_suite: Återvänd till årsklockan
     form:
       for_suite: Detta test tillhör %{suite_name}
-      color_ranges: Färgintervall
       red: Röd
       yellow: Gul
       green: Grön

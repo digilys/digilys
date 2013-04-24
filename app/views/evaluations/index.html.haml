@@ -1,0 +1,4 @@
+%h1= t(:".title")
+
+= render partial: "list", object: @evaluations, as: :evaluations
+= paginate(@evaluations)

@@ -1,0 +1,42 @@
+%h1= @evaluation.name
+
+= render partial: "navigation", locals: { evaluation: @evaluation, active: :show }
+
+%table.table.table-bordered.details-table.evaluation-details-table
+  %tbody
+    %tr.max-result
+      %th= Evaluation.human_attribute_name(:max_result)
+      %td= @evaluation.max_result
+    %tr.color-ranges
+      %th= t(:".color_ranges")
+      %td
+        %ul.unstyled.color-ranges-list
+          %li.red
+            0 &ndash;
+            = @evaluation.red_below - 1
+          %li.yellow
+            = @evaluation.red_below
+            &ndash;
+            = @evaluation.green_above
+          %li.green
+            = @evaluation.green_above
+            &ndash;
+            = @evaluation.max_result
+
+    - if @evaluation.stanines?
+      %tr.stanines
+        %th= t(:".stanines")
+        %td
+          %ul.unstyled.stanine-ranges-list
+            - stanines = @evaluation.stanines
+            - stanines.each_with_index do |stanine, i|
+              %li
+                %strong= i + 1
+                = i == 0 ? "0" : stanines[i-1] + 1
+                &ndash;
+                = stanine
+            %li
+              %strong= 9
+              = stanines.last - + 1
+              &ndash;
+              = @evaluation.max_result
