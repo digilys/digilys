@@ -35,4 +35,16 @@ class EvaluationsController < ApplicationController
       render action: "edit"
     end
   end
+
+  def confirm_destroy
+    @evaluation = Evaluation.find(params[:id])
+  end
+  def destroy
+    evaluation = Evaluation.find(params[:id])
+    suite = evaluation.suite
+    evaluation.destroy
+
+    flash[:success] = t(:"evaluations.destroy.success")
+    redirect_to suite
+  end
 end

@@ -59,3 +59,7 @@ sv:
       success: Testet skapades
     update:
       success: Testet uppdaterades
+    confirm_destroy:
+      confirmation: Om du raderar testet raderas även alla tillhörande testresultat.
+    destroy:
+      success: Testet och tillhörande information raderades

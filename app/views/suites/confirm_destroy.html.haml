@@ -9,4 +9,4 @@
 
   = f.actions do
     = f.action :submit, label: t(:".destroy_action"), button_html: { class: "btn btn-danger"}
-    %a.btn{href:suites_path(f.object)}= t(:".cancel_action")
+    %a.btn{href:suite_path(f.object)}= t(:".cancel_action")
