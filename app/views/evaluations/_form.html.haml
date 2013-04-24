@@ -1,0 +1,55 @@
+= semantic_form_for evaluation, html: { class: "form-horizontal" } do |f|
+
+  = f.inputs do
+
+    .alert.alert-info= t(:".for_suite", suite_name: f.object.suite.name)
+
+    = f.hidden_field :suite_id
+
+    = f.input :name,       required: true, input_html: { required: true, autofocus: true }
+    = f.input :max_result, required: true, input_html: { required: true }
+
+  = f.inputs t(:".color_ranges") do
+    .control-group
+      %label.control-label= t(:".red")
+      .controls
+        %input(disabled="disabled" class="input-mini red-min" type="number" value="0")
+        &ndash;
+        %input(disabled="disabled" class="input-mini red-max" type="number" value="0" id="evaluation-red-max")
+
+    .control-group
+      = f.label :red_below,
+        "#{t(:".yellow")}<abbr title=\"#{t(:"formtastic.required")}\">*</abbr>".html_safe,
+        class: "control-label"
+      .controls
+        = f.number_field :red_below,   required: true, class: "input-mini"
+        &ndash;
+        = f.number_field :green_above, required: true, class: "input-mini"
+
+    .control-group
+      %label.control-label= t(:".green")
+      .controls
+        %input(disabled="disabled" class="input-mini green-min" type="number" value="0" id="evaluation-green-min")
+        &ndash;
+        %input(disabled="disabled" class="input-mini green-max" type="number" value="0" id="evaluation-green-max")
+
+  = f.inputs t(:".stanines") do
+
+    - 1.upto(8) do |i|
+      = f.input :"stanine#{i}",
+        input_html: { class: "input-mini stanine-field" },
+        prepend: '<span class="stanine-below">0</span> &ndash;'.html_safe
+
+    .control-group
+      %label.control-label= t(:".stanine9")
+      .controls
+        .input-prepend
+          %span.add-on
+            %span.stanine-below 0
+            &ndash;
+          %input(disabled="disabled" class="input-mini stanine-max" type="number" value="0" id="evaluation-stanine-max")
+
+
+  = f.actions do
+    = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
+    %a.btn{href:suites_path(f.object)}= t(:".cancel_action")

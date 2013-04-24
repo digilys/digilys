@@ -5,6 +5,8 @@
 .row-fluid
   .span9
     %h3= Evaluation.model_name.human(:count => 2)
+    .btn-group
+      %a.btn.btn-small{href: new_suite_evaluation_path(@suite)}= t(:".evaluation.add")
     = render partial: "evaluations/list", object: @suite.evaluations, as: :evaluations
 
   .span3.sidebar

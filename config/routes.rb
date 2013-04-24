@@ -7,6 +7,13 @@ Digilys::Application.routes.draw do
     member do
       get :confirm_destroy
     end
+
+    resources :evaluations, only: :new
+  end
+  resources :evaluations, except: :new do
+    member do
+      get :confirm_destroy
+    end
   end
 
   namespace :visualize do

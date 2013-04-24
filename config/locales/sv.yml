@@ -198,6 +198,16 @@ sv:
     errors:
       <<: *errors
 
+  formtastic:
+    :yes:      Ja
+    :no:       Nej
+    :create:   Skapa %{model}
+    :update:   Uppdatera %{model}
+    :submit:   Skicka %{model}
+    :cancel:   Avbryt %{model}
+    :reset:    Nollställ %{model}
+    :required: obligatorisk
+
   wait: "Var god vänta..."
 
   # Basic common actions

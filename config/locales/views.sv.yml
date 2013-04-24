@@ -1,7 +1,7 @@
 sv:
   layouts:
     application:
-      feedback: "Feedback"
+      feedback: Feedback
     admin:
       administration: Administrera
   shared:
@@ -12,17 +12,17 @@ sv:
         så att det du letar efter är borttaget, eller så kanske du har skrivit
         in en knasig adress.</p>
         <h3>Vad vill du göra nu?</h3>
-      back_action:       "Ta mig tillbaka"
-      continue_action:   "Fortsätt leta"
-      start_over_action: "Börja om från början"
+      back_action:       Ta mig tillbaka
+      continue_action:   Fortsätt leta
+      start_over_action: Börja om från början
 
   index:
     index:
-      title: "Välkommen till DigiLys!"
+      title: Välkommen till DigiLys!
       body_html: |
         <p></p>
     admin:
-      title: "Administrationssektion"
+      title: Administrationssektion
       body_html: |
         <p>Det här är administrationssektionen i DigiLys. Här kan du skapa
         Årsklockor, test och hantera registret över elever.</p>
@@ -31,8 +31,10 @@ sv:
   suites:
     title: Årsklockor
     show:
-      visualize: "Visualisera"
-      color_chart: "Färgkarta"
+      visualize: Visualisera
+      color_chart: Färgkarta
+      evaluation:
+        add: Lägg till test
     create:
       success: Årsklockan skapades
     update:
@@ -41,3 +43,17 @@ sv:
       confirmation: Om du raderar årsklockan raderas även alla tillhörande tester och testresultat.
     destroy:
       success: Årsklockan och tillhörande information raderades
+
+  evaluations:
+    title: Test
+    navigation:
+      return_to_suite: Återvänd till årsklockan
+    form:
+      for_suite: Detta test tillhör %{suite_name}
+      color_ranges: Färgintervall
+      red: Röd
+      yellow: Gul
+      green: Grön
+      stanines: Stanine-värden <small>Lämna alla värden tomma om du inte vill använda staninevärden</small>
+    create:
+      success: Testet skapades
