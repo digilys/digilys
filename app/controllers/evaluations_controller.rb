@@ -20,4 +20,19 @@ class EvaluationsController < ApplicationController
       render action: "new"
     end
   end
+
+  def edit
+    @evaluation = Evaluation.find(params[:id])
+  end
+
+  def update
+    @evaluation = Evaluation.find(params[:id])
+
+    if @evaluation.update_attributes(params[:evaluation])
+      flash[:success] = t(:"evaluations.update.success")
+      redirect_to @evaluation
+    else
+      render action: "edit"
+    end
+  end
 end

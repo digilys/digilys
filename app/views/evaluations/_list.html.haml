@@ -7,4 +7,8 @@
     - evaluations.each do |evaluation|
       %tr
         %td.name= evaluation.name
-        %td.actions &nbsp;
+        %td.actions
+          .btn-group
+            %a.btn.btn-mini{href: evaluation_path(evaluation)}=                            t(:".show_action")
+            %a.btn.btn-mini{href: edit_evaluation_path(evaluation)}=                       t(:".edit_action")
+            %a.btn.btn-mini.btn-danger{href: confirm_destroy_evaluation_path(evaluation)}= t(:".destroy_action")

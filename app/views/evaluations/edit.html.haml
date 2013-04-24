@@ -1,0 +1,5 @@
+%h1= @evaluation.name_was
+
+= render partial: "navigation", locals: { active: :edit, evaluation: @evaluation }
+
+= render partial: "form", object: @evaluation, as: :evaluation

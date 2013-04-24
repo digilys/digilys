@@ -57,3 +57,5 @@ sv:
       stanines: Stanine-värden <small>Lämna alla värden tomma om du inte vill använda staninevärden</small>
     create:
       success: Testet skapades
+    update:
+      success: Testet uppdaterades

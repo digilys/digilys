@@ -1,15 +1,24 @@
 - active     ||= nil
-- suite      ||= nil
 - evaluation ||= nil
+- suite      ||= evaluation ? evaluation.suite : nil
 
 - content_for :title do
   - t(:".title")
 
 %ul.nav.nav-tabs
-  - if suite
+  - if evaluation
+    %li{class: active_if(active == :show)}
+      %a{href:evaluation_path(evaluation)}= t(:".show_action")
+    %li{class: active_if(active == :edit)}
+      %a{href:edit_evaluation_path(evaluation)}= t(:".edit_action")
+    %li{class: active_if(active == :destroy)}
+      %a{href:confirm_destroy_evaluation_path(evaluation)}= t(:".destroy_action")
+
+  - elsif suite
     %li{class: active_if(active == :new)}
       %a{href:new_suite_evaluation_path(suite)}= t(:".new_action")
 
+  - if suite
     %li{class: active_if(active == :show)}
       %a{href:suite_path(suite)}= t(:".return_to_suite")
 
