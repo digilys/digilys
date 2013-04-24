@@ -1,3 +1,24 @@
-// Place all the styles related to the visualize/suites controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+@import "variables";
+
+table.suite-results {
+    .result {
+        ul {
+            margin: 0;
+            list-style-type: none;
+
+            li { display: none; }
+        }
+    }
+    &.suite-show-value   .value   { display: block; }
+    &.suite-show-stanine .stanine { display: block; }
+
+    .result-red    { background-color: $red; }
+    .result-yellow { background-color: $yellow; }
+    .result-green  { background-color: $green; }
+
+    &.table-hover tbody tr {
+        &:hover > .result-red    { background-color: darken($red, 5%); }
+        &:hover > .result-yellow { background-color: darken($yellow, 5%); }
+        &:hover > .result-green  { background-color: darken($green, 5%); }
+    }
+}
