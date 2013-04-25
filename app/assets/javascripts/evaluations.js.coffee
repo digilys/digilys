@@ -62,3 +62,31 @@ $ ->
                     $group.find(".stanine-below").text($prevGroup.find(".stanine-below").text())
 
         $stanines.trigger("change")
+
+        # Suggestion field for the yellow range, only for new evaluations
+        #
+        # Suggestions are based on a percentage of the max result. The percentages
+        # are given as data attributes on $maxResult.
+        if $form.hasClass("new")
+            lowerPercentage      = intify($maxResult.data("suggestion-lower"))/100
+            upperPercentage      = intify($maxResult.data("suggestion-upper"))/100
+            $suggestionContainer = $form.find(".suggestion-container")
+            copyTemplate         = $suggestionContainer.data("suggestion-copy")
+
+            $maxResult.on "change", ->
+                maxResult = intify($maxResult.val())
+
+                if maxResult > 0
+                    lower = Math.round(maxResult * lowerPercentage)
+                    upper = Math.round(maxResult * upperPercentage)
+                    copy  = copyTemplate.replace("%from%", lower).replace("%to%", upper)
+
+                    # Inject a button which when clicked will set the values of
+                    # the yellow range to the suggested values
+                    $suggestionAction = $("<a href=\"#\" class=\"btn use-suggestion-action\">#{copy}</a>")
+                    $suggestionAction.on "click", (event) ->
+                        event.preventDefault()
+                        $redBelow.val(lower).trigger("change")
+                        $greenAbove.val(upper).trigger("change")
+
+                    $suggestionContainer.html("").append($suggestionAction)

@@ -55,6 +55,7 @@ sv:
       red: Röd
       yellow: Gul
       green: Grön
+      suggestion_copy: Använd %from% &ndash; %to%
       stanines: Stanine-värden <small>Lämna alla värden tomma om du inte vill använda staninevärden</small>
     create:
       success: Testet skapades

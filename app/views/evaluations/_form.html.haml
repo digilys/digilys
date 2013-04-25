@@ -1,4 +1,5 @@
-= semantic_form_for evaluation, html: { id: "evaluation-form", class: "form-horizontal" } do |f|
+= semantic_form_for evaluation,
+  html: { id: "evaluation-form", class: "form-horizontal #{evaluation.new_record? ? "new" : "edit" }" } do |f|
 
   = f.inputs do
 
@@ -7,7 +8,9 @@
     = f.hidden_field :suite_id
 
     = f.input :name,       required: true, input_html: { required: true, autofocus: true }
-    = f.input :max_result, required: true, input_html: { required: true }
+    = f.input :max_result,
+      required: true,
+      input_html: { required: true, "data-suggestion-lower" => Conf.evaluation.suggestion_lower, "data-suggestion-upper" => Conf.evaluation.suggestion_upper }
 
   = f.inputs t(:".color_ranges") do
     .control-group
@@ -25,6 +28,7 @@
         = f.number_field :red_below,   required: true, class: "input-mini"
         &ndash;
         = f.number_field :green_above, required: true, class: "input-mini"
+        .suggestion-container{"data-suggestion-copy" => t(:".suggestion_copy")}
 
     .control-group
       %label.control-label= t(:".green")
