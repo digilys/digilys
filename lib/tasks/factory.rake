@@ -17,7 +17,7 @@ namespace :app do
       num = (ENV["evaluations"] || 2).to_i
       results = ENV["results"]
 
-      suite = FactoryGirl.create(:suite, name: "Årsklocka #{DateTime.now.strftime("%Y%m%d%H%M")}")
+      suite = FactoryGirl.create(:suite, name: "Planering #{DateTime.now.strftime("%Y%m%d%H%M")}")
 
       puts "New suite: #{suite.name}"
 

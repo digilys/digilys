@@ -25,31 +25,31 @@ sv:
       title: Administrationssektion
       body_html: |
         <p>Det här är administrationssektionen i DigiLys. Här kan du skapa
-        Årsklockor, test och hantera registret över elever.</p>
+        planeringar, test och hantera registret över elever.</p>
         <h3>Börja genom att göra ett val till vänster!</h3>
 
   suites:
-    title: Årsklockor
+    title: Planeringar
     show:
       visualize: Visualisera
       color_chart: Färgkarta
       evaluation:
         add: Lägg till test
     create:
-      success: Årsklockan skapades
+      success: Planeringen skapades
     update:
-      success: Årsklockan uppdaterades
+      success: Planeringen uppdaterades
     confirm_destroy:
-      confirmation: Om du raderar årsklockan raderas även alla tillhörande tester och testresultat.
+      confirmation: Om du raderar planeringen raderas även alla tillhörande tester och testresultat.
     destroy:
-      success: Årsklockan och tillhörande information raderades
+      success: Planeringen och tillhörande information raderades
 
   evaluations:
     title: Test
     color_ranges: Färgintervall
     stanines: Stanine-värden
     navigation:
-      return_to_suite: Återvänd till årsklockan
+      return_to_suite: Återvänd till planeringen
     form:
       for_suite: Detta test tillhör %{suite_name}
       red: Röd

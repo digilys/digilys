@@ -8,8 +8,8 @@ sv:
         one: Elev
         other: Elever
       suite:
-        one: Årsklocka
-        other: Årsklockor
+        one: Planering
+        other: Planeringar
       result:
         one: Resultat
         other: Resultat
@@ -21,7 +21,7 @@ sv:
         other: Användare
     attributes:
       evaluation:
-        suite: Årsklocka
+        suite: Planering
         name: Namn
         max_result: Maxresultat
         red_below: Rött under
