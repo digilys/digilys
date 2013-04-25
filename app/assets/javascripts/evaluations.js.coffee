@@ -40,11 +40,25 @@ $ ->
         $redBelow.trigger("change")
         $greenAbove.trigger("change")
 
-        # Update the lower boundary indicator of stanine fields
-        # when the stanine fields change
-        $form.on "change", ".stanine-field", ->
-            $field = $(this)
-            $target = $field.closest(".control-group").next(".control-group").find(".stanine-below")
-            $target.text(intify($field.val(), 1))
+        # Update the lower boundary indicator of the next
+        # stanine field when a stanine field change.
+        # Also, update this field's lower boundary if this field's
+        # value is the same as the previous, allowing for
+        # overlapping stanine ranges
+        $stanines = $form.find(".stanine-field")
 
-        $form.find(".stanine-field").trigger("change")
+        $form.on "change", ".stanine-field", ->
+            $stanines.each ->
+                $field = $(this)
+                $group = $field.closest(".control-group")
+
+                # Update the next stanine field's indicator
+                $nextIndicator = $group.next(".control-group").find(".stanine-below")
+                $nextIndicator.text(intify($field.val(), 1))
+
+                $prevGroup = $group.prev(".control-group")
+
+                if $field.val() == $prevGroup.find(".stanine-field").val()
+                    $group.find(".stanine-below").text($prevGroup.find(".stanine-below").text())
+
+        $stanines.trigger("change")
