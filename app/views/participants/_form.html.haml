@@ -1,0 +1,13 @@
+= semantic_form_for participant do |f|
+
+  = f.inputs do
+
+    .alert.alert-info= t(:".for_suite", suite_name: f.object.suite.name)
+
+    = f.hidden_field :suite_id
+
+    = f.input :student
+
+  = f.actions do
+    = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
+    %a.btn{href:suite_path(f.object.suite)}= t(:".cancel_action")

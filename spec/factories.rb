@@ -13,6 +13,11 @@ FactoryGirl.define do
     sequence(:name) { |i| "Suite #{i}" }
   end
 
+  factory :participant do
+    student
+    suite
+  end
+
   factory :evaluation do
     suite
     sequence(:name) { |i| "Evaluation #{i}" }

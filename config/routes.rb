@@ -8,8 +8,16 @@ Digilys::Application.routes.draw do
       get :confirm_destroy
     end
 
-    resources :evaluations, only: :new
+    resources :evaluations,  only: :new
+    resources :participants, only: :new
   end
+
+  resources :participants, only: [ :create, :destroy ] do
+    member do
+      get :confirm_destroy
+    end
+  end
+
   resources :evaluations, except: :new do
     member do
       get :confirm_destroy

@@ -28,11 +28,15 @@ sv:
         planeringar, test och hantera registret över elever.</p>
         <h3>Börja genom att göra ett val till vänster!</h3>
 
+  return_to_suite: Återvänd till planeringen
+
   suites:
     title: Planeringar
     show:
       visualize: Visualisera
       color_chart: Färgkarta
+      participant:
+        add: Lägg till elev
       evaluation:
         add: Lägg till test
     create:
@@ -44,12 +48,23 @@ sv:
     destroy:
       success: Planeringen och tillhörande information raderades
 
+  participants:
+    title: Elever
+    new_action: Lägg till i planeringen
+    form:
+      for_suite: Lägg till en elev i planeringen %{suite_name}
+    create:
+      success: Eleven lades till i planeringen
+    confirm_destroy:
+      confirmation: Är du säker på att du vill ta bort eleven från planeringen?
+    destroy:
+      success: Eleven togs bort från planeringen
+
   evaluations:
     title: Test
     color_ranges: Färgintervall
     stanines: Stanine-värden
     navigation:
-      return_to_suite: Återvänd till planeringen
     form:
       for_suite: Detta test tillhör %{suite_name}
       red: Röd
