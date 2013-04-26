@@ -7,6 +7,9 @@ sv:
       student:
         one: Elev
         other: Elever
+      participant:
+        one: Elev
+        other: Elever
       suite:
         one: Planering
         other: Planeringar
@@ -41,6 +44,9 @@ sv:
         value: Resultat
       student:
         name: Namn
+      participant:
+        suite: Planering
+        student: Elev
       suite:
         name: Namn
       user:
