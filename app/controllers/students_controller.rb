@@ -43,4 +43,15 @@ class StudentsController < ApplicationController
       render action: "edit"
     end
   end
+
+  def confirm_destroy
+    @student = Student.find(params[:id])
+  end
+  def destroy
+    student = Student.find(params[:id])
+    student.destroy
+
+    flash[:success] = t(:"students.destroy.success")
+    redirect_to students_url()
+  end
 end

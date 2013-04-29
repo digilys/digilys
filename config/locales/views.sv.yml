@@ -36,6 +36,10 @@ sv:
       success: Eleven skapades
     update:
       success: Eleven uppdaterades
+    confirm_destroy:
+      confirmation: Om du raderar eleven raderas även elevens alla resultat.
+    destroy:
+      success: Eleven och tillhörande information raderades
 
   suites:
     title: Planeringar

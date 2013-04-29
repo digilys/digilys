@@ -1,0 +1,12 @@
+%h1= @student.name
+
+= render partial: "navigation", locals: { student: @student, active: :destroy }
+
+= semantic_form_for @student, method: :delete do |f|
+
+  .alert.alert-block.alert-error
+    %p= t(:".confirmation")
+
+  = f.actions do
+    = f.action :submit, label: t(:".destroy_action"), button_html: { class: "btn btn-danger"}
+    %a.btn{href:student_path(f.object)}= t(:".cancel_action")
