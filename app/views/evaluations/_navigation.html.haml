@@ -1,6 +1,7 @@
-- active     ||= nil
-- evaluation ||= nil
-- suite      ||= evaluation ? evaluation.suite : nil
+- active      ||= nil
+- evaluation  ||= nil
+- suite       ||= evaluation ? evaluation.suite : nil
+- only_return ||= false
 
 - content_for :title do
   - t(:".title")
@@ -14,7 +15,7 @@
     %li{class: active_if(active == :destroy)}
       %a{href:confirm_destroy_evaluation_path(evaluation)}= t(:".destroy_action")
 
-  - elsif suite
+  - elsif !only_return && suite
     %li{class: active_if(active == :new)}
       %a{href:new_suite_evaluation_path(suite)}= t(:".new_action")
 

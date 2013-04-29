@@ -3,6 +3,8 @@ class Evaluation < ActiveRecord::Base
   has_many   :results
   has_many   :students, through: :results
 
+  accepts_nested_attributes_for :results
+
   attr_accessible :suite_id,
     :max_result,
     :name,
@@ -15,7 +17,8 @@ class Evaluation < ActiveRecord::Base
     :stanine5,
     :stanine6,
     :stanine7,
-    :stanine8
+    :stanine8,
+    :results_attributes
 
   validates :suite, presence: true
   validates :name, presence: true

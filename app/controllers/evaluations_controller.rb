@@ -55,4 +55,31 @@ class EvaluationsController < ApplicationController
     flash[:success] = t(:"evaluations.destroy.success")
     redirect_to suite
   end
+
+  def report
+    @evaluation   = Evaluation.find(params[:id])
+    @suite        = @evaluation.suite
+    @participants = @suite.participants
+
+    @participants.each do |participant|
+      if !@evaluation.results.exists?(student_id: participant.student_id)
+        @evaluation.results.build(student_id: participant.student_id)
+      end
+    end
+
+    @evaluation.results.sort_by! { |r| r.student.name }
+  end
+
+  def submit_report
+    @evaluation   = Evaluation.find(params[:id])
+    @suite        = @evaluation.suite
+    @participants = @suite.participants
+
+    if @evaluation.update_attributes(params[:evaluation])
+      flash[:success] = t(:"evaluations.submit_report.success")
+      redirect_to @suite
+    else
+      render action: "report"
+    end
+  end
 end

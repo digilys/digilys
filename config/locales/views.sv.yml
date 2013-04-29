@@ -65,7 +65,8 @@ sv:
     title: Test
     color_ranges: Färgintervall
     stanines: Stanine-värden
-    navigation:
+    list:
+      report_action: Rapportera resultat
     form:
       for_suite: Detta test tillhör %{suite_name}
       red: Röd
@@ -81,3 +82,5 @@ sv:
       confirmation: Om du raderar testet raderas även alla tillhörande testresultat.
     destroy:
       success: Testet och tillhörande information raderades
+    submit_report:
+      success: Resultatet uppdaterades

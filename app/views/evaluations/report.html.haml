@@ -1,0 +1,18 @@
+%h1
+  = @evaluation.name
+  %small= @suite.name
+
+= render partial: "navigation", locals: { suite: @suite, only_return: true }
+
+= semantic_form_for @evaluation,
+  url: submit_report_evaluation_path(@evaluation),
+  html: { id: "result-entry-form", class: "form-horizontal" } do |f|
+
+  = f.inputs for: :results do |rf|
+    = rf.input :value, label: rf.object.student.name
+    = rf.hidden_field :student_id
+
+  = f.actions do
+    = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary" }
+    %a.btn{href:suites_path(@suite)}= t(:".cancel_action")
+

@@ -23,6 +23,8 @@ Digilys::Application.routes.draw do
   resources :evaluations, except: :new do
     member do
       get :confirm_destroy
+      get :report
+      put :submit_report
     end
   end
 
