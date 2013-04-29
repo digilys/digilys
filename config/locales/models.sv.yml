@@ -47,6 +47,7 @@ sv:
       participant:
         suite: Planering
         student: Elev
+        student_id: Elev
       suite:
         name: Namn
       user:

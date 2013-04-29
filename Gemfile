@@ -9,6 +9,7 @@ gem "cancan",         "~> 1.6.9"
 gem "rolify",         "~> 3.2.0"
 gem "kaminari",       "~> 0.14.1"
 gem "config_spartan", "~> 1.0.1"
+gem "ransack",        "~> 0.7.2"
 
 # Servers
 gem "passenger", "~> 3.0.19", require: false
@@ -26,6 +27,7 @@ gem "jquery-rails",         "~> 2.2.1"
 gem "bootstrap-sass",       "~> 2.3.1.0"
 gem "kaminari-bootstrap",   "~> 0.1.3"
 gem "formtastic-bootstrap", "~> 2.1.1"
+gem "select2-rails",        "~> 3.3.1"
 
 group :development do
   gem "capistrano", "~> 2.14.2"

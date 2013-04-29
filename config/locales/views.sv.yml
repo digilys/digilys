@@ -53,6 +53,7 @@ sv:
     new_action: Lägg till i planeringen
     form:
       for_suite: Lägg till en elev i planeringen %{suite_name}
+      student_placeholder: Sök och välj en elev
     create:
       success: Eleven lades till i planeringen
     confirm_destroy:
