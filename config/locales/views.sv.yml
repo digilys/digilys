@@ -30,6 +30,9 @@ sv:
 
   return_to_suite: Återvänd till planeringen
 
+  students:
+    title: Elever
+
   suites:
     title: Planeringar
     show:

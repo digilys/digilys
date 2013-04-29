@@ -8,7 +8,7 @@
 
     = f.input :student_id,
       as: :hidden,
-      input_html: { data: { url: students_search_path(format: :json), placeholder: t(:".student_placeholder")  } }
+      input_html: { data: { url: search_students_path(format: :json), placeholder: t(:".student_placeholder")  } }
 
   = f.actions do
     = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
