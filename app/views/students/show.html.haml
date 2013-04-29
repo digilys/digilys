@@ -1,0 +1,9 @@
+%h1= @student.name
+
+= render partial: "navigation", locals: { student: @student, active: :show }
+
+%table.table.table-bordered.details-table.student-details-table
+  %tbody
+    %tr.name
+      %th= Student.human_attribute_name(:name)
+      %td= @student.name

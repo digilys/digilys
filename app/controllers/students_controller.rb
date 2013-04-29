@@ -10,6 +10,10 @@ class StudentsController < ApplicationController
     render json: @students.collect { |s| { id: s.id, text: s.name } }.to_json
   end
 
+  def show
+    @student = Student.find(params[:id])
+  end
+
   def new
     @student = Student.new
   end
