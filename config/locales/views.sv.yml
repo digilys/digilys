@@ -32,6 +32,8 @@ sv:
 
   students:
     title: Elever
+    create:
+      success: Eleven skapades
 
   suites:
     title: Planeringar
