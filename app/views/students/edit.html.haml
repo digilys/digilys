@@ -1,0 +1,5 @@
+%h1= @student.name_was
+
+= render partial: "navigation", locals: { active: :edit, student: @student }
+
+= render partial: "form", object: @student, as: :student

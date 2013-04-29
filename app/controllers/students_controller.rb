@@ -28,4 +28,19 @@ class StudentsController < ApplicationController
       render action: "new"
     end
   end
+
+  def edit
+    @student = Student.find(params[:id])
+  end
+
+  def update
+    @student = Student.find(params[:id])
+
+    if @student.update_attributes(params[:student])
+      flash[:success] = t(:"students.update.success")
+      redirect_to @student
+    else
+      render action: "edit"
+    end
+  end
 end
