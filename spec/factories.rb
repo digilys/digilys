@@ -21,6 +21,7 @@ FactoryGirl.define do
   factory :evaluation do
     suite
     sequence(:name) { |i| "Evaluation #{i}" }
+    date            Date.today
     max_result      50
     red_below       15
     green_above     35

@@ -23,11 +23,12 @@ group :assets do
   gem "therubyracer", "~> 0.11.4", require: "v8"
 end
 
-gem "jquery-rails",         "~> 2.2.1"
-gem "bootstrap-sass",       "~> 2.3.1.0"
-gem "kaminari-bootstrap",   "~> 0.1.3"
-gem "formtastic-bootstrap", "~> 2.1.1"
-gem "select2-rails",        "~> 3.3.1"
+gem "jquery-rails",               "~> 2.2.1"
+gem "bootstrap-sass",             "~> 2.3.1.0"
+gem "kaminari-bootstrap",         "~> 0.1.3"
+gem "formtastic-bootstrap",       "~> 2.1.1"
+gem "select2-rails",              "~> 3.3.1"
+gem "bootstrap-datepicker-rails", "~> 1.0.0.5"
 
 group :development do
   gem "capistrano", "~> 2.14.2"

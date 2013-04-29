@@ -8,6 +8,7 @@ class Evaluation < ActiveRecord::Base
   attr_accessible :suite_id,
     :max_result,
     :name,
+    :date,
     :red_below,
     :green_above,
     :stanine1,
@@ -21,7 +22,8 @@ class Evaluation < ActiveRecord::Base
     :results_attributes
 
   validates :suite, presence: true
-  validates :name, presence: true
+  validates :name,  presence: true
+  validates :date,  presence: true, format: { with: /^\d{4}-\d{2}-\d{2}$/ }
   validates(:max_result,
     numericality: {
       only_integer: true,

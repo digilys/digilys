@@ -3,6 +3,7 @@
   %thead
     %tr
       %th.name= Evaluation.human_attribute_name(:name)
+      %th.date= Evaluation.human_attribute_name(:date)
       - unless hide_suite
         %th.suite= Suite.model_name.human
       %th.actions &nbsp;
@@ -10,6 +11,7 @@
     - evaluations.each do |evaluation|
       %tr
         %td.name= evaluation.name
+        %td.date= evaluation.date
         - unless hide_suite
           %td.suite= evaluation.suite.name
         %td.actions

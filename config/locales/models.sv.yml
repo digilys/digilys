@@ -26,6 +26,7 @@ sv:
       evaluation:
         suite: Planering
         name: Namn
+        date: Datum
         max_result: Maxresultat
         red_below: Rött under
         green_above: Grönt över

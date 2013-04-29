@@ -7,7 +7,9 @@
 
     = f.hidden_field :suite_id
 
-    = f.input :name,       required: true, input_html: { required: true, autofocus: true }
+    = f.input :name, required: true, input_html: { required: true, autofocus: true }
+    = f.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }
+
     = f.input :max_result,
       required: true,
       input_html: { required: true, "data-suggestion-lower" => Conf.evaluation.suggestion_lower, "data-suggestion-upper" => Conf.evaluation.suggestion_upper }

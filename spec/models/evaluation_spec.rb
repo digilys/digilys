@@ -8,6 +8,7 @@ describe Evaluation do
   context "accessible attributes" do
     it { should allow_mass_assignment_of(:suite_id) }
     it { should allow_mass_assignment_of(:name) }
+    it { should allow_mass_assignment_of(:date) }
     it { should allow_mass_assignment_of(:max_result) }
     it { should allow_mass_assignment_of(:red_below) }
     it { should allow_mass_assignment_of(:green_above) }
@@ -23,6 +24,7 @@ describe Evaluation do
   context "validation" do
     it { should validate_presence_of(:suite) }
     it { should validate_presence_of(:name) }
+    it { should validate_presence_of(:date) }
 
     it { should validate_numericality_of(:max_result).only_integer }
     it { should validate_numericality_of(:red_below).only_integer }
@@ -38,6 +40,9 @@ describe Evaluation do
     it { should validate_numericality_of(:stanine8).only_integer }
 
     it { should_not allow_value(-1).for(:max_result) }
+
+    it { should     allow_value("2013-04-29").for(:date) }
+    it { should_not allow_value("201304-29").for(:date) }
 
     context "limit ranges" do
       subject { build(:evaluation, max_result: 50, red_below: 20, green_above: 30) }
