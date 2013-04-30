@@ -45,4 +45,12 @@ FactoryGirl.define do
     student
     value 25
   end
+
+  factory :meeting do
+    suite
+    sequence(:name) { |i| "Meeting #{i}" }
+    date            Date.today
+    completed       false
+    notes           nil
+  end
 end

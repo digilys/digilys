@@ -3,6 +3,7 @@ class Suite < ActiveRecord::Base
   has_many :students,     through: :participants, order: "name asc"
   has_many :evaluations
   has_many :results,      through: :evaluations
+  has_many :meetings
 
   attr_accessible :name
   validates :name, presence: true

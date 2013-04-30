@@ -16,6 +16,9 @@ sv:
       result:
         one: Resultat
         other: Resultat
+      meeting:
+        one: Möte
+        other: Möten
       role:
         one: Roll
         other: Roller
@@ -51,6 +54,13 @@ sv:
         student_id: Elev
       suite:
         name: Namn
+      meeting:
+        suite: Planering
+        suite_id: Planering
+        name: Namn
+        date: Datum
+        completed: Mötet genomfört
+        notes: Anteckningar
       user:
         email: E-postadress
         password: Lösenord
