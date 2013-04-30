@@ -1,0 +1,21 @@
+%h1= @meeting.name
+
+= render partial: "navigation", locals: { meeting: @meeting, active: :show }
+
+%table.table.table-bordered.details-table.meeting-details-table
+  %tbody
+    %tr.suite
+      %th= Suite.model_name.human
+      %td= @meeting.suite.name
+    %tr.name
+      %th= Meeting.human_attribute_name(:name)
+      %td= @meeting.name
+    %tr.date
+      %th= Meeting.human_attribute_name(:date)
+      %td= @meeting.date
+    %tr.completed
+      %th= Meeting.human_attribute_name(:completed)
+      %td= @meeting.completed ? t(:yes) : t(:no)
+    %tr.notes
+      %th= Meeting.human_attribute_name(:notes)
+      %td= @meeting.notes

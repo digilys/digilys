@@ -19,6 +19,7 @@ Digilys::Application.routes.draw do
 
     resources :evaluations,  only: :new
     resources :participants, only: :new
+    resources :meetings,     only: :new
   end
 
   resources :participants, only: [ :create, :destroy ] do
@@ -32,6 +33,12 @@ Digilys::Application.routes.draw do
       get :confirm_destroy
       get :report
       put :submit_report
+    end
+  end
+
+  resources :meetings, except: [ :index, :new ] do
+    member do
+      get :confirm_destroy
     end
   end
 

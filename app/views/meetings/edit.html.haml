@@ -1,0 +1,5 @@
+%h1= @meeting.name
+
+= render partial: "navigation", locals: { meeting: @meeting, active: :edit }
+
+= render partial: "form", object: @meeting, as: :meeting

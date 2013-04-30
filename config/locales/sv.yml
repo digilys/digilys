@@ -208,7 +208,9 @@ sv:
     :reset:    Nollställ %{model}
     :required: obligatorisk
 
-  wait: "Var god vänta..."
+  wait: Var god vänta...
+  "yes":  Ja
+  "no":   Nej
 
   # Basic common actions
   # These are not put under a sub-key because we want i18n cascading to work

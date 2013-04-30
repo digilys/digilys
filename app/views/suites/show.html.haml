@@ -6,6 +6,7 @@
   .span9
     .btn-group
       %a.btn.btn-small{href: new_suite_evaluation_path(@suite)}= t(:".evaluation.add")
+      %a.btn.btn-small{href: new_suite_meeting_path(@suite)}=    t(:".meeting.add")
     = render partial: "calendar", object: @suite, as: :suite
 
   .span3.sidebar

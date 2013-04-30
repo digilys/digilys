@@ -1,0 +1,21 @@
+- active  ||= nil
+- meeting ||= nil
+- suite   ||= meeting.try(:suite)
+
+- content_for :title do
+  - t(:".title")
+
+%ul.nav.nav-tabs
+  - if meeting
+    %li{class: active_if(active == :show)}
+      %a{href:meeting_path(meeting)}= t(:".show_action")
+    %li{class: active_if(active == :edit)}
+      %a{href:edit_meeting_path(meeting)}= t(:".edit_action")
+    %li{class: active_if(active == :destroy)}
+      %a{href:confirm_destroy_meeting_path(meeting)}= t(:".destroy_action")
+
+  - else
+    %li{class: active_if(active == :new)}
+      %a{href:new_suite_meeting_path(suite)}= t(:".new_action")
+  %li
+    %a{href:suite_path(suite)}= t(:".return_to_suite")

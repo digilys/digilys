@@ -1,0 +1,17 @@
+= semantic_form_for meeting, html: { class: "form-horizontal" } do |f|
+
+  = f.inputs do
+    .alert.alert-info= t(:".#{f.object.new_record? ? "new" : "edit"}_for_suite", suite_name: f.object.suite.name)
+
+    = f.hidden_field :suite_id
+
+    = f.input :name, required: true, input_html: { required: true, autofocus: true }
+    = f.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }
+
+    - unless f.object.new_record?
+      = f.input :completed
+      = f.input :notes, input_html: { class: "input-xxlarge" }
+
+  = f.actions do
+    = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
+    %a.btn{href:f.object.new_record? ? suite_path(f.object.suite) : meeting_path(f.object)}= t(:".cancel_action")

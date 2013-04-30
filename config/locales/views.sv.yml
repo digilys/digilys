@@ -51,6 +51,8 @@ sv:
         add: Lägg till elev
       evaluation:
         add: Lägg till test
+      meeting:
+        add: Lägg till möte
     create:
       success: Planeringen skapades
     update:
@@ -94,3 +96,18 @@ sv:
       success: Testet och tillhörande information raderades
     submit_report:
       success: Resultatet uppdaterades
+
+  meetings:
+    title: Möten
+    new_action: Lägg till i planeringen
+    form:
+      new_for_suite: Lägg till ett möte i planeringen %{suite_name}
+      edit_for_suite: Mötet tillhör planeringen %{suite_name}
+    create:
+      success: Mötet lades till i planeringen
+    update:
+      success: Mötet uppdaterades
+    confirm_destroy:
+      confirmation: Är du säker på att du vill ta bort mötet?
+    destroy:
+      success: Mötet togs bort från planeringen
