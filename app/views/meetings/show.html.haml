@@ -18,4 +18,4 @@
       %td= @meeting.completed ? t(:yes) : t(:no)
     %tr.notes
       %th= Meeting.human_attribute_name(:notes)
-      %td= @meeting.notes
+      %td= @meeting.notes.try(:html_safe)

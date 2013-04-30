@@ -29,6 +29,8 @@ gem "kaminari-bootstrap",         "~> 0.1.3"
 gem "formtastic-bootstrap",       "~> 2.1.1"
 gem "select2-rails",              "~> 3.3.1"
 gem "bootstrap-datepicker-rails", "~> 1.0.0.5"
+gem "tinymce-rails",              "~> 3.5.8.1"
+gem "tinymce-rails-langs",        "~> 0.1"
 
 group :development do
   gem "capistrano", "~> 2.14.2"
