@@ -29,6 +29,7 @@ sv:
         <h3>Börja genom att göra ett val till vänster!</h3>
 
   return_to_suite: Återvänd till planeringen
+  report_action: Rapportera resultat
 
   students:
     title: Elever
@@ -76,8 +77,6 @@ sv:
     title: Test
     color_ranges: Färgintervall
     stanines: Stanine-värden
-    list:
-      report_action: Rapportera resultat
     form:
       for_suite: Detta test tillhör %{suite_name}
       red: Röd

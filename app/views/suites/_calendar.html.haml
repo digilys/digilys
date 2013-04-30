@@ -1,16 +1,9 @@
-%table.table.table-striped.evaluations-table
-  %thead
-    %tr
-      %th.name= Evaluation.human_attribute_name(:name)
-      %th.date= Evaluation.human_attribute_name(:date)
-      %th.suite= Suite.model_name.human
-      %th.actions &nbsp;
+%table.table.table-bordered.table-hover.table-striped.suite-calendar-table
   %tbody
-    - evaluations.each do |evaluation|
+    - suite.evaluations.each do |evaluation|
       %tr
-        %td.name= evaluation.name
         %td.date= evaluation.date
-        %td.suite= evaluation.suite.name
+        %td.name= evaluation.name
         %td.actions
           .btn-group
             %a.btn.btn-mini.btn-primary{href: report_evaluation_path(evaluation)}=         t(:".report_action")

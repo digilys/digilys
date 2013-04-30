@@ -38,3 +38,12 @@
     display: inline;
     margin-left: 2em;
 }
+
+.suite-calendar-table {
+    margin-top: 1em;
+
+    .date {
+        width: 1%;
+        white-space: nowrap;
+    }
+}
