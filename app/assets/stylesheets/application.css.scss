@@ -37,7 +37,12 @@
     }
 }
 
-table .actions {
-    white-space: nowrap;
-    width: 1%;
+.table {
+    td.actions {
+        text-align: right;
+    }
+    .actions {
+        width: 1%;
+        white-space: nowrap;
+    }
 }

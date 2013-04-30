@@ -1,13 +1,20 @@
 %table.table.table-bordered.table-hover.table-striped.suite-calendar-table
   %tbody
-    - suite.evaluations.each do |evaluation|
+    - calendar_entries(suite).each do |entity|
       %tr
-        %td.date= evaluation.date
-        %td.name= evaluation.name
+        %td.date= entity.date
+        %td.name= entity.name
         %td.actions
-          .btn-group
-            %a.btn.btn-mini.btn-primary{href: report_evaluation_path(evaluation)}=         t(:".report_action")
-          .btn-group
-            %a.btn.btn-mini{href: evaluation_path(evaluation)}=                            t(:".show_action")
-            %a.btn.btn-mini{href: edit_evaluation_path(evaluation)}=                       t(:".edit_action")
-            %a.btn.btn-mini.btn-danger{href: confirm_destroy_evaluation_path(evaluation)}= t(:".destroy_action")
+          - case entity
+          - when Evaluation
+            .btn-group
+              %a.btn.btn-mini.btn-primary{href: report_evaluation_path(entity)}=         t(:".report_action")
+            .btn-group
+              %a.btn.btn-mini{href: evaluation_path(entity)}=                            t(:".show_action")
+              %a.btn.btn-mini{href: edit_evaluation_path(entity)}=                       t(:".edit_action")
+              %a.btn.btn-mini.btn-danger{href: confirm_destroy_evaluation_path(entity)}= t(:".destroy_action")
+          - when Meeting
+            .btn-group
+              %a.btn.btn-mini{href: meeting_path(entity)}=                            t(:".show_action")
+              %a.btn.btn-mini{href: edit_meeting_path(entity)}=                       t(:".edit_action")
+              %a.btn.btn-mini.btn-danger{href: confirm_destroy_meeting_path(entity)}= t(:".destroy_action")
