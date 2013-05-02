@@ -51,11 +51,13 @@ sv:
         value: Resultat
       student:
         name: Namn
+        groups: Grupper
       group:
         name: Namn
         parent: Tillhör
         parent_id: Tillhör
         children: Undergrupper
+        students: Elever
       participant:
         suite: Planering
         student: Elev
