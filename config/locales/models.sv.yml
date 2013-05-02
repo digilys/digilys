@@ -53,6 +53,9 @@ sv:
         name: Namn
       group:
         name: Namn
+        parent: Tillhör
+        parent_id: Tillhör
+        children: Undergrupper
       participant:
         suite: Planering
         student: Elev

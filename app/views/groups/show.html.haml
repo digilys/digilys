@@ -7,3 +7,13 @@
     %tr.name
       %th= Group.human_attribute_name(:name)
       %td= @group.name
+    %tr.parent
+      %th= Group.human_attribute_name(:parent)
+      %td= @group.parent ? link_to(@group.parent.name, @group.parent) : "-"
+    %tr.children
+      %th= Group.human_attribute_name(:children)
+      %td
+        - unless @group.children.blank?
+          %ul.unstyled
+            - @group.children.each do |child|
+              %li= link_to(child.name, child)

@@ -44,6 +44,8 @@ sv:
 
   groups:
     title: Grupper
+    form:
+      parent_placeholder: Sök och välj en grupp
     create:
       success: Gruppen skapades
     update:

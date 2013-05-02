@@ -2,11 +2,16 @@ class GroupsController < ApplicationController
   layout "admin"
 
   def index
-    @groups = Group.order(:name).page(params[:page])
+    @groups = Group.includes(parent: :parent).order(:name).page(params[:page])
   end
 
   def show
     @group = Group.find(params[:id])
+  end
+
+  def search
+    @groups = Group.page(params[:page]).search(params[:q]).result
+    render json: @groups.collect { |s| { id: s.id, text: s.name } }.to_json
   end
 
   def new

@@ -6,10 +6,13 @@
   %thead
     %tr
       %th.name= Group.human_attribute_name(:name)
+      %th.parent= Group.human_attribute_name(:parent)
       %th.actions &nbsp;
     - @groups.each do |group|
       %tr
         %td.name= group.name
+        %td.parent
+          %small= [ group.parent.try(:name), group.parent.try(:parent).try(:name) ].compact.join(", ")
         %td.actions
           .btn-group
             %a.btn.btn-mini{href: group_path(group)}=                            t(:".show_action")

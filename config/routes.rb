@@ -4,6 +4,9 @@ Digilys::Application.routes.draw do
   get "index/admin"
 
   resources :groups do
+    collection do
+      get :search
+    end
     member do
       get :confirm_destroy
     end
