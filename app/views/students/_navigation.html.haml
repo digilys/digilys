@@ -12,6 +12,8 @@
       %a{href:edit_student_path(student)}= t(:".edit_action")
     %li{class: active_if(active == :destroy)}
       %a{href:confirm_destroy_student_path(student)}= t(:".destroy_action")
+    %li{class: active_if(active == :select_groups)}
+      %a{href:select_groups_student_path(student)}= t(:".select_groups_action")
 
   - else
     %li{class: active_if(active == :index)}

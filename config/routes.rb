@@ -20,7 +20,10 @@ Digilys::Application.routes.draw do
       get :search
     end
     member do
-      get :confirm_destroy
+      get    :confirm_destroy
+      get    :select_groups
+      put    :add_groups
+      delete :remove_groups
     end
   end
 

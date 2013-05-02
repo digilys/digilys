@@ -54,4 +54,24 @@ class StudentsController < ApplicationController
     flash[:success] = t(:"students.destroy.success")
     redirect_to students_url()
   end
+
+  def select_groups
+    @student = Student.find(params[:id])
+  end
+
+  def add_groups
+    student = Student.find(params[:id])
+    student.add_to_groups(params[:student][:groups])
+
+    flash[:success] = t(:"students.add_groups.success")
+    redirect_to student
+  end
+
+  def remove_groups
+    student = Student.find(params[:id])
+    student.remove_from_groups(params[:group_ids])
+
+    flash[:success] = t(:"students.remove_groups.success")
+    redirect_to student
+  end
 end

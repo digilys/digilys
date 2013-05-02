@@ -33,6 +33,9 @@ sv:
 
   students:
     title: Elever
+    select_groups_action: Lägg till i grupper
+    show:
+      remove_groups_action: Ta bort eleven från de markerade grupperna
     create:
       success: Eleven skapades
     update:
@@ -41,6 +44,12 @@ sv:
       confirmation: Om du raderar eleven raderas även elevens alla resultat.
     destroy:
       success: Eleven och tillhörande information raderades
+    select_groups:
+      groups_placeholder: Sök och välj en eller flera grupper
+    add_groups:
+      success: Eleven lades till i grupperna
+    remove_groups:
+      success: Eleven togs bort från grupperna
 
   groups:
     title: Grupper
