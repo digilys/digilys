@@ -9,6 +9,11 @@ FactoryGirl.define do
     sequence(:name) { |i| "Student #{i}" }
   end
 
+  factory :group do
+    sequence(:name) { |i| "Group #{i}" }
+    parent          nil
+  end
+
   factory :suite do
     sequence(:name) { |i| "Suite #{i}" }
   end

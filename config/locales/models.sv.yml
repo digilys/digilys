@@ -7,6 +7,9 @@ sv:
       student:
         one: Elev
         other: Elever
+      group:
+        one: Grupp
+        other: Grupper
       participant:
         one: Elev
         other: Elever
@@ -47,6 +50,8 @@ sv:
         student: Elev
         value: Resultat
       student:
+        name: Namn
+      group:
         name: Namn
       participant:
         suite: Planering
