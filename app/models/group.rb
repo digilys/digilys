@@ -2,6 +2,8 @@ class Group < ActiveRecord::Base
   belongs_to :parent,   class_name: "Group"
   has_many   :children, class_name: "Group", foreign_key: "parent_id", order: "name asc"
 
+  has_and_belongs_to_many :students, order: "students.name asc"
+
   attr_accessible :name, :parent_id
 
   validates :name, presence: true
