@@ -1,0 +1,9 @@
+%h1= @group.name
+
+= render partial: "navigation", locals: { group: @group, active: :show }
+
+%table.table.table-bordered.details-table.group-details-table
+  %tbody
+    %tr.name
+      %th= Group.human_attribute_name(:name)
+      %td= @group.name

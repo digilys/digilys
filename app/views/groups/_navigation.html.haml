@@ -1,0 +1,20 @@
+- active ||= nil
+- group  ||= nil
+
+- content_for :title do
+  - t(:".title")
+
+%ul.nav.nav-tabs
+  - if group
+    %li{class: active_if(active == :show)}
+      %a{href:group_path(group)}= t(:".show_action")
+    %li{class: active_if(active == :edit)}
+      %a{href:edit_group_path(group)}= t(:".edit_action")
+    %li{class: active_if(active == :destroy)}
+      %a{href:confirm_destroy_group_path(group)}= t(:".destroy_action")
+
+  - else
+    %li{class: active_if(active == :index)}
+      %a{href:groups_path()}= t(:".index_action")
+    %li{class: active_if(active == :new)}
+      %a{href:new_group_path()}= t(:".new_action")

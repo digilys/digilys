@@ -3,6 +3,8 @@
     .well
       %ul.nav.nav-list
         %li.nav-header= t(:".administration")
+        %li{class: active_if(params?(controller: "groups"))}
+          %a{href: groups_path()}= t(:"groups.title")
         %li{class: active_if(params?(controller: "students"))}
           %a{href: students_path()}= t(:"students.title")
         %li{class: active_if(params?(controller: "suites"))}

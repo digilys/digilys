@@ -1,0 +1,5 @@
+%h1= @group.name_was
+
+= render partial: "navigation", locals: { active: :edit, group: @group }
+
+= render partial: "form", object: @group, as: :group

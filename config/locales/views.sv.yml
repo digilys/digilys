@@ -42,6 +42,17 @@ sv:
     destroy:
       success: Eleven och tillhörande information raderades
 
+  groups:
+    title: Grupper
+    create:
+      success: Gruppen skapades
+    update:
+      success: Gruppen uppdaterades
+    confirm_destroy:
+      confirmation: Är du säker på att du vill radera gruppen?
+    destroy:
+      success: Gruppen raderades
+
   suites:
     title: Planeringar
     show:
