@@ -1,0 +1,16 @@
+%h1= @group.name
+
+= render partial: "navigation", locals: { group: @group, active: :select_students }
+
+= semantic_form_for @group, url: add_students_group_path(@group), html: { id: "group-form" } do |f|
+
+  = f.inputs do
+
+    = f.input :students,
+      value: nil,
+      as: :hidden,
+      input_html: { data: { url: search_students_path(format: :json), placeholder: t(:".students_placeholder")  } }
+
+  = f.actions do
+    = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
+    %a.btn{href:url_for(f.object)}= t(:".cancel_action")

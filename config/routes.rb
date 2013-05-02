@@ -8,7 +8,10 @@ Digilys::Application.routes.draw do
       get :search
     end
     member do
-      get :confirm_destroy
+      get    :confirm_destroy
+      get    :select_students
+      put    :add_students
+      delete :remove_students
     end
   end
 

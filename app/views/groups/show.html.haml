@@ -17,3 +17,27 @@
           %ul.unstyled
             - @group.children.each do |child|
               %li= link_to(child.name, child)
+
+%h3= Student.model_name.human(:count => 2)
+
+= form_for @group, url: remove_students_group_path(@group), method: :delete do |f|
+
+  .btn-group
+    %a.btn.btn-small{href: select_students_group_path(@group)}= t(:".select_students_action")
+    = submit_tag t(:".remove_students_action"), class: "btn btn-small btn-danger"
+
+  %table.table.table-striped.students-table
+    %thead
+      %tr
+        %th.select &nbsp;
+        %th.name= Student.human_attribute_name(:name)
+        %th.actions &nbsp;
+    %tbody
+      - @group.students.each do |student|
+        %tr
+          %td.select
+            = check_box_tag "student_ids[]", student.id, false, id: "student_ids_#{student.id}"
+          %td.name
+            %label(for="student_ids_#{student.id}")= student.name
+          %td.actions
+            %a.btn.btn-mini{href:url_for(student)}= t(:".show_action")

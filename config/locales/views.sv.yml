@@ -44,8 +44,11 @@ sv:
 
   groups:
     title: Grupper
+    select_students_action: Lägg till elever
     form:
       parent_placeholder: Sök och välj en grupp
+    show:
+      remove_students_action: Ta bort markerade elever från gruppen
     create:
       success: Gruppen skapades
     update:
@@ -54,6 +57,12 @@ sv:
       confirmation: Är du säker på att du vill radera gruppen?
     destroy:
       success: Gruppen raderades
+    select_students:
+      students_placeholder: Sök och välj en eller flera elever
+    add_students:
+      success: Eleverna lades till i gruppen
+    remove_students:
+      success: Eleverna togs bort från gruppen
 
   suites:
     title: Planeringar
