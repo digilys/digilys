@@ -10,8 +10,12 @@ class GroupsController < ApplicationController
   end
 
   def search
-    @groups = Group.page(params[:page]).search(params[:q]).result
-    render json: @groups.collect { |s| { id: s.id, text: s.name } }.to_json
+    @groups = Group.with_parents(2).page(params[:page]).search(params[:q]).result
+
+    render json: @groups.collect { |s|
+      text = [ s.name, s.parent.try(:name), s.parent.try(:parent).try(:name) ].compact.join(", ")
+      { id: s.id, text: text }
+    }.to_json
   end
 
   def new

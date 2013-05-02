@@ -10,5 +10,11 @@ $ ->
                 results: (data, page) ->
                     { results: data }
                 data: (term, page) ->
-                    { q: { name_cont: term }, page: page }
+                    terms = term.split(/\s*,\s*/)
+                    q = { name_cont: terms.shift() }
+
+                    for t, i in terms
+                        q["parent_#{i}_name_cont"] = t
+
+                    { q: q, page: page }
         )
