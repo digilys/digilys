@@ -62,6 +62,8 @@ sv:
         suite: Planering
         student: Elev
         student_id: Elev
+        group: Grupp
+        group_id: Grupp
       suite:
         name: Namn
       meeting:

@@ -98,10 +98,11 @@ sv:
     new_action: Lägg till i planeringen
     destroy_action: Ta bort från planeringen
     form:
-      for_suite: Lägg till elever i planeringen %{suite_name}
+      for_suite: Lägg till elever i planeringen %{suite_name}. Väljer du en grupp så läggs alla elever i gruppen till i planeringen.
       student_placeholder: Sök och välj elever
+      group_placeholder: Sök och välj grupper
     create:
-      success: Eleven lades till i planeringen
+      success: Eleverna lades till i planeringen
     confirm_destroy:
       confirmation: Är du säker på att du vill ta bort eleven från planeringen?
     destroy:

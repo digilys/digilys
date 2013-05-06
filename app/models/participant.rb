@@ -2,6 +2,7 @@
 class Participant < ActiveRecord::Base
   belongs_to :student
   belongs_to :suite
+  belongs_to :group
 
   attr_accessible :student_id, :suite_id
 
