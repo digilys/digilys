@@ -24,7 +24,7 @@ FactoryGirl.define do
   end
 
   factory :evaluation do
-    suite
+    suite           nil
     sequence(:name) { |i| "Evaluation #{i}" }
     date            Date.today
     max_result      50

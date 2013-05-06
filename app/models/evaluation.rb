@@ -21,9 +21,8 @@ class Evaluation < ActiveRecord::Base
     :stanine8,
     :results_attributes
 
-  validates :suite, presence: true
   validates :name,  presence: true
-  validates :date,  presence: true, format: { with: /^\d{4}-\d{2}-\d{2}$/ }
+  validates :date,  presence: true, if: :suite,   format: { with: /^\d{4}-\d{2}-\d{2}$/ }
   validates(:max_result,
     numericality: {
       only_integer: true,
