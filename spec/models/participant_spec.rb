@@ -9,6 +9,7 @@ describe Participant do
   context "validation" do
     it { should validate_presence_of(:student) }
     it { should validate_presence_of(:suite) }
+    it { should validate_uniqueness_of(:student_id).scoped_to(:suite_id) }
   end
 
   context ".name" do

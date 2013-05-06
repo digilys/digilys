@@ -5,8 +5,9 @@ class Participant < ActiveRecord::Base
 
   attr_accessible :student_id, :suite_id
 
-  validates :student, presence: true
-  validates :suite,   presence: true
+  validates :student, presence:   true
+  validates :suite,   presence:   true
+  validates :student_id, uniqueness: { scope: :suite_id }
 
   def name
     self.student.name

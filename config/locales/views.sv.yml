@@ -79,7 +79,7 @@ sv:
       visualize: Visualisera
       color_chart: Färgkarta
       participant:
-        add: Lägg till elev
+        add: Lägg till elever
       evaluation:
         add: Lägg till test
       meeting:
@@ -96,9 +96,10 @@ sv:
   participants:
     title: Elever
     new_action: Lägg till i planeringen
+    destroy_action: Ta bort från planeringen
     form:
-      for_suite: Lägg till en elev i planeringen %{suite_name}
-      student_placeholder: Sök och välj en elev
+      for_suite: Lägg till elever i planeringen %{suite_name}
+      student_placeholder: Sök och välj elever
     create:
       success: Eleven lades till i planeringen
     confirm_destroy:

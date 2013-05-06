@@ -13,4 +13,5 @@
           %small= participant.group_names
         %td.actions
           .btn-group
+            %a.btn.btn-mini{href: student_path(participant.student_id)}=                     t(:".show_action")
             %a.btn.btn-mini.btn-danger{href: confirm_destroy_participant_path(participant)}= t(:".destroy_action")
