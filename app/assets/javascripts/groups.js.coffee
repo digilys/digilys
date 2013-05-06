@@ -1,8 +1,9 @@
 $ ->
-    $("#group_parent_id").each ->
+    $(".group-autocomplete-field").each ->
         $field = $(this)
 
         $field.select2(
+            multiple: $field.data("multiple"),
             minimumInputLength: 3
             placeholder: $field.data("placeholder")
             ajax:
@@ -18,4 +19,3 @@ $ ->
 
                     { q: q, page: page }
         )
-

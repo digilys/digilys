@@ -9,7 +9,10 @@
     = f.input :groups,
       value: nil,
       as: :hidden,
-      input_html: { data: { url: search_groups_path(format: :json), placeholder: t(:".groups_placeholder")  } }
+      input_html: { class: "group-autocomplete-field",
+        data: { url: search_groups_path(format: :json),
+          placeholder: t(:".groups_placeholder"),
+          multiple: true } }
 
   = f.actions do
     = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
