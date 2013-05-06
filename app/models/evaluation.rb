@@ -120,7 +120,7 @@ class Evaluation < ActiveRecord::Base
   )
 
   def result_for(student)
-    results.where(:student_id => student).first
+    results.where(student_id: student).first
   end
 
   # Indicates if this evaluation uses stanine values

@@ -7,6 +7,6 @@ class ApplicationController < ActionController::Base
 
   # This picks up any layout set in the inheriting controller
   def record_not_found
-    render :template => "shared/404", :status => 404
+    render template: "shared/404", status: 404
   end
 end
