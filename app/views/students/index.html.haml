@@ -5,11 +5,15 @@
 %table.table.table-striped.students-table
   %thead
     %tr
-      %th.name= Student.human_attribute_name(:name)
+      %th.name=   Student.human_attribute_name(:name)
+      %th.groups= Group.model_name.human(count: 2)
       %th.actions &nbsp;
+
     - @students.each do |student|
       %tr
         %td.name= student.name
+        %td.groups
+          %small= student.groups.collect(&:name).join(", ")
         %td.actions
           .btn-group
             %a.btn.btn-mini{href: student_path(student)}=                            t(:".show_action")

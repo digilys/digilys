@@ -11,4 +11,8 @@ class Participant < ActiveRecord::Base
   def name
     self.student.name
   end
+  
+  def group_names
+    self.student.groups.collect(&:name).join(", ")
+  end
 end

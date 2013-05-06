@@ -1,12 +1,16 @@
 %table.table.table-striped.participants-table
   %thead
     %tr
-      %th.name= Student.human_attribute_name(:name)
+      %th.name=   Student.human_attribute_name(:name)
+      %th.groups= Group.model_name.human(count: 2)
       %th.actions &nbsp;
+
   %tbody
     - participants.each do |participant|
       %tr
         %td.name= participant.name
+        %td.groups
+          %small= participant.group_names
         %td.actions
           .btn-group
             %a.btn.btn-mini.btn-danger{href: confirm_destroy_participant_path(participant)}= t(:".destroy_action")
