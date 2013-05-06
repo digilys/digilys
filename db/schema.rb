@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130506085650) do
+ActiveRecord::Schema.define(:version => 20130506123216) do
 
   create_table "evaluations", :force => true do |t|
     t.integer  "suite_id"
@@ -30,6 +30,7 @@ ActiveRecord::Schema.define(:version => 20130506085650) do
     t.integer  "stanine7"
     t.integer  "stanine8"
     t.date     "date"
+    t.integer  "template_id"
   end
 
   create_table "groups", :force => true do |t|

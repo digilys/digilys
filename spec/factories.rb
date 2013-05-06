@@ -24,6 +24,7 @@ FactoryGirl.define do
   end
 
   factory :evaluation do
+    template        nil
     suite           nil
     sequence(:name) { |i| "Evaluation #{i}" }
     date            Date.today
@@ -43,6 +44,10 @@ FactoryGirl.define do
     stanine6        { stanines[5] }
     stanine7        { stanines[6] }
     stanine8        { stanines[7] }
+
+    factory :evaluation_with_suite do
+      suite
+    end
   end
 
   factory :result do

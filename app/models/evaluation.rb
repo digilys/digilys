@@ -1,11 +1,15 @@
 class Evaluation < ActiveRecord::Base
+  belongs_to :template,  class_name: "Evaluation"
+  has_many   :instances, class_name: "Evaluation", foreign_key: "parent_id", order: "date asc"
+
   belongs_to :suite
   has_many   :results
   has_many   :students, through: :results
 
   accepts_nested_attributes_for :results
 
-  attr_accessible :suite_id,
+  attr_accessible :template_id,
+    :suite_id,
     :max_result,
     :name,
     :date,
@@ -137,5 +141,32 @@ class Evaluation < ActiveRecord::Base
       self.stanine7,
       self.stanine8
     ]
+  end
+
+
+  # Initializes a new evaluation from a template
+  def self.new_from_template(template, attrs = {})
+    new do |e|
+      e.template    = template
+      e.name        = template.name
+      e.max_result  = template.max_result
+      e.red_below   = template.red_below
+      e.green_above = template.green_above
+      e.stanine1    = template.stanine1
+      e.stanine2    = template.stanine2
+      e.stanine3    = template.stanine3
+      e.stanine4    = template.stanine4
+      e.stanine5    = template.stanine5
+      e.stanine6    = template.stanine6
+      e.stanine7    = template.stanine7
+      e.stanine8    = template.stanine8
+
+      e.assign_attributes(attrs)
+    end
+  end
+
+  # Scope only on templates
+  def self.templates
+    where(suite_id: nil)
   end
 end
