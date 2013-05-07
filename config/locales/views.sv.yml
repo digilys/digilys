@@ -76,7 +76,9 @@ sv:
 
   suites:
     title: Planeringar
+    templates_action: Mallar
     show:
+      template_notice: Detta är en mall för planeringar.
       visualize: Visualisera
       color_chart: Färgkarta
       participant:

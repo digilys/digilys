@@ -29,7 +29,7 @@
 
     = f.input :name, required: true, input_html: { required: true, autofocus: true }
 
-    - if evaluation.suite
+    - if evaluation.has_regular_suite?
       = f.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }
 
     = f.input :max_result,

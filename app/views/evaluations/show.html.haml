@@ -7,7 +7,7 @@
 
 %table.table.table-bordered.details-table.evaluation-details-table
   %tbody
-    - if @evaluation.suite
+    - if @evaluation.has_regular_suite?
       %tr.date
         %th= Evaluation.human_attribute_name(:date)
         %td= l @evaluation.date

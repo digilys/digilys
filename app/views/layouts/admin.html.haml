@@ -7,11 +7,14 @@
           %a{href: groups_path()}= t(:"groups.title")
         %li{class: active_if(params?(controller: "students"))}
           %a{href: students_path()}= t(:"students.title")
-        %li{class: active_if(params?(controller: "suites"))}
+        %li{class: active_if(params?(controller: "suites") && !(params?(action: "template") || @suite.try(:is_template)))}
           %a{href: suites_path()}= t(:"suites.title")
+
         %li.nav-header= t(:".templates")
         %li{class: active_if(params?(controller: "evaluations"))}
           %a{href: evaluations_path()}= t(:"evaluations.title")
+        %li{class: active_if(params?(controller: "suites") && (params?(action: "template") ||  @suite.try(:is_template)))}
+          %a{href: template_suites_path()}= t(:"suites.title")
 
   .content.span9
     = content_for?(:admin_content) ? yield(:admin_content) : yield

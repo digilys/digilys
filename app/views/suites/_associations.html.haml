@@ -1,0 +1,22 @@
+%table.table.table-bordered.table-hover.table-striped.suite-associations-table
+  %tbody
+    %tr
+      %th(colspan="2")= Evaluation.model_name.human(count: 2)
+    - suite.evaluations.each do |evaluation|
+      %tr
+        %td.name= evaluation.name
+        %td.actions
+          .btn-group
+            %a.btn.btn-mini{href: evaluation_path(evaluation)}=                            t(:".show_action")
+            %a.btn.btn-mini{href: edit_evaluation_path(evaluation)}=                       t(:".edit_action")
+            %a.btn.btn-mini.btn-danger{href: confirm_destroy_evaluation_path(evaluation)}= t(:".destroy_action")
+    %tr
+      %th(colspan="2")= Meeting.model_name.human(count: 2)
+    - suite.meetings.each do |meeting|
+      %tr
+        %td.name= meeting.name
+        %td.actions
+          .btn-group
+            %a.btn.btn-mini{href: meeting_path(meeting)}=                            t(:".show_action")
+            %a.btn.btn-mini{href: edit_meeting_path(meeting)}=                       t(:".edit_action")
+            %a.btn.btn-mini.btn-danger{href: confirm_destroy_meeting_path(meeting)}= t(:".destroy_action")

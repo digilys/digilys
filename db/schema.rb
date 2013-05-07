@@ -105,9 +105,9 @@ ActiveRecord::Schema.define(:version => 20130507084116) do
 
   create_table "suites", :force => true do |t|
     t.string   "name"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
-    t.boolean  "is_template"
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
+    t.boolean  "is_template", :default => false
     t.integer  "template_id"
   end
 

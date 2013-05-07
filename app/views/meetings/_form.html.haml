@@ -11,7 +11,9 @@
     = f.hidden_field :suite_id
 
     = f.input :name, required: true, input_html: { required: true, autofocus: true }
-    = f.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }
+
+    - if meeting.has_regular_suite?
+      = f.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }
 
     - unless f.object.new_record?
       = f.input :completed

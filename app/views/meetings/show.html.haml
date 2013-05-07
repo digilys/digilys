@@ -10,12 +10,13 @@
     %tr.name
       %th= Meeting.human_attribute_name(:name)
       %td= @meeting.name
-    %tr.date
-      %th= Meeting.human_attribute_name(:date)
-      %td= @meeting.date
-    %tr.completed
-      %th= Meeting.human_attribute_name(:completed)
-      %td= @meeting.completed ? t(:yes) : t(:no)
-    %tr.notes
-      %th= Meeting.human_attribute_name(:notes)
-      %td= @meeting.notes.try(:html_safe)
+    - if @meeting.has_regular_suite?
+      %tr.date
+        %th= Meeting.human_attribute_name(:date)
+        %td= @meeting.date
+      %tr.completed
+        %th= Meeting.human_attribute_name(:completed)
+        %td= @meeting.completed ? t(:yes) : t(:no)
+      %tr.notes
+        %th= Meeting.human_attribute_name(:notes)
+        %td= @meeting.notes.try(:html_safe)

@@ -2,7 +2,11 @@ class SuitesController < ApplicationController
   layout "admin"
 
   def index
-    @suites = Suite.order(:name).page(params[:page])
+    @suites = Suite.regular.order(:name).page(params[:page])
+  end
+
+  def template
+    @suites = Suite.template.order(:name).page(params[:page])
   end
 
   def show
