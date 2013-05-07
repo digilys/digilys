@@ -108,45 +108,23 @@ describe Evaluation do
   end
 
   context "#new_from_template" do
-    let(:template)   { create(:evaluation) }
-    let(:evaluation) { Evaluation.new_from_template(template) }
-    describe "template_id" do
-      subject { evaluation.template_id }
-      it { should == template.id }
-    end
-    describe "name" do
-      subject { evaluation.name }
-      it { should == template.name }
-    end
-    describe "max_result" do
-      subject { evaluation.max_result }
-      it { should == template.max_result }
-    end
-    describe "red_below" do
-      subject { evaluation.red_below }
-      it { should == template.red_below }
-    end
-    describe "green_above" do
-      subject { evaluation.green_above }
-      it { should == template.green_above }
-    end
+    let(:template) { create(:evaluation) }
+    subject        { Evaluation.new_from_template(template) }
+
+    its(:template_id) { should == template.id }
+    its(:name)        { should == template.name }
+    its(:max_result)  { should == template.max_result }
+    its(:red_below)   { should == template.red_below }
+    its(:green_above) { should == template.green_above }
+
     1.upto(8).each do |i|
-      describe "stanine#{i}" do
-        subject { evaluation.send(:"stanine#{i}") }
-        it { should == template.send(:"stanine#{i}") }
-      end
+      its(:"stanine#{i}") { should == template.send(:"stanine#{i}") }
     end
 
     context "with attrs" do
-      let(:evaluation) { Evaluation.new_from_template(template, { suite_id: 1, name: "Overridden" }) }
-      describe "extra attributes" do
-        subject { evaluation.suite_id }
-        it { should == 1 }
-      end
-      describe "overridden attributes" do
-        subject { evaluation.name }
-        it { should == "Overridden" }
-      end
+      subject { Evaluation.new_from_template(template, { suite_id: 1, name: "Overridden" }) }
+      its(:suite_id) { should == 1 }
+      its(:name)     { should == "Overridden" }
     end
   end
 
