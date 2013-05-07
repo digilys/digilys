@@ -68,6 +68,9 @@ sv:
         group_id: Grupp
       suite:
         name: Namn
+        template_id: Mall
+        template: Mall
+        is_template: Använd som mall
       meeting:
         suite: Planering
         suite_id: Planering

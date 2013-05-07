@@ -15,7 +15,9 @@ FactoryGirl.define do
   end
 
   factory :suite do
+    template        nil
     sequence(:name) { |i| "Suite #{i}" }
+    is_template     false
   end
 
   factory :participant do
