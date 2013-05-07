@@ -13,12 +13,31 @@ describe Meeting do
     it { should allow_mass_assignment_of(:notes) }
   end
   context "validation" do
-    it { should validate_presence_of(:suite) }
-    it { should validate_presence_of(:name) }
-    it { should validate_presence_of(:date) }
+    it { should     validate_presence_of(:suite) }
+    it { should     validate_presence_of(:name) }
+    it { should_not validate_presence_of(:date) }
 
-    it { should     allow_value("2013-04-29").for(:date) }
-    it { should_not allow_value("201304-29").for(:date) }
+    context "with regular suite" do
+      subject { build(:meeting, suite: create(:suite, is_template: false)) }
+      it { should     validate_presence_of(:date) }
+      it { should     allow_value("2013-04-29").for(:date) }
+      it { should_not allow_value("201304-29").for(:date) }
+    end
+  end
+
+  context ".has_regular_suite?" do
+    context "with no suite" do
+      subject { build(:meeting, suite: nil).has_regular_suite? }
+      it { should be_false }
+    end
+    context "with template suite" do
+      subject { build(:meeting, suite: create(:suite, is_template: true)).has_regular_suite? }
+      it { should be_false }
+    end
+    context "with regular suite" do
+      subject { build(:meeting, suite: create(:suite, is_template: false)).has_regular_suite? }
+      it { should be_true }
+    end
   end
 
   context ".overdue?" do

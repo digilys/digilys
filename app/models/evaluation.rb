@@ -26,7 +26,7 @@ class Evaluation < ActiveRecord::Base
     :results_attributes
 
   validates :name,  presence: true
-  validates :date,  presence: true, if: :suite,   format: { with: /^\d{4}-\d{2}-\d{2}$/ }
+  validates :date,  presence: true, if: :has_regular_suite?, format: { with: /^\d{4}-\d{2}-\d{2}$/ }
   validates(:max_result,
     numericality: {
       only_integer: true,
@@ -121,6 +121,10 @@ class Evaluation < ActiveRecord::Base
     },
     presence: { if: :stanines? }
   )
+
+  def has_regular_suite?
+    !self.suite.blank? && !self.suite.is_template?
+  end
 
   def result_for(student)
     results.where(student_id: student).first

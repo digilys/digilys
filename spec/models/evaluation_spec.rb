@@ -68,11 +68,26 @@ describe Evaluation do
       end
     end
 
-    context "with suite" do
-      subject { build(:evaluation, suite: create(:suite)) }
+    context "with regular suite" do
+      subject { build(:evaluation, suite: create(:suite, is_template: false)) }
       it { should validate_presence_of(:date) }
       it { should     allow_value("2013-04-29").for(:date) }
       it { should_not allow_value("201304-29").for(:date) }
+    end
+  end
+
+  context ".has_regular_suite?" do
+    context "with no suite" do
+      subject { build(:evaluation, suite: nil).has_regular_suite? }
+      it { should be_false }
+    end
+    context "with template suite" do
+      subject { build(:evaluation, suite: create(:suite, is_template: true)).has_regular_suite? }
+      it { should be_false }
+    end
+    context "with regular suite" do
+      subject { build(:evaluation, suite: create(:suite, is_template: false)).has_regular_suite? }
+      it { should be_true }
     end
   end
 
