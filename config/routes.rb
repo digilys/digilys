@@ -29,7 +29,9 @@ Digilys::Application.routes.draw do
 
   resources :suites do
     collection do
-      get :template
+      get  :template
+      get  :search
+      post :new_from_template
     end
     member do
       get :confirm_destroy

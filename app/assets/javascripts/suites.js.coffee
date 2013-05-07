@@ -1,4 +1,14 @@
-# Place all the behaviors and hooks related to the matching controller here.
-# All this logic will automatically be available in application.js.
-# You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
+$ ->
+    $(".suite-template-autocomplete-field").each ->
+        $field = $(this)
 
+        $field.select2(
+            minimumInputLength: 3,
+            placeholder: $field.data("placeholder")
+            ajax:
+                url: $field.data("url")
+                results: (data, page) ->
+                    { results: data }
+                data: (term, page) ->
+                    { q: { name_cont: term }, page: page }
+        )

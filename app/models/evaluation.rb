@@ -2,7 +2,7 @@ class Evaluation < ActiveRecord::Base
   belongs_to :template,  class_name: "Evaluation"
   has_many   :instances, class_name: "Evaluation", foreign_key: "template_id", order: "date asc"
 
-  belongs_to :suite
+  belongs_to :suite,    inverse_of: :evaluations
   has_many   :results
   has_many   :students, through: :results
 

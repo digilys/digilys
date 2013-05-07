@@ -2,4 +2,20 @@
 
 = render partial: "navigation", locals: { active: :new }
 
+- if @suite.template
+  .alert.alert-info= t(:".from_template", template_name: @suite.template.name)
+- else
+  = semantic_form_for @suite,
+    url: new_from_template_suites_path(),
+    html: { class: "form-horizontal select-suite-template-form" } do |f|
+
+    .control-group
+      = f.label :template_id, class: "control-label"
+      .controls
+        = f.hidden_field :template_id,
+          class: "suite-template-autocomplete-field",
+          data: { url: search_suites_path(), 
+            placeholder: t(:".template_placeholder")}
+        = f.submit t(:".use_template_action"), class: "btn btn-primary"
+
 = render partial: "form", object: @suite, as: :suite

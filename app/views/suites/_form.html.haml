@@ -2,10 +2,41 @@
 
   = f.inputs do
 
+    = f.hidden_field :template_id
+
     = f.input :name, required: true, input_html: { required: true, autofocus: true }
 
     - if suite.new_record?
+      - if suite.template
+
+        = f.inputs Evaluation.model_name.human(count: 2) do
+          = f.inputs for: :evaluations do |ef|
+
+            = ef.hidden_field :template_id
+            = ef.hidden_field :max_result
+            = ef.hidden_field :red_below
+            = ef.hidden_field :green_above
+            = ef.hidden_field :stanine1
+            = ef.hidden_field :stanine2
+            = ef.hidden_field :stanine3
+            = ef.hidden_field :stanine4
+            = ef.hidden_field :stanine5
+            = ef.hidden_field :stanine6
+            = ef.hidden_field :stanine7
+            = ef.hidden_field :stanine8
+
+            = ef.input :name,                              input_html: { readonly: true }
+            = ef.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }
+
+        = f.inputs Meeting.model_name.human(count: 2) do
+          = f.inputs for: :meetings do |mf|
+            = mf.input :name,                              input_html: { readonly: true }
+            = mf.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }
+
+    - else
+
       = f.input :is_template
+
 
   = f.actions do
     = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}

@@ -4,13 +4,18 @@ class Suite < ActiveRecord::Base
 
   has_many :participants, include: :student
   has_many :students,     through: :participants, order: "name asc"
-  has_many :evaluations
+  has_many :evaluations,  inverse_of: :suite
   has_many :results,      through: :evaluations
-  has_many :meetings
+  has_many :meetings,     inverse_of: :suite
+
+  accepts_nested_attributes_for :evaluations,
+    :meetings
 
   attr_accessible :name,
     :is_template,
-    :template_id
+    :template_id,
+    :evaluations_attributes,
+    :meetings_attributes
 
   validates :name, presence: true
 

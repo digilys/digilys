@@ -9,6 +9,11 @@ class SuitesController < ApplicationController
     @suites = Suite.template.order(:name).page(params[:page])
   end
 
+  def search
+    @suites = Suite.template.page(params[:page]).search(params[:q]).result
+    render json: @suites.collect { |s| { id: s.id, text: s.name } }.to_json
+  end
+
   def show
     @suite = Suite.find(params[:id])
   end
@@ -17,10 +22,17 @@ class SuitesController < ApplicationController
     @suite = Suite.new
   end
 
+  def new_from_template
+    template = Suite.find(params[:suite][:template_id])
+    @suite   = Suite.new_from_template(template, params[:suite])
+
+    render action: "new"
+  end
+
   def create
     @suite = Suite.new(params[:suite])
 
-    if @suite.save
+    if @suite.save!
       flash[:success] = t(:"suites.create.success")
       redirect_to @suite
     else
