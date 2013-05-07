@@ -30,6 +30,8 @@ sv:
         other: Användare
     attributes:
       evaluation:
+        template: Mall
+        template_id: Mall
         suite: Planering
         name: Namn
         date: Datum

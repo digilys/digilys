@@ -9,6 +9,7 @@
           %a{href: students_path()}= t(:"students.title")
         %li{class: active_if(params?(controller: "suites"))}
           %a{href: suites_path()}= t(:"suites.title")
+        %li.nav-header= t(:".templates")
         %li{class: active_if(params?(controller: "evaluations"))}
           %a{href: evaluations_path()}= t(:"evaluations.title")
 

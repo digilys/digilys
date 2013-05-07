@@ -2,11 +2,15 @@
 
 = render partial: "navigation", locals: { evaluation: @evaluation, active: :show }
 
+- unless @evaluation.suite
+  .alert.alert-info= t(:".template_notice")
+
 %table.table.table-bordered.details-table.evaluation-details-table
   %tbody
-    %tr.date
-      %th= Evaluation.human_attribute_name(:date)
-      %td= l @evaluation.date
+    - if @evaluation.suite
+      %tr.date
+        %th= Evaluation.human_attribute_name(:date)
+        %td= l @evaluation.date
     %tr.max-result
       %th= Evaluation.human_attribute_name(:max_result)
       %td= @evaluation.max_result

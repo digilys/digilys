@@ -1,5 +1,5 @@
 %h1= t(:".title")
 
-= render partial: "navigation", locals: { active: :new, suite: @suite }
+= render partial: "navigation", locals: { active: :new, suite: @evaluation.suite }
 
 = render partial: "form", object: @evaluation, as: :evaluation

@@ -4,6 +4,7 @@ sv:
       feedback: Feedback
     admin:
       administration: Administrera
+      templates: Mallar
   shared:
     "404":
       title: Ojdå!
@@ -112,8 +113,13 @@ sv:
     title: Test
     color_ranges: Färgintervall
     stanines: Stanine-värden
+    show:
+      template_notice: Detta är en mall för test.
     form:
-      for_suite: Detta test tillhör %{suite_name}
+      for_suite: Detta test tillhör %{suite_name}.
+      from_template: Använder mallen %{template_name}.
+      template_placeholder: Sök och välj en mall
+      use_template_action: Använd mall
       red: Röd
       yellow: Gul
       green: Grön

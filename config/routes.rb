@@ -43,7 +43,11 @@ Digilys::Application.routes.draw do
     end
   end
 
-  resources :evaluations, except: :new do
+  resources :evaluations do
+    collection do
+      get  :search
+      post :new_from_template
+    end
     member do
       get :confirm_destroy
       get :report

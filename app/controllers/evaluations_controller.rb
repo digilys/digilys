@@ -2,7 +2,12 @@ class EvaluationsController < ApplicationController
   layout "admin"
 
   def index
-    @evaluations = Evaluation.includes(:suite).order(:name).page(params[:page])
+    @evaluations = Evaluation.templates.order(:name).page(params[:page])
+  end
+
+  def search
+    @evaluations = Evaluation.templates.page(params[:page]).search(params[:q]).result
+    render json: @evaluations.collect { |e| { id: e.id, text: e.name } }.to_json
   end
 
   def show
@@ -10,16 +15,21 @@ class EvaluationsController < ApplicationController
   end
 
   def new
-    @suite            = Suite.find(params[:suite_id])
     @evaluation       = Evaluation.new
-    @evaluation.suite = @suite
+    @evaluation.suite = Suite.find(params[:suite_id]) if params[:suite_id]
   end
 
-  # A suite id is required, so we load it separately
-  # in order to cause a 404 if it doesn't exist
+  def new_from_template
+    template    = Evaluation.find(params[:evaluation][:template_id])
+    @evaluation = Evaluation.new_from_template(template, params[:evaluation])
+
+    render action: "new"
+  end
+
   def create
-    @suite      = Suite.find(params[:evaluation][:suite_id])
-    @evaluation = Evaluation.new(params[:evaluation])
+    suite             = Suite.find(params[:evaluation].delete(:suite_id)) unless params[:evaluation][:suite_id].blank?
+    @evaluation       = Evaluation.new(params[:evaluation])
+    @evaluation.suite = suite
 
     if @evaluation.save
       flash[:success] = t(:"evaluations.create.success")

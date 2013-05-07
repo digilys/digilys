@@ -1,14 +1,36 @@
+- if evaluation.suite || evaluation.template
+  .alert.alert-info
+    = t(:".for_suite",     suite_name:    evaluation.suite.name)    if evaluation.suite
+    = t(:".from_template", template_name: evaluation.template.name) if evaluation.template && evaluation.new_record?
+
+- if evaluation.new_record? && !evaluation.template
+  = form_for evaluation,
+    url: new_from_template_evaluations_path(),
+    html: { class: "form-horizontal select-evaluation-template-form" } do |f|
+
+    = f.hidden_field :suite_id
+
+    .control-group
+      = f.label :template_id, class: "control-label"
+      .controls
+        = f.hidden_field :template_id,
+          class: "evaluation-template-autocomplete-field",
+          data: { url: search_evaluations_path(), 
+            placeholder: t(:".template_placeholder")}
+        = f.submit t(:".use_template_action"), class: "btn btn-primary"
+
 = semantic_form_for evaluation,
   html: { id: "evaluation-form", class: "form-horizontal #{evaluation.new_record? ? "new" : "edit" }" } do |f|
 
   = f.inputs do
 
-    .alert.alert-info= t(:".for_suite", suite_name: f.object.suite.name)
-
+    = f.hidden_field :template_id
     = f.hidden_field :suite_id
 
     = f.input :name, required: true, input_html: { required: true, autofocus: true }
-    = f.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }
+
+    - if evaluation.suite
+      = f.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }
 
     = f.input :max_result,
       required: true,
@@ -58,4 +80,7 @@
 
   = f.actions do
     = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
-    %a.btn{href:suite_path(f.object.suite)}= t(:".cancel_action")
+    - if evaluation.suite
+      %a.btn{href:suite_path(evaluation.suite) }= t(:".cancel_action")
+    - else
+      %a.btn{href:evaluation.new_record? ? evaluations_path() : evaluation_path(evaluation) }= t(:".cancel_action")

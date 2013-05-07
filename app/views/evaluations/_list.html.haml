@@ -2,18 +2,12 @@
   %thead
     %tr
       %th.name= Evaluation.human_attribute_name(:name)
-      %th.date= Evaluation.human_attribute_name(:date)
-      %th.suite= Suite.model_name.human
       %th.actions &nbsp;
   %tbody
     - evaluations.each do |evaluation|
       %tr
         %td.name= evaluation.name
-        %td.date= evaluation.date
-        %td.suite= evaluation.suite.name
         %td.actions
-          .btn-group
-            %a.btn.btn-mini.btn-primary{href: report_evaluation_path(evaluation)}=         t(:".report_action")
           .btn-group
             %a.btn.btn-mini{href: evaluation_path(evaluation)}=                            t(:".show_action")
             %a.btn.btn-mini{href: edit_evaluation_path(evaluation)}=                       t(:".edit_action")
