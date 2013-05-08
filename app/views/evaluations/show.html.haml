@@ -18,17 +18,12 @@
       %th= t(:".color_ranges")
       %td
         %ul.unstyled.color-ranges-list
-          %li.red
-            0 &ndash;
-            = @evaluation.red_below - 1
-          %li.yellow
-            = @evaluation.red_below
-            &ndash;
-            = @evaluation.green_above
-          %li.green
-            = @evaluation.green_above
-            &ndash;
-            = @evaluation.max_result
+          - if @evaluation.red_range
+            %li.red=    format_range(@evaluation.red_range)
+          - if @evaluation.yellow_range
+            %li.yellow= format_range(@evaluation.yellow_range)
+          - if @evaluation.green_range
+            %li.green=  format_range(@evaluation.green_range)
 
     - if @evaluation.stanines?
       %tr.stanines

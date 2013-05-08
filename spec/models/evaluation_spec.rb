@@ -105,6 +105,42 @@ describe Evaluation do
     end
   end
 
+  context "color range methods" do
+    let(:max_result)  { 66 }
+    let(:red_below)   { 22 }
+    let(:green_above) { 44 }
+    subject           { create(:evaluation, max_result: max_result, red_below: red_below, green_above: green_above) }
+
+
+    its(:red_range)    { should == ( 0..21) }
+    its(:yellow_range) { should == (22..44) }
+    its(:green_range)  { should == (45..66) }
+
+    context "with red edge" do
+      let(:red_below) { 1 }
+      its(:red_range) { should == 0 }
+    end
+    context "with no red range" do
+      let(:red_below) { 0 }
+      its(:red_range) { should be_blank }
+    end
+
+    context "with yellow edge" do
+      let(:red_below)    { 33 }
+      let(:green_above)  { 33 }
+      its(:yellow_range) { should == 33 }
+    end
+
+    context "with green edge" do
+      let(:green_above) { 65 }
+      its(:green_range) { should == 66 }
+    end
+    context "with no green range" do
+      let(:green_above) { 66 }
+      its(:green_range) { should be_blank }
+    end
+  end
+
   context ".stanines" do
     let(:stanine_limits) { [ 10, 20, 30, 40, 50, 60, 70, 80 ] }
     let(:evaluation)     { create(:evaluation, max_result: 90, stanines: stanine_limits )}

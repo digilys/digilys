@@ -134,6 +134,30 @@ class Evaluation < ActiveRecord::Base
     results.where(student_id: student).first
   end
 
+  def red_range
+    @red_range = if self.red_below > 1
+      0..(self.red_below - 1)
+    elsif self.red_below == 1
+      0
+    else
+      nil
+    end
+  end
+  def yellow_range
+    @yellow_range = if self.red_below == self.green_above
+      self.red_below
+    else
+      self.red_below..self.green_above
+    end
+  end
+  def green_range
+    @green_range = if self.green_above < self.max_result - 1
+      (self.green_above + 1)..self.max_result
+    elsif self.green_above == self.max_result - 1
+      self.max_result
+    end
+  end
+
   # Indicates if this evaluation uses stanine values
   def stanines?
     self.stanines.any? { |s| !s.nil? }

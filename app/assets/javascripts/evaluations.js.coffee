@@ -31,10 +31,20 @@ $ ->
             $stanineMax.val(value)
 
         $redBelow.on "change", ->
-            $redMax.val(intify($redBelow.val(), -1))
+            $redMax.val(
+                Math.max(
+                    intify($redBelow.val(), -1),
+                    0
+                )
+            )
 
         $greenAbove.on "change", ->
-            $greenMin.val(intify($greenAbove.val(), 1))
+            $greenMin.val(
+                Math.min(
+                    intify($greenAbove.val(), 1),
+                    intify($maxResult.val())
+                )
+            )
 
         $maxResult.trigger("change")
         $redBelow.trigger("change")

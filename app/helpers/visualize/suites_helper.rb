@@ -6,4 +6,13 @@ module Visualize::SuitesHelper
       return "result-#{result.color}"
     end
   end
+
+  def format_range(range)
+    case range
+    when Range
+      "#{range.min} &ndash; #{range.max}".html_safe
+    else
+      range
+    end
+  end
 end

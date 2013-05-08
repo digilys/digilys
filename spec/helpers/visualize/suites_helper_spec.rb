@@ -1,15 +1,5 @@
 require 'spec_helper'
 
-# Specs in this file have access to a helper object that includes
-# the Visualize::SuitesHelper. For example:
-#
-# describe Visualize::SuitesHelper do
-#   describe "string concat" do
-#     it "concats two strings with spaces" do
-#       helper.concat_strings("this","that").should == "this that"
-#     end
-#   end
-# end
 describe Visualize::SuitesHelper do
   describe ".result_color_class" do
     it "handles nil results" do
@@ -35,6 +25,15 @@ describe Visualize::SuitesHelper do
       it "returns green" do
         helper.result_color_class(result).should == "result-green"
       end
+    end
+  end
+
+  describe ".format_range" do
+    it "joins ranges with a html ndash" do
+      helper.format_range(10..20).should == "10 &ndash; 20"
+    end
+    it "handles single values" do
+      helper.format_range(10).should == 10
     end
   end
 end
