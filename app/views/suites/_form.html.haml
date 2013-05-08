@@ -33,9 +33,8 @@
             = mf.input :name,                              input_html: { readonly: true }
             = mf.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }
 
-    - else
-
-      = f.input :is_template
+      - else
+        = f.input :is_template
 
 
   = f.actions do
