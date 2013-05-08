@@ -20,6 +20,7 @@ $ ->
         $redBelow   = $("#evaluation_red_below")
         $greenAbove = $("#evaluation_green_above")
 
+        $redMin     = $("#evaluation-red-min")
         $redMax     = $("#evaluation-red-max")
         $greenMin   = $("#evaluation-green-min")
         $greenMax   = $("#evaluation-green-max")
@@ -31,20 +32,27 @@ $ ->
             $stanineMax.val(value)
 
         $redBelow.on "change", ->
-            $redMax.val(
-                Math.max(
-                    intify($redBelow.val(), -1),
-                    0
-                )
-            )
+            value  = $redBelow.val()
+            suffix = if /%/.test(value) then "%" else ""
+            value  = Math.max(intify(value, -1), 0)
+
+            $redMin.val("0" + suffix)
+            $redMax.val(value.toString() + suffix)
 
         $greenAbove.on "change", ->
-            $greenMin.val(
-                Math.min(
-                    intify($greenAbove.val(), 1),
-                    intify($maxResult.val())
-                )
-            )
+            value = $greenAbove.val()
+
+            if /%/.test(value)
+                suffix = "%"
+                max = 100
+            else
+                suffix = ""
+                max = intify($maxResult.val())
+
+            value = Math.min(intify(value, 1), max)
+
+            $greenMin.val(value.toString() + suffix)
+            $greenMax.val(max.toString() + suffix)
 
         $maxResult.trigger("change")
         $redBelow.trigger("change")
