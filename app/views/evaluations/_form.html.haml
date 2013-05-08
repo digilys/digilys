@@ -40,26 +40,27 @@
     .control-group
       %label.control-label= t(:".red")
       .controls
-        %input(disabled="disabled" class="input-mini red-min" type="number" value="0")
+        %input(disabled="disabled" class="input-mini red-min" type="text" value="0")
         &ndash;
-        %input(disabled="disabled" class="input-mini red-max" type="number" value="0" id="evaluation-red-max")
+        %input(disabled="disabled" class="input-mini red-max" type="text" value="0" id="evaluation-red-max")
 
     .control-group
       = f.label :red_below,
         "#{t(:".yellow")}<abbr title=\"#{t(:"formtastic.required")}\">*</abbr>".html_safe,
         class: "control-label"
       .controls
-        = f.number_field :red_below,   required: true, class: "input-mini"
+        = f.text_field :red_below,   required: true, class: "input-mini"
         &ndash;
-        = f.number_field :green_above, required: true, class: "input-mini"
+        = f.text_field :green_above, required: true, class: "input-mini"
         .suggestion-container{"data-suggestion-copy" => t(:".suggestion_copy")}
+        %span.help-block= t(:".percentage_help")
 
     .control-group
       %label.control-label= t(:".green")
       .controls
-        %input(disabled="disabled" class="input-mini green-min" type="number" value="0" id="evaluation-green-min")
+        %input(disabled="disabled" class="input-mini green-min" type="text" value="0" id="evaluation-green-min")
         &ndash;
-        %input(disabled="disabled" class="input-mini green-max" type="number" value="0" id="evaluation-green-max")
+        %input(disabled="disabled" class="input-mini green-max" type="text" value="0" id="evaluation-green-max")
 
     .control-group
       .controls

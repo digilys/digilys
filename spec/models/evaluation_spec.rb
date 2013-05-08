@@ -76,6 +76,12 @@ describe Evaluation do
     end
   end
 
+  context ".convert_percentages" do
+    subject { create(:evaluation, max_result: 50, red_below: "40%", green_above: "60%") }
+    its(:red_below)   { should == 20 }
+    its(:green_above) { should == 30 }
+  end
+
   context ".has_regular_suite?" do
     context "with no suite" do
       subject { build(:evaluation, suite: nil).has_regular_suite? }
@@ -182,15 +188,15 @@ describe Evaluation do
     context "with edge-to-edge stanines" do
       let(:stanine_limits) { [ 10, 11, 12, 13, 14, 15, 16, 17 ] }
 
-    it { should include(1 =>  0..10) }
-    it { should include(2 => 11) }
-    it { should include(3 => 12) }
-    it { should include(4 => 13) }
-    it { should include(5 => 14) }
-    it { should include(6 => 15) }
-    it { should include(7 => 16) }
-    it { should include(8 => 17) }
-    it { should include(9 => 18..90) }
+      it { should include(1 =>  0..10) }
+      it { should include(2 => 11) }
+      it { should include(3 => 12) }
+      it { should include(4 => 13) }
+      it { should include(5 => 14) }
+      it { should include(6 => 15) }
+      it { should include(7 => 16) }
+      it { should include(8 => 17) }
+      it { should include(9 => 18..90) }
     end
 
     context "without stanines" do

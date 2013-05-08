@@ -126,6 +126,10 @@ class Evaluation < ActiveRecord::Base
     presence: { if: :stanines? }
   )
 
+
+  before_validation :convert_percentages
+
+
   def has_regular_suite?
     !self.suite.blank? && !self.suite.is_template?
   end
@@ -224,4 +228,22 @@ class Evaluation < ActiveRecord::Base
   def self.templates
     where(suite_id: nil)
   end
+
+
+  private
+
+  def convert_percentages
+    return unless self.max_result
+
+    %w(red_below green_above).each do |attr|
+      value = self.attributes_before_type_cast[attr]
+
+      if value.is_a?(String) &&
+          /\A([+-]?\d+)\s*%\Z/.match(value) # Regex used for integer validation + a percent sign at the end
+        percentage = $1.to_f                # $1 contains the number matched by the regex
+        send(:"#{attr}=", (self.max_result * percentage/100.0).to_i)
+      end
+    end
+  end
+
 end

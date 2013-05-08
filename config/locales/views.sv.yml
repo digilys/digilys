@@ -126,6 +126,7 @@ sv:
       from_template: Använder mallen %{template_name}.
       template_placeholder: Sök och välj en mall
       use_template_action: Använd mall
+      percentage_help: Lägg till "%" efter numret för att ange intervallet som procent
       red: Röd
       yellow: Gul
       green: Grön
