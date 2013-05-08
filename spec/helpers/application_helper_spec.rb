@@ -66,4 +66,34 @@ describe ApplicationHelper do
       helper.params?({ controller: "err" }, { controller: "err2" }).should be_false
     end
   end
+
+  describe "#confirm_destroy_form" do
+    before(:each) do
+      helper.stub(:render) { |options| options }
+    end
+
+    let(:entity)   { create(:suite) }
+    let(:message)  { "Destroy confirmation message" }
+    let(:options)  { {} }
+    let(:rendered) { helper.confirm_destroy_form(entity, message, options) }
+
+    subject { rendered }
+
+    it { should include(partial: "shared/confirm_destroy_form") }
+    
+    context "locals" do
+      subject { rendered[:locals] }
+
+      it { should include(entity:       entity) }
+      it { should include(message:      message) }
+      it { should include(cancel_path:  helper.url_for(entity)) }
+
+      context "with cancel_to entity" do
+        let(:cancel_to) { create(:evaluation) }
+        let(:options)   { { cancel_to: cancel_to }}
+
+        it { should include(cancel_path: helper.url_for(cancel_to)) }
+      end
+    end
+  end
 end

@@ -45,4 +45,12 @@ module ApplicationHelper
 
     return false
   end
+
+  # Renders a form for confirming a destroy action
+  def confirm_destroy_form(entity, message, options = {})
+    cancel_path = url_for(options[:cancel_to] || url_for(entity))
+
+    render partial: "shared/confirm_destroy_form",
+      locals: { entity: entity, message: message, cancel_path: cancel_path }
+  end
 end

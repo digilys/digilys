@@ -2,11 +2,4 @@
 
 = render partial: "navigation", locals: { meeting: @meeting, active: :destroy }
 
-= semantic_form_for @meeting, method: :delete do |f|
-
-  .alert.alert-block.alert-error
-    %p= t(:".confirmation")
-
-  = f.actions do
-    = f.action :submit, label: t(:".destroy_action"), button_html: { class: "btn btn-danger"}
-    %a.btn{href:meeting_path(f.object)}= t(:".cancel_action")
+= confirm_destroy_form(@meeting, t(:".confirmation"))

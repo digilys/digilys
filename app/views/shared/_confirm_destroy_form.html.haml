@@ -1,0 +1,8 @@
+= semantic_form_for entity, method: :delete do |f|
+
+  .alert.alert-block.alert-error
+    %p= message
+
+  = f.actions do
+    = f.action :submit, label: t(:".destroy_action"), button_html: { class: "btn btn-danger"}
+    %a.btn{href:cancel_path}= t(:".cancel_action")

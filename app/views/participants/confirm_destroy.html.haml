@@ -2,11 +2,4 @@
 
 = render partial: "navigation", locals: { participant: @participant, active: :destroy }
 
-= semantic_form_for @participant, method: :delete do |f|
-
-  .alert.alert-block.alert-error
-    %p= t(:".confirmation")
-
-  = f.actions do
-    = f.action :submit, label: t(:".destroy_action"), button_html: { class: "btn btn-danger"}
-    %a.btn{href:suite_path(f.object.suite)}= t(:".cancel_action")
+= confirm_destroy_form(@participant, t(:".confirmation"), cancel_to: @participant.suite)
