@@ -23,8 +23,17 @@ class Result < ActiveRecord::Base
 
   def stanine
     if self.evaluation.stanines?
-      val = self.value
-      @stanine ||= self.evaluation.stanines.take_while { |i| i < val }.length + 1
+      unless @stanine
+        @stanine = 1
+        prev = -1
+
+        self.evaluation.stanines.each do |boundary|
+          @stanine += 1 if boundary < self.value || boundary == self.value && prev == boundary
+          prev = boundary
+        end
+      end
+
+      return @stanine
     end
   end
 end

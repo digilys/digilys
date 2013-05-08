@@ -62,6 +62,19 @@ describe Result do
       end
     end
 
+    context "with overlapping stanines" do
+      let(:stanine_limits) { [10, 20, 30, 40, 40, 40, 70, 80]}
+      it "selects the largest stanine when the value matches several" do
+        create(:result, evaluation: evaluation, value: 40).stanine.should == 6
+      end
+      it "selects the correct stanine below" do
+        create(:result, evaluation: evaluation, value: 39).stanine.should == 4
+      end
+      it "selects the correct stanine above" do
+        create(:result, evaluation: evaluation, value: 41).stanine.should == 7
+      end
+    end
+
     context "without stanines" do
       let(:stanine_limits) { nil }
       subject { create(:result, evaluation: evaluation, value: 50 ) }
