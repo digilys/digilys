@@ -61,6 +61,14 @@
         &ndash;
         %input(disabled="disabled" class="input-mini green-max" type="number" value="0" id="evaluation-green-max")
 
+    .control-group
+      .controls
+        = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
+        - if evaluation.suite
+          %a.btn{href:suite_path(evaluation.suite) }= t(:".cancel_action")
+        - else
+          %a.btn{href:evaluation.new_record? ? evaluations_path() : evaluation_path(evaluation) }= t(:".cancel_action")
+
   = f.inputs t(:".stanines") do
 
     - 1.upto(8) do |i|
