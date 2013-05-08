@@ -1,12 +1,15 @@
 class Suite < ActiveRecord::Base
   belongs_to :template,  class_name: "Suite"
-  has_many   :instances, class_name: "Suite", foreign_key: "template_id", order: "date asc"
+  has_many   :instances,
+    class_name:  "Suite",
+    foreign_key: "template_id",
+    dependent:   :nullify
 
-  has_many :participants, include: :student
+  has_many :participants, include: :student,      dependent: :destroy
   has_many :students,     through: :participants, order: "name asc"
-  has_many :evaluations,  inverse_of: :suite
+  has_many :evaluations,  inverse_of: :suite,     dependent: :destroy
   has_many :results,      through: :evaluations
-  has_many :meetings,     inverse_of: :suite
+  has_many :meetings,     inverse_of: :suite,     dependent: :destroy
 
   accepts_nested_attributes_for :evaluations,
     :meetings
