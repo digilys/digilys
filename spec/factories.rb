@@ -38,14 +38,14 @@ FactoryGirl.define do
       stanines      [7, 12, 17, 22, 27, 32, 37, 42]
     end
 
-    stanine1        { stanines[0] }
-    stanine2        { stanines[1] }
-    stanine3        { stanines[2] }
-    stanine4        { stanines[3] }
-    stanine5        { stanines[4] }
-    stanine6        { stanines[5] }
-    stanine7        { stanines[6] }
-    stanine8        { stanines[7] }
+    stanine1        { stanines ? stanines[0] : nil }
+    stanine2        { stanines ? stanines[1] : nil }
+    stanine3        { stanines ? stanines[2] : nil }
+    stanine4        { stanines ? stanines[3] : nil }
+    stanine5        { stanines ? stanines[4] : nil }
+    stanine6        { stanines ? stanines[5] : nil }
+    stanine7        { stanines ? stanines[6] : nil }
+    stanine8        { stanines ? stanines[7] : nil }
 
     factory :evaluation_with_suite do
       suite

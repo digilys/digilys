@@ -61,5 +61,11 @@ describe Result do
         create(:result, evaluation: evaluation, value: values.second).stanine.should == stanine
       end
     end
+
+    context "without stanines" do
+      let(:stanine_limits) { nil }
+      subject { create(:result, evaluation: evaluation, value: 50 ) }
+      its(:stanine) { should be_nil }
+    end
   end
 end

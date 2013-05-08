@@ -22,7 +22,9 @@ class Result < ActiveRecord::Base
   end
 
   def stanine
-    val = self.value
-    @stanine ||= self.evaluation.stanines.take_while { |i| i < val }.length + 1
+    if self.evaluation.stanines?
+      val = self.value
+      @stanine ||= self.evaluation.stanines.take_while { |i| i < val }.length + 1
+    end
   end
 end

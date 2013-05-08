@@ -20,4 +20,4 @@
           %td{class: "result #{result_color_class(result)}"}
             %ul
               %li.value= result.value
-              %li.stanine= result.stanine
+              %li.stanine= result.stanine || "-"
