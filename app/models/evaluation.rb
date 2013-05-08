@@ -174,6 +174,29 @@ class Evaluation < ActiveRecord::Base
       self.stanine8
     ]
   end
+  # Generates ruby ranges for the stanine ranges based on stanine boundaries
+  def stanine_ranges
+    unless @stanine_ranges
+      @stanine_ranges = {}
+
+      if self.stanines?
+        boundaries = [-1, *self.stanines, self.max_result]
+
+        1.upto(boundaries.length - 1) do |i|
+          upper = boundaries[i]
+          lower = boundaries[i - 1] + 1
+
+          if upper > lower
+            @stanine_ranges[i] = lower..upper
+          else
+            @stanine_ranges[i] = upper
+          end
+        end
+      end
+    end
+
+    return @stanine_ranges
+  end
 
 
   # Initializes a new evaluation from a template

@@ -141,20 +141,61 @@ describe Evaluation do
     end
   end
 
-  context ".stanines" do
-    let(:stanine_limits) { [ 10, 20, 30, 40, 50, 60, 70, 80 ] }
-    let(:evaluation)     { create(:evaluation, max_result: 90, stanines: stanine_limits )}
-    it "returns an array with the stanine boundaries" do
-      evaluation.stanines.should == stanine_limits
-    end
-  end
-
   context ".stanines?" do
     it "returns true if all stanine values are set" do
       create(:evaluation, stanines: Array.new(8, 1)).stanines?.should be_true
     end
     it "stanines are " do
       create(:evaluation, stanines: Array.new(8)).stanines?.should be_false
+    end
+  end
+
+  context ".stanines" do
+    let(:stanine_limits) { [ 10, 20, 30, 40, 50, 60, 70, 80 ] }
+    subject              { create(:evaluation, max_result: 90, stanines: stanine_limits )}
+    its(:stanines)       { should == stanine_limits}
+  end
+
+  context ".stanine_ranges" do
+    let(:stanine_limits) { [ 10, 20, 30, 40, 50, 60, 70, 80 ] }
+    subject              { create(:evaluation, max_result: 90, stanines: stanine_limits ).stanine_ranges }
+
+    it { should include(1 =>  0..10) }
+    it { should include(2 => 11..20) }
+    it { should include(3 => 21..30) }
+    it { should include(4 => 31..40) }
+    it { should include(5 => 41..50) }
+    it { should include(6 => 51..60) }
+    it { should include(7 => 61..70) }
+    it { should include(8 => 71..80) }
+    it { should include(9 => 81..90) }
+
+    context "with overlapping stanines" do
+      let(:stanine_limits) { [ 10, 20, 30, 40, 40, 40, 70, 80 ] }
+
+      it { should include(4 => 31..40) }
+      it { should include(5 => 40) }
+      it { should include(6 => 40) }
+      it { should include(7 => 41..70) }
+    end
+
+    context "with edge-to-edge stanines" do
+      let(:stanine_limits) { [ 10, 11, 12, 13, 14, 15, 16, 17 ] }
+
+    it { should include(1 =>  0..10) }
+    it { should include(2 => 11) }
+    it { should include(3 => 12) }
+    it { should include(4 => 13) }
+    it { should include(5 => 14) }
+    it { should include(6 => 15) }
+    it { should include(7 => 16) }
+    it { should include(8 => 17) }
+    it { should include(9 => 18..90) }
+    end
+
+    context "without stanines" do
+      let(:stanine_limits) { nil }
+      it { should be_blank }
     end
   end
 
