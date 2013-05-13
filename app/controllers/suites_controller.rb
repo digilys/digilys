@@ -32,7 +32,7 @@ class SuitesController < ApplicationController
   def create
     @suite = Suite.new(params[:suite])
 
-    if @suite.save!
+    if @suite.save
       flash[:success] = t(:"suites.create.success")
       redirect_to @suite
     else
