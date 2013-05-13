@@ -40,6 +40,7 @@ group :test, :development do
   gem "rspec-rails",        "~> 2.0"
   gem "factory_girl",       "~> 4.2.0"
   gem "factory_girl_rails", "~> 4.2.1"
+  gem "capybara",           "~> 2.1.0"
 end
 group :test do
   gem "shoulda-matchers", "~> 2.0.0"
