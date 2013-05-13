@@ -6,9 +6,10 @@ class Evaluation < ActiveRecord::Base
     order:       "date asc",
     dependent:   :nullify
 
-  belongs_to :suite,    inverse_of: :evaluations
-  has_many   :results,  dependent:  :destroy
-  has_many   :students, through:    :results
+  belongs_to :suite,        inverse_of: :evaluations
+  has_many   :participants, through:    :suite
+  has_many   :results,      dependent:  :destroy
+  has_many   :students,     through:    :results
 
   accepts_nested_attributes_for :results
 
@@ -200,6 +201,37 @@ class Evaluation < ActiveRecord::Base
     end
 
     return @stanine_ranges
+  end
+
+
+  # Builds a percentage distribution of the results
+  # of the following form:
+  #
+  #  {
+  #     not_reported: 10,
+  #     red: 20,
+  #     yellow: 30
+  #     green: 40
+  #  }
+  def result_distribution
+    return nil if self.results.blank?
+
+    result_distribution = {}
+
+    num_participants = self.participants.size.to_f
+
+    result_distribution[:not_reported] = ((num_participants - self.results.length.to_f) / num_participants) * 100.0
+
+    colors = { red: 0, yellow: 0, green: 0 }
+    self.results.each do |result|
+      colors[result.color] += 1
+    end
+    
+    colors.each_pair do |color, num|
+      result_distribution[color] = (num.to_f / num_participants) * 100.0
+    end
+
+    return result_distribution
   end
 
 

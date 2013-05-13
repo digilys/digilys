@@ -13,6 +13,7 @@
               %a.btn.btn-mini{href: evaluation_path(entity)}=                            t(:".show_action")
               %a.btn.btn-mini{href: edit_evaluation_path(entity)}=                       t(:".edit_action")
               %a.btn.btn-mini.btn-danger{href: confirm_destroy_evaluation_path(entity)}= t(:".destroy_action")
+            = evaluation_progress_bar(entity)
           - when Meeting
             .btn-group
               %a.btn.btn-mini{href: meeting_path(entity)}=                            t(:".show_action")

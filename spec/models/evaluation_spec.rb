@@ -205,6 +205,49 @@ describe Evaluation do
     end
   end
 
+  context ".result_distribution" do
+    let(:suite)        { create(:suite) }
+    let(:participants) { create_list(:participant, 5, suite: suite) }
+    let(:evaluation)   { create(:evaluation, suite: suite, max_result: 10, red_below: 4, green_above: 7) }
+
+    context "with all types" do
+      before(:each) do
+        create(:result, student: participants[0].student, evaluation: evaluation, value: 1) # red
+        create(:result, student: participants[1].student, evaluation: evaluation, value: 5) # yellow
+        create(:result, student: participants[2].student, evaluation: evaluation, value: 6) # yellow
+        create(:result, student: participants[3].student, evaluation: evaluation, value: 8) # green
+      end
+
+      subject { evaluation.result_distribution }
+
+      it { should include(not_reported: 20.0) }
+      it { should include(red:          20.0) }
+      it { should include(yellow:       40.0) }
+      it { should include(green:        20.0) }
+    end
+
+    context "without a color" do
+      before(:each) do
+        create(:result, student: participants[0].student, evaluation: evaluation, value: 1) # red
+        create(:result, student: participants[1].student, evaluation: evaluation, value: 5) # yellow
+        create(:result, student: participants[2].student, evaluation: evaluation, value: 6) # yellow
+        create(:result, student: participants[3].student, evaluation: evaluation, value: 8) # green
+      end
+
+      subject { evaluation.result_distribution }
+
+      it { should include(not_reported: 20.0) }
+      it { should include(red:          20.0) }
+      it { should include(yellow:       40.0) }
+      it { should include(green:        20.0) }
+    end
+
+    context "without results" do
+      subject { create(:evaluation).result_distribution }
+      it      { should be_blank }
+    end
+  end
+
   context "#new_from_template" do
     let(:template) { create(:evaluation) }
     subject        { Evaluation.new_from_template(template) }
