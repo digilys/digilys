@@ -7,13 +7,13 @@
           %a{href: groups_path()}= t(:"groups.title")
         %li{class: active_if(params?(controller: "students"))}
           %a{href: students_path()}= t(:"students.title")
-        %li{class: active_if(params?(controller: "suites") && !(params?(action: "template") || @suite.try(:is_template)))}
+        %li{class: active_if(working_with_suite?(@suite, @evaluation))}
           %a{href: suites_path()}= t(:"suites.title")
 
         %li.nav-header= t(:".templates")
-        %li{class: active_if(params?(controller: "evaluations"))}
+        %li{class: active_if(params?(controller: "evaluations") && !working_with_suite?(@suite, @evaluation))}
           %a{href: evaluations_path()}= t(:"evaluations.title")
-        %li{class: active_if(params?(controller: "suites") && (params?(action: "template") ||  @suite.try(:is_template)))}
+        %li{class: active_if(working_with_suite_template?(@suite))}
           %a{href: template_suites_path()}= t(:"suites.title")
 
   .content.span9

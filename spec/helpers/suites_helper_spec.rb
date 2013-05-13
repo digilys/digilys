@@ -34,8 +34,57 @@ describe SuitesHelper do
   end
 
   context "#working_with_suite?" do
+    let(:params)     { {} }
+    let(:suite)      { nil }
+    let(:evaluation) { nil }
+    before(:each)    { helper.stub(:params).and_return(params) }
+
+    subject { helper.working_with_suite?(suite, evaluation) }
+
+    it { should be_false }
+
+    context "with a regular suite" do
+      let(:suite) { create(:suite, is_template: false) }
+      it          { should be_true }
+    end
+    context "with a template suite" do
+      let(:suite) { create(:suite, is_template: true) }
+      it          { should be_false }
+    end
+    context "under suites#index" do
+      let(:params) { { "controller" => "suites", "action" => "index" } }
+      it           { should be_true }
+    end
+    context "with suite_id" do
+      let(:params) { { "controller" => "evaluations", "action" => "new", suite_id: 1 } }
+      it           { should be_true }
+    end
+    context "with an evaluation assigned to a suite" do
+      let(:evaluation) { create(:evaluation, suite: create(:suite)) }
+      it               { should be_true }
+    end
   end
 
   context "#working_with_suite_template?" do
+    let(:params)  { {} }
+    let(:suite)   { nil }
+    before(:each) { helper.stub(:params).and_return(params) }
+
+    subject { helper.working_with_suite_template?(suite) }
+
+    it { should be_false }
+
+    context "with a regular suite" do
+      let(:suite) { create(:suite, is_template: false) }
+      it          { should be_false }
+    end
+    context "with a template suite" do
+      let(:suite) { create(:suite, is_template: true) }
+      it          { should be_true }
+    end
+    context "under suites#template" do
+      let(:params) { { "controller" => "suites", "action" => "template" } }
+      it           { should be_true }
+    end
   end
 end
