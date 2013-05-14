@@ -5,20 +5,22 @@ class Suite < ActiveRecord::Base
     foreign_key: "template_id",
     dependent:   :nullify
 
-  has_many :participants, include: :student,      dependent: :destroy
+  has_many :participants, inverse_of: :suite,     include: :student,   dependent: :destroy
   has_many :students,     through: :participants, order: "name asc"
   has_many :evaluations,  inverse_of: :suite,     dependent: :destroy
   has_many :results,      through: :evaluations
   has_many :meetings,     inverse_of: :suite,     dependent: :destroy
 
   accepts_nested_attributes_for :evaluations,
-    :meetings
+    :meetings,
+    :participants
 
   attr_accessible :name,
     :is_template,
     :template_id,
     :evaluations_attributes,
-    :meetings_attributes
+    :meetings_attributes,
+    :participants_attributes
 
   validates :name, presence: true
 

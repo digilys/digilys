@@ -77,6 +77,9 @@ sv:
   suites:
     title: Planeringar
     templates_action: Mallar
+    form:
+      student_placeholder: Sök och välj elever
+      group_placeholder: Sök och välj grupper
     show:
       template_notice: Detta är en mall för planeringar.
       visualize: Visualisera

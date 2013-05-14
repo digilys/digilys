@@ -6,35 +6,47 @@
 
     = f.input :name, required: true, input_html: { required: true, autofocus: true }
 
-    - if suite.new_record?
-      - if suite.template
+    - if suite.new_record? && !suite.template
+      = f.input :is_template
 
-        = f.inputs Evaluation.model_name.human(count: 2) do
-          = f.inputs for: :evaluations do |ef|
+  - if suite.new_record?
+    - if suite.template
+      = f.inputs Evaluation.model_name.human(count: 2) do
+        = f.inputs for: :evaluations do |ef|
+          = ef.hidden_field :template_id
+          = ef.hidden_field :max_result
+          = ef.hidden_field :red_below
+          = ef.hidden_field :green_above
+          = ef.hidden_field :stanine1
+          = ef.hidden_field :stanine2
+          = ef.hidden_field :stanine3
+          = ef.hidden_field :stanine4
+          = ef.hidden_field :stanine5
+          = ef.hidden_field :stanine6
+          = ef.hidden_field :stanine7
+          = ef.hidden_field :stanine8
 
-            = ef.hidden_field :template_id
-            = ef.hidden_field :max_result
-            = ef.hidden_field :red_below
-            = ef.hidden_field :green_above
-            = ef.hidden_field :stanine1
-            = ef.hidden_field :stanine2
-            = ef.hidden_field :stanine3
-            = ef.hidden_field :stanine4
-            = ef.hidden_field :stanine5
-            = ef.hidden_field :stanine6
-            = ef.hidden_field :stanine7
-            = ef.hidden_field :stanine8
+          = ef.input :name,                              input_html: { readonly: true }
+          = ef.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }
 
-            = ef.input :name,                              input_html: { readonly: true }
-            = ef.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }
+      = f.inputs Meeting.model_name.human(count: 2) do 
+        = f.inputs for: :meetings do |mf|
+          = mf.input :name,                              input_html: { readonly: true }
+          = mf.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }
 
-        = f.inputs Meeting.model_name.human(count: 2) do
-          = f.inputs for: :meetings do |mf|
-            = mf.input :name,                              input_html: { readonly: true }
-            = mf.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }
+    = f.inputs Participant.model_name.human(count: 2), for: :participants, id: "new_participant" do |pf|
+      = pf.input :student_id,
+        as: :hidden,
+        input_html: { class: "student-autocomplete-field",
+          data: { url: search_students_path(format: :json),
+            placeholder: t(:".student_placeholder") } }
 
-      - else
-        = f.input :is_template
+      = pf.input :group_id,
+        as: :hidden,
+        input_html: { class: "group-autocomplete-field",
+          data: { url: search_groups_path(format: :json),
+            placeholder: t(:".group_placeholder"),
+            multiple: true } }
 
 
   = f.actions do

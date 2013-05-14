@@ -12,3 +12,9 @@ $ ->
                 data: (term, page) ->
                     { q: { name_cont: term }, page: page }
         )
+
+    $("#new_suite #suite_is_template").on "change", ->
+        if ($(this).is(":checked"))
+            $("#new_participant").hide()
+        else
+            $("#new_participant").show()

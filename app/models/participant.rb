@@ -4,7 +4,9 @@ class Participant < ActiveRecord::Base
   belongs_to :suite
   belongs_to :group
 
-  attr_accessible :student_id, :suite_id
+  attr_accessible :student_id,
+    :suite_id,
+    :group_id
 
   validates :student, presence:   true
   validates :suite,   presence:   true
