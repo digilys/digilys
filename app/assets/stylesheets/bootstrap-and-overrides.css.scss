@@ -6,3 +6,8 @@
         padding: 8px 0;
     }
 }
+
+.progress-yellow .bar, .progress .bar-yellow {
+    @include gradient-vertical(lighten($yellow, 15%), $yellow);
+}
+

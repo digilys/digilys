@@ -24,7 +24,7 @@ describe EvaluationsHelper do
       it { should have_selector(".progress") }
       it { should have_selector(".progress .bar", count: 3) }
       it { should have_selector(".progress .bar-success[style=\"width: 20.0%\"]") }
-      it { should have_selector(".progress .bar-warning[style=\"width: 40.0%\"]") }
+      it { should have_selector(".progress .bar-yellow[style=\"width: 40.0%\"]") }
       it { should have_selector(".progress .bar-danger[style=\"width: 20.0%\"]") }
     end
     context "with colors missing" do
@@ -36,7 +36,7 @@ describe EvaluationsHelper do
       it { should have_selector(".progress") }
       it { should have_selector(".progress .bar", count: 3) }
       it { should have_selector(".progress .bar-success[style=\"width: 0.0%\"]") }
-      it { should have_selector(".progress .bar-warning[style=\"width: 40.0%\"]") }
+      it { should have_selector(".progress .bar-yellow[style=\"width: 40.0%\"]") }
       it { should have_selector(".progress .bar-danger[style=\"width: 0.0%\"]") }
     end
   end
