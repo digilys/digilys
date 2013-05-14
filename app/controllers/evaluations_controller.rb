@@ -63,7 +63,11 @@ class EvaluationsController < ApplicationController
     evaluation.destroy
 
     flash[:success] = t(:"evaluations.destroy.success")
-    redirect_to suite
+    if suite
+      redirect_to suite
+    else
+      redirect_to evaluations_url()
+    end
   end
 
   def report
