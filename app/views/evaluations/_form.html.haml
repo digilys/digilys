@@ -44,7 +44,8 @@
         &ndash;
         %input(disabled="disabled" class="input-mini red-max" type="text" value="0" id="evaluation-red-max")
 
-    .control-group
+    - has_color_range_error = !(evaluation.errors[:red_below] + evaluation.errors[:green_above]).blank?
+    .control-group{class: "#{"error" if has_color_range_error}"}
       = f.label :red_below,
         "#{t(:".yellow")}<abbr title=\"#{t(:"formtastic.required")}\">*</abbr>".html_safe,
         class: "control-label"
@@ -53,7 +54,10 @@
         &ndash;
         = f.text_field :green_above, required: true, class: "input-mini"
         .suggestion-container{"data-suggestion-copy" => t(:".suggestion_copy")}
-        %span.help-block= t(:".percentage_help")
+        - if has_color_range_error
+          .help-block= t(:".color_range_error_text")
+        - else
+          %span.help-block= t(:".percentage_help")
 
     .control-group
       %label.control-label= t(:".green")
