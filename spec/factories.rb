@@ -1,22 +1,22 @@
 FactoryGirl.define do
   factory :user do
-    sequence(:email)      { |i| "user#{i}@example.com" }
+    sequence(:email)      { |i| "user%09d@example.com" % i }
     password              "password"
     password_confirmation { password }
   end
 
   factory :student do
-    sequence(:name) { |i| "Student #{i}" }
+    sequence(:name) { |i| "Student %09d" % i }
   end
 
   factory :group do
-    sequence(:name) { |i| "Group #{i}" }
+    sequence(:name) { |i| "Group %09d" % i }
     parent          nil
   end
 
   factory :suite do
     template        nil
-    sequence(:name) { |i| "Suite #{i}" }
+    sequence(:name) { |i| "Suite %09d" % i }
     is_template     false
   end
 
@@ -28,7 +28,7 @@ FactoryGirl.define do
   factory :evaluation do
     template        nil
     suite           nil
-    sequence(:name) { |i| "Evaluation #{i}" }
+    sequence(:name) { |i| "Evaluation %09d" % i }
     date            Date.today
     max_result      50
     red_below       15
@@ -60,7 +60,7 @@ FactoryGirl.define do
 
   factory :meeting do
     suite
-    sequence(:name) { |i| "Meeting #{i}" }
+    sequence(:name) { |i| "Meeting %09d" % i }
     date            Date.today
     completed       false
     notes           nil
