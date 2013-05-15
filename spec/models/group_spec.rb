@@ -39,6 +39,16 @@ describe Group do
     end
   end
 
+  context "#top_level" do
+    let!(:top_level)    { create_list(:group, 3) }
+    let!(:second_level) { create_list(:group, 3, parent: top_level.first) }
+    let!(:third_level)  { create_list(:group, 3, parent: second_level.second) }
+
+    it "only matches groups without parents" do
+      Group.top_level.all.should match_array(top_level)
+    end
+  end
+
   context ".add_students" do
     let(:parent1)  { create(:group) }
     let(:parent2)  { create(:group, parent: parent1) }

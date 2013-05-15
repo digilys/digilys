@@ -65,6 +65,12 @@ class Group < ActiveRecord::Base
 
     self.joins(joins)
   end
+
+  # Adds a condition removing all groups with a parent,
+  # thus giving the top level groups
+  def self.top_level
+    where(parent_id: nil)
+  end
   
   private
 

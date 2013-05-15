@@ -2,7 +2,7 @@ class GroupsController < ApplicationController
   layout "admin"
 
   def index
-    @groups = Group.includes(parent: :parent).order(:name).page(params[:page])
+    @groups = Group.top_level.order(:name).all
   end
 
   def show
