@@ -41,6 +41,21 @@ namespace :app do
         end
       end
     end
+
+    task groups: :environment do
+      num_schools = (ENV["schools"] || 2).to_i
+      num_classes = (ENV["classes"] || 3).to_i
+
+      1.upto(num_schools) do |i|
+        school = FactoryGirl.create(:group, name: "Skola #{i}")
+        puts "New school: #{school.name}"
+
+        1.upto(num_classes) do |j|
+          cls = FactoryGirl.create(:group, name: "Klass #{j}", parent: school)
+          puts "\tNew class: #{cls.name}"
+        end
+      end
+    end
   end
 end
 
