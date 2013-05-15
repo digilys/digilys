@@ -2,7 +2,7 @@
 - group  ||= nil
 
 - content_for :title do
-  - t(:".title")
+  - Group.model_name.human(count: 2)
 
 %ul.nav.nav-tabs
   - if group

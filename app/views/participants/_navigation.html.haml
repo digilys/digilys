@@ -2,7 +2,7 @@
 - suite      ||= nil
 
 - content_for :title do
-  - t(:".title")
+  - Participant.model_name.human(count: 2)
 
 %ul.nav.nav-tabs
   - if suite

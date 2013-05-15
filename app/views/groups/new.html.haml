@@ -1,4 +1,4 @@
-%h1= t(:".title")
+%h1= Group.model_name.human(count: 2)
 
 = render partial: "navigation", locals: { active: :new }
 

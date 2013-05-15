@@ -1,4 +1,6 @@
-%h1= @student.name_was
+%h1
+  = @student.name_was
+  %small= Student.model_name.human
 
 = render partial: "navigation", locals: { active: :edit, student: @student }
 

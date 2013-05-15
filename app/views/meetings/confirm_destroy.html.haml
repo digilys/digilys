@@ -1,4 +1,6 @@
-%h1= @meeting.name
+%h1
+  = @meeting.name
+  %small= @meeting.suite.name
 
 = render partial: "navigation", locals: { meeting: @meeting, active: :destroy }
 

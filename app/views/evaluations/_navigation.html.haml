@@ -4,7 +4,7 @@
 - only_return ||= false
 
 - content_for :title do
-  - t(:".title")
+  - suite ? Evaluation.model_name.human(count: 2) : t(:".templates_title")
 
 %ul.nav.nav-tabs
   - if !suite

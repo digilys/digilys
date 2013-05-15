@@ -3,7 +3,7 @@
 - suite   ||= meeting.try(:suite)
 
 - content_for :title do
-  - t(:".title")
+  - Meeting.model_name.human(count: 2)
 
 %ul.nav.nav-tabs
   - if meeting

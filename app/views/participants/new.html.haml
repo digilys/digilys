@@ -1,4 +1,6 @@
-%h1= t(:".title")
+%h1
+  = Participant.model_name.human(count: 2)
+  %small= @suite.name
 
 = render partial: "navigation", locals: { active: :new, suite: @suite }
 

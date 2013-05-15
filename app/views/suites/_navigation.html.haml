@@ -2,7 +2,7 @@
 - suite  ||= nil
 
 - content_for :title do
-  - t(:".title")
+  - (suite && suite.is_template?) || active == :template ? t(:".templates_title") : Suite.model_name.human(count: 2)
 
 %ul.nav.nav-tabs
   - if suite

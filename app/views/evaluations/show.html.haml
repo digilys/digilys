@@ -1,4 +1,7 @@
-%h1= @evaluation.name
+%h1
+  = @evaluation.name
+  %small
+    = @evaluation.suite.try(:name) || t(:".template_title")
 
 = render partial: "navigation", locals: { evaluation: @evaluation, active: :show }
 

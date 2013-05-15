@@ -1,4 +1,6 @@
-%h1= @suite.name_was
+%h1
+  = @suite.name_was
+  %small= @suite.is_template? ? t(:".template_title") : Suite.model_name.human
 
 = render partial: "navigation", locals: { suite: @suite, active: :edit }
 

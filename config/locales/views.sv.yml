@@ -33,7 +33,6 @@ sv:
   report_action: Rapportera resultat
 
   students:
-    title: Elever
     select_groups_action: Lägg till i grupper
     show:
       remove_groups_action: Ta bort eleven från de markerade grupperna
@@ -53,7 +52,6 @@ sv:
       success: Eleven togs bort från grupperna
 
   groups:
-    title: Grupper
     select_students_action: Lägg till elever
     form:
       parent_placeholder: Sök och välj en grupp
@@ -75,7 +73,8 @@ sv:
       success: Eleverna togs bort från gruppen
 
   suites:
-    title: Planeringar
+    template_title: Planeringsmall
+    templates_title: Planeringsmallar
     templates_action: Mallar
     form:
       student_placeholder: Sök och välj elever
@@ -104,7 +103,6 @@ sv:
       success: Planeringen och tillhörande information raderades
 
   participants:
-    title: Elever
     new_action: Lägg till i planeringen
     destroy_action: Ta bort från planeringen
     form:
@@ -119,7 +117,8 @@ sv:
       success: Eleven togs bort från planeringen
 
   evaluations:
-    title: Test
+    template_title: Testmall
+    templates_title: Testmallar
     color_ranges: Färgintervall
     stanines: Stanine-värden
     show:
@@ -148,7 +147,6 @@ sv:
       success: Resultatet uppdaterades
 
   meetings:
-    title: Möten
     new_action: Lägg till i planeringen
     form:
       new_for_suite: Lägg till ett möte i planeringen %{suite_name}

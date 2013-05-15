@@ -1,4 +1,6 @@
-%h1= @group.name
+%h1
+  = @group.name
+  %small= Group.model_name.human
 
 = render partial: "navigation", locals: { group: @group, active: :destroy }
 
