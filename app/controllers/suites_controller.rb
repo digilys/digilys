@@ -25,6 +25,7 @@ class SuitesController < ApplicationController
 
   def new_from_template
     template = Suite.find(params[:suite][:template_id])
+    params[:suite][:name] = "" # Force a name change
     @suite   = Suite.new_from_template(template, params[:suite])
     @suite.participants.build
 
