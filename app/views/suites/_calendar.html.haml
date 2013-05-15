@@ -2,20 +2,12 @@
   %tbody
     - calendar_entries(suite).each do |entity|
       %tr
-        %td.date= entity.date
-        %td.name= entity.name
+        %td.date= link_to(entity.date, entity)
+        %td.name= link_to(entity.name, entity)
         %td.actions
           - case entity
           - when Evaluation
             .btn-group
-              %a.btn.btn-mini.btn-primary{href: report_evaluation_path(entity)}=         t(:".report_action")
-            .btn-group
-              %a.btn.btn-mini{href: evaluation_path(entity)}=                            t(:".show_action")
-              %a.btn.btn-mini{href: edit_evaluation_path(entity)}=                       t(:".edit_action")
-              %a.btn.btn-mini.btn-danger{href: confirm_destroy_evaluation_path(entity)}= t(:".destroy_action")
+              %a.btn.btn-mini.btn-primary{href: report_evaluation_path(entity)}= t(:".report_action")
             = evaluation_progress_bar(entity)
           - when Meeting
-            .btn-group
-              %a.btn.btn-mini{href: meeting_path(entity)}=                            t(:".show_action")
-              %a.btn.btn-mini{href: edit_meeting_path(entity)}=                       t(:".edit_action")
-              %a.btn.btn-mini.btn-danger{href: confirm_destroy_meeting_path(entity)}= t(:".destroy_action")
