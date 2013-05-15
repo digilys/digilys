@@ -97,6 +97,31 @@ describe Evaluation do
     end
   end
 
+  context ".color_for" do
+    let(:evaluation) { create(:evaluation, red_below: 10, green_above: 20, max_result: 30) }
+    let(:value)      { nil }
+    subject          { evaluation.color_for(value) }
+
+    it { should be_nil }
+
+    context "with red value" do
+      let(:value) { 9 }
+      it { should == :red }
+    end
+    context "with yellow value, lower bound" do
+      let(:value) { 10 }
+      it { should == :yellow }
+    end
+    context "with yellow value, upper bound" do
+      let(:value) { 20 }
+      it { should == :yellow }
+    end
+    context "with green value" do
+      let(:value) { 21 }
+      it { should == :green }
+    end
+  end
+
   context ".result_for" do
     let(:students)   { create_list(:student, 3) }
     let(:student)    { students.second }

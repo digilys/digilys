@@ -159,3 +159,8 @@ sv:
       confirmation: Är du säker på att du vill ta bort mötet?
     destroy:
       success: Mötet togs bort från planeringen
+
+
+  visualize:
+    suites:
+      averages: Genomsnitt

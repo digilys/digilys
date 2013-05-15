@@ -12,13 +12,7 @@ class Result < ActiveRecord::Base
   validates :evaluation, :student, presence: true
 
   def color
-    if self.value < self.evaluation.red_below
-      :red
-    elsif self.value > self.evaluation.green_above
-      :green
-    else
-      :yellow
-    end
+    self.evaluation.color_for(self.value)
   end
 
   def stanine

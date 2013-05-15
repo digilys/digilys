@@ -21,4 +21,10 @@ table.suite-results {
         &:hover > .result-yellow { background-color: darken($yellow, 5%); }
         &:hover > .result-green  { background-color: darken($green, 5%); }
     }
+
+    .averages {
+        th, td {
+            padding-top: 1.5em;
+        }
+    }
 }

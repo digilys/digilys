@@ -135,6 +135,18 @@ class Evaluation < ActiveRecord::Base
     !self.suite.blank? && !self.suite.is_template?
   end
 
+  def color_for(value)
+    if value.nil?
+      nil
+    elsif value < self.red_below
+      :red
+    elsif value > self.green_above
+      :green
+    else
+      :yellow
+    end
+  end
+
   def result_for(student)
     results.where(student_id: student).first
   end

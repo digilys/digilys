@@ -1,5 +1,9 @@
 %h1= @suite.name
 
+-# Track values and stanines for 
+- values = {}
+- stanines = {}
+
 %table.table.table-bordered.table-hover.suite-results.suite-show-value
 
   %thead
@@ -11,13 +15,39 @@
       - @suite.evaluations.each do |evaluation|
         %th= evaluation.name
 
+        -# Initialize the tracking variables
+        - values[evaluation.id]   = []
+        - stanines[evaluation.id] = []
+
   %tbody
     - @suite.students.each do |student|
       %tr
         %th= student.name
         - @suite.evaluations.each do |evaluation|
           - result = evaluation.result_for(student)
-          %td{class: "result #{result_color_class(result)}"}
+          %td.result{class: result_color_class(result)}
             %ul
               %li.value=   result.try(:value)   || "-"
               %li.stanine= result.try(:stanine) || "-"
+
+              -# Add to track variables
+              - values[evaluation.id]   << result.value   if result.value
+              - stanines[evaluation.id] << result.stanine if result.stanine
+
+    %tr.averages
+      %th= t(:".averages")
+      - @suite.evaluations.each do |evaluation|
+
+        - if !values[evaluation.id].blank?
+          - average_value = values[evaluation.id].instance_eval { reduce(:+).to_f / size }
+        - else
+          - average_value = nil
+
+        %td.result{class: result_color_class(average_value, evaluation)}
+          %ul
+            %li.value= average_value || "-" 
+            %li.stanine
+              - if !stanines[evaluation.id].blank?
+                = stanines[evaluation.id].instance_eval { reduce(:+).to_f / size }
+              - else
+                = "-"
