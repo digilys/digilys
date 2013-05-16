@@ -1,6 +1,10 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
 
+  before_filter :authenticate_user!
+
+  check_authorization unless: :skip_authorization?
+
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
   protected
@@ -98,5 +102,9 @@ class ApplicationController < ActionController::Base
   # This picks up any layout set in the inheriting controller
   def record_not_found
     render template: "shared/404", status: 404
+  end
+
+  def skip_authorization?
+    devise_controller? || self.is_a?(RailsAdmin::ApplicationController)
   end
 end

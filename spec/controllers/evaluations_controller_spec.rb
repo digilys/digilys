@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe EvaluationsController do
+  login_admin
+
   describe "GET #report" do
     let!(:suite)        { create(:suite) }
     let!(:evaluation)   { create(:evaluation, suite: suite) }

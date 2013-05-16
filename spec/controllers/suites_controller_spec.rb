@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe SuitesController do
+  login_admin
+
   describe "POST #create" do
     let(:students) { create_list(:student, 3) }
     let(:groups)   { create_list(:group, 2) }

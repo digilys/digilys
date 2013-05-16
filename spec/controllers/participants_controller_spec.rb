@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe ParticipantsController do
+  login_admin
+
   describe "POST #create" do
     let(:suite)    { create(:suite) }
     let(:students) { create_list(:student, 3) }
