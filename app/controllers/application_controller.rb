@@ -68,6 +68,31 @@ class ApplicationController < ActionController::Base
     return result.values
   end
 
+
+  ## Google Charts data transformers
+  def results_to_datatable(evaluations)
+    rows = []
+
+    students = evaluations.collect(&:students).flatten.uniq
+
+    # Title row
+    rows << [ Evaluation.model_name.human(count: 2), *students.collect(&:name) ]
+
+    # Rows for results
+    evaluations.each do |evaluation|
+      row = [ evaluation.name ]
+
+      students.each do |student|
+        row << evaluation.result_for(student).try(:value)
+      end
+
+      rows << row
+    end
+
+    return rows
+  end
+
+
   private
 
   # This picks up any layout set in the inheriting controller
