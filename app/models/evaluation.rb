@@ -129,6 +129,7 @@ class Evaluation < ActiveRecord::Base
 
 
   before_validation :convert_percentages
+  after_update      :touch_results
 
 
   def has_regular_suite?
@@ -144,6 +145,21 @@ class Evaluation < ActiveRecord::Base
       :green
     else
       :yellow
+    end
+  end
+  def stanine_for(value)
+    if !value.blank? && self.stanines?
+      stanine = 1
+      prev = -1
+
+      self.stanines.each do |boundary|
+        stanine += 1 if boundary < value || boundary == value && prev == boundary
+        prev = boundary
+      end
+
+      return stanine
+    else
+      return nil
     end
   end
 
@@ -290,4 +306,24 @@ class Evaluation < ActiveRecord::Base
     end
   end
 
+  # If any of these attributes are changed, touch the results
+  TOUCH_RESULT_ON_CHANGED = %w(
+    red_below
+    green_above
+    stanine1
+    stanine2
+    stanine3
+    stanine4
+    stanine5
+    stanine6
+    stanine7
+    stanine8
+  )
+
+  def touch_results
+    # Intersect the changed array with the touch on array
+    if !(TOUCH_RESULT_ON_CHANGED & self.changed).blank?
+      self.results.map(&:save)
+    end
+  end
 end

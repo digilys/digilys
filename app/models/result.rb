@@ -11,23 +11,25 @@ class Result < ActiveRecord::Base
   }
   validates :evaluation, :student, presence: true
 
+  before_save :update_color_and_stanine
+
   def color
-    self.evaluation.color_for(self.value)
+    read_attribute(:color).to_sym
+  end
+  def color=(value)
+    value = value.to_sym if value.respond_to?(:to_sym)
+    case value
+    when :red, :yellow, :green
+      write_attribute(:color, value)
+    else
+      write_attribute(:color, nil)
+    end
   end
 
-  def stanine
-    if self.evaluation.stanines?
-      unless @stanine
-        @stanine = 1
-        prev = -1
+  private
 
-        self.evaluation.stanines.each do |boundary|
-          @stanine += 1 if boundary < self.value || boundary == self.value && prev == boundary
-          prev = boundary
-        end
-      end
-
-      return @stanine
-    end
+  def update_color_and_stanine
+    self.color   = self.evaluation.color_for(self.value)
+    self.stanine = self.evaluation.stanine_for(self.value)
   end
 end

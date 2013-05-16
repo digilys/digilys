@@ -55,7 +55,9 @@ FactoryGirl.define do
   factory :result do
     evaluation
     student
-    value 25
+    value   25
+    color   nil
+    stanine nil
   end
 
   factory :meeting do

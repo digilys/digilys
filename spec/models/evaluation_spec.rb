@@ -121,6 +121,58 @@ describe Evaluation do
       it { should == :green }
     end
   end
+  context ".stanine_for" do
+    let(:stanine_limits) { [10, 20, 30, 40, 50, 60, 70, 80] }
+    let(:evaluation) { create(:evaluation, max_result: 90, stanines: stanine_limits) }
+    let(:value)      { nil }
+    subject          { evaluation.stanine_for(value) }
+
+    it { should be_nil }
+
+    # Boundaries for the stanine values given the stanine limits above
+    {
+      1 => [0,10],
+      2 => [11,20],
+      3 => [21,30],
+      4 => [31,40],
+      5 => [41,50],
+      6 => [51,60],
+      7 => [61,70],
+      8 => [71,80],
+      9 => [81,90]
+    }.each_pair do |stanine, values|
+      context "stanine #{stanine}, lower bound" do
+        let(:value) { values.first }
+        it          { should == stanine }
+      end
+      context "stanine #{stanine}, upper bound" do
+        let(:value) { values.second }
+        it          { should == stanine }
+      end
+    end
+
+    context "with overlapping stanines" do
+      let(:stanine_limits) { [10, 20, 30, 40, 40, 40, 70, 80]}
+      context "giving largest stanine" do
+        let(:value) { 40 }
+        it          { should == 6 }
+      end
+      context "giving the correct stanine below" do
+        let(:value) { 39 }
+        it          { should == 4 }
+      end
+      context "giving the correct stanine above" do
+        let(:value) { 41 }
+        it          { should == 7 }
+      end
+    end
+
+    context "without stanines" do
+      let(:stanine_limits) { nil }
+      let(:value)          { 123 }
+      it                   { should be_nil }
+    end
+  end
 
   context ".result_for" do
     let(:students)   { create_list(:student, 3) }

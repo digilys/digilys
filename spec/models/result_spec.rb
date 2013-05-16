@@ -25,24 +25,41 @@ describe Result do
     end
   end
 
-  context ".color" do
+  context "color filter" do
     let(:evaluation) { create(:evaluation, max_result: 10, red_below: 4, green_above: 7) }
+    let(:value)      { 5 }
+    subject(:result) { create(:result, evaluation: evaluation, value: value) }
 
-    it "returns red when the value is strictly below the red limit" do
-      create(:result, evaluation: evaluation, value: 3).color.should == :red
+    context "with red value" do
+      let(:value) { 3 }
+      its(:color) { should == :red }
     end
-    it "returns yellow when the value is between the red and green limits" do
-      create(:result, evaluation: evaluation, value: 4).color.should == :yellow
-      create(:result, evaluation: evaluation, value: 7).color.should == :yellow
+    context "with yellow value, lower edge" do
+      let(:value) { 4 }
+      its(:color) { should == :yellow }
     end
-    it "returns green when the value is strictly above the green limit" do
-      create(:result, evaluation: evaluation, value: 8).color.should == :green
+    context "with yellow value, upper edge" do
+      let(:value) { 7 }
+      its(:color) { should == :yellow }
+    end
+    context "with green value" do
+      let(:value) { 8 }
+      its(:color) { should == :green }
+    end
+
+    it "updates the color when the evaluation changes" do
+      result.color.should == :yellow
+      evaluation.update_attributes(red_below: 6)
+      result.reload
+      result.color.should == :red
     end
   end
 
   context ".stanine" do
     let(:stanine_limits) { [10, 20, 30, 40, 50, 60, 70, 80] }
-    let(:evaluation) { create(:evaluation, max_result: 90, stanines: stanine_limits) }
+    let(:evaluation)     { create(:evaluation, max_result: 90, stanines: stanine_limits) }
+    let(:value)          { 35 }
+    subject(:result)     { create(:result, evaluation: evaluation, value: value) }
 
     # Boundaries for the stanine values given the stanine limits above
     {
@@ -56,29 +73,42 @@ describe Result do
       8 => [71,80],
       9 => [81,90]
     }.each_pair do |stanine, values|
-      it "correctly gives stanine #{stanine}" do
-        create(:result, evaluation: evaluation, value: values.first ).stanine.should == stanine
-        create(:result, evaluation: evaluation, value: values.second).stanine.should == stanine
+      context "stanine #{stanine}, lower bound" do
+        let(:value)   { values.first }
+        its(:stanine) { should == stanine }
+      end
+      context "stanine #{stanine}, upper bound" do
+        let(:value)   { values.second }
+        its(:stanine) { should == stanine }
       end
     end
 
     context "with overlapping stanines" do
       let(:stanine_limits) { [10, 20, 30, 40, 40, 40, 70, 80]}
-      it "selects the largest stanine when the value matches several" do
-        create(:result, evaluation: evaluation, value: 40).stanine.should == 6
+      context "when matching several" do
+        let(:value)   { 40 }
+        its(:stanine) { should == 6 }
       end
-      it "selects the correct stanine below" do
-        create(:result, evaluation: evaluation, value: 39).stanine.should == 4
+      context "when matching below" do
+        let(:value)   { 39 }
+        its(:stanine) { should == 4 }
       end
-      it "selects the correct stanine above" do
-        create(:result, evaluation: evaluation, value: 41).stanine.should == 7
+      context "when matching above" do
+        let(:value)   { 41 }
+        its(:stanine) { should == 7 }
       end
     end
 
     context "without stanines" do
       let(:stanine_limits) { nil }
-      subject { create(:result, evaluation: evaluation, value: 50 ) }
-      its(:stanine) { should be_nil }
+      its(:stanine)        { should be_nil }
+    end
+
+    it "updates the color when the evaluation changes" do
+      result.stanine.should == 4
+      evaluation.update_attributes(stanine3: 40, stanine4: 45)
+      result.reload
+      result.stanine.should == 3
     end
   end
 end
