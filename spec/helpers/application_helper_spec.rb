@@ -96,4 +96,33 @@ describe ApplicationHelper do
       end
     end
   end
+
+  context "google chart helpers" do
+    before(:each) do
+      helper.should_receive(:content_for).at_least(:once).with(:page_end, anything()) do |target, html|
+        html
+      end
+    end
+    describe "#gchart_init" do
+      subject(:html) { Capybara::Node::Simple.new(helper.gchart_init) }
+      it { should have_selector("script", count: 2, visible: false)}
+      it { should have_selector("script[src='//google.com/jsapi']", visible: false)}
+      it { should have_content(%(google.load("visualization", "1.0", {"packages": ["corechart"]});)) }
+    end
+    describe "#gchart" do
+      subject(:html) { Capybara::Node::Simple.new(
+        helper.gchart(
+          id: "foo",
+          type: :line,
+          url: "zomg",
+          foo: "bar"
+        )
+      ) }
+      it { should have_selector("script", visible: false) }
+      it { should have_content(%(document.getElementById("foo"))) }
+      it { should have_content("new google.visualization.LineChart") }
+      it { should have_content("$.getJSON(\"zomg\"") }
+      it { should have_content("chart.draw(google.visualization.arrayToDataTable(data), #{{foo: "bar"}.to_json});")}
+    end
+  end
 end

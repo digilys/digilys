@@ -53,4 +53,33 @@ module ApplicationHelper
     render partial: "shared/confirm_destroy_form",
       locals: { entity: entity, message: message, cancel_path: cancel_path }
   end
+
+
+  ## Google visualization
+
+  # Initializes Google visualization libraries
+  def gchart_init
+    html =  javascript_include_tag("//google.com/jsapi")
+    html << javascript_tag(%(google.load("visualization", "1.0", {"packages": ["corechart"]});))
+    content_for :page_end, html
+  end
+
+  # Code for generating a Google chart
+  def gchart(options)
+    id   = options.delete(:id)
+    url  = options.delete(:url)
+    type = options.delete(:type)
+
+    html = javascript_tag(%(
+      ;(function(google, $) {
+        google.setOnLoadCallback(function() {
+          var chart = new google.visualization.#{type.to_s.capitalize}Chart(document.getElementById("#{id}"));
+          $.getJSON("#{url}", function(data) {
+            chart.draw(google.visualization.arrayToDataTable(data), #{options.to_json});
+          });
+        });
+      })(google, jQuery);
+    ))
+    content_for :page_end, html
+  end
 end
