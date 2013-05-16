@@ -31,8 +31,8 @@
               %li.stanine= result.try(:stanine) || "-"
 
               -# Add to track variables
-              - values[evaluation.id]   << result.value   if result.value
-              - stanines[evaluation.id] << result.stanine if result.stanine
+              - values[evaluation.id]   << result.value   if result.try(:value)
+              - stanines[evaluation.id] << result.stanine if result.try(:stanine)
 
     %tr.averages
       %th= t(:".averages")
