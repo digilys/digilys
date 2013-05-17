@@ -1,26 +1,24 @@
 class StudentsController < ApplicationController
   layout "admin"
 
+  load_and_authorize_resource
+
   def index
-    @students = Student.order(:name).page(params[:page])
+    @students = @students.order(:name).page(params[:page])
   end
 
   def search
-    @students = Student.page(params[:page]).search(params[:q]).result
+    @students = @students.page(params[:page]).search(params[:q]).result
     render json: @students.collect { |s| { id: s.id, text: s.name } }.to_json
   end
 
   def show
-    @student = Student.find(params[:id])
   end
 
   def new
-    @student = Student.new
   end
 
   def create
-    @student = Student.new(params[:student])
-
     if @student.save
       flash[:success] = t(:"students.create.success")
       redirect_to @student
@@ -30,12 +28,9 @@ class StudentsController < ApplicationController
   end
 
   def edit
-    @student = Student.find(params[:id])
   end
 
   def update
-    @student = Student.find(params[:id])
-
     if @student.update_attributes(params[:student])
       flash[:success] = t(:"students.update.success")
       redirect_to @student
@@ -45,33 +40,28 @@ class StudentsController < ApplicationController
   end
 
   def confirm_destroy
-    @student = Student.find(params[:id])
   end
   def destroy
-    student = Student.find(params[:id])
-    student.destroy
+    @student.destroy
 
     flash[:success] = t(:"students.destroy.success")
     redirect_to students_url()
   end
 
   def select_groups
-    @student = Student.find(params[:id])
   end
 
   def add_groups
-    student = Student.find(params[:id])
-    student.add_to_groups(params[:student][:groups])
+    @student.add_to_groups(params[:student][:groups])
 
     flash[:success] = t(:"students.add_groups.success")
-    redirect_to student
+    redirect_to @student
   end
 
   def remove_groups
-    student = Student.find(params[:id])
-    student.remove_from_groups(params[:group_ids])
+    @student.remove_from_groups(params[:group_ids])
 
     flash[:success] = t(:"students.remove_groups.success")
-    redirect_to student
+    redirect_to @student
   end
 end
