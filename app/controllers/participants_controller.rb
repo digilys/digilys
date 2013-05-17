@@ -1,15 +1,14 @@
 class ParticipantsController < ApplicationController
   layout "admin"
 
-  load_and_authorize_resource except: :create
+  load_and_authorize_resource :suite
+  load_and_authorize_resource :participant, through: :suite, shallow: true, except: :create
+  before_filter :authorize_suite!
 
   def new
-    @suite             = Suite.find(params[:suite_id])
     @participant.suite = @suite
   end
 
-  # A suite id is required, so we load it separately
-  # in order to cause a 404 if it doesn't exist
   def create
     @suite = Suite.find(params[:participant][:suite_id])
 
@@ -38,5 +37,14 @@ class ParticipantsController < ApplicationController
 
     flash[:success] = t(:"participants.destroy.success")
     redirect_to suite
+  end
+
+
+  private
+
+  def authorize_suite!
+    if @participant.try(:suite)
+      authorize! :update, @participant.suite
+    end
   end
 end
