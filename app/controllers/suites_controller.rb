@@ -1,52 +1,37 @@
 class SuitesController < ApplicationController
   layout "admin"
 
+  before_filter :process_incoming_participant_data, only: :create
+  before_filter :load_from_template,                only: :new_from_template
+
+  load_and_authorize_resource
+
   def index
-    @suites = Suite.regular.order(:name).page(params[:page])
+    @suites = @suites.regular.order(:name).page(params[:page])
   end
 
   def template
-    @suites = Suite.template.order(:name).page(params[:page])
+    @suites = @suites.template.order(:name).page(params[:page])
   end
 
   def search
-    @suites = Suite.template.page(params[:page]).search(params[:q]).result
+    @suites = @suites.template.page(params[:page]).search(params[:q]).result
     render json: @suites.collect { |s| { id: s.id, text: s.name } }.to_json
   end
 
   def show
-    @suite = Suite.find(params[:id])
   end
 
   def new
-    @suite = Suite.new
     @suite.participants.build
   end
 
   def new_from_template
-    template = Suite.find(params[:suite][:template_id])
-    params[:suite][:name] = "" # Force a name change
-    @suite   = Suite.new_from_template(template, params[:suite])
     @suite.participants.build
-
     render action: "new"
   end
 
   def create
-    if params[:suite][:is_template].to_i == 1
-      # No participants allowed for templates
-      params[:suite].delete(:participants_attributes)
-    else
-      # Convert comma separated student and group ids to distinct participant data
-      process_participant_autocomplete_params(
-        params[:suite][:participants_attributes].delete("0")
-      ).each_with_index do |participant_data, i|
-        params[:suite][:participants_attributes][i.to_s] = participant_data
-      end
-    end
-
-    @suite = Suite.new(params[:suite])
-
     if @suite.save
       flash[:success] = t(:"suites.create.success")
       redirect_to @suite
@@ -58,12 +43,9 @@ class SuitesController < ApplicationController
   end
 
   def edit
-    @suite = Suite.find(params[:id])
   end
 
   def update
-    @suite = Suite.find(params[:id])
-
     if @suite.update_attributes(params[:suite])
       flash[:success] = t(:"suites.update.success")
       redirect_to @suite
@@ -73,13 +55,39 @@ class SuitesController < ApplicationController
   end
 
   def confirm_destroy
-    @suite = Suite.find(params[:id])
   end
   def destroy
-    suite = Suite.find(params[:id])
-    suite.destroy
-
+    @suite.destroy
     flash[:success] = t(:"suites.destroy.success")
     redirect_to suites_url()
+  end
+
+
+  private
+
+  # Loads an entity from a template id.
+  # Required as a before_filter so it works with cancan's auth
+  def load_from_template
+    params[:suite][:name] = "" # Force a name change
+
+    template = Suite.find(params[:suite][:template_id])
+    @suite   = Suite.new_from_template(template, params[:suite])
+  end
+
+  # Convert incoming participant autocomplete data
+  # to distinct entities that are compatible with rails
+  # accepts_attributes_for
+  def process_incoming_participant_data
+    if params[:suite][:is_template].to_i == 1
+      # No participants allowed for templates
+      params[:suite].delete(:participants_attributes)
+    else
+      # Convert comma separated student and group ids to distinct participant data
+      process_participant_autocomplete_params(
+        params[:suite][:participants_attributes].delete("0")
+      ).each_with_index do |participant_data, i|
+        params[:suite][:participants_attributes][i.to_s] = participant_data
+      end
+    end
   end
 end
