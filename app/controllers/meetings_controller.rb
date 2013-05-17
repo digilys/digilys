@@ -1,21 +1,17 @@
 class MeetingsController < ApplicationController
   layout "admin"
 
-  load_and_authorize_resource
+  load_and_authorize_resource :suite
+  load_and_authorize_resource :meeting, through: :suite, shallow: true
+  before_filter :authorize_suite!
 
   def show
   end
 
   def new
-    @suite         = Suite.find(params[:suite_id])
-    @meeting.suite = @suite
   end
 
-  # A suite id is required, so we load it separately
-  # in order to cause a 404 if it doesn't exist
   def create
-    @suite   = Suite.find(params[:meeting][:suite_id])
-
     if @meeting.save
       flash[:success] = t(:"meetings.create.success")
       redirect_to @meeting
@@ -44,5 +40,14 @@ class MeetingsController < ApplicationController
 
     flash[:success] = t(:"meetings.destroy.success")
     redirect_to suite
+  end
+
+
+  private
+
+  def authorize_suite!
+    if @meeting.try(:suite)
+      authorize! :update, @meeting.suite
+    end
   end
 end
