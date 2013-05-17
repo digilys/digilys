@@ -7,6 +7,10 @@ class SuitesController < ApplicationController
   load_and_authorize_resource
 
   def index
+    if current_user.has_role?(:superuser)
+      @suites = @suites.with_role(:suite_manager, current_user)
+    end
+
     @suites = @suites.regular.order(:name).page(params[:page])
   end
 
@@ -33,6 +37,7 @@ class SuitesController < ApplicationController
 
   def create
     if @suite.save
+      current_user.add_role :suite_manager, @suite
       flash[:success] = t(:"suites.create.success")
       redirect_to @suite
     else

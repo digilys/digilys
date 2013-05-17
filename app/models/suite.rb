@@ -1,4 +1,6 @@
 class Suite < ActiveRecord::Base
+  resourcify
+
   belongs_to :template,  class_name: "Suite"
   has_many   :instances,
     class_name:  "Suite",
@@ -23,6 +25,11 @@ class Suite < ActiveRecord::Base
     :participants_attributes
 
   validates :name, presence: true
+
+
+  def users
+    User.with_role(:suite_manager, self).order("email asc")
+  end
 
 
   def self.template

@@ -89,6 +89,7 @@ sv:
         add: Lägg till test
       meeting:
         add: Lägg till möte
+      connected_users: Deltagare
     new:
       from_template: Använder mallen %{template_name}.
       template_placeholder: Sök och välj en mall

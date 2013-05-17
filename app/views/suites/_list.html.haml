@@ -10,6 +10,9 @@
         %td.name= suite.name
         %td.actions
           .btn-group
-            %a.btn.btn-mini{href: suite_path(suite)}=                            t(:".show_action")
-            %a.btn.btn-mini{href: edit_suite_path(suite)}=                       t(:".edit_action")
-            %a.btn.btn-mini.btn-danger{href: confirm_destroy_suite_path(suite)}= t(:".destroy_action")
+            - if can? :show, suite
+              %a.btn.btn-mini{href: suite_path(suite)}=                            t(:".show_action")
+            - if can? :update, suite
+              %a.btn.btn-mini{href: edit_suite_path(suite)}=                       t(:".edit_action")
+            - if can? :destroy, suite
+              %a.btn.btn-mini.btn-danger{href: confirm_destroy_suite_path(suite)}= t(:".destroy_action")
