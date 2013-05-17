@@ -1,13 +1,13 @@
 class MeetingsController < ApplicationController
   layout "admin"
 
+  load_and_authorize_resource
+
   def show
-    @meeting = Meeting.find(params[:id])
   end
 
   def new
     @suite         = Suite.find(params[:suite_id])
-    @meeting       = Meeting.new
     @meeting.suite = @suite
   end
 
@@ -15,7 +15,6 @@ class MeetingsController < ApplicationController
   # in order to cause a 404 if it doesn't exist
   def create
     @suite   = Suite.find(params[:meeting][:suite_id])
-    @meeting = Meeting.new(params[:meeting])
 
     if @meeting.save
       flash[:success] = t(:"meetings.create.success")
@@ -26,12 +25,9 @@ class MeetingsController < ApplicationController
   end
 
   def edit
-    @meeting = Meeting.find(params[:id])
   end
 
   def update
-    @meeting = Meeting.find(params[:id])
-
     if @meeting.update_attributes(params[:meeting])
       flash[:success] = t(:"meetings.update.success")
       redirect_to @meeting
@@ -41,12 +37,10 @@ class MeetingsController < ApplicationController
   end
 
   def confirm_destroy
-    @meeting = Meeting.find(params[:id])
   end
   def destroy
-    meeting = Meeting.find(params[:id])
-    suite = meeting.suite
-    meeting.destroy
+    suite = @meeting.suite
+    @meeting.destroy
 
     flash[:success] = t(:"meetings.destroy.success")
     redirect_to suite
