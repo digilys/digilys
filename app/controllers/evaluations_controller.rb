@@ -2,7 +2,11 @@ class EvaluationsController < ApplicationController
   layout "admin"
 
   before_filter :load_from_template, only: :new_from_template
-  load_and_authorize_resource
+
+  load_and_authorize_resource :suite
+  load_and_authorize_resource :evaluation, through: :suite, shallow: true
+  before_filter :authorize_suite!
+
 
   def index
     @evaluations = @evaluations.templates.order(:name).page(params[:page])
@@ -17,7 +21,6 @@ class EvaluationsController < ApplicationController
   end
 
   def new
-    @evaluation.suite = Suite.find(params[:suite_id]) if params[:suite_id]
   end
 
   def new_from_template
@@ -25,11 +28,6 @@ class EvaluationsController < ApplicationController
   end
 
   def create
-    unless params[:evaluation][:suite_id].blank?
-      suite             = Suite.find(params[:evaluation].delete(:suite_id))
-      @evaluation.suite = suite
-    end
-
     if @evaluation.save
       flash[:success] = t(:"evaluations.create.success")
       redirect_to @evaluation
@@ -97,5 +95,11 @@ class EvaluationsController < ApplicationController
   def load_from_template
     template    = Evaluation.find(params[:evaluation][:template_id])
     @evaluation = Evaluation.new_from_template(template, params[:evaluation])
+  end
+
+  def authorize_suite!
+    if @evaluation.try(:suite)
+      authorize! :update, @evaluation.suite
+    end
   end
 end
