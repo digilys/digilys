@@ -1,5 +1,6 @@
 class Visualize::SuitesController < ApplicationController
+  load_and_authorize_resource
+
   def show
-    @suite = Suite.find(params[:id])
   end
 end
