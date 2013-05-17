@@ -22,9 +22,10 @@
             %span.icon-bar
           %a.brand{href: root_url()}
             DigiLys
-          %ul.nav
-            %li{class: active_if(is_admin ||= false)}
-              %a{href: index_admin_path()}= t(:".administration")
+          - if can? :admin, :index
+            %ul.nav
+              %li{class: active_if(is_admin ||= false)}
+                %a{href: index_admin_path()}= t(:".administration")
 
           - if Conf.feedback
             %ul.nav.pull-right
