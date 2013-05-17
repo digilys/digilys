@@ -1,9 +1,10 @@
 class ParticipantsController < ApplicationController
   layout "admin"
 
+  load_and_authorize_resource except: :create
+
   def new
     @suite             = Suite.find(params[:suite_id])
-    @participant       = Participant.new
     @participant.suite = @suite
   end
 
@@ -11,6 +12,8 @@ class ParticipantsController < ApplicationController
   # in order to cause a 404 if it doesn't exist
   def create
     @suite = Suite.find(params[:participant][:suite_id])
+
+    authorize! :update, @suite
 
     participant_data = process_participant_autocomplete_params(params[:participant])
 
@@ -27,13 +30,11 @@ class ParticipantsController < ApplicationController
   end
 
   def confirm_destroy
-    @participant = Participant.find(params[:id])
   end
 
   def destroy
-    participant = Participant.find(params[:id])
-    suite = participant.suite
-    participant.destroy
+    suite = @participant.suite
+    @participant.destroy
 
     flash[:success] = t(:"participants.destroy.success")
     redirect_to suite
