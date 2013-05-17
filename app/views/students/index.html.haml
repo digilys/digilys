@@ -11,14 +11,13 @@
 
     - @students.each do |student|
       %tr
-        %td.name= student.name
+        %td.name= link_to(student.name, student)
         %td.groups
           %small= student.groups.collect(&:name).join(", ")
         %td.actions
           .btn-group
             %a.btn.btn-mini{href: student_path(student)}=                            t(:".show_action")
             %a.btn.btn-mini{href: edit_student_path(student)}=                       t(:".edit_action")
-            %a.btn.btn-mini.btn-danger{href: confirm_destroy_student_path(student)}= t(:".destroy_action")
   %tbody
 
 = paginate(@students)

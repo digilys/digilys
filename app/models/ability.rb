@@ -22,6 +22,9 @@ class Ability
       can :destroy, Suite do |suite|
         !suite.is_template && user.has_role?(:suite_manager, suite)
       end
+
+      # Students
+      cannot :destroy, Student
     end
   end
 end
