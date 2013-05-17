@@ -1,35 +1,34 @@
 class EvaluationsController < ApplicationController
   layout "admin"
 
+  before_filter :load_from_template, only: :new_from_template
+  load_and_authorize_resource
+
   def index
-    @evaluations = Evaluation.templates.order(:name).page(params[:page])
+    @evaluations = @evaluations.templates.order(:name).page(params[:page])
   end
 
   def search
-    @evaluations = Evaluation.templates.page(params[:page]).search(params[:q]).result
+    @evaluations = @evaluations.templates.page(params[:page]).search(params[:q]).result
     render json: @evaluations.collect { |e| { id: e.id, text: e.name } }.to_json
   end
 
   def show
-    @evaluation = Evaluation.find(params[:id])
   end
 
   def new
-    @evaluation       = Evaluation.new
     @evaluation.suite = Suite.find(params[:suite_id]) if params[:suite_id]
   end
 
   def new_from_template
-    template    = Evaluation.find(params[:evaluation][:template_id])
-    @evaluation = Evaluation.new_from_template(template, params[:evaluation])
-
     render action: "new"
   end
 
   def create
-    suite             = Suite.find(params[:evaluation].delete(:suite_id)) unless params[:evaluation][:suite_id].blank?
-    @evaluation       = Evaluation.new(params[:evaluation])
-    @evaluation.suite = suite
+    unless params[:evaluation][:suite_id].blank?
+      suite             = Suite.find(params[:evaluation].delete(:suite_id))
+      @evaluation.suite = suite
+    end
 
     if @evaluation.save
       flash[:success] = t(:"evaluations.create.success")
@@ -40,12 +39,9 @@ class EvaluationsController < ApplicationController
   end
 
   def edit
-    @evaluation = Evaluation.find(params[:id])
   end
 
   def update
-    @evaluation = Evaluation.find(params[:id])
-
     if @evaluation.update_attributes(params[:evaluation])
       flash[:success] = t(:"evaluations.update.success")
       redirect_to @evaluation
@@ -55,12 +51,10 @@ class EvaluationsController < ApplicationController
   end
 
   def confirm_destroy
-    @evaluation = Evaluation.find(params[:id])
   end
   def destroy
-    evaluation = Evaluation.find(params[:id])
-    suite = evaluation.suite
-    evaluation.destroy
+    suite = @evaluation.suite
+    @evaluation.destroy
 
     flash[:success] = t(:"evaluations.destroy.success")
     if suite
@@ -71,7 +65,6 @@ class EvaluationsController < ApplicationController
   end
 
   def report
-    @evaluation   = Evaluation.find(params[:id])
     @suite        = @evaluation.suite
     @participants = @suite.participants
 
@@ -85,7 +78,6 @@ class EvaluationsController < ApplicationController
   end
 
   def submit_report
-    @evaluation   = Evaluation.find(params[:id])
     @suite        = @evaluation.suite
     @participants = @suite.participants
 
@@ -95,5 +87,15 @@ class EvaluationsController < ApplicationController
     else
       render action: "report"
     end
+  end
+
+
+  private
+
+  # Loads an entity from a template id.
+  # Required as a before_filter so it works with cancan's auth
+  def load_from_template
+    template    = Evaluation.find(params[:evaluation][:template_id])
+    @evaluation = Evaluation.new_from_template(template, params[:evaluation])
   end
 end
