@@ -91,3 +91,4 @@ sv:
         last_sign_in_at: Senaste inloggningen
         current_sign_in_ip: Nuvarande IP-adress
         last_sign_in_ip: Senaste IP-adress
+        name: Namn

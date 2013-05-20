@@ -16,10 +16,6 @@
     .navbar.navbar-fluid-top
       .navbar-inner
         .container-fluid
-          %a.btn.btn-navbar(data-target=".nav-collapse" data-toggle="collapse")
-            %span.icon-bar
-            %span.icon-bar
-            %span.icon-bar
           %a.brand{href: root_url()}
             DigiLys
           - if can? :admin, :index
@@ -27,8 +23,17 @@
               %li{class: active_if(is_admin ||= false)}
                 %a{href: index_admin_path()}= t(:".administration")
 
-          - if Conf.feedback
-            %ul.nav.pull-right
+          %ul.nav.pull-right
+            - if user_signed_in?
+              %li
+                %small.navbar-text
+                  = t(:".logged_in_as", name: current_user.name)
+              %li
+                = link_to t(:".logout_action"), destroy_user_session_path(), method: :delete
+            - else
+              %li
+                = link_to t(:".login_action"), new_user_session_path()
+            - if Conf.feedback
               %li
                 %a(href="#feedback-modal" role="button" data-toggle="modal")= t(:".feedback")
                 #feedback-modal.modal.hide.fade(role="dialog" aria-hidden="true" aria-labelledby="feedback-modal-header")

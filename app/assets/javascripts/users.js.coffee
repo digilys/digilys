@@ -11,5 +11,5 @@ $ ->
                 results: (data, page) ->
                     { results: data }
                 data: (term, page) ->
-                    { q: { email_cont: term }, page: page }
+                    { q: { name_or_email_cont: term }, page: page }
         )

@@ -2,6 +2,7 @@ sv:
   layouts:
     application:
       feedback: Feedback
+      logged_in_as: Inloggad som %{name}
     admin:
       administration: Administrera
       templates: Mallar

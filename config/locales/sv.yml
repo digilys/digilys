@@ -221,3 +221,5 @@ sv:
   destroy_action: "Radera"
   save_action:    "Spara"
   cancel_action:  "Avbryt"
+  login_action:   Logga in
+  logout_action:  Logga ut

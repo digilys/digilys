@@ -1,12 +1,12 @@
 %table.table.table-striped.users-table
   %thead
     %tr
-      %th.name=   User.human_attribute_name(:email)
+      %th.name=   User.human_attribute_name(:name)
       %th.actions &nbsp;
   %tbody
     - suite.users.each do |user|
       %tr
-        %td.email= user.email
+        %td.email= user.name
 
         %td.actions
           = form_for :suite,
