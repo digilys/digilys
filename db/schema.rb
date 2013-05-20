@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130523115944) do
+ActiveRecord::Schema.define(:version => 20130524144132) do
 
   create_table "evaluations", :force => true do |t|
     t.integer  "suite_id"
@@ -102,9 +102,13 @@ ActiveRecord::Schema.define(:version => 20130523115944) do
   add_index "roles", ["name"], :name => "index_roles_on_name"
 
   create_table "students", :force => true do |t|
-    t.string   "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+    t.string   "personal_id"
+    t.string   "first_name"
+    t.string   "last_name"
+    t.string   "gender"
+    t.text     "data"
   end
 
   create_table "suites", :force => true do |t|

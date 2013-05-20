@@ -55,6 +55,10 @@ sv:
         value: Resultat
       student:
         name: Namn
+        first_name: Förnamn
+        last_name: Efternamn
+        personal_id: Personnummer
+        gender: Kön
         groups: Grupper
       group:
         name: Namn

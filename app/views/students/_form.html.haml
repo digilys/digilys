@@ -2,7 +2,11 @@
 
   = f.inputs do
 
-    = f.input :name, required: true, input_html: { required: true, autofocus: true }
+    = f.input :first_name,  required: true, input_html: { required: true }
+    = f.input :last_name,   required: true, input_html: { required: true }
+    = f.input :personal_id, required: true, input_html: { required: true }
+
+    = f.input :gender, required: true, as: :radio
 
   = f.actions do
     = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}

@@ -11,7 +11,11 @@ FactoryGirl.define do
   end
 
   factory :student do
-    sequence(:name) { |i| "Student %09d" % i }
+    sequence(:personal_id) { |i| "%06d" % i }
+    first_name             "Student"
+    sequence(:last_name)   { |i| "%09d" % i }
+    gender                 :male
+    data                   nil
   end
 
   factory :group do

@@ -208,6 +208,11 @@ sv:
     :reset:    Nollställ %{model}
     :required: obligatorisk
 
+  enumerize:
+    gender:
+      male: Pojke
+      female: Flicka
+
   wait: Var god vänta...
   "yes":  Ja
   "no":   Nej
@@ -227,3 +232,4 @@ sv:
   roles:
     admin: Administratör
     superuser: Planerare
+

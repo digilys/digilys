@@ -1,4 +1,6 @@
 class Student < ActiveRecord::Base
+  extend Enumerize
+
   has_many :participants, dependent: :destroy
   has_many :suites,       through: :participants
   has_many :results,      dependent: :destroy
@@ -6,8 +8,24 @@ class Student < ActiveRecord::Base
 
   has_and_belongs_to_many :groups
 
-  attr_accessible :name
-  validates :name, presence: true
+  attr_accessible :personal_id,
+    :first_name,
+    :last_name,
+    :gender,
+    :data
+
+  validates :personal_id, presence: true, uniqueness: true
+  validates :first_name,  presence: true
+  validates :last_name,   presence: true
+
+  enumerize :gender, in: [ :male, :female ]
+
+  def name
+    "#{self.first_name} #{self.last_name}"
+  end
+  def name_was
+    "#{self.first_name_was} #{self.last_name_was}"
+  end
 
   # Add this user to all of the groups, and all of the group's parents
   def add_to_groups(groups)

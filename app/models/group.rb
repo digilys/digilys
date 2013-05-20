@@ -6,7 +6,7 @@ class Group < ActiveRecord::Base
     order:       "name asc",
     dependent:   :nullify
 
-  has_and_belongs_to_many :students, order: "students.name asc"
+  has_and_belongs_to_many :students, order: "students.first_name asc, students.last_name asc"
 
   has_many :participants, dependent: :nullify
 

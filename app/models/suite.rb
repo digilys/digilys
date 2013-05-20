@@ -8,7 +8,7 @@ class Suite < ActiveRecord::Base
     dependent:   :nullify
 
   has_many :participants, inverse_of: :suite,     include: :student,   dependent: :destroy
-  has_many :students,     through: :participants, order: "name asc"
+  has_many :students,     through: :participants, order: "first_name asc, last_name asc"
   has_many :evaluations,  inverse_of: :suite,     dependent: :destroy
   has_many :results,      through: :evaluations
   has_many :meetings,     inverse_of: :suite,     dependent: :destroy

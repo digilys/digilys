@@ -11,5 +11,5 @@ $ ->
                 results: (data, page) ->
                     { results: data }
                 data: (term, page) ->
-                    { q: { name_cont: term }, page: page }
+                    { q: { first_name_or_last_name_cont: term }, page: page }
         )

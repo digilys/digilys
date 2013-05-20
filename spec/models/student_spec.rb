@@ -6,10 +6,23 @@ describe Student do
     it { should be_valid }
   end
   context "accessible attributes" do
-    it { should allow_mass_assignment_of(:name) }
+    it { should allow_mass_assignment_of(:personal_id) }
+    it { should allow_mass_assignment_of(:first_name) }
+    it { should allow_mass_assignment_of(:last_name) }
+    it { should allow_mass_assignment_of(:gender) }
+    it { should allow_mass_assignment_of(:data) }
   end
   context "validation" do
-    it { should validate_presence_of(:name) }
+    it { should validate_presence_of(:personal_id) }
+    it { should validate_uniqueness_of(:personal_id) }
+    it { should validate_presence_of(:first_name) }
+    it { should validate_presence_of(:last_name) }
+    it { should ensure_inclusion_of(:gender).in_array(%w(male female)) }
+  end
+
+  context ".name" do
+    subject { create(:student, first_name: "Foo", last_name: "Bar") }
+    its(:name) { should == "Foo Bar" }
   end
 
   context ".add_to_groups" do

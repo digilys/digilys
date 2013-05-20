@@ -4,7 +4,7 @@ class StudentsController < ApplicationController
   load_and_authorize_resource
 
   def index
-    @students = @students.order(:name).page(params[:page])
+    @students = @students.order(:first_name, :last_name).page(params[:page])
   end
 
   def search

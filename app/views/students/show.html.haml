@@ -6,9 +6,18 @@
 
 %table.table.table-bordered.details-table.student-details-table
   %tbody
-    %tr.name
-      %th= Student.human_attribute_name(:name)
-      %td= @student.name
+    %tr.first_name
+      %th= Student.human_attribute_name(:first_name)
+      %td= @student.first_name
+    %tr.last_name
+      %th= Student.human_attribute_name(:last_name)
+      %td= @student.last_name
+    %tr.personal_id
+      %th= Student.human_attribute_name(:personal_id)
+      %td= @student.personal_id
+    %tr.gender
+      %th= Student.human_attribute_name(:gender)
+      %td= @student.gender_text
 
 %h3= Group.model_name.human(count: 2)
 
