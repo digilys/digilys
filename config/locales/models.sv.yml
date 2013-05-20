@@ -82,6 +82,7 @@ sv:
         email: E-postadress
         password: Lösenord
         roles: Roller
+        current_password: Nuvarande lösenord
         password_confirmation: Bekräfta lösenord
         remember_me: Kom ihåg mig
         reset_password_sent_at: Återställ lösenord skickades

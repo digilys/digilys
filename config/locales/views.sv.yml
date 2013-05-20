@@ -173,6 +173,18 @@ sv:
     destroy:
       success: Mötet togs bort från planeringen
 
+  users:
+    edit:
+      edit_self_title: Ändra användaruppgifter
+      details_title: Användaruppgifter
+      password_title: Lösenord
+      current_password_hint: Ange ditt nuvarande lösenord för att ändra lösenordet.
+      password_hint: Lämna lösenordet tomt om du inte vill byta ditt nuvarande lösenord.
+      password_for_other_hint: Lämna lösenordet tomt om du inte vill ändra användarens nuvarande lösenord.
+      roles_title: Rättigheter
+    update:
+      success: Användardetaljerna uppdaterades
+
 
   visualize:
     suites:

@@ -1,0 +1,17 @@
+%h1= User.model_name.human
+
+%table.table.table-striped.users-table
+  %thead
+    %tr
+      %th.name=   Suite.human_attribute_name(:name)
+      %th.email=  Suite.human_attribute_name(:email)
+      %th.actions &nbsp;
+  %tbody
+    - @users.each do |user|
+      %tr
+        %td.name=  user.name
+        %td.email= user.email
+        %td.actions
+          .btn-group
+            %a.btn.btn-mini{href: edit_user_path(user)}= t(:".edit_action")
+

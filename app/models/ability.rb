@@ -14,6 +14,9 @@ class Ability
     elsif user.has_role?(:superuser)
       can :manage, :all
 
+      # Users
+      cannot :manage, User
+
       # Suites
       cannot :manage, Suite
       can [ :list, :create ], Suite
@@ -27,5 +30,8 @@ class Ability
       # Students
       cannot :destroy, Student
     end
+
+    # Generic user functionality
+    can :update, User, id: user.id
   end
 end

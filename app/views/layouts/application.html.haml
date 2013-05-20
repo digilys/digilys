@@ -26,8 +26,8 @@
           %ul.nav.pull-right
             - if user_signed_in?
               %li
-                %small.navbar-text
-                  = t(:".logged_in_as", name: current_user.name)
+                = link_to edit_user_path(current_user) do
+                  %small= t(:".logged_in_as", name: current_user.name)
               %li
                 = link_to t(:".logout_action"), destroy_user_session_path(), method: :delete
             - else
