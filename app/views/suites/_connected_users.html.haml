@@ -1,3 +1,20 @@
-%ul.user-list
-  - suite.users.each do |user|
-    %li= user.email
+%table.table.table-striped.users-table
+  %thead
+    %tr
+      %th.name=   User.human_attribute_name(:email)
+      %th.actions &nbsp;
+  %tbody
+    - suite.users.each do |user|
+      %tr
+        %td.email= user.email
+
+        %td.actions
+          = form_for :suite,
+            url: remove_users_suite_path(suite),
+            method: :delete,
+            html: { id: "remove-user-#{user.id}-form" } do |f|
+
+            = f.hidden_field :user_id, value: user.id
+
+            .btn-group
+              = f.submit t(:".remove_user_action"), class: "btn btn-mini btn-danger"

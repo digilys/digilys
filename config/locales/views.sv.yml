@@ -89,7 +89,11 @@ sv:
         add: Lägg till test
       meeting:
         add: Lägg till möte
-      connected_users: Deltagare
+      users:
+        title: Deltagare
+        add: Lägg till deltagare
+    connected_users:
+      remove_user_action: Ta bort från planeringen
     new:
       from_template: Använder mallen %{template_name}.
       template_placeholder: Sök och välj en mall
@@ -102,6 +106,13 @@ sv:
       confirmation: Om du raderar planeringen raderas även alla tillhörande tester och testresultat.
     destroy:
       success: Planeringen och tillhörande information raderades
+    select_users:
+      title: Lägg till deltagare
+      users_placeholder: Sök och välj användare
+    add_users:
+      success: Deltagarna lades till i planeringen.
+    remove_users:
+      success: Deltagaren togs bort från planeringen.
 
   participants:
     new_action: Lägg till i planeringen

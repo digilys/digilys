@@ -33,5 +33,7 @@
         %a.btn.btn-small{href: new_suite_participant_path(@suite)}= t(:".participant.add")
       = render partial: "participants/list", object: @suite.participants, as: :participants
     .span6
-      %h3= t(:".connected_users")
+      %h3= t(:".users.title")
+      .btn-group
+        %a.btn.btn-small{href: select_users_suite_path(@suite)}= t(:".users.add")
       = render partial: "connected_users", object: @suite, as: :suite

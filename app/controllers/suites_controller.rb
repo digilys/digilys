@@ -68,6 +68,31 @@ class SuitesController < ApplicationController
   end
 
 
+  def select_users
+  end
+
+  def add_users
+    users = User.where(id: params[:suite][:user_id].split(",")).all
+
+    users.each do |user|
+      user.add_role :suite_manager, @suite
+    end
+
+    flash[:success] = t(:"suites.add_users.success")
+    redirect_to @suite
+  end
+
+  def remove_users
+    users = User.where(id: params[:suite][:user_id].split(",")).all
+
+    users.each do |user|
+      user.remove_role :suite_manager, @suite
+    end
+
+    flash[:success] = t(:"suites.remove_users.success")
+    redirect_to @suite
+  end
+
   private
 
   # Loads an entity from a template id.

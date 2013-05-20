@@ -3,6 +3,12 @@ Digilys::Application.routes.draw do
   get "index/index"
   get "index/admin"
 
+  resources :users, only: [] do
+    collection do
+      get :search
+    end
+  end
+
   resources :groups do
     collection do
       get :search
@@ -34,7 +40,10 @@ Digilys::Application.routes.draw do
       post :new_from_template
     end
     member do
-      get :confirm_destroy
+      get    :confirm_destroy
+      get    :select_users
+      put    :add_users
+      delete :remove_users
     end
 
     resources :evaluations,  only: :new
@@ -70,7 +79,7 @@ Digilys::Application.routes.draw do
     resources :suites, only: :show
   end
 
-  devise_for :users
+  devise_for :users, path: "authenticate"
 
   mount RailsAdmin::Engine => "/radmin", as: "rails_admin"
 

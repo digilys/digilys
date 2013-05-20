@@ -44,6 +44,10 @@
 .table {
     td.actions {
         text-align: right;
+
+        form {
+            margin: 0;
+        }
     }
     .actions {
         width: 1%;

@@ -5,6 +5,7 @@ class Ability
     return unless user
 
     alias_action [ :index, :search, :template ], to: :list
+    alias_action [ :select_users, :add_user ],   to: :update
     alias_action :new_from_template,             to: :create
     alias_action :confirm_destroy,               to: :destroy
 

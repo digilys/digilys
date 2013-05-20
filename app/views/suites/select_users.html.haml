@@ -1,0 +1,20 @@
+%h1
+  = t(".title")
+  %small= @suite.name
+
+= semantic_form_for :suite,
+  url: add_users_suite_path(@suite),
+  method: :put,
+  html: { id: "select-users-form" } do |f|
+
+  = f.inputs do
+    = f.input :user_id,
+      value: nil,
+      as: :hidden,
+      input_html: { class: "user-autocomplete-field",
+        data: { url: search_users_path(format: :json),
+          placeholder: t(:".users_placeholder") } }
+
+  = f.actions do
+    = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
+    %a.btn{href:url_for(@suite)}= t(:".cancel_action")
