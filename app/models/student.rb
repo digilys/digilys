@@ -33,6 +33,10 @@ class Student < ActiveRecord::Base
     "#{self.first_name_was} #{self.last_name_was}"
   end
 
+  def data_humanized
+    return {} if self.data.blank?
+    @data_humanized ||= Hash[self.data.collect { |key, value| [key, json_value_to_text_value(value)] }]
+  end
   def data_text
     if !@data_text && !self.data.blank?
       @data_text = self.data.collect { |key, value| "#{key}: #{json_value_to_text_value(value)}" }.join("\n")

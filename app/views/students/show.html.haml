@@ -18,6 +18,10 @@
     %tr.gender
       %th= Student.human_attribute_name(:gender)
       %td= @student.gender_text
+    - @student.data_humanized.each_pair do |key, value|
+      %tr.data
+        %th= key
+        %td= value
 
 %h3= Group.model_name.human(count: 2)
 
