@@ -16,13 +16,15 @@ class UsersController < ApplicationController
   end
 
   def update
+    is_self_update = current_user == @user
+
     if params[:user][:password].blank?
       params[:user].delete(:current_password)
       params[:user].delete(:password)
       params[:user].delete(:password_confirmation)
       update_method = :update_attributes
     else
-      update_method = current_user == @user ? :update_with_password : :update_with_password
+      update_method = is_self_update ? :update_with_password : :update_with_attributes
     end
 
     role_ids = params[:user].delete(:role_ids)
@@ -38,7 +40,7 @@ class UsersController < ApplicationController
         end
       end
 
-      sign_in @user, bypass: true
+      sign_in @user, bypass: true if is_self_update
 
       flash[:success] = t(:"users.update.success")
       redirect_to edit_user_url(@user)
