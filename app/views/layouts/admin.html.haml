@@ -9,8 +9,9 @@
           %a{href: students_path()}= Student.model_name.human(count: 2)
         %li{class: active_if(params?(controller: "groups"))}
           %a{href: groups_path()}= Group.model_name.human(count: 2)
-        %li{class: active_if(params?(controller: "users"))}
-          %a{href: users_path()}= User.model_name.human(count: 2)
+        - if can? :manage, User
+          %li{class: active_if(params?(controller: "users"))}
+            %a{href: users_path()}= User.model_name.human(count: 2)
 
         %li.nav-header= t(:".templates")
         %li{class: active_if(params?(controller: "evaluations") && !working_with_suite?(@suite, @evaluation))}
