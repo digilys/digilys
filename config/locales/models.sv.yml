@@ -60,6 +60,8 @@ sv:
         personal_id: Personnummer
         gender: Kön
         groups: Grupper
+        data: Elevinformation
+        data_text: Elevinformation
       group:
         name: Namn
         parent: Tillhör
@@ -100,3 +102,9 @@ sv:
         current_sign_in_ip: Nuvarande IP-adress
         last_sign_in_ip: Senaste IP-adress
         name: Namn
+    errors:
+      models:
+        student:
+          attributes:
+            data_text:
+              faulty_lines: Texten innehåller fel på rad %{lines}

@@ -39,6 +39,9 @@ sv:
     select_groups_action: Lägg till i grupper
     show:
       remove_groups_action: Ta bort eleven från de markerade grupperna
+    form:
+      basic_fields_title: Basinformation
+      data_fields_title: Övrig information
     create:
       success: Eleven skapades
     update:
