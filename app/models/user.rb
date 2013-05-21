@@ -14,4 +14,6 @@ class User < ActiveRecord::Base
     :remember_me,
     :role_ids,
     :name
+
+  validates :name, presence: true
 end
