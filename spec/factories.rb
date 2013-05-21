@@ -34,6 +34,7 @@ FactoryGirl.define do
     template        nil
     suite           nil
     sequence(:name) { |i| "Evaluation %09d" % i }
+    description     "Description"
     date            Date.today
     max_result      50
     red_below       15

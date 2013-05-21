@@ -28,6 +28,7 @@
     = f.hidden_field :suite_id
 
     = f.input :name, required: true, input_html: { required: true, autofocus: true }
+    = f.input :description, as: :text, input_html: { class: "input-xlarge", rows: 3 }
 
     - if evaluation.has_regular_suite?
       = f.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }

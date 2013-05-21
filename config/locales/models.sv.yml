@@ -34,6 +34,7 @@ sv:
         template_id: Mall
         suite: Planering
         name: Namn
+        description: Beskrivning
         date: Datum
         max_result: Maxresultat
         red_below: Rött under

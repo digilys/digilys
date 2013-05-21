@@ -8,6 +8,7 @@ describe Evaluation do
   context "accessible attributes" do
     it { should allow_mass_assignment_of(:suite_id) }
     it { should allow_mass_assignment_of(:name) }
+    it { should allow_mass_assignment_of(:description) }
     it { should allow_mass_assignment_of(:date) }
     it { should allow_mass_assignment_of(:max_result) }
     it { should allow_mass_assignment_of(:red_below) }
@@ -331,6 +332,7 @@ describe Evaluation do
 
     its(:template_id) { should == template.id }
     its(:name)        { should == template.name }
+    its(:description) { should == template.description }
     its(:max_result)  { should == template.max_result }
     its(:red_below)   { should == template.red_below }
     its(:green_above) { should == template.green_above }

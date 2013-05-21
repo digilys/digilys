@@ -17,6 +17,7 @@ class Evaluation < ActiveRecord::Base
     :suite_id,
     :max_result,
     :name,
+    :description,
     :date,
     :red_below,
     :green_above,
@@ -268,6 +269,7 @@ class Evaluation < ActiveRecord::Base
     new do |e|
       e.template    = template
       e.name        = template.name
+      e.description = template.description
       e.max_result  = template.max_result
       e.red_below   = template.red_below
       e.green_above = template.green_above
