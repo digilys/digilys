@@ -9,6 +9,7 @@ describe Meeting do
     it { should allow_mass_assignment_of(:suite_id) }
     it { should allow_mass_assignment_of(:name) }
     it { should allow_mass_assignment_of(:date) }
+    it { should allow_mass_assignment_of(:agenda) }
     it { should allow_mass_assignment_of(:completed) }
     it { should allow_mass_assignment_of(:notes) }
   end

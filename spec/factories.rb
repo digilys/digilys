@@ -70,6 +70,7 @@ FactoryGirl.define do
     suite
     sequence(:name) { |i| "Meeting %09d" % i }
     date            Date.today
+    agenda          nil
     completed       false
     notes           nil
   end

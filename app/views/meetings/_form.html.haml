@@ -1,7 +1,6 @@
-- unless meeting.new_record?
-  - content_for :page_end do
-    = tinymce_assets
-    = tinymce
+- content_for :page_end do
+  = tinymce_assets
+  = tinymce
 
 = semantic_form_for meeting, html: { class: "form-horizontal" } do |f|
 
@@ -14,6 +13,8 @@
 
     - if meeting.has_regular_suite?
       = f.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }
+
+    = f.input :agenda, input_html: { class: "input-xxlarge tinymce" }
 
     - unless f.object.new_record?
       = f.input :completed

@@ -16,6 +16,10 @@
       %tr.date
         %th= Meeting.human_attribute_name(:date)
         %td= @meeting.date
+    %tr.agenda
+      %th= Meeting.human_attribute_name(:agenda)
+      %td= @meeting.agenda.try(:html_safe)
+    - if @meeting.has_regular_suite?
       %tr.completed
         %th= Meeting.human_attribute_name(:completed)
         %td= @meeting.completed ? t(:yes) : t(:no)
