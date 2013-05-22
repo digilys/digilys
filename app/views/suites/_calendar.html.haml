@@ -7,7 +7,9 @@
         %td.actions
           - case entity
           - when Evaluation
-            .btn-group
-              %a.btn.btn-mini.btn-primary{href: report_evaluation_path(entity)}= t(:".report_action")
+            %a.btn.btn-mini.btn-primary{href: report_evaluation_path(entity)}= t(:".evaluation_report_action")
             = evaluation_progress_bar(entity)
           - when Meeting
+            - if entity.completed?
+              %i.icon-ok{title: t(:".meeting_completed")}
+            %a.btn.btn-mini{href: report_meeting_path(entity)}= t(:".meeting_report_action")

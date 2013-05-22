@@ -1,20 +1,21 @@
+%h1
+  = @meeting.name
+  %small= @meeting.suite.name
+
+= render partial: "navigation", locals: { meeting: @meeting, active: :report }
+
 - content_for :page_end do
   = tinymce_assets
   = tinymce
 
-= semantic_form_for meeting, html: { class: "form-horizontal" } do |f|
+= semantic_form_for @meeting, url: submit_report_meeting_path(@meeting) do |f|
 
   = f.inputs do
     .alert.alert-info= t(:".#{f.object.new_record? ? "new" : "edit"}_for_suite", suite_name: f.object.suite.name)
 
-    = f.hidden_field :suite_id
+    = f.input :completed, as: :hidden
 
-    = f.input :name, required: true, input_html: { required: true, autofocus: true }
-
-    - if meeting.has_regular_suite?
-      = f.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }
-
-    = f.input :agenda, input_html: { class: "input-xxlarge tinymce" }
+    = f.input :notes, input_html: { class: "input-block-level tinymce" }
 
   = f.actions do
     = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}

@@ -32,6 +32,19 @@ class MeetingsController < ApplicationController
     end
   end
 
+  def report
+    @meeting.completed = true
+  end
+
+  def submit_report
+    if @meeting.update_attributes(params[:meeting])
+      flash[:success] = t(:"meetings.submit_report.success")
+      redirect_to @meeting
+    else
+      render action: "report"
+    end
+  end
+
   def confirm_destroy
   end
   def destroy

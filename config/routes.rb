@@ -72,6 +72,8 @@ Digilys::Application.routes.draw do
   resources :meetings, except: [ :index, :new ] do
     member do
       get :confirm_destroy
+      get :report
+      put :submit_report
     end
   end
 
