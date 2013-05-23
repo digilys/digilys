@@ -48,6 +48,7 @@ sv:
         stanine7: Stanine 7
         stanine8: Stanine 8
         stanine9: Stanine 9
+        category_list: Kategorier
       result:
         evaluation: Test
         student: Elev

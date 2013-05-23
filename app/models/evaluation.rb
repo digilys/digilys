@@ -11,6 +11,8 @@ class Evaluation < ActiveRecord::Base
   has_many   :results,      dependent:  :destroy
   has_many   :students,     through:    :results
 
+  acts_as_taggable_on :categories
+
   accepts_nested_attributes_for :results
 
   attr_accessible :template_id,
@@ -29,7 +31,8 @@ class Evaluation < ActiveRecord::Base
     :stanine6,
     :stanine7,
     :stanine8,
-    :results_attributes
+    :results_attributes,
+    :category_list
 
   validates :name,  presence: true
   validates :date,  presence: true, if: :has_regular_suite?, format: { with: /^\d{4}-\d{2}-\d{2}$/ }
@@ -267,20 +270,21 @@ class Evaluation < ActiveRecord::Base
   # Initializes a new evaluation from a template
   def self.new_from_template(template, attrs = {})
     new do |e|
-      e.template    = template
-      e.name        = template.name
-      e.description = template.description
-      e.max_result  = template.max_result
-      e.red_below   = template.red_below
-      e.green_above = template.green_above
-      e.stanine1    = template.stanine1
-      e.stanine2    = template.stanine2
-      e.stanine3    = template.stanine3
-      e.stanine4    = template.stanine4
-      e.stanine5    = template.stanine5
-      e.stanine6    = template.stanine6
-      e.stanine7    = template.stanine7
-      e.stanine8    = template.stanine8
+      e.template      = template
+      e.name          = template.name
+      e.description   = template.description
+      e.max_result    = template.max_result
+      e.red_below     = template.red_below
+      e.green_above   = template.green_above
+      e.stanine1      = template.stanine1
+      e.stanine2      = template.stanine2
+      e.stanine3      = template.stanine3
+      e.stanine4      = template.stanine4
+      e.stanine5      = template.stanine5
+      e.stanine6      = template.stanine6
+      e.stanine7      = template.stanine7
+      e.stanine8      = template.stanine8
+      e.category_list = template.category_list
 
       e.assign_attributes(attrs)
     end

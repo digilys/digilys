@@ -13,6 +13,11 @@
     %tr.description
       %th= Evaluation.human_attribute_name(:description)
       %td= @evaluation.description
+    %tr.categories
+      %th= Evaluation.human_attribute_name(:category_list)
+      %td
+        - @evaluation.category_list.each do |category|
+          %span.label.label-info= category
     - if @evaluation.has_regular_suite?
       %tr.date
         %th= Evaluation.human_attribute_name(:date)

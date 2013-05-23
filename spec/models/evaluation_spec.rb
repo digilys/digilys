@@ -327,15 +327,16 @@ describe Evaluation do
   end
 
   context "#new_from_template" do
-    let(:template) { create(:evaluation) }
+    let(:template) { create(:evaluation, category_list: "foo, bar, baz") }
     subject        { Evaluation.new_from_template(template) }
 
-    its(:template_id) { should == template.id }
-    its(:name)        { should == template.name }
-    its(:description) { should == template.description }
-    its(:max_result)  { should == template.max_result }
-    its(:red_below)   { should == template.red_below }
-    its(:green_above) { should == template.green_above }
+    its(:template_id)   { should == template.id }
+    its(:name)          { should == template.name }
+    its(:description)   { should == template.description }
+    its(:max_result)    { should == template.max_result }
+    its(:red_below)     { should == template.red_below }
+    its(:green_above)   { should == template.green_above }
+    its(:category_list) { should == template.category_list }
 
     1.upto(8).each do |i|
       its(:"stanine#{i}") { should == template.send(:"stanine#{i}") }
