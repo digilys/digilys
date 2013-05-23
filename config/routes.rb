@@ -64,9 +64,10 @@ Digilys::Application.routes.draw do
       post :new_from_template
     end
     member do
-      get :confirm_destroy
-      get :report
-      put :submit_report
+      get    :confirm_destroy
+      get    :report
+      put    :submit_report
+      delete :destroy_report
     end
   end
 

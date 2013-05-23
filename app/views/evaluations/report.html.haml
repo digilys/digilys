@@ -14,5 +14,6 @@
 
   = f.actions do
     = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary" }
-    %a.btn{href:suites_path(@suite)}= t(:".cancel_action")
+    %a.btn{href:url_for(@suite)}= t(:".cancel_action")
+    = link_to t(:".destroy_action"), destroy_report_evaluation_path(@evaluation), method: :delete, class: "btn btn-danger"
 

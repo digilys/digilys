@@ -160,6 +160,8 @@ sv:
       success: Testet och tillhörande information raderades
     submit_report:
       success: Resultatet uppdaterades
+    destroy_report:
+      success: Resultatet togs bort
 
   meetings:
     new_action: Lägg till i planeringen
