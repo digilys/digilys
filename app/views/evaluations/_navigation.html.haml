@@ -16,10 +16,10 @@
   - if evaluation
     %li{class: active_if(active == :show)}
       %a{href:evaluation_path(evaluation)}= t(:".show_action")
-    %li{class: active_if(active == :edit)}
-      %a{href:edit_evaluation_path(evaluation)}= t(:".edit_action")
-    %li{class: active_if(active == :destroy)}
+    %li.secondary-tab{class: active_if(active == :destroy)}
       %a{href:confirm_destroy_evaluation_path(evaluation)}= t(:".destroy_action")
+    %li.secondary-tab{class: active_if(active == :edit)}
+      %a{href:edit_evaluation_path(evaluation)}= t(:".edit_action")
 
   - elsif !only_return && suite
     %li{class: active_if(active == :new)}

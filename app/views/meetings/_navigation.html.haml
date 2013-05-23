@@ -9,13 +9,13 @@
   - if meeting
     %li{class: active_if(active == :show)}
       %a{href:meeting_path(meeting)}= t(:".show_action")
-    %li{class: active_if(active == :edit)}
-      %a{href:edit_meeting_path(meeting)}= t(:".edit_action")
     - if suite
       %li{class: active_if(active == :report)}
         %a{href:report_meeting_path(meeting)}= t(:".meeting_report_action")
-    %li{class: active_if(active == :destroy)}
+    %li.secondary-tab{class: active_if(active == :destroy)}
       %a{href:confirm_destroy_meeting_path(meeting)}= t(:".destroy_action")
+    %li.secondary-tab{class: active_if(active == :edit)}
+      %a{href:edit_meeting_path(meeting)}= t(:".edit_action")
 
   - else
     %li{class: active_if(active == :new)}
