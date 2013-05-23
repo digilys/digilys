@@ -11,3 +11,7 @@
     @include gradient-vertical(lighten($yellow, 15%), $yellow);
 }
 
+.nav-tabs .secondary-tab {
+    float: right;
+}
+

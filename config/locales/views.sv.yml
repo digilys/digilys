@@ -76,16 +76,16 @@ sv:
       success: Eleverna togs bort från gruppen
 
   suites:
+    show_action: Översikt
     template_title: Planeringsmall
     templates_title: Planeringsmallar
     templates_action: Mallar
+    color_chart: Färgkarta
     form:
       student_placeholder: Sök och välj elever
       group_placeholder: Sök och välj grupper
     show:
       template_notice: Detta är en mall för planeringar.
-      visualize: Visualisera
-      color_chart: Färgkarta
       participant:
         add: Lägg till elever
       evaluation:
@@ -188,7 +188,3 @@ sv:
     update:
       success: Användardetaljerna uppdaterades
 
-
-  visualize:
-    suites:
-      averages: Genomsnitt

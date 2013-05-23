@@ -44,6 +44,7 @@ Digilys::Application.routes.draw do
       get    :select_users
       put    :add_users
       delete :remove_users
+      get    :color_chart
     end
 
     resources :evaluations,  only: :new
@@ -75,10 +76,6 @@ Digilys::Application.routes.draw do
       get :report
       put :submit_report
     end
-  end
-
-  namespace :visualize do
-    resources :suites, only: :show
   end
 
   devise_for :users, path: "authenticate"

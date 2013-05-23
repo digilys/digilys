@@ -8,22 +8,13 @@
   .alert.alert-info= t(:".template_notice")
 
 .row-fluid
-  .span9
-    .btn-group
-      %a.btn.btn-small{href: new_suite_evaluation_path(@suite)}= t(:".evaluation.add")
-      %a.btn.btn-small{href: new_suite_meeting_path(@suite)}=    t(:".meeting.add")
-    - if @suite.is_template?
-      = render partial: "associations", object: @suite, as: :suite
-    - else
-      = render partial: "calendar",     object: @suite, as: :suite
-
-  .span3.sidebar
-    - unless @suite.is_template?
-      .well
-        %ul.nav.nav-list
-          %li.nav-header= t(:".visualize")
-          %li
-            %a{href:visualize_suite_path(@suite)}= t(:".color_chart")
+  .btn-group
+    %a.btn.btn-small{href: new_suite_evaluation_path(@suite)}= t(:".evaluation.add")
+    %a.btn.btn-small{href: new_suite_meeting_path(@suite)}=    t(:".meeting.add")
+  - if @suite.is_template?
+    = render partial: "associations", object: @suite, as: :suite
+  - else
+    = render partial: "calendar",     object: @suite, as: :suite
 
 - unless @suite.is_template?
   .row-fluid

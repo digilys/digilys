@@ -8,10 +8,14 @@
   - if suite
     %li{class: active_if(active == :show)}
       %a{href:suite_path(suite)}= t(:".show_action")
-    %li{class: active_if(active == :edit)}
-      %a{href:edit_suite_path(suite)}= t(:".edit_action")
-    %li{class: active_if(active == :destroy)}
+    - if !suite.is_template?
+      %li{class: active_if(active == :color_chart)}
+        %a{href:color_chart_suite_path(@suite)}= t(:".color_chart")
+
+    %li.secondary-tab{class: active_if(active == :destroy)}
       %a{href:confirm_destroy_suite_path(suite)}= t(:".destroy_action")
+    %li.secondary-tab{class: active_if(active == :edit)}
+      %a{href:edit_suite_path(suite)}= t(:".edit_action")
 
   - else
     %li{class: active_if(active == :index)}

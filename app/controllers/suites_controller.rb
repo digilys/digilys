@@ -1,5 +1,5 @@
 class SuitesController < ApplicationController
-  layout "admin"
+  layout "admin", except: :color_chart
 
   before_filter :process_incoming_participant_data, only: :create
   before_filter :load_from_template,                only: :new_from_template
@@ -24,6 +24,9 @@ class SuitesController < ApplicationController
   end
 
   def show
+  end
+
+  def color_chart
   end
 
   def new
