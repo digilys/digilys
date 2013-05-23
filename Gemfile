@@ -1,15 +1,16 @@
 source "https://rubygems.org"
 
-gem "rails",          "3.2.13"
-gem "pg",             "~> 0.15.1"
-gem "haml-rails",     "~> 0.4"
-gem "rails_admin",    "~> 0.4.7"
-gem "devise",         "~> 2.2.3"
-gem "cancan",         "~> 1.6.9"
-gem "rolify",         "~> 3.2.0"
-gem "kaminari",       "~> 0.14.1"
-gem "config_spartan", "~> 1.0.1"
-gem "ransack",        "~> 0.7.2"
+gem "rails",               "3.2.13"
+gem "pg",                  "~> 0.15.1"
+gem "haml-rails",          "~> 0.4"
+gem "rails_admin",         "~> 0.4.7"
+gem "devise",              "~> 2.2.3"
+gem "cancan",              "~> 1.6.9"
+gem "rolify",              "~> 3.2.0"
+gem "kaminari",            "~> 0.14.1"
+gem "config_spartan",      "~> 1.0.1"
+gem "ransack",             "~> 0.7.2"
+gem "acts-as-taggable-on", "~> 2.4.1"
 
 # Servers
 gem "passenger", "~> 3.0.19", require: false
