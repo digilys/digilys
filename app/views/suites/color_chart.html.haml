@@ -38,6 +38,9 @@
               - values[evaluation.id]   << result.value   if result.try(:value)
               - stanines[evaluation.id] << result.stanine if result.try(:stanine)
 
+  %tbody
+    %tr
+      %th{colspan: @suite.evaluations.length + 1} &nbsp;
     %tr.averages
       %th= t(:".averages")
       - @suite.evaluations.each do |evaluation|
@@ -49,9 +52,9 @@
 
         %td.result{class: result_color_class(average_value, evaluation)}
           %ul
-            %li.value= average_value || "-" 
+            %li.value= number_with_precision(average_value, precision: 2) || "-"
             %li.stanine
               - if !stanines[evaluation.id].blank?
-                = stanines[evaluation.id].instance_eval { reduce(:+).to_f / size }
+                = number_with_precision(stanines[evaluation.id].instance_eval { reduce(:+).to_f / size }, precision: 2)
               - else
                 = "-"

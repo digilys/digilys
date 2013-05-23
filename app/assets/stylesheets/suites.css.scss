@@ -26,6 +26,12 @@
 }
 
 table.suite-results {
+    width: auto;
+
+    tbody td {
+        width: 7em;
+    }
+
     .result {
         ul {
             margin: 0;
