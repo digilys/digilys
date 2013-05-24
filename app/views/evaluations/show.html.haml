@@ -50,14 +50,14 @@
   %table.table.table-bordered.table-hover.evaluation-results.results-color-table
     %thead
       %tr
-        %th= Student.model_name.human
-        %th= Result.model_name.human
+        %th.student= Student.model_name.human
+        %th.evaluation= Result.model_name.human
         - if @evaluation.stanines?
-          %th= t(:".stanines")
+          %th.evaluation= t(:".stanines")
     %tbody
       - @evaluation.results.each do |result|
         %tr
-          %th= link_to result.student.name, result.student
+          %th.student= link_to result.student.name, result.student
           %td.result{class: result_color_class(result)}= result.value
           - if @evaluation.stanines?
             %td.result{class: result_color_class(result)}= result.stanine

@@ -12,12 +12,12 @@
 
   %thead
     %tr
-      %th
+      %th.student
         .btn-group.result-toggles
           %button.btn.active(data-value="value") Resultat
           %button.btn(data-value="stanine") Stanine
       - @suite.evaluations.each do |evaluation|
-        %th= evaluation.name
+        %th.evaluation= evaluation.name
 
         -# Initialize the tracking variables
         - values[evaluation.id]   = []
@@ -26,7 +26,7 @@
   %tbody
     - @suite.students.each do |student|
       %tr
-        %th= student.name
+        %th.student= student.name
         - @suite.evaluations.each do |evaluation|
           - result = evaluation.result_for(student)
           %td.result{class: result_color_class(result)}
@@ -38,7 +38,7 @@
               - values[evaluation.id]   << result.value   if result.try(:value)
               - stanines[evaluation.id] << result.stanine if result.try(:stanine)
 
-  %tbody
+  %tfoot
     %tr
       %th{colspan: @suite.evaluations.length + 1} &nbsp;
     %tr.averages
