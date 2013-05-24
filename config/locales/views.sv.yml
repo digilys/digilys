@@ -81,6 +81,7 @@ sv:
     templates_title: Planeringsmallar
     templates_action: Mallar
     color_chart: Färgkarta
+    averages: Medelvärde
     form:
       student_placeholder: Sök och välj elever
       group_placeholder: Sök och välj grupper
