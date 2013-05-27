@@ -9,13 +9,14 @@
     html: { class: "form-horizontal select-evaluation-template-form" } do |f|
 
     = f.hidden_field :suite_id
+    = f.hidden_field :type
 
     .control-group
       = f.label :template_id, class: "control-label"
       .controls
         = f.hidden_field :template_id,
           class: "evaluation-template-autocomplete-field",
-          data: { url: search_evaluations_path(), 
+          data: { url: search_template_evaluations_path(), 
             placeholder: t(:".template_placeholder")}
         = f.submit t(:".use_template_action"), class: "btn btn-primary"
 
@@ -26,6 +27,7 @@
 
     = f.hidden_field :template_id
     = f.hidden_field :suite_id
+    = f.hidden_field :type
 
     = f.input :name, required: true, input_html: { required: true, autofocus: true }
     = f.input :description, as: :text, input_html: { class: "input-xlarge", rows: 3 }

@@ -22,7 +22,8 @@ class Evaluation < ActiveRecord::Base
 
   accepts_nested_attributes_for :results
 
-  attr_accessible :template_id,
+  attr_accessible :type,
+    :template_id,
     :suite_id,
     :max_result,
     :name,

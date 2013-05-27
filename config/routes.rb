@@ -58,9 +58,8 @@ Digilys::Application.routes.draw do
     end
   end
 
-  resources :evaluations do
+  resources :evaluations, except: [ :index, :new ] do
     collection do
-      get  :search
       post :new_from_template
     end
     member do
@@ -76,6 +75,12 @@ Digilys::Application.routes.draw do
       get :confirm_destroy
       get :report
       put :submit_report
+    end
+  end
+
+  namespace :template do
+    resources :evaluations, only: [ :index, :new ] do
+      get :search, on: :collection
     end
   end
 

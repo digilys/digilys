@@ -1,6 +1,29 @@
 require 'spec_helper'
 
 describe EvaluationsHelper do
+  describe "#working_with_evaluation_template?" do
+    let(:params)     { { "controller" => "evaluations" } }
+    let(:evaluation) { nil }
+    before(:each)    { helper.stub(:params).and_return(params) }
+
+    subject { helper.working_with_evaluation_template?(evaluation) }
+
+    it { should be_false }
+
+    context "under templates/evaluation controller" do
+      let(:params) { { "controller" => "template/evaluations" } }
+      it           { should be_true }
+    end
+    context "with a suite evaluation" do
+      let(:evaluation) { create(:suite_evaluation) }
+      it               { should be_false }
+    end
+    context "with an evaluation template" do
+      let(:evaluation) { create(:evaluation_template) }
+      it               { should be_true }
+    end
+  end
+
   describe "#evaluation_progress_bar" do
     let(:suite)        { create(:suite) }
     let(:evaluation)   { create(:suite_evaluation, suite: suite, max_result: 10, red_below: 4, green_above: 7) }

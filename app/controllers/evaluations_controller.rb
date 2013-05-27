@@ -6,22 +6,13 @@ class EvaluationsController < ApplicationController
   load_and_authorize_resource :suite
   load_and_authorize_resource :evaluation, through: :suite, shallow: true
   before_filter :authorize_suite!
-  before_filter :set_evaluation_type, only: [ :new, :new_from_template, :create ]
 
-
-  def index
-    @evaluations = @evaluations.with_type(:template).order(:name).page(params[:page])
-  end
-
-  def search
-    @evaluations = @evaluations.with_type(:template).page(params[:page]).search(params[:q]).result
-    render json: @evaluations.collect { |e| { id: e.id, text: e.name } }.to_json
-  end
 
   def show
   end
 
   def new
+    @evaluation.type = :suite
   end
 
   def new_from_template
@@ -30,7 +21,7 @@ class EvaluationsController < ApplicationController
 
   def create
     if @evaluation.save
-      flash[:success] = t(:"evaluations.create.success")
+      flash[:success] = t(:"evaluations.create.success.#{@evaluation.type}")
       redirect_to @evaluation
     else
       render action: "new"
@@ -42,7 +33,7 @@ class EvaluationsController < ApplicationController
 
   def update
     if @evaluation.update_attributes(params[:evaluation])
-      flash[:success] = t(:"evaluations.update.success")
+      flash[:success] = t(:"evaluations.update.success.#{@evaluation.type}")
       redirect_to @evaluation
     else
       render action: "edit"
@@ -55,7 +46,7 @@ class EvaluationsController < ApplicationController
     suite = @evaluation.suite
     @evaluation.destroy
 
-    flash[:success] = t(:"evaluations.destroy.success")
+    flash[:success] = t(:"evaluations.destroy.success.#{@evaluation.type}")
     if suite
       redirect_to suite
     else
@@ -109,14 +100,6 @@ class EvaluationsController < ApplicationController
   def authorize_suite!
     if @evaluation.try(:suite)
       authorize! :update, @evaluation.suite
-    end
-  end
-
-  def set_evaluation_type
-    if @suite || @evaluation.suite
-      @evaluation.type = :suite
-    else
-      @evaluation.type = :template
     end
   end
 end

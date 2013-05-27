@@ -1,5 +1,10 @@
 module EvaluationsHelper
 
+  def working_with_evaluation_template?(evaluation)
+    return params?(controller: "template/evaluations") ||
+      params?(controller: "evaluations") && evaluation && evaluation.type.template?
+  end
+
   # Renders a bootstrap progress bar representing the result distribution 
   # of this evaluation, if any
   def evaluation_progress_bar(evaluation)

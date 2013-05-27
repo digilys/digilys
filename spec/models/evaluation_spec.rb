@@ -16,6 +16,7 @@ describe Evaluation do
     end
   end
   context "accessible attributes" do
+    it { should allow_mass_assignment_of(:type) }
     it { should allow_mass_assignment_of(:suite_id) }
     it { should allow_mass_assignment_of(:name) }
     it { should allow_mass_assignment_of(:description) }
@@ -31,8 +32,6 @@ describe Evaluation do
     it { should allow_mass_assignment_of(:stanine6) }
     it { should allow_mass_assignment_of(:stanine7) }
     it { should allow_mass_assignment_of(:stanine8) }
-
-    it { should_not allow_mass_assignment_of(:type) }
   end
   context "validation" do
     it { should validate_presence_of(:name) }

@@ -155,13 +155,21 @@ sv:
       color_range_error_text: Intervallet måste vara giltiga heltal och ligga mellan 0 och maxresultatet
       stanines: Stanine-värden <small>Lämna alla värden tomma om du inte vill använda staninevärden</small>
     create:
-      success: Testet skapades
+      success:
+        suite: Testet skapades
+        template: Testmallen skapades
     update:
-      success: Testet uppdaterades
+      success:
+        suite: Testet uppdaterades
+        template: Testmallen uppdaterades
     confirm_destroy:
-      confirmation: Om du raderar testet raderas även alla tillhörande testresultat.
+      confirmation:
+        suite: Om du raderar testet raderas även alla tillhörande testresultat.
+        template: Är du säker på att du vill radera testmallen?
     destroy:
-      success: Testet och tillhörande information raderades
+      success:
+        suite: Testet och tillhörande information raderades
+        template: Testmallen raderades
     submit_report:
       success: Resultatet uppdaterades
     destroy_report:
@@ -194,3 +202,7 @@ sv:
     update:
       success: Användardetaljerna uppdaterades
 
+
+  template:
+    evaluations:
+      title: Testmallar
