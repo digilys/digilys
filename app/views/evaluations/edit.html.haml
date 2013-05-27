@@ -1,6 +1,10 @@
 %h1
   = @evaluation.name_was
-  %small= @evaluation.suite.try(:name) || t(:".template_title")
+  %small
+    - if @evaluation.type.template?
+      = t(:".template_title")
+    - elsif @evaluation.type.suite?
+      = @evaluation.suite.name
 
 = render partial: "navigation", locals: { active: :edit, evaluation: @evaluation }
 

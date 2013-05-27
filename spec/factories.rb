@@ -37,9 +37,10 @@ FactoryGirl.define do
   factory :evaluation do
     template        nil
     suite           nil
+    type            :template
     sequence(:name) { |i| "Evaluation %09d" % i }
     description     "Description"
-    date            Date.today
+    date            nil
     max_result      50
     red_below       15
     green_above     35
@@ -57,8 +58,12 @@ FactoryGirl.define do
     stanine7        { stanines ? stanines[6] : nil }
     stanine8        { stanines ? stanines[7] : nil }
 
-    factory :evaluation_with_suite do
+    factory :suite_evaluation do
       suite
+      type  :suite
+      date  { suite.is_template ? nil : Date.today }
+    end
+    factory :evaluation_template do
     end
   end
 

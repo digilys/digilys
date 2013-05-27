@@ -1,4 +1,9 @@
 class Evaluation < ActiveRecord::Base
+  extend Enumerize
+
+  # Column name "type" is not used for inheritance
+  self.inheritance_column = :disable_inheritance
+
   belongs_to :template,  class_name: "Evaluation"
   has_many   :instances,
     class_name:  "Evaluation",
@@ -12,6 +17,8 @@ class Evaluation < ActiveRecord::Base
   has_many   :students,     through:    :results
 
   acts_as_taggable_on :categories
+
+  enumerize :type, in: [ :template, :suite ], predicates: { prefix: true }, scope: true
 
   accepts_nested_attributes_for :results
 
@@ -34,8 +41,12 @@ class Evaluation < ActiveRecord::Base
     :results_attributes,
     :category_list
 
-  validates :name,  presence: true
-  validates :date,  presence: true, if: :has_regular_suite?, format: { with: /^\d{4}-\d{2}-\d{2}$/ }
+
+  validate  :validate_suite
+  validate  :validate_date
+
+  validates :name, presence: true
+
   validates(:max_result,
     numericality: {
       only_integer: true,
@@ -137,7 +148,7 @@ class Evaluation < ActiveRecord::Base
 
 
   def has_regular_suite?
-    !self.suite.blank? && !self.suite.is_template?
+    self.type.try(:suite?) && !self.suite.blank? && !self.suite.is_template?
   end
 
   def color_for(value)
@@ -290,11 +301,6 @@ class Evaluation < ActiveRecord::Base
     end
   end
 
-  # Scope only on templates
-  def self.templates
-    where(suite_id: nil)
-  end
-
 
   private
 
@@ -330,6 +336,27 @@ class Evaluation < ActiveRecord::Base
     # Intersect the changed array with the touch on array
     if !(TOUCH_RESULT_ON_CHANGED & self.changed).blank?
       self.results.map(&:save)
+    end
+  end
+
+
+  def validate_suite
+    if self.type.try(:suite?)
+      errors.add_on_blank(:suite)
+    else
+      errors.add(:suite, :not_nil) if !self.suite.blank?
+    end
+  end
+
+  def validate_date
+    if self.has_regular_suite?
+      if self.date.blank?
+        errors.add(:date, :blank)
+      elsif !self.date_before_type_cast.is_a?(Date) && self.date_before_type_cast !~ /^\d{4}-\d{2}-\d{2}$/
+        errors.add(:date, :invalid)
+      end
+    else
+      errors.add(:date, :not_nil) if !self.date_before_type_cast.blank?
     end
   end
 end

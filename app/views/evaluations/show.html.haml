@@ -1,11 +1,14 @@
 %h1
   = @evaluation.name
   %small
-    = @evaluation.suite.try(:name) || t(:".template_title")
+    - if @evaluation.type.template?
+      = t(:".template_title")
+    - elsif @evaluation.type.suite?
+      = @evaluation.suite.name
 
 = render partial: "navigation", locals: { evaluation: @evaluation, active: :show }
 
-- unless @evaluation.suite
+- if @evaluation.type.template?
   .alert.alert-info= t(:".template_notice")
 
 %table.table.table-bordered.details-table.evaluation-details-table
@@ -18,7 +21,7 @@
       %td
         - @evaluation.category_list.each do |category|
           %span.label.label-info= category
-    - if @evaluation.has_regular_suite?
+    - if @evaluation.date
       %tr.date
         %th= Evaluation.human_attribute_name(:date)
         %td= l @evaluation.date

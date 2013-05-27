@@ -6,14 +6,15 @@ class EvaluationsController < ApplicationController
   load_and_authorize_resource :suite
   load_and_authorize_resource :evaluation, through: :suite, shallow: true
   before_filter :authorize_suite!
+  before_filter :set_evaluation_type, only: [ :new, :new_from_template, :create ]
 
 
   def index
-    @evaluations = @evaluations.templates.order(:name).page(params[:page])
+    @evaluations = @evaluations.with_type(:template).order(:name).page(params[:page])
   end
 
   def search
-    @evaluations = @evaluations.templates.page(params[:page]).search(params[:q]).result
+    @evaluations = @evaluations.with_type(:template).page(params[:page]).search(params[:q]).result
     render json: @evaluations.collect { |e| { id: e.id, text: e.name } }.to_json
   end
 
@@ -108,6 +109,14 @@ class EvaluationsController < ApplicationController
   def authorize_suite!
     if @evaluation.try(:suite)
       authorize! :update, @evaluation.suite
+    end
+  end
+
+  def set_evaluation_type
+    if @suite || @evaluation.suite
+      @evaluation.type = :suite
+    else
+      @evaluation.type = :template
     end
   end
 end

@@ -12,12 +12,12 @@ describe SuitesHelper do
     context "with entities" do
       let(:entities) do
         [
-          create(:evaluation, suite: suite, date: Date.yesterday),
-          create(:evaluation, suite: suite, date: Date.today),
-          create(:evaluation, suite: suite, date: Date.tomorrow),
-          create(:meeting,    suite: suite, date: Date.yesterday),
-          create(:meeting,    suite: suite, date: Date.today),
-          create(:meeting,    suite: suite, date: Date.tomorrow)
+          create(:suite_evaluation, suite: suite, date: Date.yesterday), 
+          create(:suite_evaluation, suite: suite, date: Date.today), 
+          create(:suite_evaluation, suite: suite, date: Date.tomorrow), 
+          create(:meeting,          suite: suite, date: Date.yesterday), 
+          create(:meeting,          suite: suite, date: Date.today), 
+          create(:meeting,          suite: suite, date: Date.tomorrow)
         ]
       end
 
@@ -60,7 +60,7 @@ describe SuitesHelper do
       it           { should be_true }
     end
     context "with an evaluation assigned to a suite" do
-      let(:evaluation) { create(:evaluation, suite: create(:suite)) }
+      let(:evaluation) { create(:suite_evaluation) }
       it               { should be_true }
     end
   end

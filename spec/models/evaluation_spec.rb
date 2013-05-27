@@ -1,9 +1,19 @@
 require 'spec_helper'
 
 describe Evaluation do
-  context "factory" do
-    subject { build(:evaluation) }
-    it { should be_valid }
+  context "factories" do
+    context "default" do
+      subject { build(:evaluation) }
+      it { should be_valid }
+    end
+    context "suite" do
+      subject { build(:suite_evaluation) }
+      it { should be_valid }
+    end
+    context "template" do
+      subject { build(:evaluation_template) }
+      it { should be_valid }
+    end
   end
   context "accessible attributes" do
     it { should allow_mass_assignment_of(:suite_id) }
@@ -21,10 +31,12 @@ describe Evaluation do
     it { should allow_mass_assignment_of(:stanine6) }
     it { should allow_mass_assignment_of(:stanine7) }
     it { should allow_mass_assignment_of(:stanine8) }
+
+    it { should_not allow_mass_assignment_of(:type) }
   end
   context "validation" do
-    it { should     validate_presence_of(:name) }
-    it { should_not validate_presence_of(:date) }
+    it { should validate_presence_of(:name) }
+    it { should ensure_inclusion_of(:type).in_array(%w(suite template)) }
 
     it { should validate_numericality_of(:max_result).only_integer }
     it { should validate_numericality_of(:red_below).only_integer }
@@ -69,11 +81,28 @@ describe Evaluation do
       end
     end
 
-    context "with regular suite" do
-      subject { build(:evaluation, suite: create(:suite, is_template: false)) }
-      it { should validate_presence_of(:date) }
-      it { should     allow_value("2013-04-29").for(:date) }
-      it { should_not allow_value("201304-29").for(:date) }
+    context "with type" do
+      context "suite" do
+        subject { build(:suite_evaluation) }
+        it { should     validate_presence_of(:suite) }
+        it { should     validate_presence_of(:date) }
+        it { should     allow_value("2013-04-29").for(:date) }
+        it { should_not allow_value("201304-29").for(:date) }
+
+        context "and with suite template" do
+          subject { build(:suite_evaluation, suite: create(:suite, is_template: true)) }
+          it { should_not validate_presence_of(:date) }
+          it { should_not allow_value("2013-04-29").for(:date) }
+          it { should_not allow_value("201304-29").for(:date) }
+        end
+      end
+      context "template" do
+        subject { build(:evaluation_template) }
+        it { should_not validate_presence_of(:suite) }
+        it { should_not allow_value(create(:suite)).for(:suite) }
+        it { should_not validate_presence_of(:suite) }
+        it { should_not allow_value("2013-04-29").for(:date) }
+      end
     end
   end
 
@@ -89,12 +118,16 @@ describe Evaluation do
       it { should be_false }
     end
     context "with template suite" do
-      subject { build(:evaluation, suite: create(:suite, is_template: true)).has_regular_suite? }
+      subject { build(:suite_evaluation, suite: create(:suite, is_template: true)).has_regular_suite? }
       it { should be_false }
     end
     context "with regular suite" do
-      subject { build(:evaluation, suite: create(:suite, is_template: false)).has_regular_suite? }
+      subject { build(:suite_evaluation, suite: create(:suite, is_template: false)).has_regular_suite? }
       it { should be_true }
+    end
+    context "with wrong type" do
+      subject { build(:suite_evaluation, suite: create(:suite, is_template: false), type: :template).has_regular_suite? }
+      it { should be_false }
     end
   end
 
@@ -286,7 +319,7 @@ describe Evaluation do
   context ".result_distribution" do
     let(:suite)        { create(:suite) }
     let(:participants) { create_list(:participant, 5, suite: suite) }
-    let(:evaluation)   { create(:evaluation, suite: suite, max_result: 10, red_below: 4, green_above: 7) }
+    let(:evaluation)   { create(:suite_evaluation, suite: suite, max_result: 10, red_below: 4, green_above: 7) }
 
     context "with all types" do
       before(:each) do
@@ -349,11 +382,4 @@ describe Evaluation do
     end
   end
 
-  context "#templates" do
-    let!(:templates) { create_list(:evaluation,            3) }
-    let!(:regular)   { create_list(:evaluation_with_suite, 3) }
-    it "should scope to templates only" do
-      Evaluation.templates.all.should match_array(templates)
-    end
-  end
 end

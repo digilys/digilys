@@ -3,7 +3,7 @@ require 'spec_helper'
 describe EvaluationsHelper do
   describe "#evaluation_progress_bar" do
     let(:suite)        { create(:suite) }
-    let(:evaluation)   { create(:evaluation, suite: suite, max_result: 10, red_below: 4, green_above: 7) }
+    let(:evaluation)   { create(:suite_evaluation, suite: suite, max_result: 10, red_below: 4, green_above: 7) }
     let(:participants) { create_list(:participant, 5, suite: suite) }
 
     subject { Capybara::Node::Simple.new(helper.evaluation_progress_bar(evaluation)) }

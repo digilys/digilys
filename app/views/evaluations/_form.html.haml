@@ -1,6 +1,6 @@
-- if evaluation.suite || evaluation.template
+- if evaluation.type.suite? || evaluation.template
   .alert.alert-info
-    = t(:".for_suite",     suite_name:    evaluation.suite.name)    if evaluation.suite
+    = t(:".for_suite",     suite_name:    evaluation.suite.name)    if evaluation.type.suite?
     = t(:".from_template", template_name: evaluation.template.name) if evaluation.template && evaluation.new_record?
 
 - if evaluation.new_record? && !evaluation.template
@@ -72,7 +72,7 @@
     .control-group
       .controls
         = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
-        - if evaluation.suite
+        - if evaluation.type.suite?
           %a.btn{href:suite_path(evaluation.suite) }= t(:".cancel_action")
         - else
           %a.btn{href:evaluation.new_record? ? evaluations_path() : evaluation_path(evaluation) }= t(:".cancel_action")
@@ -96,7 +96,7 @@
 
   = f.actions do
     = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
-    - if evaluation.suite
+    - if evaluation.type.suite?
       %a.btn{href:suite_path(evaluation.suite) }= t(:".cancel_action")
     - else
       %a.btn{href:evaluation.new_record? ? evaluations_path() : evaluation_path(evaluation) }= t(:".cancel_action")

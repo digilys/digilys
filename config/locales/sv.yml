@@ -119,6 +119,7 @@ sv:
       too_long: är för lång (maximum är %{count} tecken)
       too_short: är för kort (minimum är %{count} tecken)
       wrong_length: har fel längd (ska vara %{count} tecken)
+      not_nil: får inte anges
     template:
       body: ! 'Det var problem med följande fält:'
       header:

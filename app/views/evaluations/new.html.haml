@@ -1,8 +1,8 @@
 %h1
-  - if @evaluation.suite
+  - if @evaluation.type.suite?
     = Evaluation.model_name.human(count: 2)
     %small= @evaluation.suite.name
-  - else
+  - elsif @evaluation.type.template?
     = t(:".templates_title")
 
 = render partial: "navigation", locals: { active: :new, suite: @evaluation.suite }

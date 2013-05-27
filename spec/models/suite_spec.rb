@@ -14,8 +14,8 @@ describe Suite do
 
   context "#new_from_template" do
     let(:template)     { create(:suite, is_template: true) }
-    let!(:evaluations) { create_list(:evaluation, 3, suite: template) }
-    let!(:meetings)    { create_list(:meeting,    3, suite: template) }
+    let!(:evaluations) { create_list(:suite_evaluation, 3, suite: template) }
+    let!(:meetings)    { create_list(:meeting,          3, suite: template) }
     let(:suite)        { Suite.new_from_template(template) }
 
     subject            { suite }

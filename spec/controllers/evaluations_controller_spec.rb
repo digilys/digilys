@@ -5,7 +5,7 @@ describe EvaluationsController do
 
   describe "GET #report" do
     let!(:suite)        { create(:suite) }
-    let!(:evaluation)   { create(:evaluation, suite: suite) }
+    let!(:evaluation)   { create(:suite_evaluation, suite: suite) }
     let!(:participants) { create_list(:participant, 2, suite: suite)}
 
     it "generates unsaved results for participants" do
