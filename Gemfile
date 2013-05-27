@@ -11,6 +11,7 @@ gem "kaminari",            "~> 0.14.1"
 gem "config_spartan",      "~> 1.0.1"
 gem "ransack",             "~> 0.7.2"
 gem "acts-as-taggable-on", "~> 2.4.1"
+gem "enumerize",           "~> 0.6.1"
 
 # Servers
 gem "passenger", "~> 3.0.19", require: false
