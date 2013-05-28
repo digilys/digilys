@@ -213,6 +213,14 @@ sv:
     gender:
       male: Pojke
       female: Flicka
+    status:
+      open: Pågående
+      closed: Avslutad
+    activity:
+      type:
+        action: Insats
+        inquiry: Frågeställning
+
 
   wait: Var god vänta...
   "yes":  Ja

@@ -87,4 +87,20 @@ FactoryGirl.define do
     completed       false
     notes           nil
   end
+
+  factory :activity do
+    suite
+    meeting         nil
+    type            :action
+    status          :open
+    sequence(:name) { |i| "Activity %09d" % i }
+    description     nil
+    notes           nil
+
+    factory :action_activity do
+    end
+    factory :inquiry_activity do
+      type :inquiry
+    end
+  end
 end

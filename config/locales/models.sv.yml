@@ -22,6 +22,9 @@ sv:
       meeting:
         one: Möte
         other: Möten
+      activity:
+        one: Ärende
+        other: Ärenden
       role:
         one: Roll
         other: Roller
@@ -86,6 +89,16 @@ sv:
         date: Datum
         agenda: Agenda
         completed: Mötet genomfört
+        notes: Anteckningar
+      activity:
+        suite: Planering
+        suite_id: Planering
+        meeting: Bestämdes vid
+        meeting_id: Bestämdes vid
+        type: Typ
+        status: Status
+        name: Namn
+        description: Beskrivning
         notes: Anteckningar
       user:
         email: E-postadress

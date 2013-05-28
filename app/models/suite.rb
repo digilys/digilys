@@ -12,6 +12,7 @@ class Suite < ActiveRecord::Base
   has_many :evaluations,  inverse_of: :suite,     dependent: :destroy
   has_many :results,      through: :evaluations
   has_many :meetings,     inverse_of: :suite,     dependent: :destroy
+  has_many :activities,   inverse_of: :suite,     dependent: :destroy
 
   accepts_nested_attributes_for :evaluations,
     :meetings,

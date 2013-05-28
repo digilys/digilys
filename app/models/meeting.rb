@@ -1,5 +1,6 @@
 class Meeting < ActiveRecord::Base
-  belongs_to :suite, inverse_of: :meetings
+  belongs_to :suite,      inverse_of: :meetings
+  has_many   :activities, inverse_of: :meeting
 
   attr_accessible :completed,
     :date,
