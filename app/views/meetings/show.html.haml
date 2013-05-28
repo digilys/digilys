@@ -31,8 +31,8 @@
           %th= Activity.model_name.human(count: 2)
           %td
             - unless @meeting.activities.blank?
-              %ul.unstyled
+              %ul.unstyled.activity-list
                 - @meeting.activities.each do |activity|
                   %li
-                    %span.label= activity.type_text
                     = activity.name
+                    %span.label= activity.type_text

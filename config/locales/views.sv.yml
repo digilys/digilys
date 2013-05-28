@@ -102,6 +102,9 @@ sv:
       users:
         title: Deltagare
         add: Lägg till deltagare
+      activity:
+        open_title: Pågående
+        closed_title: Avslutade
     color_chart:
       add_generic_evaluation_action: Lägg till
     connected_users:
