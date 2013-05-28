@@ -6,6 +6,7 @@ sv:
     admin:
       administration: Administrera
       templates: Mallar
+      generics: Grunddata
   shared:
     "404":
       title: Ojdå!
@@ -139,12 +140,16 @@ sv:
     titles:
       template: Testmall
       suite: "%{suite}"
+      generic: Elevdata
       templates:
         html: Testmallar
         text: Testmallar
       suites:
         html: Test <small>%{suite}</small>
         text: Test - %{suite}
+      generics:
+        html: Elevdata
+        text: Elevdata
 
     color_ranges: Färgintervall
     stanines: Stanine-värden
@@ -167,18 +172,22 @@ sv:
       success:
         suite: Testet skapades
         template: Testmallen skapades
+        generic: Elevdata skapades
     update:
       success:
         suite: Testet uppdaterades
         template: Testmallen uppdaterades
+        generic: Elevdata uppdaterades
     confirm_destroy:
       confirmation:
         suite: Om du raderar testet raderas även alla tillhörande testresultat.
         template: Är du säker på att du vill radera testmallen?
+        generic: Om du raderar elevdata raderas även alla tillhörande resultat.
     destroy:
       success:
         suite: Testet och tillhörande information raderades
         template: Testmallen raderades
+        generic: Elevdata raderades
     submit_report:
       success: Resultatet uppdaterades
     destroy_report:
@@ -215,3 +224,7 @@ sv:
   template:
     evaluations:
       title: Testmallar
+
+  generic:
+    evaluations:
+      title: Elevdata

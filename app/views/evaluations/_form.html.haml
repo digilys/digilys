@@ -3,7 +3,7 @@
     = t(:".for_suite",     suite_name:    evaluation.suite.name)    if evaluation.type.suite?
     = t(:".from_template", template_name: evaluation.template.name) if evaluation.template && evaluation.new_record?
 
-- if evaluation.new_record? && !evaluation.template
+- if evaluation.new_record? && !evaluation.template && !evaluation.type.generic?
   = form_for evaluation,
     url: new_from_template_evaluations_path(),
     html: { class: "form-horizontal select-evaluation-template-form" } do |f|
@@ -74,10 +74,7 @@
     .control-group
       .controls
         = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
-        - if evaluation.type.suite?
-          %a.btn{href:suite_path(evaluation.suite) }= t(:".cancel_action")
-        - else
-          %a.btn{href:evaluation.new_record? ? evaluations_path() : evaluation_path(evaluation) }= t(:".cancel_action")
+        %a.btn{href:evaluation_cancel_path(evaluation) }= t(:".cancel_action")
 
   = f.inputs t(:".stanines") do
 
@@ -98,7 +95,4 @@
 
   = f.actions do
     = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
-    - if evaluation.type.suite?
-      %a.btn{href:suite_path(evaluation.suite) }= t(:".cancel_action")
-    - else
-      %a.btn{href:evaluation.new_record? ? evaluations_path() : evaluation_path(evaluation) }= t(:".cancel_action")
+    %a.btn{href:evaluation_cancel_path(evaluation) }= t(:".cancel_action")

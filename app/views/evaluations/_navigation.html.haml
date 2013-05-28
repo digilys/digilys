@@ -16,6 +16,12 @@
       %li{class: active_if(active == :new)}
         %a{href:new_suite_evaluation_path(evaluation.suite)}= t(:".new_action")
 
+    - elsif evaluation.type.generic?
+      %li
+        %a{href:generic_evaluations_path()}= t(:".index_action")
+      %li{class: active_if(active == :new)}
+        %a{href:new_generic_evaluation_path()}= t(:".new_action")
+
     - if !evaluation.new_record?
       %li{class: active_if(active == :show)}
         %a{href:evaluation_path(evaluation)}= t(:".show_action")

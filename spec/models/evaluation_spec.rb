@@ -14,6 +14,10 @@ describe Evaluation do
       subject { build(:evaluation_template) }
       it { should be_valid }
     end
+    context "generic" do
+      subject { build(:generic_evaluation) }
+      it { should be_valid }
+    end
   end
   context "accessible attributes" do
     it { should allow_mass_assignment_of(:type) }
@@ -35,7 +39,7 @@ describe Evaluation do
   end
   context "validation" do
     it { should validate_presence_of(:name) }
-    it { should ensure_inclusion_of(:type).in_array(%w(suite template)) }
+    it { should ensure_inclusion_of(:type).in_array(%w(suite template generic)) }
 
     it { should validate_numericality_of(:max_result).only_integer }
     it { should validate_numericality_of(:red_below).only_integer }
@@ -97,6 +101,13 @@ describe Evaluation do
       end
       context "template" do
         subject { build(:evaluation_template) }
+        it { should_not validate_presence_of(:suite) }
+        it { should_not allow_value(create(:suite)).for(:suite) }
+        it { should_not validate_presence_of(:suite) }
+        it { should_not allow_value("2013-04-29").for(:date) }
+      end
+      context "generic" do
+        subject { build(:generic_evaluation) }
         it { should_not validate_presence_of(:suite) }
         it { should_not allow_value(create(:suite)).for(:suite) }
         it { should_not validate_presence_of(:suite) }

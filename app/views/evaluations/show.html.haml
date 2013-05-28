@@ -45,7 +45,7 @@
                 %strong= stanine
                 = format_range(range)
 
-- unless @evaluation.results.blank?
+- if @evaluation.type.suite? && !@evaluation.results.blank?
   %table.table.table-bordered.table-hover.evaluation-results.results-color-table
     %thead
       %tr

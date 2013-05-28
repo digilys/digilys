@@ -18,7 +18,7 @@ class Evaluation < ActiveRecord::Base
 
   acts_as_taggable_on :categories
 
-  enumerize :type, in: [ :template, :suite ], predicates: { prefix: true }, scope: true
+  enumerize :type, in: [ :generic, :template, :suite ], predicates: { prefix: true }, scope: true
 
   accepts_nested_attributes_for :results
 

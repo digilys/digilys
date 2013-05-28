@@ -23,6 +23,63 @@ describe EvaluationsHelper do
       it               { should be_true }
     end
   end
+  describe "#working_with_generic_evaluation?" do
+    let(:params)     { { "controller" => "evaluations" } }
+    let(:evaluation) { nil }
+    before(:each)    { helper.stub(:params).and_return(params) }
+
+    subject { helper.working_with_generic_evaluation?(evaluation) }
+
+    it { should be_false }
+
+    context "under generic/evaluation controller" do
+      let(:params) { { "controller" => "generic/evaluations" } }
+      it           { should be_true }
+    end
+    context "with a suite evaluation" do
+      let(:evaluation) { create(:suite_evaluation) }
+      it               { should be_false }
+    end
+    context "with a generic evaluation" do
+      let(:evaluation) { create(:generic_evaluation) }
+      it               { should be_true }
+    end
+  end
+
+  describe "#evaluation_cancel_path" do
+    let(:evaluation) { nil }
+    subject          { helper.evaluation_cancel_path(evaluation) }
+    it               { should be_blank }
+
+    context "with unsaved record" do
+      context "with a suite evaluation" do
+        let(:evaluation) { build(:suite_evaluation) }
+        it { should == helper.suite_path(evaluation.suite) }
+      end
+      context "with an evaluation template" do
+        let(:evaluation) { build(:evaluation_template) }
+        it { should == helper.template_evaluations_path() }
+      end
+      context "with a generic evaluation" do
+        let(:evaluation) { build(:generic_evaluation) }
+        it { should == helper.generic_evaluations_path() }
+      end
+    end
+    context "with saved record" do
+      context "with a suite evaluation" do
+        let(:evaluation) { build(:suite_evaluation) }
+        it { should == helper.suite_path(evaluation.suite) }
+      end
+      context "with an evaluation template" do
+        let(:evaluation) { create(:evaluation_template) }
+        it { should == helper.evaluation_path(evaluation) }
+      end
+      context "with a generic evaluation" do
+        let(:evaluation) { create(:generic_evaluation) }
+        it { should == helper.evaluation_path(evaluation) }
+      end
+    end
+  end
 
   describe "#evaluation_progress_bar" do
     let(:suite)        { create(:suite) }

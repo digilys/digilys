@@ -37,7 +37,7 @@ FactoryGirl.define do
   factory :evaluation do
     template        nil
     suite           nil
-    type            :template
+    type            :generic
     sequence(:name) { |i| "Evaluation %09d" % i }
     description     "Description"
     date            nil
@@ -64,6 +64,9 @@ FactoryGirl.define do
       date  { suite.is_template ? nil : Date.today }
     end
     factory :evaluation_template do
+      type :template
+    end
+    factory :generic_evaluation do
     end
   end
 

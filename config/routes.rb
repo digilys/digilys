@@ -83,6 +83,9 @@ Digilys::Application.routes.draw do
       get :search, on: :collection
     end
   end
+  namespace :generic do
+    resources :evaluations, only: [ :index, :new ]
+  end
 
   devise_for :users, path: "authenticate"
 
