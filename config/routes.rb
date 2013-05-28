@@ -40,11 +40,13 @@ Digilys::Application.routes.draw do
       post :new_from_template
     end
     member do
+      get    :color_chart
       get    :confirm_destroy
       get    :select_users
       put    :add_users
       delete :remove_users
-      get    :color_chart
+      put    :add_generic_evaluations
+      delete :remove_generic_evaluations
     end
 
     resources :evaluations,  only: :new

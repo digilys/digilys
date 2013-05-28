@@ -27,6 +27,11 @@ class SuitesController < ApplicationController
   end
 
   def color_chart
+    evaluations = Evaluation.with_type(:generic).order("name asc").partition { |e| @suite.generic_evaluations.include?(e.id) }
+    @generic_evaluations = {
+      included: evaluations.first,
+      missing:  evaluations.last
+    }
   end
 
   def new
@@ -94,6 +99,19 @@ class SuitesController < ApplicationController
 
     flash[:success] = t(:"suites.remove_users.success")
     redirect_to @suite
+  end
+
+  def add_generic_evaluations
+    evaluation = Evaluation.with_type(:generic).find(params[:suite][:generic_evaluations])
+    @suite.generic_evaluations << evaluation.id
+    @suite.save
+    redirect_to color_chart_suite_url(@suite)
+  end
+  def remove_generic_evaluations
+    evaluation = Evaluation.with_type(:generic).find(params[:evaluation_id])
+    @suite.generic_evaluations.delete(evaluation.id)
+    @suite.save
+    redirect_to color_chart_suite_url(@suite)
   end
 
   private

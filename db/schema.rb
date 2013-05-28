@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130527075605) do
+ActiveRecord::Schema.define(:version => 20130528083946) do
 
   create_table "evaluations", :force => true do |t|
     t.integer  "suite_id"
@@ -114,10 +114,11 @@ ActiveRecord::Schema.define(:version => 20130527075605) do
 
   create_table "suites", :force => true do |t|
     t.string   "name"
-    t.datetime "created_at",                     :null => false
-    t.datetime "updated_at",                     :null => false
-    t.boolean  "is_template", :default => false
+    t.datetime "created_at",                                             :null => false
+    t.datetime "updated_at",                                             :null => false
+    t.boolean  "is_template",                         :default => false
     t.integer  "template_id"
+    t.string   "generic_evaluations", :limit => 1024
   end
 
   create_table "taggings", :force => true do |t|

@@ -41,6 +41,10 @@ table.results-table {
         }
     }
 
+    .icon-trash {
+        float: right;
+    }
+
     &.suite-show-value   .value   { display: block; }
     &.suite-show-stanine .stanine { display: block; }
 

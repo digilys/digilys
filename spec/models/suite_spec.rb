@@ -12,7 +12,17 @@ describe Suite do
     it { should validate_presence_of(:name) }
   end
 
-  context "#new_from_template" do
+  describe ".generic_evaluations" do
+    subject { create(:suite, generic_evaluations: nil) }
+    its(:generic_evaluations) { should == [] }
+
+    context "with existing data" do
+      subject { create(:suite, generic_evaluations: [1,2,3]) }
+      its(:generic_evaluations) { should == [1,2,3] }
+    end
+  end
+
+  describe "#new_from_template" do
     let(:template)     { create(:suite, is_template: true) }
     let!(:evaluations) { create_list(:suite_evaluation, 3, suite: template) }
     let!(:meetings)    { create_list(:meeting,          3, suite: template) }
@@ -47,14 +57,14 @@ describe Suite do
     end
   end
 
-  context "#templates" do
+  describe "#templates" do
     let!(:templates) { create_list(:suite, 3, is_template: true) }
     let!(:regular)   { create_list(:suite, 3, is_template: false) }
     it "restricts the query to templates only" do
       Suite.template.all.should match_array(templates)
     end
   end
-  context "#regular" do
+  describe "#regular" do
     let!(:templates) { create_list(:suite, 3, is_template: true) }
     let!(:regular)   { create_list(:suite, 3, is_template: false) }
     it "restricts the query to regular suites only" do

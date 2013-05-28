@@ -24,9 +24,10 @@ FactoryGirl.define do
   end
 
   factory :suite do
-    template        nil
-    sequence(:name) { |i| "Suite %09d" % i }
-    is_template     false
+    template            nil
+    sequence(:name)     { |i| "Suite %09d" % i }
+    is_template         false
+    generic_evaluations nil
   end
 
   factory :participant do

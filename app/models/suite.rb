@@ -26,9 +26,18 @@ class Suite < ActiveRecord::Base
 
   validates :name, presence: true
 
+  serialize :generic_evaluations, JSON
+
 
   def users
     User.with_role(:suite_manager, self).order("email asc")
+  end
+
+  def generic_evaluations
+    if read_attribute(:generic_evaluations).nil?
+      write_attribute(:generic_evaluations, [])
+    end
+    return read_attribute(:generic_evaluations)
   end
 
 

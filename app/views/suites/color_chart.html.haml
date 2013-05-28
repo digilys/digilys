@@ -4,9 +4,10 @@
 
 = render partial: "navigation", locals: { suite: @suite, active: :color_chart }
 
--# Track values and stanines for 
+-# Track values and stanines for averages
 - values = {}
 - stanines = {}
+- evaluations = @generic_evaluations[:included] + @suite.evaluations
 
 %table.table.table-bordered.table-hover.suite-results.suite-show-value.results-table.results-fixed-table
 
@@ -16,8 +17,14 @@
         .btn-group.result-toggles
           %button.btn.active(data-value="value") Resultat
           %button.btn(data-value="stanine") Stanine
-      - @suite.evaluations.each do |evaluation|
-        %th.evaluation= evaluation.name
+      - evaluations.each do |evaluation|
+        %th.evaluation
+          = evaluation.name
+          - if evaluation.type.generic?
+            = link_to "",
+              remove_generic_evaluations_suite_path(@suite, evaluation_id: evaluation.id),
+              method: :delete,
+              class: "icon-trash"
 
         -# Initialize the tracking variables
         - values[evaluation.id]   = []
@@ -32,7 +39,7 @@
           title: student.name,
           content: render(partial: "students/details_table", locals: { student: student })} }= student.name
 
-        - @suite.evaluations.each do |evaluation|
+        - evaluations.each do |evaluation|
           - result = evaluation.result_for(student)
           %td.result{class: result_color_class(result)}
             %ul
@@ -45,10 +52,10 @@
 
   %tfoot
     %tr
-      %th{colspan: @suite.evaluations.length + 1} &nbsp;
+      %th{colspan: evaluations.length + 1} &nbsp;
     %tr.averages
       %th= t(:".averages")
-      - @suite.evaluations.each do |evaluation|
+      - evaluations.each do |evaluation|
 
         - if !values[evaluation.id].blank?
           - average_value = values[evaluation.id].instance_eval { reduce(:+).to_f / size }
@@ -63,3 +70,10 @@
                 = number_with_precision(stanines[evaluation.id].instance_eval { reduce(:+).to_f / size }, precision: 2)
               - else
                 = "-"
+
+= semantic_form_for @suite,
+  url: add_generic_evaluations_suite_path(@suite),
+  html: { class: "form-inline" } do |f|
+  = f.select :generic_evaluations, options_from_collection_for_select(@generic_evaluations[:missing], :id, :name)
+  = f.action :submit, label: t(:".add_generic_evaluation_action")
+

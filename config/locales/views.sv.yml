@@ -84,9 +84,10 @@ sv:
     show_action: Översikt
     template_title: Planeringsmall
     templates_title: Planeringsmallar
-    templates_action: Mallar
-    color_chart: Färgkarta
     averages: Medelvärde
+    navigation:
+      templates_action: Mallar
+      color_chart: Färgkarta
     form:
       student_placeholder: Sök och välj elever
       group_placeholder: Sök och välj grupper
@@ -101,6 +102,8 @@ sv:
       users:
         title: Deltagare
         add: Lägg till deltagare
+    color_chart:
+      add_generic_evaluation_action: Lägg till
     connected_users:
       remove_user_action: Ta bort från planeringen
     new:
