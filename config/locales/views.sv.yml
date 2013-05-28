@@ -136,10 +136,19 @@ sv:
       success: Eleven togs bort från planeringen
 
   evaluations:
-    template_title: Testmall
-    templates_title: Testmallar
+    titles:
+      template: Testmall
+      suite: "%{suite}"
+      templates:
+        html: Testmallar
+        text: Testmallar
+      suites:
+        html: Test <small>%{suite}</small>
+        text: Test - %{suite}
+
     color_ranges: Färgintervall
     stanines: Stanine-värden
+
     show:
       template_notice: Detta är en mall för test.
     form:
