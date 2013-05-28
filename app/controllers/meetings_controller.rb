@@ -1,6 +1,9 @@
 class MeetingsController < ApplicationController
   layout "admin"
 
+  # Needs to execute before load_and_authorize_resource
+  before_filter :remove_empty_activities, only: :submit_report
+
   load_and_authorize_resource :suite
   load_and_authorize_resource :meeting, through: :suite, shallow: true
   before_filter :authorize_suite!
@@ -33,6 +36,7 @@ class MeetingsController < ApplicationController
   end
 
   def report
+    @meeting.activities.build
     @meeting.completed = true
   end
 
@@ -62,5 +66,12 @@ class MeetingsController < ApplicationController
     if @meeting.try(:suite)
       authorize! :update, @meeting.suite
     end
+  end
+
+  def remove_empty_activities
+    params[:meeting][:activities_attributes].reject! { |key, value|
+      value.try(:[], :name).blank? &&
+        value.try(:[], :description).blank?
+    }
   end
 end

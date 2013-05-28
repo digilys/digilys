@@ -8,7 +8,9 @@
   = tinymce_assets
   = tinymce
 
-= semantic_form_for @meeting, url: submit_report_meeting_path(@meeting) do |f|
+= semantic_form_for @meeting,
+  url: submit_report_meeting_path(@meeting),
+  html: { id: "meeting-report-form" } do |f|
 
   = f.inputs do
     .alert.alert-info= t(:".#{f.object.new_record? ? "new" : "edit"}_for_suite", suite_name: f.object.suite.name)
@@ -16,6 +18,17 @@
     = f.input :completed, as: :hidden
 
     = f.input :notes, input_html: { class: "input-block-level tinymce" }
+
+  = f.inputs Activity.model_name.human(count: 2),
+    class: "activities-fields",
+    data: { tinymce: "#{tinymce_javascript()}" } do
+    = f.inputs for: :activities do |af|
+      .span5
+        = af.input :name, input_html: { class: "input-block-level" }
+        = af.input :type, as: :radio
+        = af.hidden_field :status
+      .span7
+        = af.input :description, input_html: { class: "input-block-level tinymce", rows: 7 }
 
   = f.actions do
     = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
