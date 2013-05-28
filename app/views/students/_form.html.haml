@@ -12,6 +12,10 @@
 
     = f.input :data_text, as: :text, input_html: { rows: 7, class: "input-xxlarge" }
 
+    = f.inputs for: :generic_results do |rf|
+      = rf.input :value, label: rf.object.evaluation.name
+      = rf.hidden_field :evaluation_id
+
   = f.actions do
     = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
     %a.btn{href:f.object.new_record? ? students_path() : student_path(f.object)}= t(:".cancel_action")

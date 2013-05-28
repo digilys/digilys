@@ -6,14 +6,24 @@ class Student < ActiveRecord::Base
   has_many :results,      dependent: :destroy
   has_many :evaluations,  through: :results
 
+  has_many :generic_results,
+    class_name: "Result",
+    include:    :evaluation,
+    conditions: "evaluations.type = 'generic'",
+    order:      "evaluations.name ASC",
+    inverse_of: :student
+
   has_and_belongs_to_many :groups
+
+  accepts_nested_attributes_for :generic_results
 
   attr_accessible :personal_id,
     :first_name,
     :last_name,
     :gender,
     :data,
-    :data_text
+    :data_text,
+    :generic_results_attributes
 
   validates :personal_id, presence: true, uniqueness: true
   validates :first_name,  presence: true
@@ -68,6 +78,16 @@ class Student < ActiveRecord::Base
     end
   end
 
+
+  # Fills the generic results collection with unsaved entities for all 
+  # missing generic evaluations
+  def populate_generic_results
+    existing = self.generic_results.collect(&:evaluation_id)
+
+    Evaluation.with_type(:generic).order("name asc").each do |evaluation|
+      self.generic_results.build(evaluation_id: evaluation.id) unless existing.include?(evaluation.id)
+    end
+  end
 
   private
 

@@ -4,47 +4,63 @@
 
 = render partial: "navigation", locals: { student: @student, active: :show }
 
-%table.table.table-bordered.details-table.student-details-table
-  %tbody
-    %tr.first_name
-      %th= Student.human_attribute_name(:first_name)
-      %td= @student.first_name
-    %tr.last_name
-      %th= Student.human_attribute_name(:last_name)
-      %td= @student.last_name
-    %tr.personal_id
-      %th= Student.human_attribute_name(:personal_id)
-      %td= @student.personal_id
-    %tr.gender
-      %th= Student.human_attribute_name(:gender)
-      %td= @student.gender_text
-    - @student.data_humanized.each_pair do |key, value|
-      %tr.data
-        %th= key
-        %td= value
-
-%h3= Group.model_name.human(count: 2)
-
-= form_for @student, url: remove_groups_student_path(@student), method: :delete do |f|
-
-  .btn-student
-    %a.btn.btn-small{href: select_groups_student_path(@student)}= t(:".select_groups_action")
-    = submit_tag t(:".remove_groups_action"), class: "btn btn-small btn-danger"
-
-  %table.table.table-striped.groups-table
-    %thead
-      %tr
-        %th.select &nbsp;
-        %th.name= Group.human_attribute_name(:name)
-        %th.actions &nbsp;
-    %tbody
-      - @student.groups.each do |group|
+.row-fluid
+  .span6
+    %table.table.table-bordered.details-table.student-details-table
+      %tbody
+        %tr.first_name
+          %th= Student.human_attribute_name(:first_name)
+          %td= @student.first_name
+        %tr.last_name
+          %th= Student.human_attribute_name(:last_name)
+          %td= @student.last_name
+        %tr.personal_id
+          %th= Student.human_attribute_name(:personal_id)
+          %td= @student.personal_id
+        %tr.gender
+          %th= Student.human_attribute_name(:gender)
+          %td= @student.gender_text
+        - @student.data_humanized.each_pair do |key, value|
+          %tr.data
+            %th= key
+            %td= value
+  .span6
+    %table.table.table-bordered.table-hover.evaluation-results.results-table
+      %thead
         %tr
-          %td.select
-            = check_box_tag "group_ids[]", group.id, false, id: "group_ids_#{group.id}"
-          %td.name
-            %label(for="group_ids_#{group.id}")
-              = group.name
-              %small= [ group.parent.try(:name), group.parent.try(:parent).try(:name) ].compact.join(", ")
-          %td.actions
-            %a.btn.btn-mini{href:url_for(group)}= t(:".show_action")
+          %th= t(:"generic.evaluations.title")
+          %th= Result.model_name.human
+          %th= t(:".stanines")
+      %tbody
+        - @student.generic_results.each do |result|
+          %tr
+            %td= result.evaluation.name
+            %td.result{class: result_color_class(result)}= result.value
+            %td.result{class: result_color_class(result)}= result.evaluation.stanines? ? result.stanine : "-"
+
+.row-fluid
+  %h3= Group.model_name.human(count: 2)
+
+  = form_for @student, url: remove_groups_student_path(@student), method: :delete do |f|
+
+    .btn-student
+      %a.btn.btn-small{href: select_groups_student_path(@student)}= t(:".select_groups_action")
+      = submit_tag t(:".remove_groups_action"), class: "btn btn-small btn-danger"
+
+    %table.table.table-striped.groups-table
+      %thead
+        %tr
+          %th.select &nbsp;
+          %th.name= Group.human_attribute_name(:name)
+          %th.actions &nbsp;
+      %tbody
+        - @student.groups.each do |group|
+          %tr
+            %td.select
+              = check_box_tag "group_ids[]", group.id, false, id: "group_ids_#{group.id}"
+            %td.name
+              %label(for="group_ids_#{group.id}")
+                = group.name
+                %small= [ group.parent.try(:name), group.parent.try(:parent).try(:name) ].compact.join(", ")
+            %td.actions
+              %a.btn.btn-mini{href:url_for(group)}= t(:".show_action")

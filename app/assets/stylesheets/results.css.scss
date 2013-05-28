@@ -1,23 +1,25 @@
 @import "variables";
 
-table.results-color-table {
-    table-layout: fixed;
-    width: 1%;
+table.results-table {
+    &.results-fixed-table {
+        table-layout: fixed;
+        width: 1%;
 
-    thead {
-        th.student {
-            width: 15em;
-            word-wrap: break-word;
+        thead {
+            th {
+                width: 7em;
+                word-wrap: break-word;
+            }
+            th:first-child {
+                width: 15em;
+                word-wrap: break-word;
+                text-align: right;
+            }
+        }
+
+        tbody th, tfoot th {
             text-align: right;
         }
-        th.evaluation {
-            width: 7em;
-            word-wrap: break-word;
-        }
-    }
-
-    tbody th, tfoot th {
-        text-align: right;
     }
 
     .result {
@@ -28,22 +30,24 @@ table.results-color-table {
             li { display: none; }
         }
     }
-    &.suite-show-value   .value   { display: block; }
-    &.suite-show-stanine .stanine { display: block; }
 
     .result-red    { background-color: $red; }
     .result-yellow { background-color: $yellow; }
     .result-green  { background-color: $green; }
-
-    &.table-hover tbody tr {
-        &:hover > .result-red    { background-color: darken($red, 5%); }
-        &:hover > .result-yellow { background-color: darken($yellow, 5%); }
-        &:hover > .result-green  { background-color: darken($green, 5%); }
-    }
 
     .averages {
         th, td {
             padding-top: 1.5em;
         }
     }
+
+    &.suite-show-value   .value   { display: block; }
+    &.suite-show-stanine .stanine { display: block; }
+
+    &.table-hover tbody tr {
+        &:hover > .result-red    { background-color: darken($red, 5%); }
+        &:hover > .result-yellow { background-color: darken($yellow, 5%); }
+        &:hover > .result-green  { background-color: darken($green, 5%); }
+    }
 }
+

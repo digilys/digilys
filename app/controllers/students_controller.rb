@@ -1,6 +1,9 @@
 class StudentsController < ApplicationController
   layout "admin"
 
+  # Needs to execute before load_and_authorize_resource
+  before_filter :remove_empty_results, only: [ :create, :update ]
+
   load_and_authorize_resource
 
   def index
@@ -16,6 +19,7 @@ class StudentsController < ApplicationController
   end
 
   def new
+    @student.populate_generic_results
   end
 
   def create
@@ -23,11 +27,13 @@ class StudentsController < ApplicationController
       flash[:success] = t(:"students.create.success")
       redirect_to @student
     else
+      @student.populate_generic_results
       render action: "new"
     end
   end
 
   def edit
+    @student.populate_generic_results
   end
 
   def update
@@ -35,6 +41,7 @@ class StudentsController < ApplicationController
       flash[:success] = t(:"students.update.success")
       redirect_to @student
     else
+      @student.populate_generic_results
       render action: "edit"
     end
   end
@@ -63,5 +70,12 @@ class StudentsController < ApplicationController
 
     flash[:success] = t(:"students.remove_groups.success")
     redirect_to @student
+  end
+
+
+  private
+
+  def remove_empty_results
+    params[:student][:generic_results_attributes].reject! { |key, value| value.try(:[], :value).blank? }
   end
 end

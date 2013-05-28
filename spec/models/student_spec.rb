@@ -220,4 +220,59 @@ describe Student do
       student.groups.should_not include(groups.second)
     end
   end
+
+  context ".generic_results" do
+    subject(:student) { create(:student) }
+    let!(:suite_results)   { create_list(:result, 3, student: student, evaluation: create(:suite_evaluation)) }
+    let!(:generic_results) { create_list(:result, 3, student: student, evaluation: create(:generic_evaluation)) }
+
+    its(:results)         { should match_array(generic_results + suite_results) }
+    its(:generic_results) { should match_array(generic_results) }
+  end
+
+  context ".populate_generic_results" do
+    let(:student)              { create(:student) }
+    let!(:generic_evaluations) { create_list(:generic_evaluation, 3) }
+    let!(:existing)            { nil }
+    before(:each)              { student.populate_generic_results }
+    subject(:results)          { student.generic_results }
+
+    it { should have(3).items }
+
+    it "has records for all generic evaluations" do
+      results.collect(&:evaluation).should match_array(generic_evaluations)
+    end
+    it "has only unsaved records" do
+      results.collect(&:new_record?).should match_array([true, true, true])
+    end
+
+    context "with partial existing results" do
+      let(:existing) { create(:result, student: student, evaluation: generic_evaluations.first) }
+
+      it { should have(3).items }
+
+      it "has records for all generic evaluations" do
+        results.collect(&:evaluation).should match_array(generic_evaluations)
+      end
+      it "has partially unsaved records" do
+        results.collect(&:new_record?).should match_array([false, true, true])
+      end
+    end
+    context "with complete existing results" do
+      let(:existing) { [
+        create(:result, student: student, evaluation: generic_evaluations.first),
+        create(:result, student: student, evaluation: generic_evaluations.second),
+        create(:result, student: student, evaluation: generic_evaluations.third)
+      ] }
+
+      it { should have(3).items }
+
+      it "has records for all generic evaluations" do
+        results.collect(&:evaluation).should match_array(generic_evaluations)
+      end
+      it "has partially unsaved records" do
+        results.collect(&:new_record?).should match_array([false, false, false])
+      end
+    end
+  end
 end

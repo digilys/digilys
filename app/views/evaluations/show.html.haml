@@ -46,7 +46,7 @@
                 = format_range(range)
 
 - if @evaluation.type.suite? && !@evaluation.results.blank?
-  %table.table.table-bordered.table-hover.evaluation-results.results-color-table
+  %table.table.table-bordered.table-hover.evaluation-results.results-table
     %thead
       %tr
         %th.student= Student.model_name.human
