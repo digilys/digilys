@@ -26,7 +26,12 @@
   %tbody
     - @suite.students.each do |student|
       %tr
-        %th.student= student.name
+        %th.student
+          %a.student{href:"#", 
+          data: { toggle: "popover",
+          title: student.name,
+          content: render(partial: "students/details_table", locals: { student: student })} }= student.name
+
         - @suite.evaluations.each do |evaluation|
           - result = evaluation.result_for(student)
           %td.result{class: result_color_class(result)}

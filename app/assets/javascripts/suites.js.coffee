@@ -30,3 +30,8 @@ $ ->
         # Change which value is displayed by replacing the CSS class
         $button.closest(".suite-results").attr "class", (i, cls) ->
             cls.replace /suite-show-\w+/, "suite-show-#{$button.data("value")}"
+
+    # Display a popover of student data
+    $(".suite-results a.student").popover(html: true).click (e) ->
+        e.preventDefault()
+        $(".suite-results a.student").not(this).popover("hide")

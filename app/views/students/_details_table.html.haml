@@ -1,0 +1,13 @@
+%table.table.table-bordered.details-table.student-details-popover-table
+  %tbody
+    %tr
+      %th= Student.human_attribute_name(:personal_id)
+      %td= student.personal_id
+    %tr
+      %th= Student.human_attribute_name(:gender)
+      %td= student.gender_text
+    - student.data_humanized.each_pair do |key, value|
+      %tr
+        %th= key
+        %td= value
+
