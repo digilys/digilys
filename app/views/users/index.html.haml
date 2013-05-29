@@ -14,4 +14,6 @@
         %td.actions
           .btn-group
             %a.btn.btn-mini{href: edit_user_path(user)}= t(:".edit_action")
+            - unless current_user == user
+              %a.btn.btn-danger.btn-mini{href: confirm_destroy_user_path(user)}= t(:".destroy_action")
 

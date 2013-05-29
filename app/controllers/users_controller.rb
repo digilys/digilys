@@ -49,6 +49,15 @@ class UsersController < ApplicationController
     end
   end
 
+  def confirm_destroy
+  end
+
+  def destroy
+    @user.destroy
+    flash[:success] = t(:"users.destroy.success")
+    redirect_to users_url()
+  end
+
 
   private
 

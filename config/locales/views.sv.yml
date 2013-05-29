@@ -241,6 +241,10 @@ sv:
       roles_title: Rättigheter
     update:
       success: Användardetaljerna uppdaterades
+    confirm_destroy:
+      confirmation: Är du säker på att du vill radera användaren?
+    destroy:
+      success: Användaren raderades
 
 
   template:

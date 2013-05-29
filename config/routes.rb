@@ -3,9 +3,12 @@ Digilys::Application.routes.draw do
   get "index/index"
   get "index/admin"
 
-  resources :users, only: [ :index, :edit, :update ] do
+  resources :users, only: [ :index, :edit, :update, :destroy ] do
     collection do
       get :search
+    end
+    member do
+      get :confirm_destroy
     end
   end
 

@@ -1,0 +1,5 @@
+%h1
+  = @user.name
+  %small= User.model_name.human
+
+= confirm_destroy_form(@user, t(:".confirmation"), cancel_to: users_path())
