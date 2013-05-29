@@ -7,7 +7,6 @@
     %tr
       %th.name= Group.human_attribute_name(:name)
       %th.parent= Group.human_attribute_name(:parent)
-      %th.actions &nbsp;
     = render_group_tree(@groups)
   %tbody
 

@@ -3,16 +3,7 @@
   %thead
     %tr
       %th.name= Suite.human_attribute_name(:name)
-      %th.actions &nbsp;
   %tbody
     - suites.each do |suite|
       %tr
-        %td.name= suite.name
-        %td.actions
-          .btn-group
-            - if can? :show, suite
-              %a.btn.btn-mini{href: suite_path(suite)}=                            t(:".show_action")
-            - if can? :update, suite
-              %a.btn.btn-mini{href: edit_suite_path(suite)}=                       t(:".edit_action")
-            - if can? :destroy, suite
-              %a.btn.btn-mini.btn-danger{href: confirm_destroy_suite_path(suite)}= t(:".destroy_action")
+        %td.name= link_to(suite.name, suite)

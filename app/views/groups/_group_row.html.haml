@@ -2,7 +2,3 @@
   %td.name= link_to(group.name, group)
   %td.parent
     %small= [ group.parent.try(:name), group.parent.try(:parent).try(:name) ].compact.join(", ")
-  %td.actions
-    .btn-group
-      %a.btn.btn-mini{href: group_path(group)}=                            t(:".show_action")
-      %a.btn.btn-mini{href: edit_group_path(group)}=                       t(:".edit_action")

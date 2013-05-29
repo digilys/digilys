@@ -7,17 +7,12 @@
     %tr
       %th.name=   Student.human_attribute_name(:name)
       %th.groups= Group.model_name.human(count: 2)
-      %th.actions &nbsp;
 
+  %tbody
     - @students.each do |student|
       %tr
         %td.name= link_to(student.name, student)
         %td.groups
           %small= student.groups.collect(&:name).join(", ")
-        %td.actions
-          .btn-group
-            %a.btn.btn-mini{href: student_path(student)}=                            t(:".show_action")
-            %a.btn.btn-mini{href: edit_student_path(student)}=                       t(:".edit_action")
-  %tbody
 
 = paginate(@students)

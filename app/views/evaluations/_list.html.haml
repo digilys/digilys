@@ -2,7 +2,6 @@
   %thead
     %tr
       %th.name= Evaluation.human_attribute_name(:name)
-      %th.actions &nbsp;
   %tbody
     - evaluations.each do |evaluation|
       %tr
@@ -10,7 +9,3 @@
           = link_to evaluation.name, evaluation
           - evaluation.category_list.each do |category|
             %span.label.label-info= category
-        %td.actions
-          .btn-group
-            %a.btn.btn-mini{href: edit_evaluation_path(evaluation)}=                       t(:".edit_action")
-            %a.btn.btn-mini.btn-danger{href: confirm_destroy_evaluation_path(evaluation)}= t(:".destroy_action")
