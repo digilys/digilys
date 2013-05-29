@@ -32,7 +32,10 @@
     = f.input :name, required: true, input_html: { required: true, autofocus: true }
     = f.input :description, as: :text, input_html: { class: "input-xlarge", rows: 3 }
 
-    = f.input :category_list, input_html: { class: "tag-field" }
+    = f.input :category_list,
+      hint: t(:".category_help"),
+      input_html: { class: "tag-field",
+      data: { "existing-tags" => Evaluation.all_tags(on: :categories).collect(&:name).to_json } }
 
     - if evaluation.has_regular_suite?
       = f.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }

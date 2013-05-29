@@ -6,6 +6,11 @@ $ ->
         autoclose: true
     )
 
-    $("input.tag-field").select2(
-        tags: []
-    )
+    $("input.tag-field").each ->
+        $field = $(this)
+
+        tags = $field.data("existing-tags") ? []
+
+        $field.select2(
+            tags: tags
+        )
