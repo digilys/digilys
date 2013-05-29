@@ -104,6 +104,7 @@ sv:
         name: Namn
         description: Beskrivning
         notes: Anteckningar
+        students_and_groups: Elever/grupper
       user:
         email: E-postadress
         password: Lösenord

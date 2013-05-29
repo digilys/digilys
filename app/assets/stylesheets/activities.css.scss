@@ -1,3 +1,10 @@
-// Place all the styles related to the activities controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+form.activity {
+    .hidden {
+        visibility: visible;
+        display: block;
+    }
+
+    .select2-container {
+        width: 30em;
+    }
+}

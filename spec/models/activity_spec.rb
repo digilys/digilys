@@ -42,4 +42,51 @@ describe Activity do
       its(:suite) { should == suite }
     end
   end
+
+  describe ".parse_students_and_groups" do
+    let!(:students)           { create_list(:student, 3) }
+    let!(:groups)             { create_list(:group,   3) }
+    let(:students_and_groups) { nil }
+    subject(:activity)        { create(:activity, students_and_groups: students_and_groups) }
+
+    its(:students) { should be_blank }
+    its(:groups)   { should be_blank }
+
+    context "with student ids" do
+      let(:students_and_groups) { students.collect { |s| "s-#{s.id}" }.join(",") }
+      its(:students)            { should match_array(students) }
+    end
+    context "with group ids" do
+      let(:students_and_groups) { groups.collect { |g| "g-#{g.id}" }.join(",") }
+      its(:groups)              { should match_array(groups) }
+    end
+    context "with student and group ids" do
+      let(:students_and_groups) { "s-#{students.first.id},g-#{groups.first.id}"}
+      its(:students)            { should == [students.first] }
+      its(:groups)              { should == [groups.first] }
+    end
+    context "with invalid data" do
+      let(:students_and_groups) { "[],zomg,123,s-#{students.first.id},g-#{groups.first.id}"}
+      its(:students)            { should == [students.first] }
+      its(:groups)              { should == [groups.first] }
+    end
+    context "with duplicates" do
+      let(:students_and_groups) { ([ "s-#{students.first.id}", "g-#{groups.first.id}" ] * 2).join(",") }
+      its(:students)            { should == [students.first] }
+      its(:groups)              { should == [groups.first] }
+    end
+  end
+  describe ".students_and_groups_select2_data" do
+    let(:students)     { create_list(:student, 3) }
+    let(:groups)       { create_list(:group,   3) }
+    subject(:activity) { create(:activity, students: students, groups: groups) }
+
+    its(:students_and_groups_select2_data) { should have(6).items }
+    its(:students_and_groups_select2_data) { should include(id: "s-#{students.first.id}",  text: students.first.name) }
+    its(:students_and_groups_select2_data) { should include(id: "s-#{students.second.id}", text: students.second.name) }
+    its(:students_and_groups_select2_data) { should include(id: "s-#{students.third.id}",  text: students.third.name) }
+    its(:students_and_groups_select2_data) { should include(id: "g-#{groups.first.id}",    text: groups.first.name) }
+    its(:students_and_groups_select2_data) { should include(id: "g-#{groups.second.id}",   text: groups.second.name) }
+    its(:students_and_groups_select2_data) { should include(id: "g-#{groups.third.id}",    text: groups.third.name) }
+  end
 end

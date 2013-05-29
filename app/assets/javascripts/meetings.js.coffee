@@ -12,6 +12,10 @@ $ ->
             fieldHtml = template.replace(/\{\{idx\}\}/gi, index.toString())
             $fields = $("<fieldset/>").addClass("inputs").append($(fieldHtml))
             $fields.find(":text, textarea").val("")
+            $fields.find(".select2-container").remove()
+
+            $fields.find(".activity-students-autocomplete-field").each ->
+                window.Digilys.Autocomplete.activityStudentsGroups(this)
 
             $fields
 

@@ -40,6 +40,7 @@ Digilys::Application.routes.draw do
       post :new_from_template
     end
     member do
+      get    :search_participants
       get    :color_chart
       get    :confirm_destroy
       get    :select_users

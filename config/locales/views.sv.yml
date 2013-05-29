@@ -35,6 +35,7 @@ sv:
   evaluation_report_action: Rapportera resultat
   meeting_report_action: Protokollför
   meeting_completed: Mötet genomfört och protokollfört
+  activity_students_placeholder: Sök och välj elever eller grupper
 
   students:
     select_groups_action: Lägg till i grupper

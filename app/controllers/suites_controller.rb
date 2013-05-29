@@ -23,6 +23,16 @@ class SuitesController < ApplicationController
     render json: @suites.collect { |s| { id: s.id, text: s.name } }.to_json
   end
 
+  def search_participants
+    students = @suite.students.page(params[:page]).search(params[:sq]).result
+    groups   = @suite.groups.page(params[:page]).search(params[:gq]).result
+
+    result  = students.collect { |s| { id: "s-#{s.id}", text: s.name } }
+    result += groups.collect   { |g| { id: "g-#{g.id}", text: g.name } }
+
+    render json: result.to_json
+  end
+
   def show
   end
 

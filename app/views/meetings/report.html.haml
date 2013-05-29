@@ -15,21 +15,30 @@
   = f.inputs do
     .alert.alert-info= t(:".#{f.object.new_record? ? "new" : "edit"}_for_suite", suite_name: f.object.suite.name)
 
-    = f.input :completed, as: :hidden
+    = f.hidden_field :completed
 
     = f.input :notes, input_html: { class: "input-block-level tinymce" }
 
   = f.inputs Activity.model_name.human(count: 2),
     class: "activities-fields",
     data: { tinymce: "#{tinymce_javascript()}" } do
+
     = f.inputs for: :activities do |af|
+
       .span6
         = af.input :name, input_html: { class: "input-block-level" }
-        .span4
-          = af.input :type, as: :radio
-        .span6
-          = af.input :students, collection: @meeting.suite.students
-          = af.hidden_field :status
+        = af.input :type, as: :radio
+
+        = af.input :students_and_groups,
+          as: :hidden,
+          input_html: { class: "activity-students-autocomplete-field",
+            data: { url: search_participants_suite_path(f.object.suite),
+              data: af.object.students_and_groups_select2_data.to_json,
+              placeholder: t(:".activity_students_placeholder"),
+              multiple: true } }
+
+        = af.hidden_field :status
+
       .span6
         = af.input :description, input_html: { class: "input-block-level tinymce", rows: 7 }
 
