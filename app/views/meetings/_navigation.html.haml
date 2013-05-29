@@ -9,7 +9,7 @@
   - if meeting
     %li{class: active_if(active == :show)}
       %a{href:meeting_path(meeting)}= t(:".show_action")
-    - if suite
+    - if suite && !suite.is_template?
       %li{class: active_if(active == :report)}
         %a{href:report_meeting_path(meeting)}= t(:".meeting_report_action")
     %li.secondary-tab{class: active_if(active == :destroy)}
