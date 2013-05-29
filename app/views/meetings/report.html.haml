@@ -23,11 +23,14 @@
     class: "activities-fields",
     data: { tinymce: "#{tinymce_javascript()}" } do
     = f.inputs for: :activities do |af|
-      .span5
+      .span6
         = af.input :name, input_html: { class: "input-block-level" }
-        = af.input :type, as: :radio
-        = af.hidden_field :status
-      .span7
+        .span4
+          = af.input :type, as: :radio
+        .span6
+          = af.input :students, collection: @meeting.suite.students
+          = af.hidden_field :status
+      .span6
         = af.input :description, input_html: { class: "input-block-level tinymce", rows: 7 }
 
   = f.actions do

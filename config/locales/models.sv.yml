@@ -95,6 +95,8 @@ sv:
         suite_id: Planering
         meeting: Bestämdes vid
         meeting_id: Bestämdes vid
+        students: Elever
+        student_ids: Elever
         type: Typ
         status: Status
         name: Namn

@@ -21,6 +21,13 @@
       %th= Activity.human_attribute_name(:status)
       %td
         %span.label{class: @activity.open? ? "label-success" : ""}= @activity.status_text
+    - unless @activity.students.blank?
+      %tr.students
+        %th= Activity.human_attribute_name(:students)
+        %td
+          %ul.unstyled
+            - @activity.students.each do |student|
+              %li= link_to student.name, student
     %tr.description
       %th= Activity.human_attribute_name(:description)
       %td= @activity.description.try(:html_safe)

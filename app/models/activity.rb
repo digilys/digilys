@@ -7,12 +7,15 @@ class Activity < ActiveRecord::Base
   belongs_to :suite,   inverse_of: :activities
   belongs_to :meeting, inverse_of: :activities
 
+  has_and_belongs_to_many :students
+
   attr_accessible :description,
     :name,
     :notes,
     :status,
     :suite_id,
-    :type
+    :type,
+    :student_ids
 
   validates :suite, presence: true
   validates :name,  presence: true

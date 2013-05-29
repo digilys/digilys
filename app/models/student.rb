@@ -14,6 +14,7 @@ class Student < ActiveRecord::Base
     inverse_of: :student
 
   has_and_belongs_to_many :groups
+  has_and_belongs_to_many :activities
 
   accepts_nested_attributes_for :generic_results
 
@@ -23,6 +24,7 @@ class Student < ActiveRecord::Base
     :gender,
     :data,
     :data_text,
+    :student_ids,
     :generic_results_attributes
 
   validates :personal_id, presence: true, uniqueness: true
