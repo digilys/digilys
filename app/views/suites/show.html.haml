@@ -16,8 +16,10 @@
   - else
     .span8
       .btn-group
-        %a.btn.btn-small{href: new_suite_evaluation_path(@suite)}= t(:".evaluation.add")
-        %a.btn.btn-small{href: new_suite_meeting_path(@suite)}=    t(:".meeting.add")
+        %a.btn.btn-small{href: new_suite_evaluation_path(@suite)}=  t(:".evaluation.add")
+        %a.btn.btn-small{href: new_suite_meeting_path(@suite)}=     t(:".meeting.add")
+        %a.btn.btn-small{href: new_suite_participant_path(@suite)}= t(:".participant.add")
+        %a.btn.btn-small{href: select_users_suite_path(@suite)}=    t(:".users.add")
       = render partial: "calendar", object: @suite, as: :suite
 
     .span4
