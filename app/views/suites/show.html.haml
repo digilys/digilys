@@ -23,21 +23,16 @@
     .span4
       - open, closed = @suite.activities.partition { |a| a.status.open? }
       #activity-accordion.accordion
-        - [ [:open, open], [:closed, closed] ].each do |name, collection|
-          - indicate_active = name == :open && !collection.blank?
+        - [ [:open, open], [:closed, closed] ].each do |name, activities|
+          - indicate_active = name == :open && !activities.blank?
           .accordion-group
             .accordion-heading
               %a.accordion-toggle{href: "#activity-accordion-#{name}", data: { toggle: "collapse", parent: "#activity-accordion"}}
                 = t(:".activity.#{name}_title")
-                %span.badge{class: indicate_active ? "badge-success" : ""}= collection.length
+                %span.badge{class: indicate_active ? "badge-success" : ""}= activities.length
             .accordion-body.collapse{id: "activity-accordion-#{name}", class: indicate_active ? "in" : ""}
               .accordion-inner
-                - unless collection.blank?
-                  %ul.unstyled.activity-list
-                    - collection.each do |activity|
-                      %li
-                        = activity.name
-                        %span.label= activity.type_text
+                = render partial: "activities/list", locals: { activities: activities }
 
 
 - unless @suite.is_template?

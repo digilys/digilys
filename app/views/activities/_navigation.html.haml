@@ -1,0 +1,18 @@
+- active   ||= nil
+- activity ||= nil
+
+- content_for :title do
+  - Activity.model_name.human(count: 2)
+
+%ul.nav.nav-tabs
+  %li{class: active_if(active == :show)}
+    %a{href:activity_path(activity)}= t(:".show_action")
+  - unless activity.closed?
+    %li{class: active_if(active == :report)}
+      %a{href:report_activity_path(activity)}= t(:".activity_report_action")
+  %li.secondary-tab{class: active_if(active == :destroy)}
+    %a{href:confirm_destroy_activity_path(activity)}= t(:".destroy_action")
+  %li.secondary-tab{class: active_if(active == :edit)}
+    %a{href:edit_activity_path(activity)}= t(:".edit_action")
+  %li
+    %a{href:suite_path(activity.suite)}= t(:".return_to_suite")

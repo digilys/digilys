@@ -215,6 +215,18 @@ sv:
     destroy:
       success: Mötet togs bort från planeringen
 
+  activities:
+    edit_for_suite: Ärendet tillhör planeringen %{suite_name}
+    activity_report_action: Stäng ärendet
+    update:
+      success: Ärendet uppdaterades
+    submit_report:
+      success: Ärendet stängdes
+    confirm_destroy:
+      confirmation: Är du säker på att du vill ta bort ärendet?
+    destroy:
+      success: Ärendet togs bort från planeringen
+
   users:
     edit:
       edit_self_title: Ändra användaruppgifter

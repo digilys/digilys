@@ -1,0 +1,30 @@
+%h1
+  = @activity.name
+  %small= @activity.suite.name
+
+= render partial: "navigation", locals: { activity: @activity, active: :show }
+
+%table.table.table-bordered.details-table.activity-details-table
+  %tbody
+    %tr.type
+      %th= Activity.human_attribute_name(:type)
+      %td
+        %span.label= @activity.type_text
+    %tr.suite
+      %th= Suite.model_name.human
+      %td= link_to @activity.suite.name, @activity.suite
+    - if @activity.meeting
+      %tr.meeting
+        %th= Activity.human_attribute_name(:meeting)
+        %td= link_to @activity.meeting.name, @activity.meeting
+    %tr.status
+      %th= Activity.human_attribute_name(:status)
+      %td
+        %span.label{class: @activity.open? ? "label-success" : ""}= @activity.status_text
+    %tr.description
+      %th= Activity.human_attribute_name(:description)
+      %td= @activity.description.try(:html_safe)
+    - if @activity.closed?
+      %tr.notes
+        %th= Activity.human_attribute_name(:notes)
+        %td= @activity.notes.try(:html_safe)

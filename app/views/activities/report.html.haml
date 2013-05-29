@@ -1,0 +1,21 @@
+%h1
+  = @activity.name
+  %small= @activity.suite.name
+
+= render partial: "navigation", locals: { activity: @activity, active: :report }
+
+- content_for :page_end do
+  = tinymce_assets
+  = tinymce
+
+= semantic_form_for @activity, url: submit_report_activity_path(@activity) do |f|
+
+  = f.inputs do
+    = f.hidden_field :status
+
+    = f.input :notes, input_html: { class: "input-block-level tinymce" }
+
+  = f.actions do
+    = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
+    %a.btn{href:activity_path(f.object)}= t(:".cancel_action")
+

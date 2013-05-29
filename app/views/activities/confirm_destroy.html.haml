@@ -1,0 +1,7 @@
+%h1
+  = @activity.name
+  %small= @activity.suite.name
+
+= render partial: "navigation", locals: { activity: @activity, active: :destroy }
+
+= confirm_destroy_form(@activity, t(:".confirmation"))

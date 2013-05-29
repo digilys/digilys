@@ -1,0 +1,7 @@
+- unless activities.blank?
+  %ul.unstyled.activity-list
+    - activities.each do |activity|
+      %li
+        = link_to activity do
+          %span.name= activity.name
+          %span.label= activity.type_text

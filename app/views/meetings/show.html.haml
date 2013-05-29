@@ -29,10 +29,4 @@
       - if @meeting.completed?
         %tr.activities
           %th= Activity.model_name.human(count: 2)
-          %td
-            - unless @meeting.activities.blank?
-              %ul.unstyled.activity-list
-                - @meeting.activities.each do |activity|
-                  %li
-                    = activity.name
-                    %span.label= activity.type_text
+          %td= render partial: "activities/list", locals: { activities: @meeting.activities }

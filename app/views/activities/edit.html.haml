@@ -1,0 +1,26 @@
+%h1
+  = @activity.name
+  %small= @activity.suite.name
+
+= render partial: "navigation", locals: { activity: @activity, active: :edit }
+
+- content_for :page_end do
+  = tinymce_assets
+  = tinymce
+
+= semantic_form_for @activity do |f|
+
+  = f.inputs do
+    .alert.alert-info= t(:".edit_for_suite", suite_name: f.object.suite.name)
+
+    = f.input :name, required: true, input_html: { required: true, autofocus: true }
+
+    = f.input :description, input_html: { class: "input-block-level tinymce" }
+
+    - if @activity.closed?
+      = f.input :notes, input_html: { class: "input-block-level tinymce" }
+
+  = f.actions do
+    = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
+    %a.btn{href:activity_path(f.object)}= t(:".cancel_action")
+

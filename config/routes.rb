@@ -80,6 +80,14 @@ Digilys::Application.routes.draw do
     end
   end
 
+  resources :activities, except: [ :index, :new ] do
+    member do
+      get :confirm_destroy
+      get :report
+      put :submit_report
+    end
+  end
+
   namespace :template do
     resources :evaluations, only: [ :index, :new ] do
       get :search, on: :collection
