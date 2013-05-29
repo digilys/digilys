@@ -26,12 +26,12 @@ $ ->
         $greenMax   = $("#evaluation-green-max")
         $stanineMax = $("#evaluation-stanine-max")
 
-        $maxResult.on "change", ->
+        changeMaxResult = ->
             value = intify($maxResult.val())
             $greenMax.val(value)
             $stanineMax.val(value)
 
-        $redBelow.on "change", ->
+        changeRedBelow = ->
             value  = $redBelow.val()
             suffix = if /%/.test(value) then "%" else ""
             value  = Math.max(intify(value, -1), 0)
@@ -39,7 +39,7 @@ $ ->
             $redMin.val("0" + suffix)
             $redMax.val(value.toString() + suffix)
 
-        $greenAbove.on "change", ->
+        changeGreenAbove = ->
             value = $greenAbove.val()
 
             if /%/.test(value)
@@ -54,9 +54,13 @@ $ ->
             $greenMin.val(value.toString() + suffix)
             $greenMax.val(max.toString() + suffix)
 
-        $maxResult.trigger("change")
-        $redBelow.trigger("change")
-        $greenAbove.trigger("change")
+        $maxResult.on  "change", changeMaxResult
+        $redBelow.on   "change", changeRedBelow
+        $greenAbove.on "change", changeGreenAbove
+
+        changeMaxResult()
+        changeRedBelow()
+        changeGreenAbove()
 
         # Update the lower boundary indicator of the next
         # stanine field when a stanine field change.
@@ -65,7 +69,7 @@ $ ->
         # overlapping stanine ranges
         $stanines = $form.find(".stanine-field")
 
-        $form.on "change", ".stanine-field", ->
+        changeStanine = ->
             $stanines.each ->
                 $field = $(this)
                 $group = $field.closest(".control-group")
@@ -79,7 +83,9 @@ $ ->
                 if $field.val() == $prevGroup.find(".stanine-field").val()
                     $group.find(".stanine-below").text($prevGroup.find(".stanine-below").text())
 
-        $stanines.trigger("change")
+        $form.on "change", ".stanine-field", changeStanine
+
+        changeStanine()
 
         # Suggestion field for the yellow range, only for new evaluations
         #

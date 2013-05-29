@@ -14,3 +14,10 @@ $ ->
         $field.select2(
             tags: tags
         )
+
+    $("form").on("change", ":input", ->
+        window.onbeforeunload = ->
+            return window.Digilys.navigationConfirmation
+    ).on("submit", ->
+        window.onbeforeunload = null
+    )

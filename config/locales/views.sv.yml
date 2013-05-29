@@ -19,6 +19,8 @@ sv:
       continue_action:   Fortsätt leta
       start_over_action: Börja om från början
 
+  navigation_confirmation: Alla ändringar du gjort här kommer att försvinna.
+
   index:
     index:
       title: Välkommen till DigiLys!

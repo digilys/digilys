@@ -56,5 +56,10 @@
       Javascripts
       \==================================================
     / Placed at the end of the document so the pages load faster
+
+    :javascript
+      window.Digilys = window.Digilys || {}
+      window.Digilys.navigationConfirmation = "#{t(:navigation_confirmation)}";
+
     = javascript_include_tag "application"
     = content_for?(:page_end) ? yield(:page_end) : ""
