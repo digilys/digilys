@@ -97,6 +97,8 @@ sv:
         meeting_id: Bestämdes vid
         students: Elever
         student_ids: Elever
+        groups: Grupper
+        group_ids: Grupper
         type: Typ
         status: Status
         name: Namn

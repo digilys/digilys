@@ -8,6 +8,7 @@ class Activity < ActiveRecord::Base
   belongs_to :meeting, inverse_of: :activities
 
   has_and_belongs_to_many :students
+  has_and_belongs_to_many :groups
 
   attr_accessible :description,
     :name,
@@ -15,7 +16,8 @@ class Activity < ActiveRecord::Base
     :status,
     :suite_id,
     :type,
-    :student_ids
+    :student_ids,
+    :group_ids
 
   validates :suite, presence: true
   validates :name,  presence: true
