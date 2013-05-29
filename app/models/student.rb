@@ -16,7 +16,8 @@ class Student < ActiveRecord::Base
   has_and_belongs_to_many :groups
   has_and_belongs_to_many :activities
 
-  accepts_nested_attributes_for :generic_results
+  accepts_nested_attributes_for :generic_results,
+    reject_if: proc { |attributes| attributes[:value].blank? }
 
   attr_accessible :personal_id,
     :first_name,

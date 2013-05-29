@@ -20,7 +20,8 @@ class Evaluation < ActiveRecord::Base
 
   enumerize :type, in: [ :generic, :template, :suite ], predicates: { prefix: true }, scope: true
 
-  accepts_nested_attributes_for :results
+  accepts_nested_attributes_for :results,
+    reject_if: proc { |attributes| attributes[:value].blank? }
 
   attr_accessible :type,
     :template_id,

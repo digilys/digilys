@@ -71,8 +71,6 @@ class EvaluationsController < ApplicationController
     @suite        = @evaluation.suite
     @participants = @suite.participants
 
-    params[:evaluation][:results_attributes].reject! { |key, value| value.try(:[], :value).blank? }
-
     if @evaluation.update_attributes(params[:evaluation])
       flash[:success] = t(:"evaluations.submit_report.success")
       redirect_to @suite

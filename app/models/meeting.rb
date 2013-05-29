@@ -2,7 +2,8 @@ class Meeting < ActiveRecord::Base
   belongs_to :suite,      inverse_of: :meetings
   has_many   :activities, inverse_of: :meeting
 
-  accepts_nested_attributes_for :activities
+  accepts_nested_attributes_for :activities,
+    reject_if: proc { |attributes| attributes[:name].blank? && attributes[:description].blank? }
 
   attr_accessible :completed,
     :date,
