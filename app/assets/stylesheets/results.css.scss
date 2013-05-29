@@ -36,8 +36,9 @@ table.results-table {
     .result-green  { background-color: $green; }
 
     .averages {
-        th, td {
-            padding-top: 1.5em;
+        th, td, li {
+            line-height: 16px;
+            font-weight: bold;
         }
     }
 
