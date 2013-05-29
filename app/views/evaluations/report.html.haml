@@ -8,8 +8,10 @@
   url: submit_report_evaluation_path(@evaluation),
   html: { id: "result-entry-form", class: "form-horizontal" } do |f|
 
+  = f.input :max_result, input_html: { disabled: true }
+
   = f.inputs for: :results do |rf|
-    = rf.input :value, label: rf.object.student.name
+    = rf.input :value, label: rf.object.student.name, input_html: { data: { "error-message" => t(:".result_error_message") } }
     = rf.hidden_field :student_id
 
   = f.actions do

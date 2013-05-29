@@ -196,6 +196,8 @@ sv:
         suite: Testet och tillhörande information raderades
         template: Testmallen raderades
         generic: Elevdata raderades
+    report:
+      result_error_message: Resultatet måste vara mellan 0 och maxresultatet
     submit_report:
       success: Resultatet uppdaterades
     destroy_report:
