@@ -209,6 +209,8 @@ sv:
       success: Mötet lades till i planeringen
     update:
       success: Mötet uppdaterades
+    report:
+      add_activity_action: Lägg till ärende
     submit_report:
       success: Mötet protokollfördes
     confirm_destroy:

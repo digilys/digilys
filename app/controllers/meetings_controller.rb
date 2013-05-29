@@ -33,7 +33,7 @@ class MeetingsController < ApplicationController
   end
 
   def report
-    @meeting.activities.build
+    @meeting.activities.build if @meeting.activities.blank?
     @meeting.completed = true
   end
 

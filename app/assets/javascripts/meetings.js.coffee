@@ -15,16 +15,14 @@ $ ->
             $fields.find(".select2-container").remove()
 
             $fields.find(".activity-students-autocomplete-field").each ->
+                $(this).data("data", null)
                 window.Digilys.Autocomplete.activityStudentsGroups(this)
 
             $fields
 
-        addChangeListener = ->
-            $activitiesContainer.find("fieldset.inputs:last").one "change", ":text, textarea", ->
-                $fields = buildFields($activitiesContainer.find("fieldset.inputs").length)
-                $form.find(".tinymce").removeClass("tinymce")
-                $activitiesContainer.append($fields)
-                eval(tinymceCode)
-                addChangeListener()
-
-        addChangeListener()
+        $activitiesContainer.on "click", ".add-activity-action", (event) ->
+            event.preventDefault()
+            $fields = buildFields($activitiesContainer.find("fieldset.inputs").length)
+            $form.find(".tinymce").removeClass("tinymce")
+            $activitiesContainer.find("fieldset.inputs:last").after($fields)
+            eval(tinymceCode)
