@@ -72,7 +72,7 @@ $ ->
 
                 # Update the next stanine field's indicator
                 $nextIndicator = $group.next(".control-group").find(".stanine-below")
-                $nextIndicator.text(intify($field.val(), 1))
+                $nextIndicator.text(Math.min(intify($field.val(), 1), intify($maxResult.val())))
 
                 $prevGroup = $group.prev(".control-group")
 
