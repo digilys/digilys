@@ -18,8 +18,9 @@ class Evaluation < ActiveRecord::Base
 
   acts_as_taggable_on :categories
 
-  enumerize :type,   in: [ :generic, :template, :suite ], predicates: { prefix: true }, scope: true
-  enumerize :target, in: [ :all, :male, :female ],        predicates: { prefix: true }, default: :all
+  enumerize :type,       in: [ :generic, :template, :suite ], predicates: { prefix: true }, scope: true
+  enumerize :target,     in: [ :all, :male, :female ],        predicates: { prefix: true }, default: :all
+  enumerize :value_type, in: [ :numeric, :boolean, :grade ],  predicates: { prefix: true }, default: :numeric
 
   accepts_nested_attributes_for :results,
     reject_if: proc { |attributes| attributes[:value].blank? }
@@ -43,7 +44,8 @@ class Evaluation < ActiveRecord::Base
     :stanine8,
     :results_attributes,
     :category_list,
-    :target
+    :target,
+    :value_type
 
   serialize :value_aliases, JSON
 
@@ -151,6 +153,7 @@ class Evaluation < ActiveRecord::Base
 
   before_validation :convert_percentages
   after_update      :touch_results
+  before_save       :set_aliases_from_value_type
 
 
   def has_regular_suite?
@@ -378,6 +381,25 @@ class Evaluation < ActiveRecord::Base
       end
     else
       errors.add(:date, :not_nil) if !self.date_before_type_cast.blank?
+    end
+  end
+
+  BOOLEAN_ALIASES = { "0" => I18n.t(:no), "1" => I18n.t(:yes) }
+  GRADE_ALIASES   = {
+    "0" => "F",
+    "1" => "E",
+    "2" => "D",
+    "3" => "C",
+    "4" => "B",
+    "5" => "A"
+  }
+
+  def set_aliases_from_value_type
+    case self.value_type
+    when "grade"
+      self.value_aliases = GRADE_ALIASES
+    when "boolean"
+      self.value_aliases = BOOLEAN_ALIASES
     end
   end
 end

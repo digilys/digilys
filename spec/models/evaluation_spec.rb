@@ -38,11 +38,13 @@ describe Evaluation do
     it { should allow_mass_assignment_of(:stanine8) }
     it { should allow_mass_assignment_of(:category_list) }
     it { should allow_mass_assignment_of(:target) }
+    it { should allow_mass_assignment_of(:value_type) }
   end
   context "validation" do
     it { should validate_presence_of(:name) }
     it { should ensure_inclusion_of(:type).in_array(%w(suite template generic)) }
     it { should ensure_inclusion_of(:target).in_array(%w(all male female)) }
+    it { should ensure_inclusion_of(:value_type).in_array(%w(numeric boolean grade)) }
 
     it { should validate_numericality_of(:max_result).only_integer }
     it { should validate_numericality_of(:red_below).only_integer }
@@ -123,6 +125,21 @@ describe Evaluation do
     subject { create(:evaluation, max_result: 50, red_below: "40%", green_above: "60%") }
     its(:red_below)   { should == 20 }
     its(:green_above) { should == 30 }
+  end
+
+  describe ".set_aliases_from_value_type" do
+    context "for numeric value type" do
+      subject { create(:evaluation, value_type: :numeric) }
+      its(:value_aliases) { should be_blank }
+    end
+    context "for boolean value type" do
+      subject { create(:evaluation, value_type: :boolean)}
+      its(:value_aliases) { should == Evaluation::BOOLEAN_ALIASES }
+    end
+    context "for grade value type" do
+      subject { create(:evaluation, value_type: :grade)}
+      its(:value_aliases) { should == Evaluation::GRADE_ALIASES }
+    end
   end
 
   describe ".has_regular_suite?" do
