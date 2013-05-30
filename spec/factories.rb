@@ -53,6 +53,7 @@ FactoryGirl.define do
     red_below       15
     green_above     35
     target          :all
+    value_aliases   nil
 
     ignore do
       stanines      [7, 12, 17, 22, 27, 32, 37, 42]

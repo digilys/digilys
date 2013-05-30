@@ -55,7 +55,7 @@ describe Result do
     end
   end
 
-  context ".stanine" do
+  describe ".stanine" do
     let(:stanine_limits) { [10, 20, 30, 40, 50, 60, 70, 80] }
     let(:evaluation)     { create(:evaluation, max_result: 90, stanines: stanine_limits) }
     let(:value)          { 35 }
@@ -109,6 +109,22 @@ describe Result do
       evaluation.update_attributes(stanine3: 40, stanine4: 45)
       result.reload
       result.stanine.should == 3
+    end
+  end
+
+  describe ".display_value" do
+    let(:aliases)    { { 1 => "foo", 2 => "bar" } }
+    let(:evaluation) { create(:evaluation, value_aliases: aliases) }
+    let(:value)      { nil }
+    subject          { create(:result, evaluation: evaluation, value: value) }
+
+    context "with a value with an alias" do
+      let(:value) { 1 }
+      its(:display_value) { should == "foo" }
+    end
+    context "with a value without an alias" do
+      let(:value) { 3 }
+      its(:display_value) { should == "3" }
     end
   end
 end

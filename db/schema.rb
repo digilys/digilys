@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130530054759) do
+ActiveRecord::Schema.define(:version => 20130530071708) do
 
   create_table "activities", :force => true do |t|
     t.integer  "suite_id"
@@ -45,8 +45,8 @@ ActiveRecord::Schema.define(:version => 20130530054759) do
     t.integer  "max_result"
     t.integer  "red_below"
     t.integer  "green_above"
-    t.datetime "created_at",                                          :null => false
-    t.datetime "updated_at",                                          :null => false
+    t.datetime "created_at",                                            :null => false
+    t.datetime "updated_at",                                            :null => false
     t.integer  "stanine1"
     t.integer  "stanine2"
     t.integer  "stanine3"
@@ -57,9 +57,10 @@ ActiveRecord::Schema.define(:version => 20130530054759) do
     t.integer  "stanine8"
     t.date     "date"
     t.integer  "template_id"
-    t.string   "description", :limit => 1024
-    t.string   "type",                        :default => "template"
-    t.string   "target",                      :default => "all"
+    t.string   "description",   :limit => 1024
+    t.string   "type",                          :default => "template"
+    t.string   "target",                        :default => "all"
+    t.text     "value_aliases"
   end
 
   create_table "groups", :force => true do |t|

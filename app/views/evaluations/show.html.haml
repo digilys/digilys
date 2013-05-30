@@ -60,6 +60,6 @@
       - @evaluation.results.each do |result|
         %tr
           %th.student= link_to result.student.name, result.student
-          %td.result{class: result_color_class(result)}= result.value
+          %td.result{class: result_color_class(result)}= result.display_value
           - if @evaluation.stanines?
             %td.result{class: result_color_class(result)}= result.stanine

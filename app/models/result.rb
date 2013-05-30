@@ -26,6 +26,14 @@ class Result < ActiveRecord::Base
     end
   end
 
+  def display_value
+    if self.value.blank?
+      "" 
+    else
+      self.evaluation.alias_for(self.value).to_s
+    end
+  end
+
   private
 
   def update_color_and_stanine

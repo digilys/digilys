@@ -119,13 +119,13 @@ describe Evaluation do
     end
   end
 
-  context ".convert_percentages" do
+  describe ".convert_percentages" do
     subject { create(:evaluation, max_result: 50, red_below: "40%", green_above: "60%") }
     its(:red_below)   { should == 20 }
     its(:green_above) { should == 30 }
   end
 
-  context ".has_regular_suite?" do
+  describe ".has_regular_suite?" do
     context "with no suite" do
       subject { build(:evaluation, suite: nil).has_regular_suite? }
       it { should be_false }
@@ -144,7 +144,7 @@ describe Evaluation do
     end
   end
 
-  context ".color_for" do
+  describe ".color_for" do
     let(:evaluation) { create(:evaluation, red_below: 10, green_above: 20, max_result: 30) }
     let(:value)      { nil }
     subject          { evaluation.color_for(value) }
@@ -168,7 +168,7 @@ describe Evaluation do
       it { should == :green }
     end
   end
-  context ".stanine_for" do
+  describe ".stanine_for" do
     let(:stanine_limits) { [10, 20, 30, 40, 50, 60, 70, 80] }
     let(:evaluation) { create(:evaluation, max_result: 90, stanines: stanine_limits) }
     let(:value)      { nil }
@@ -221,7 +221,7 @@ describe Evaluation do
     end
   end
 
-  context ".result_for" do
+  describe ".result_for" do
     let(:students)   { create_list(:student, 3) }
     let(:student)    { students.second }
     let(:evaluation) { create(:evaluation) }
@@ -271,7 +271,7 @@ describe Evaluation do
     end
   end
 
-  context ".stanines?" do
+  describe ".stanines?" do
     it "returns true if all stanine values are set" do
       create(:evaluation, stanines: Array.new(8, 1)).stanines?.should be_true
     end
@@ -280,13 +280,13 @@ describe Evaluation do
     end
   end
 
-  context ".stanines" do
+  describe ".stanines" do
     let(:stanine_limits) { [ 10, 20, 30, 40, 50, 60, 70, 80 ] }
     subject              { create(:evaluation, max_result: 90, stanines: stanine_limits )}
     its(:stanines)       { should == stanine_limits}
   end
 
-  context ".stanine_ranges" do
+  describe ".stanine_ranges" do
     let(:stanine_limits) { [ 10, 20, 30, 40, 50, 60, 70, 80 ] }
     subject              { create(:evaluation, max_result: 90, stanines: stanine_limits ).stanine_ranges }
 
@@ -329,7 +329,7 @@ describe Evaluation do
     end
   end
 
-  context ".result_distribution" do
+  describe ".result_distribution" do
     let(:target)               { :all }
     let(:suite)                { create(:suite) }
     let!(:male_participants)   { create_list(:male_participant,   1, suite: suite) }
@@ -393,7 +393,25 @@ describe Evaluation do
     end
   end
 
-  context "#new_from_template" do
+  describe ".alias_for" do
+    let(:aliases)    { { 1 => "foo", 2 => "bar" } }
+    let(:evaluation) { create(:evaluation, value_aliases: aliases) }
+
+    it "converts a raw value to its alias" do
+      evaluation.alias_for(1).should == "foo"
+    end
+    it "returns the raw value if there is no alias" do
+      evaluation.alias_for(3).should == 3
+    end
+    context "without aliases" do
+      let(:aliases) { nil }
+      it "returns the raw value" do
+        evaluation.alias_for(1).should == 1
+      end
+    end
+  end
+
+  describe "#new_from_template" do
     let(:template) { create(:evaluation_template, category_list: "foo, bar, baz", target: :male) }
     subject        { Evaluation.new_from_template(template) }
 

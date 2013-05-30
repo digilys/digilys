@@ -43,8 +43,8 @@
           - result = evaluation.result_for(student)
           %td.result{class: result_color_class(result)}
             %ul
-              %li.value=   result.try(:value)   || "-"
-              %li.stanine= result.try(:stanine) || "-"
+              %li.value=   result.try(:display_value) || "-"
+              %li.stanine= result.try(:stanine)       || "-"
 
               -# Add to track variables
               - values[evaluation.id]   << result.value   if result.try(:value)
@@ -64,7 +64,11 @@
 
         %td.result{class: result_color_class(average_value, evaluation)}
           %ul
-            %li.value= number_with_precision(average_value, precision: 2) || "-"
+            %li.value
+              - if !evaluation.value_aliases.blank?
+                = evaluation.alias_for(average_value.round)
+              - else
+                = number_with_precision(average_value, precision: 2) || "-"
             %li.stanine
               - if !stanines[evaluation.id].blank?
                 = number_with_precision(stanines[evaluation.id].instance_eval { reduce(:+).to_f / size }, precision: 2)

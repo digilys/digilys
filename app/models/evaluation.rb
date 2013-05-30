@@ -45,6 +45,8 @@ class Evaluation < ActiveRecord::Base
     :category_list,
     :target
 
+  serialize :value_aliases, JSON
+
 
   validate  :validate_suite
   validate  :validate_date
@@ -284,6 +286,15 @@ class Evaluation < ActiveRecord::Base
     end
 
     return result_distribution
+  end
+
+
+  def alias_for(value)
+    if self.value_aliases.blank?
+      value 
+    else
+      self.value_aliases[value.to_s] || value
+    end
   end
 
 

@@ -35,7 +35,7 @@
         - @student.generic_results.each do |result|
           %tr
             %td= result.evaluation.name
-            %td.result{class: result_color_class(result)}= result.value
+            %td.result{class: result_color_class(result)}= result.display_value
             %td.result{class: result_color_class(result)}= result.evaluation.stanines? ? result.stanine : "-"
 
 .row-fluid
