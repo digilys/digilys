@@ -18,6 +18,14 @@ describe Evaluation do
       subject { build(:generic_evaluation) }
       it { should be_valid }
     end
+    context "numeric" do
+      subject { build(:numeric_evaluation) }
+      it { should be_valid }
+    end
+    context "boolean" do
+      subject { build(:boolean_evaluation) }
+      it { should be_valid }
+    end
   end
   context "accessible attributes" do
     it { should allow_mass_assignment_of(:type) }
@@ -39,6 +47,8 @@ describe Evaluation do
     it { should allow_mass_assignment_of(:category_list) }
     it { should allow_mass_assignment_of(:target) }
     it { should allow_mass_assignment_of(:value_type) }
+    it { should allow_mass_assignment_of(:color_for_true) }
+    it { should allow_mass_assignment_of(:color_for_false) }
   end
   context "validation" do
     it { should validate_presence_of(:name) }
@@ -47,46 +57,61 @@ describe Evaluation do
     it { should ensure_inclusion_of(:value_type).in_array(%w(numeric boolean grade)) }
 
     it { should validate_numericality_of(:max_result).only_integer }
-    it { should validate_numericality_of(:red_below).only_integer }
-    it { should validate_numericality_of(:green_above).only_integer }
-
-    it { should validate_numericality_of(:stanine1).only_integer }
-    it { should validate_numericality_of(:stanine2).only_integer }
-    it { should validate_numericality_of(:stanine3).only_integer }
-    it { should validate_numericality_of(:stanine4).only_integer }
-    it { should validate_numericality_of(:stanine5).only_integer }
-    it { should validate_numericality_of(:stanine6).only_integer }
-    it { should validate_numericality_of(:stanine7).only_integer }
-    it { should validate_numericality_of(:stanine8).only_integer }
-
     it { should_not allow_value(-1).for(:max_result) }
 
-    context "limit ranges" do
-      subject { build(:evaluation, max_result: 50, red_below: 20, green_above: 30) }
-      it { should_not allow_value(-1).for(:red_below) }
-      it { should_not allow_value(51).for(:green_above) }
-      it { should_not allow_value(19).for(:green_above) }
-      it { should_not allow_value(31).for(:red_below) }
-    end
+    context "numeric value type" do
+      subject { build(:numeric_evaluation) }
 
-    context "stanine" do
-      context "with stanines" do
-        let(:stanine_limits) { [10,20,30,40,50,60,70,80] }
-        subject { build(:evaluation, max_result: 90, stanines: stanine_limits)}
+      it { should validate_numericality_of(:red_below).only_integer }
+      it { should validate_numericality_of(:green_above).only_integer }
 
-        # 8 stanine limits
-        1.upto(8).each do |i|
-          it { should_not allow_value(nil).for(:"stanine#{i}") }
-          it { should_not allow_value(-1).for(:"stanine#{i}") }
-          it { should_not allow_value(stanine_limits[i - 2] - 1).for(:"stanine#{i}") }   if i > 1
-          it { should_not allow_value(stanine_limits[i]     + 1).for(:"stanine#{i}") }   if i < 8
+      it { should_not allow_value(nil).for(:red_below) }
+      it { should_not allow_value(nil).for(:green_above) }
+
+      it { should validate_numericality_of(:stanine1).only_integer }
+      it { should validate_numericality_of(:stanine2).only_integer }
+      it { should validate_numericality_of(:stanine3).only_integer }
+      it { should validate_numericality_of(:stanine4).only_integer }
+      it { should validate_numericality_of(:stanine5).only_integer }
+      it { should validate_numericality_of(:stanine6).only_integer }
+      it { should validate_numericality_of(:stanine7).only_integer }
+      it { should validate_numericality_of(:stanine8).only_integer }
+
+      context "limit ranges" do
+        subject { build(:evaluation, value_type: :numeric, max_result: 50, red_below: 20, green_above: 30) }
+        it { should_not allow_value(-1).for(:red_below) }
+        it { should_not allow_value(51).for(:green_above) }
+        it { should_not allow_value(19).for(:green_above) }
+        it { should_not allow_value(31).for(:red_below) }
+      end
+
+      context "stanine" do
+        context "with stanines" do
+          let(:stanine_limits) { [10,20,30,40,50,60,70,80] }
+          subject { build(:evaluation, value_type: :numeric, max_result: 90, stanines: stanine_limits)}
+
+          # 8 stanine limits
+          1.upto(8).each do |i|
+            it { should_not allow_value(nil).for(:"stanine#{i}") }
+            it { should_not allow_value(-1).for(:"stanine#{i}") }
+            it { should_not allow_value(stanine_limits[i - 2] - 1).for(:"stanine#{i}") }   if i > 1
+            it { should_not allow_value(stanine_limits[i]     + 1).for(:"stanine#{i}") }   if i < 8
+          end
+        end
+
+        context "without stanines" do
+          subject { build(:evaluation, value_type: :numeric, max_result: 90, stanines: Array.new(8) )}
+          it { should be_valid }
         end
       end
+    end
 
-      context "without stanines" do
-        subject { build(:evaluation, max_result: 90, stanines: Array.new(8) )}
-        it { should be_valid }
-      end
+    context "boolean value type" do
+      subject { build(:boolean_evaluation, colors: nil) }
+      it      { should     ensure_inclusion_of(:color_for_true).in_array([:red, :yellow, :green]) }
+      it      { should     ensure_inclusion_of(:color_for_false).in_array([:red, :yellow, :green]) }
+      it      { should_not allow_value(nil).for(:color_for_true) }
+      it      { should_not allow_value(nil).for(:color_for_false) }
     end
 
     context "with type" do
@@ -121,6 +146,13 @@ describe Evaluation do
     end
   end
 
+  describe ".set_default_values_for_value_type" do
+    context "for boolean values" do
+      subject { create(:boolean_evaluation, max_result: nil) }
+      its(:max_result) { should == 1 }
+    end
+  end
+
   describe ".convert_percentages" do
     subject { create(:evaluation, max_result: 50, red_below: "40%", green_above: "60%") }
     its(:red_below)   { should == 20 }
@@ -129,16 +161,24 @@ describe Evaluation do
 
   describe ".set_aliases_from_value_type" do
     context "for numeric value type" do
-      subject { create(:evaluation, value_type: :numeric) }
+      subject { create(:numeric_evaluation) }
       its(:value_aliases) { should be_blank }
     end
     context "for boolean value type" do
-      subject { create(:evaluation, value_type: :boolean)}
+      subject { create(:boolean_evaluation) }
       its(:value_aliases) { should == Evaluation::BOOLEAN_ALIASES }
     end
     context "for grade value type" do
       subject { create(:evaluation, value_type: :grade)}
       its(:value_aliases) { should == Evaluation::GRADE_ALIASES }
+    end
+  end
+  
+  describe ".persist_colors" do
+    context "for boolean value types" do
+      subject      { create(:boolean_evaluation, colors: nil, color_for_true: :red, color_for_false: :green) }
+      its(:colors) { should include("1" => "red") }
+      its(:colors) { should include("0" => "green") }
     end
   end
 
@@ -162,27 +202,42 @@ describe Evaluation do
   end
 
   describe ".color_for" do
-    let(:evaluation) { create(:evaluation, red_below: 10, green_above: 20, max_result: 30) }
     let(:value)      { nil }
     subject          { evaluation.color_for(value) }
 
-    it { should be_nil }
+    context "for numeric value types" do
+      let(:evaluation) { create(:numeric_evaluation, red_below: 10, green_above: 20, max_result: 30) }
 
-    context "with red value" do
-      let(:value) { 9 }
-      it { should == :red }
+      it { should be_nil }
+
+      context "with red value" do
+        let(:value) { 9 }
+        it { should == :red }
+      end
+      context "with yellow value, lower bound" do
+        let(:value) { 10 }
+        it { should == :yellow }
+      end
+      context "with yellow value, upper bound" do
+        let(:value) { 20 }
+        it { should == :yellow }
+      end
+      context "with green value" do
+        let(:value) { 21 }
+        it { should == :green }
+      end
     end
-    context "with yellow value, lower bound" do
-      let(:value) { 10 }
-      it { should == :yellow }
-    end
-    context "with yellow value, upper bound" do
-      let(:value) { 20 }
-      it { should == :yellow }
-    end
-    context "with green value" do
-      let(:value) { 21 }
-      it { should == :green }
+    context "for boolean value types" do
+      let(:evaluation) { create(:boolean_evaluation, color_for_false: :yellow, color_for_true: :red) }
+      it { should be_nil }
+      context "with true" do
+        let(:value) { 1 }
+        it { should == :red }
+      end
+      context "with false" do
+        let(:value) { 0 }
+        it { should == :yellow }
+      end
     end
   end
   describe ".stanine_for" do
@@ -427,6 +482,8 @@ describe Evaluation do
       end
     end
   end
+
+  describe
 
   describe "#new_from_template" do
     let(:template) { create(:evaluation_template, category_list: "foo, bar, baz", target: :male) }

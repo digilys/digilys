@@ -1,0 +1,60 @@
+- hide ||= false
+= f.inputs t(:".result_info"),
+  class: "form-horizontal inputs value-type-fields numeric-fields",
+  style: hide ? "display:none;" : "" do
+
+  = f.input :max_result,
+    required: true,
+    input_html: { required: true, "data-suggestion-lower" => Conf.evaluation.suggestion_lower, "data-suggestion-upper" => Conf.evaluation.suggestion_upper }
+
+  .control-group
+    %label.control-label= t(:".red")
+    .controls
+      %input(disabled="disabled" class="input-mini red-min" type="text" value="0")
+      &ndash;
+      %input(disabled="disabled" class="input-mini red-max" type="text" value="0" id="evaluation-red-max")
+
+  - has_color_range_error = !(evaluation.errors[:red_below] + evaluation.errors[:green_above]).blank?
+  .control-group{class: "#{"error" if has_color_range_error}"}
+    = f.label :red_below,
+      "#{t(:".yellow")}<abbr title=\"#{t(:"formtastic.required")}\">*</abbr>".html_safe,
+      class: "control-label"
+    .controls
+      = f.text_field :red_below,   required: true, class: "input-mini"
+      &ndash;
+      = f.text_field :green_above, required: true, class: "input-mini"
+      .suggestion-container{"data-suggestion-copy" => t(:".suggestion_copy")}
+      - if has_color_range_error
+        .help-block= t(:".color_range_error_text")
+      - else
+        %span.help-block= t(:".percentage_help")
+
+  .control-group
+    %label.control-label= t(:".green")
+    .controls
+      %input(disabled="disabled" class="input-mini green-min" type="text" value="0" id="evaluation-green-min")
+      &ndash;
+      %input(disabled="disabled" class="input-mini green-max" type="text" value="0" id="evaluation-green-max")
+
+  .control-group
+    .controls
+      = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
+      %a.btn{href:evaluation_cancel_path(evaluation) }= t(:".cancel_action")
+
+= f.inputs t(:".stanines"),
+  class: "form-horizontal inputs value-type-fields numeric-fields",
+  style: hide ? "display:none;" : "" do
+
+  - 1.upto(8) do |i|
+    = f.input :"stanine#{i}",
+      input_html: { class: "input-mini stanine-field" },
+      prepend: '<span class="stanine-below">0</span> &ndash;'.html_safe
+
+  .control-group
+    %label.control-label= t(:".stanine9")
+    .controls
+      .input-prepend
+        %span.add-on
+          %span.stanine-below 0
+          &ndash;
+        %input(disabled="disabled" class="input-mini stanine-max" type="number" value="0" id="evaluation-stanine-max")

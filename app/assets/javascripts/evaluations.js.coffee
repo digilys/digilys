@@ -115,6 +115,11 @@ $ ->
 
                     $suggestionContainer.html("").append($suggestionAction)
 
+        # Hide/show different value fields
+        $("#evaluation_value_type").on "change", ->
+            $form.find(".value-type-fields").hide()
+            $form.find("." + $(this).val() +  "-fields").show()
+
     $(".evaluation-template-autocomplete-field").each ->
         $field = $(this)
 

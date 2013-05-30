@@ -55,6 +55,7 @@ FactoryGirl.define do
     target          :all
     value_aliases   nil
     value_type      :numeric
+    colors          nil
 
     ignore do
       stanines      [7, 12, 17, 22, 27, 32, 37, 42]
@@ -78,6 +79,17 @@ FactoryGirl.define do
       type :template
     end
     factory :generic_evaluation do
+    end
+
+    factory :numeric_evaluation do
+    end
+    factory :boolean_evaluation do
+      value_type  :boolean
+      max_result  1
+      red_below   nil
+      green_above nil
+      stanines    nil
+      colors(     { "0" => "red", "1" => "green" })
     end
   end
 

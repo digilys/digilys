@@ -161,8 +161,12 @@ sv:
         html: Elevdata
         text: Elevdata
 
+    red: Röd
+    yellow: Gul
+    green: Grön
     color_ranges: Färgintervall
     stanines: Stanine-värden
+    result_info: Resultatinformation
 
     show:
       template_notice: Detta är en mall för test.
@@ -171,14 +175,14 @@ sv:
       from_template: Använder mallen %{template_name}.
       template_placeholder: Sök och välj en mall
       use_template_action: Använd mall
+      basic_info: Grundinformation
+      result_info: Resultatinformation
       category_help: Välj befintliga eller skriv in nya kategorier
+      stanines: Stanine-värden <small>Lämna alla värden tomma om du inte vill använda staninevärden</small>
+    numeric_fields:
       percentage_help: Lägg till "%" efter numret för att ange intervallet som procent
-      red: Röd
-      yellow: Gul
-      green: Grön
       suggestion_copy: Använd %from% &ndash; %to%
       color_range_error_text: Intervallet måste vara giltiga heltal och ligga mellan 0 och maxresultatet
-      stanines: Stanine-värden <small>Lämna alla värden tomma om du inte vill använda staninevärden</small>
     create:
       success:
         suite: Testet skapades

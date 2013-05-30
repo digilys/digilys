@@ -1,0 +1,8 @@
+- hide ||= false
+= f.inputs t(:".result_info"),
+  class: "form-horizontal inputs value-type-fields boolean-fields",
+  style: hide ? "display:none;" : "" do
+
+  - color_options = [[t(:".red"), :red], [t(:".yellow"), :yellow], [t(:".green"), :green]]
+  = f.input :color_for_true,  as: :select, collection: color_options, include_blank: false
+  = f.input :color_for_false, as: :select, collection: color_options, include_blank: false

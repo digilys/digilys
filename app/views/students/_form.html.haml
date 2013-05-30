@@ -13,7 +13,10 @@
     = f.input :data_text, as: :text, input_html: { rows: 7, class: "input-xxlarge" }
 
     = f.inputs for: :generic_results do |rf|
-      = rf.input :value, label: rf.object.evaluation.name
+      - if rf.object.evaluation.value_type.boolean?
+        = rf.input :value, label: rf.object.evaluation.name, as: :select, collection: [[t(:yes), 1],[t(:no), 0]]
+      - else
+        = rf.input :value, label: rf.object.evaluation.name
       = rf.hidden_field :evaluation_id
 
   = f.actions do

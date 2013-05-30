@@ -45,9 +45,12 @@ class Evaluation < ActiveRecord::Base
     :results_attributes,
     :category_list,
     :target,
-    :value_type
+    :value_type,
+    :color_for_true,
+    :color_for_false
 
   serialize :value_aliases, JSON
+  serialize :colors, JSON
 
 
   validate  :validate_suite
@@ -62,20 +65,24 @@ class Evaluation < ActiveRecord::Base
     },
   )
   validates(:red_below,
+    presence: true,
     numericality: {
       only_integer: true,
       greater_than_or_equal_to: 0,
-      less_than_or_equal_to: :green_above
+      less_than_or_equal_to: :green_above,
+      unless: proc { |e| e.red_below.nil? || e.green_above.nil? }
     },
-    presence: { if: :stanines? }
+    if: :value_type_numeric?
   )
   validates(:green_above,
+    presence: true,
     numericality: {
       only_integer: true,
       greater_than_or_equal_to: :red_below,
-      less_than_or_equal_to: :max_result
+      less_than_or_equal_to: :max_result,
+      unless: proc { |e| e.red_below.nil? || e.green_above.nil? }
     },
-    presence: { if: :stanines? }
+    if: :value_type_numeric?
   )
 
   validates(:stanine1,
@@ -150,10 +157,17 @@ class Evaluation < ActiveRecord::Base
     presence: { if: :stanines? }
   )
 
+  validates(:color_for_true, :color_for_false,
+    inclusion: { in: [:red, :yellow, :green] },
+    if: :value_type_boolean?
+  )
 
+
+  before_validation :set_default_values_for_value_type
   before_validation :convert_percentages
   after_update      :touch_results
   before_save       :set_aliases_from_value_type
+  before_save       :persist_colors
 
 
   def has_regular_suite?
@@ -161,14 +175,18 @@ class Evaluation < ActiveRecord::Base
   end
 
   def color_for(value)
-    if value.nil?
-      nil
-    elsif value < self.red_below
-      :red
-    elsif value > self.green_above
-      :green
+    return nil if value.nil?
+
+    if self.value_type.numeric?
+      if value < self.red_below
+        return :red
+      elsif value > self.green_above
+        return :green
+      else
+        return :yellow
+      end
     else
-      :yellow
+      return self.colors.try(:[], value.to_s).try(:to_sym)
     end
   end
   def stanine_for(value)
@@ -301,6 +319,21 @@ class Evaluation < ActiveRecord::Base
   end
 
 
+  # Virtual accessor for boolean colors
+  def color_for_true=(value)
+    @color_for_true = value.to_s
+  end
+  def color_for_true
+    (@color_for_true  || self.colors.try(:[], "1")).try(:to_sym)
+  end
+  def color_for_false=(value)
+    @color_for_false = value.to_s
+  end
+  def color_for_false
+    (@color_for_false || self.colors.try(:[], "0")).try(:to_sym)
+  end
+
+
   # Initializes a new evaluation from a template
   def self.new_from_template(template, attrs = {})
     new do |e|
@@ -384,6 +417,13 @@ class Evaluation < ActiveRecord::Base
     end
   end
 
+  def set_default_values_for_value_type
+    case self.value_type
+    when "boolean"
+      self.max_result = 1
+    end
+  end
+
   BOOLEAN_ALIASES = { "0" => I18n.t(:no), "1" => I18n.t(:yes) }
   GRADE_ALIASES   = {
     "0" => "F",
@@ -400,6 +440,12 @@ class Evaluation < ActiveRecord::Base
       self.value_aliases = GRADE_ALIASES
     when "boolean"
       self.value_aliases = BOOLEAN_ALIASES
+    end
+  end
+
+  def persist_colors
+    if self.value_type.boolean?
+      self.colors = { "0" => self.color_for_false, "1" => self.color_for_true }
     end
   end
 end

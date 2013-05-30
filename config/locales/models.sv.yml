@@ -53,6 +53,9 @@ sv:
         stanine9: Stanine 9
         category_list: Kategorier
         target: Test för
+        value_type: Datatyp
+        color_for_true: Färg för "Ja"
+        color_for_false: Färg för "Nej"
       result:
         evaluation: Test
         student: Elev

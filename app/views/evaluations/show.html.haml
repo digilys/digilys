@@ -31,12 +31,16 @@
       %th= t(:".color_ranges")
       %td
         %ul.unstyled.color-ranges-list
-          - if @evaluation.red_range
-            %li.red=    format_range(@evaluation.red_range)
-          - if @evaluation.yellow_range
-            %li.yellow= format_range(@evaluation.yellow_range)
-          - if @evaluation.green_range
-            %li.green=  format_range(@evaluation.green_range)
+          - if @evaluation.value_type.numeric?
+            - if @evaluation.red_range
+              %li.red=    format_range(@evaluation.red_range)
+            - if @evaluation.yellow_range
+              %li.yellow= format_range(@evaluation.yellow_range)
+            - if @evaluation.green_range
+              %li.green=  format_range(@evaluation.green_range)
+          - elsif @evaluation.value_type.boolean?
+            %li{class: @evaluation.color_for(1)}= t(:yes)
+            %li{class: @evaluation.color_for(0)}= t(:no)
 
     - if @evaluation.stanines?
       %tr.stanines
