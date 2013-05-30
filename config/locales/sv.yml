@@ -220,6 +220,11 @@ sv:
       type:
         action: Insats
         inquiry: Frågeställning
+    evaluation:
+      target:
+        all: Alla elever
+        male: Endast pojkar
+        female: Endast flickor
 
 
   wait: Var god vänta...

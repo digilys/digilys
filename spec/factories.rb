@@ -33,6 +33,13 @@ FactoryGirl.define do
   factory :participant do
     student
     suite
+
+    factory :male_participant do
+      student { create(:student, gender: :male) }
+    end
+    factory :female_participant do
+      student { create(:student, gender: :female) }
+    end
   end
 
   factory :evaluation do
@@ -45,6 +52,7 @@ FactoryGirl.define do
     max_result      50
     red_below       15
     green_above     35
+    target          :all
 
     ignore do
       stanines      [7, 12, 17, 22, 27, 32, 37, 42]

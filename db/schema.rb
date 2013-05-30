@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130529102806) do
+ActiveRecord::Schema.define(:version => 20130530054759) do
 
   create_table "activities", :force => true do |t|
     t.integer  "suite_id"
@@ -59,6 +59,7 @@ ActiveRecord::Schema.define(:version => 20130529102806) do
     t.integer  "template_id"
     t.string   "description", :limit => 1024
     t.string   "type",                        :default => "template"
+    t.string   "target",                      :default => "all"
   end
 
   create_table "groups", :force => true do |t|

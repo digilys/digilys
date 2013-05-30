@@ -36,10 +36,13 @@ describe Evaluation do
     it { should allow_mass_assignment_of(:stanine6) }
     it { should allow_mass_assignment_of(:stanine7) }
     it { should allow_mass_assignment_of(:stanine8) }
+    it { should allow_mass_assignment_of(:category_list) }
+    it { should allow_mass_assignment_of(:target) }
   end
   context "validation" do
     it { should validate_presence_of(:name) }
     it { should ensure_inclusion_of(:type).in_array(%w(suite template generic)) }
+    it { should ensure_inclusion_of(:target).in_array(%w(all male female)) }
 
     it { should validate_numericality_of(:max_result).only_integer }
     it { should validate_numericality_of(:red_below).only_integer }
@@ -327,9 +330,12 @@ describe Evaluation do
   end
 
   context ".result_distribution" do
-    let(:suite)        { create(:suite) }
-    let(:participants) { create_list(:participant, 5, suite: suite) }
-    let(:evaluation)   { create(:suite_evaluation, suite: suite, max_result: 10, red_below: 4, green_above: 7) }
+    let(:target)               { :all }
+    let(:suite)                { create(:suite) }
+    let!(:male_participants)   { create_list(:male_participant,   1, suite: suite) }
+    let!(:female_participants) { create_list(:female_participant, 4, suite: suite) }
+    let(:participants)         { male_participants + female_participants }
+    let(:evaluation)           { create(:suite_evaluation, suite: suite, max_result: 10, red_below: 4, green_above: 7, target: target) }
 
     context "with all types" do
       before(:each) do
@@ -349,7 +355,7 @@ describe Evaluation do
 
     context "without a color" do
       before(:each) do
-        create(:result, student: participants[0].student, evaluation: evaluation, value: 1) # red
+        create(:result, student: participants[0].student, evaluation: evaluation, value: 9) # green
         create(:result, student: participants[1].student, evaluation: evaluation, value: 5) # yellow
         create(:result, student: participants[2].student, evaluation: evaluation, value: 6) # yellow
         create(:result, student: participants[3].student, evaluation: evaluation, value: 8) # green
@@ -358,19 +364,37 @@ describe Evaluation do
       subject { evaluation.result_distribution }
 
       it { should include(not_reported: 20.0) }
-      it { should include(red:          20.0) }
+      it { should include(red:          0) }
       it { should include(yellow:       40.0) }
-      it { should include(green:        20.0) }
+      it { should include(green:        40.0) }
     end
 
     context "without results" do
       subject { create(:evaluation).result_distribution }
       it      { should be_blank }
     end
+
+    context "limited by gender" do
+      let(:target) { :female }
+
+      before(:each) do
+        create(:result, student: female_participants[0].student, evaluation: evaluation, value: 1) # red
+        create(:result, student: female_participants[1].student, evaluation: evaluation, value: 5) # yellow
+        create(:result, student: female_participants[2].student, evaluation: evaluation, value: 8) # green
+        create(:result, student: female_participants[3].student, evaluation: evaluation, value: 9) # green
+      end
+
+      subject { evaluation.result_distribution }
+
+      it { should include(not_reported: 0) }
+      it { should include(red:          25.0) }
+      it { should include(yellow:       25.0) }
+      it { should include(green:        50.0) }
+    end
   end
 
   context "#new_from_template" do
-    let(:template) { create(:evaluation, category_list: "foo, bar, baz") }
+    let(:template) { create(:evaluation_template, category_list: "foo, bar, baz", target: :male) }
     subject        { Evaluation.new_from_template(template) }
 
     its(:template_id)   { should == template.id }
@@ -380,6 +404,7 @@ describe Evaluation do
     its(:red_below)     { should == template.red_below }
     its(:green_above)   { should == template.green_above }
     its(:category_list) { should == template.category_list }
+    its(:target)        { should == template.target }
 
     1.upto(8).each do |i|
       its(:"stanine#{i}") { should == template.send(:"stanine#{i}") }

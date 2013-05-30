@@ -18,7 +18,8 @@ class Evaluation < ActiveRecord::Base
 
   acts_as_taggable_on :categories
 
-  enumerize :type, in: [ :generic, :template, :suite ], predicates: { prefix: true }, scope: true
+  enumerize :type,   in: [ :generic, :template, :suite ], predicates: { prefix: true }, scope: true
+  enumerize :target, in: [ :all, :male, :female ],        predicates: { prefix: true }, default: :all
 
   accepts_nested_attributes_for :results,
     reject_if: proc { |attributes| attributes[:value].blank? }
@@ -41,7 +42,8 @@ class Evaluation < ActiveRecord::Base
     :stanine7,
     :stanine8,
     :results_attributes,
-    :category_list
+    :category_list,
+    :target
 
 
   validate  :validate_suite
@@ -263,7 +265,12 @@ class Evaluation < ActiveRecord::Base
 
     result_distribution = {}
 
-    num_participants = self.participants.size.to_f
+    num_participants = case self.target
+    when "all"
+      self.participants.size.to_f
+    else
+      self.participants.with_gender(self.target).size.to_f
+    end
 
     result_distribution[:not_reported] = ((num_participants - self.results.length.to_f) / num_participants) * 100.0
 
@@ -298,6 +305,7 @@ class Evaluation < ActiveRecord::Base
       e.stanine7      = template.stanine7
       e.stanine8      = template.stanine8
       e.category_list = template.category_list
+      e.target        = template.target
 
       e.assign_attributes(attrs)
     end

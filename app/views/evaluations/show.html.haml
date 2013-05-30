@@ -17,6 +17,9 @@
       %td
         - @evaluation.category_list.each do |category|
           %span.label.label-info= category
+    %tr.target
+      %th= Evaluation.human_attribute_name(:target)
+      %td= @evaluation.target_text
     - if @evaluation.date
       %tr.date
         %th= Evaluation.human_attribute_name(:date)

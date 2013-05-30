@@ -19,4 +19,8 @@ class Participant < ActiveRecord::Base
   def group_names
     self.student.groups.collect(&:name).join(", ")
   end
+
+  def self.with_gender(gender)
+    includes(:student).where("students.gender" => gender.to_s)
+  end
 end

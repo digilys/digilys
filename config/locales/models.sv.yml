@@ -52,6 +52,7 @@ sv:
         stanine8: Stanine 8
         stanine9: Stanine 9
         category_list: Kategorier
+        target: Test för
       result:
         evaluation: Test
         student: Elev
