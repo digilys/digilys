@@ -26,6 +26,10 @@ describe Evaluation do
       subject { build(:boolean_evaluation) }
       it { should be_valid }
     end
+    context "grade" do
+      subject { build(:grade_evaluation) }
+      it { should be_valid }
+    end
   end
   context "accessible attributes" do
     it { should allow_mass_assignment_of(:type) }
@@ -44,6 +48,10 @@ describe Evaluation do
     it { should allow_mass_assignment_of(:value_type) }
     it { should allow_mass_assignment_of(:color_for_true) }
     it { should allow_mass_assignment_of(:color_for_false) }
+    ("a".."f").each do |grade|
+      it { should allow_mass_assignment_of(:"color_for_grade_#{grade}") }
+      it { should allow_mass_assignment_of(:"stanine_for_grade_#{grade}") }
+    end
   end
   context "validation" do
     it { should validate_presence_of(:name) }
@@ -104,6 +112,53 @@ describe Evaluation do
       it      { should_not allow_value(nil).for(:color_for_false) }
     end
 
+    context "grade value type" do
+      subject { build(:grade_evaluation) }
+
+      ("a".."f").each do |grade|
+        it { should_not allow_value(0).for(:"color_for_grade_#{grade}") }
+        it { should_not allow_value(4).for(:"color_for_grade_#{grade}") }
+        it { should_not allow_value(0).for(:"stanine_for_grade_#{grade}") }
+        it { should_not allow_value(10).for(:"stanine_for_grade_#{grade}") }
+      end
+
+      context "grade and color ordering" do
+        subject { build(:grade_evaluation, color_for_grades: [2] * 6) } # All colors are yellow
+
+        # All values have to be >= than the previous value
+        it { should_not allow_value(1).for(:color_for_grade_e) }
+        it { should_not allow_value(1).for(:color_for_grade_d) }
+        it { should_not allow_value(1).for(:color_for_grade_c) }
+        it { should_not allow_value(1).for(:color_for_grade_b) }
+        it { should_not allow_value(1).for(:color_for_grade_a) }
+
+        # All values have to be <= than the next value
+        it { should_not allow_value(3).for(:color_for_grade_f) }
+        it { should_not allow_value(3).for(:color_for_grade_e) }
+        it { should_not allow_value(3).for(:color_for_grade_d) }
+        it { should_not allow_value(3).for(:color_for_grade_c) }
+        it { should_not allow_value(3).for(:color_for_grade_b) }
+      end
+
+      context "grade and stanine ordering" do
+        subject { build(:grade_evaluation, stanine_for_grades: [5] * 6) } # Stanine 5 for all
+
+        # All values have to be >= than the previous value
+        it { should_not allow_value(4).for(:stanine_for_grade_e) }
+        it { should_not allow_value(4).for(:stanine_for_grade_d) }
+        it { should_not allow_value(4).for(:stanine_for_grade_c) }
+        it { should_not allow_value(4).for(:stanine_for_grade_b) }
+        it { should_not allow_value(4).for(:stanine_for_grade_a) }
+
+        # All values have to be <= than the next value
+        it { should_not allow_value(6).for(:stanine_for_grade_f) }
+        it { should_not allow_value(6).for(:stanine_for_grade_e) }
+        it { should_not allow_value(6).for(:stanine_for_grade_d) }
+        it { should_not allow_value(6).for(:stanine_for_grade_c) }
+        it { should_not allow_value(6).for(:stanine_for_grade_b) }
+      end
+    end
+
     context "with type" do
       context "suite" do
         subject { build(:suite_evaluation) }
@@ -141,6 +196,10 @@ describe Evaluation do
       subject { create(:boolean_evaluation, max_result: nil) }
       its(:max_result) { should == 1 }
     end
+    context "for grade values" do
+      subject { create(:grade_evaluation, max_result: nil) }
+      its(:max_result) { should == 5 }
+    end
   end
 
   describe ".convert_percentages" do
@@ -159,16 +218,38 @@ describe Evaluation do
       its(:value_aliases) { should == Evaluation::BOOLEAN_ALIASES }
     end
     context "for grade value type" do
-      subject { create(:evaluation, value_type: :grade)}
+      subject { create(:grade_evaluation) }
       its(:value_aliases) { should == Evaluation::GRADE_ALIASES }
     end
   end
   
-  describe ".persist_colors" do
+  describe ".persist_colors_and_stanines" do
     context "for boolean value types" do
       subject      { create(:boolean_evaluation, colors: nil, color_for_true: :red, color_for_false: :green) }
       its(:colors) { should include("1" => "red") }
       its(:colors) { should include("0" => "green") }
+    end
+    context "for grade value types" do
+      subject      { create(
+        :grade_evaluation,
+        colors:             nil,
+        stanines:           nil,
+        color_for_grades:   [ 1, 1, 2, 2, 3, 3 ],
+        stanine_for_grades: [ 2, 3, 5, 6, 7, 9 ]
+      ) }
+      its(:colors)   { should include("0" => 1) }
+      its(:colors)   { should include("1" => 1) }
+      its(:colors)   { should include("2" => 2) }
+      its(:colors)   { should include("3" => 2) }
+      its(:colors)   { should include("4" => 3) }
+      its(:colors)   { should include("5" => 3) }
+
+      its(:stanines) { should include("0" => 2) }
+      its(:stanines) { should include("1" => 3) }
+      its(:stanines) { should include("2" => 5) }
+      its(:stanines) { should include("3" => 6) }
+      its(:stanines) { should include("4" => 7) }
+      its(:stanines) { should include("5" => 9) }
     end
   end
 
@@ -229,57 +310,117 @@ describe Evaluation do
         it { should == :yellow }
       end
     end
+    context "for grade value types" do
+      let(:evaluation) { create(:grade_evaluation, color_for_grades: [1, 1, 2, 2, 3, 3]) }
+      it { should be_nil }
+      context "with A" do
+        let(:value) { 5 }
+        it { should == :green }
+      end
+      context "with B" do
+        let(:value) { 4 }
+        it { should == :green }
+      end
+      context "with C" do
+        let(:value) { 3 }
+        it { should == :yellow }
+      end
+      context "with D" do
+        let(:value) { 2 }
+        it { should == :yellow }
+      end
+      context "with E" do
+        let(:value) { 1 }
+        it { should == :red }
+      end
+      context "with F" do
+        let(:value) { 0 }
+        it { should == :red }
+      end
+    end
   end
   describe ".stanine_for" do
-    let(:stanine_values) { [10, 20, 30, 40, 50, 60, 70, 80] }
-    let(:evaluation) { create(:evaluation, max_result: 90, stanine_values: stanine_values) }
     let(:value)      { nil }
     subject          { evaluation.stanine_for(value) }
 
-    it { should be_nil }
+    context "for numeric value types" do
+      let(:stanine_values) { [10, 20, 30, 40, 50, 60, 70, 80] }
+      let(:evaluation) { create(:evaluation, max_result: 90, stanine_values: stanine_values) }
 
-    # Boundaries for the stanine values given the stanine limits above
-    {
-      1 => [0,10],
-      2 => [11,20],
-      3 => [21,30],
-      4 => [31,40],
-      5 => [41,50],
-      6 => [51,60],
-      7 => [61,70],
-      8 => [71,80],
-      9 => [81,90]
-    }.each_pair do |stanine, values|
-      context "stanine #{stanine}, lower bound" do
-        let(:value) { values.first }
-        it          { should == stanine }
+      it { should be_nil }
+
+      # Boundaries for the stanine values given the stanine limits above
+      {
+        1 => [0,10],
+        2 => [11,20],
+        3 => [21,30],
+        4 => [31,40],
+        5 => [41,50],
+        6 => [51,60],
+        7 => [61,70],
+        8 => [71,80],
+        9 => [81,90]
+      }.each_pair do |stanine, values|
+        context "stanine #{stanine}, lower bound" do
+          let(:value) { values.first }
+          it          { should == stanine }
+        end
+        context "stanine #{stanine}, upper bound" do
+          let(:value) { values.second }
+          it          { should == stanine }
+        end
       end
-      context "stanine #{stanine}, upper bound" do
-        let(:value) { values.second }
-        it          { should == stanine }
+
+      context "with overlapping stanines" do
+        let(:stanine_values) { [10, 20, 30, 40, 40, 40, 70, 80]}
+        context "giving largest stanine" do
+          let(:value) { 40 }
+          it          { should == 6 }
+        end
+        context "giving the correct stanine below" do
+          let(:value) { 39 }
+          it          { should == 4 }
+        end
+        context "giving the correct stanine above" do
+          let(:value) { 41 }
+          it          { should == 7 }
+        end
+      end
+
+      context "without stanines" do
+        let(:stanine_values) { nil }
+        let(:value)          { 123 }
+        it                   { should be_nil }
       end
     end
 
-    context "with overlapping stanines" do
-      let(:stanine_values) { [10, 20, 30, 40, 40, 40, 70, 80]}
-      context "giving largest stanine" do
-        let(:value) { 40 }
-        it          { should == 6 }
+    context "for grade value types" do
+      let (:evaluation) { create(:grade_evaluation, stanine_for_grades: [2, 2, 3, 5, 7, 9]) }
+      it { should be_nil }
+      context "with A" do
+        let(:value) { 5 }
+        it { should == 9 }
       end
-      context "giving the correct stanine below" do
-        let(:value) { 39 }
-        it          { should == 4 }
+      context "with B" do
+        let(:value) { 4 }
+        it { should == 7 }
       end
-      context "giving the correct stanine above" do
-        let(:value) { 41 }
-        it          { should == 7 }
+      context "with C" do
+        let(:value) { 3 }
+        it { should == 5 }
       end
-    end
-
-    context "without stanines" do
-      let(:stanine_values) { nil }
-      let(:value)          { 123 }
-      it                   { should be_nil }
+      context "with D" do
+        let(:value) { 2 }
+        it { should == 3 }
+      end
+      context "with E" do
+        let(:value) { 1 }
+        it { should == 2 }
+      end
+      context "with F" do
+        let(:value) { 0 }
+        it { should == 2 }
+      end
     end
   end
 

@@ -41,16 +41,25 @@
           - elsif @evaluation.value_type.boolean?
             %li{class: @evaluation.color_for(1)}= t(:yes)
             %li{class: @evaluation.color_for(0)}= t(:no)
+          - elsif @evaluation.value_type.grade?
+            - 5.downto(0) do |grade|
+              %li{class: @evaluation.color_for(grade)}= Evaluation::GRADES[grade].upcase
 
-    - if @evaluation.stanines?
+    - if @evaluation.stanines? || !@evaluation.stanines.blank?
       %tr.stanines
         %th= t(:".stanines")
         %td
           %ul.unstyled.stanine-ranges-list
-            - @evaluation.stanine_ranges.each_pair do |stanine, range|
-              %li
-                %strong= stanine
-                = format_range(range)
+            - if @evaluation.value_type.numeric?
+              - @evaluation.stanine_ranges.each_pair do |stanine, range|
+                %li
+                  %strong= stanine
+                  = format_range(range)
+            - if @evaluation.value_type.grade?
+              - 5.downto(0) do |grade|
+                %li
+                  = Evaluation::GRADES[grade].upcase
+                  %strong= @evaluation.stanine_for(grade)
 
 - if @evaluation.type.suite? && !@evaluation.results.blank?
   %table.table.table-bordered.table-hover.evaluation-results.results-table

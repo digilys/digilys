@@ -1,0 +1,23 @@
+- hide ||= false
+= f.inputs t(:".result_info"),
+  class: "form-horizontal inputs value-type-fields grade-fields",
+  style: hide ? "display:none;" : "" do
+
+  .row-fluid
+    .span6
+      - color_options = [[t(:".red"), 1], [t(:".yellow"), 2], [t(:".green"), 3]]
+      - ("a".."f").each do |i|
+        = f.input :"color_for_grade_#{i}",
+          as: :select,
+          collection: color_options,
+          include_blank: false,
+          input_html: { class: "input-small" }
+
+    .span6
+      - stanine_options = (1..9)
+      - ("a".."f").each do |i|
+        = f.input :"stanine_for_grade_#{i}",
+          label: t(:".stanine"),
+          as: :select,
+          collection: stanine_options,
+          input_html: { class: "input-small" }

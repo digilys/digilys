@@ -49,7 +49,10 @@
   = render partial: "evaluations/numeric_fields", locals: { evaluation: evaluation, f: f, hide: !evaluation.value_type.numeric? }
 
   - if evaluation.type.generic?
-    = render partial: "evaluations/boolean_fields", locals: { evaluation: evaluation, f: f, hide: !evaluation.value_type.boolean? }
+    - if evaluation.new_record? || evaluation.value_type.boolean?
+      = render partial: "evaluations/boolean_fields", locals: { evaluation: evaluation, f: f, hide: !evaluation.value_type.boolean? }
+    - if evaluation.new_record? || evaluation.value_type.grade?
+      = render partial: "evaluations/grade_fields",   locals: { evaluation: evaluation, f: f, hide: !evaluation.value_type.grade? }
 
   = f.actions do
     = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}

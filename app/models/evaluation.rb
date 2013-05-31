@@ -47,7 +47,19 @@ class Evaluation < ActiveRecord::Base
     :target,
     :value_type,
     :color_for_true,
-    :color_for_false
+    :color_for_false,
+    :color_for_grade_a,
+    :color_for_grade_b,
+    :color_for_grade_c,
+    :color_for_grade_d,
+    :color_for_grade_e,
+    :color_for_grade_f,
+    :stanine_for_grade_a,
+    :stanine_for_grade_b,
+    :stanine_for_grade_c,
+    :stanine_for_grade_d,
+    :stanine_for_grade_e,
+    :stanine_for_grade_f
 
   serialize :value_aliases, JSON
   serialize :colors,        JSON
@@ -115,17 +127,49 @@ class Evaluation < ActiveRecord::Base
     presence: { if: :stanines? }
   )
 
+  VALID_COLORS = [:red, :yellow, :green]
+
   validates(:color_for_true, :color_for_false,
-    inclusion: { in: [:red, :yellow, :green] },
+    inclusion: { in: VALID_COLORS },
     if: :value_type_boolean?
   )
+
+  GRADES = ("a".."f").to_a.reverse
+  
+  GRADES.each_with_index do |grade, i|
+    validates(:"color_for_grade_#{grade}",
+      numericality: {
+        only_integer: true,
+        greater_than_or_equal_to:
+          ->(evaluation) { i <= 0 ? 1 : evaluation.send(:"color_for_grade_#{GRADES[i-1]}") || 1 },
+        less_than_or_equal_to:
+          ->(evaluation) { i >= 5 ? 3 : evaluation.send(:"color_for_grade_#{GRADES[i+1]}") || 3 },
+        message: :faulty_grade_color
+      },
+      if: :value_type_grade?
+    )
+    validates(:"stanine_for_grade_#{grade}",
+      numericality: {
+        allow_nil: true,
+        allow_blank: true,
+        only_integer: true,
+        greater_than_or_equal_to:
+          ->(evaluation) { i <= 0 ? 1 : evaluation.send(:"stanine_for_grade_#{GRADES[i-1]}") || 1 },
+        less_than_or_equal_to:
+          ->(evaluation) { i >= 5 ? 9 : evaluation.send(:"stanine_for_grade_#{GRADES[i+1]}") || 9 },
+        message: :faulty_grade_stanine
+      },
+      presence: { if: :stanine_for_grades? },
+      if: :value_type_grade?
+    )
+  end
 
 
   before_validation :set_default_values_for_value_type
   before_validation :convert_percentages
   after_update      :touch_results
   before_save       :set_aliases_from_value_type
-  before_save       :persist_colors
+  before_save       :persist_colors_and_stanines
 
 
   def has_regular_suite?
@@ -135,7 +179,8 @@ class Evaluation < ActiveRecord::Base
   def color_for(value)
     return nil if value.nil?
 
-    if self.value_type.numeric?
+    case self.value_type.to_sym
+    when :numeric
       if value < self.red_below
         return :red
       elsif value > self.green_above
@@ -143,12 +188,21 @@ class Evaluation < ActiveRecord::Base
       else
         return :yellow
       end
-    else
+    when :boolean
       return self.colors.try(:[], value.to_s).try(:to_sym)
+    when :grade
+      color_num = self.colors.try(:[], value.to_s)
+      return VALID_COLORS[color_num - 1] if color_num
     end
+    return nil
   end
   def stanine_for(value)
-    if !value.blank? && self.stanines?
+    return nil if value.blank?
+
+    case self.value_type.to_sym
+    when :numeric
+      return nil unless self.stanines?
+
       stanine = 1
       prev = -1
 
@@ -158,9 +212,10 @@ class Evaluation < ActiveRecord::Base
       end
 
       return stanine
-    else
-      return nil
+    when :grade
+      return self.stanines.try(:[], value.to_s)
     end
+    return nil
   end
 
   def result_for(student)
@@ -291,6 +346,32 @@ class Evaluation < ActiveRecord::Base
     (@color_for_false || self.colors.try(:[], "0")).try(:to_sym)
   end
 
+  # Virtual accessors for grade colors and stanines
+  GRADES.each_with_index do |g, i|
+
+    attr_writer :"color_for_grade_#{g}", :"stanine_for_grade_#{g}"
+
+    # Enforce integer
+    define_method(:"color_for_grade_#{g}") do
+      v = instance_variable_get("@color_for_grade_#{g}")
+      v ||= self.colors.try(:[], i.to_s)
+      v.blank? ? nil : v.to_i
+    end
+    define_method(:"stanine_for_grade_#{g}") do
+      v = instance_variable_get("@stanine_for_grade_#{g}")
+      v ||= self.stanines.try(:[], i.to_s)
+      v.blank? ? nil : v.to_i
+    end
+  end
+
+  def stanine_for_grades?
+    !@stanine_for_grade_a.blank? ||
+      !@stanine_for_grade_b.blank? ||
+      !@stanine_for_grade_c.blank? ||
+      !@stanine_for_grade_d.blank? ||
+      !@stanine_for_grade_e.blank? ||
+      !@stanine_for_grade_f.blank?
+  end
 
   # Initializes a new evaluation from a template
   def self.new_from_template(template, attrs = {})
@@ -377,6 +458,8 @@ class Evaluation < ActiveRecord::Base
 
   def set_default_values_for_value_type
     case self.value_type
+    when "grade"
+      self.max_result = 5
     when "boolean"
       self.max_result = 1
     end
@@ -401,9 +484,27 @@ class Evaluation < ActiveRecord::Base
     end
   end
 
-  def persist_colors
-    if self.value_type.boolean?
+  def persist_colors_and_stanines
+    case self.value_type.to_sym
+    when :boolean
       self.colors = { "0" => self.color_for_false, "1" => self.color_for_true }
+    when :grade
+      self.colors = {
+        "0" => self.color_for_grade_f,
+        "1" => self.color_for_grade_e,
+        "2" => self.color_for_grade_d,
+        "3" => self.color_for_grade_c,
+        "4" => self.color_for_grade_b,
+        "5" => self.color_for_grade_a
+      }
+      self.stanines = {
+        "0" => self.stanine_for_grade_f,
+        "1" => self.stanine_for_grade_e,
+        "2" => self.stanine_for_grade_d,
+        "3" => self.stanine_for_grade_c,
+        "4" => self.stanine_for_grade_b,
+        "5" => self.stanine_for_grade_a
+      }
     end
   end
 end

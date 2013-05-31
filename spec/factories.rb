@@ -92,6 +92,34 @@ FactoryGirl.define do
       stanine_values nil
       colors         ({ "0" => "red", "1" => "green" })
     end
+    factory :grade_evaluation do
+      value_type        :grade
+
+      # 1 = red, 2 = yellow, 3 = green
+      ignore do
+        # F, E, D, C, B, A
+        color_for_grades [ 1, 1, 2, 2, 3, 3 ]
+      end
+      color_for_grade_a { color_for_grades[5] }
+      color_for_grade_b { color_for_grades[4] }
+      color_for_grade_c { color_for_grades[3] }
+      color_for_grade_d { color_for_grades[2] }
+      color_for_grade_e { color_for_grades[1] }
+      color_for_grade_f { color_for_grades[0] }
+
+      ignore do
+        stanines nil
+        # F, E, D, C, B, A
+        stanine_for_grades nil
+      end
+
+      stanine_for_grade_a { stanine_for_grades ? stanine_for_grades[5] : nil }
+      stanine_for_grade_b { stanine_for_grades ? stanine_for_grades[4] : nil }
+      stanine_for_grade_c { stanine_for_grades ? stanine_for_grades[3] : nil }
+      stanine_for_grade_d { stanine_for_grades ? stanine_for_grades[2] : nil }
+      stanine_for_grade_e { stanine_for_grades ? stanine_for_grades[1] : nil }
+      stanine_for_grade_f { stanine_for_grades ? stanine_for_grades[0] : nil }
+    end
   end
 
   factory :result do

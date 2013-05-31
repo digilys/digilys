@@ -56,6 +56,21 @@ sv:
         value_type: Datatyp
         color_for_true: Färg för "Ja"
         color_for_false: Färg för "Nej"
+        color_for_grade_a: A
+        color_for_grade_b: B
+        color_for_grade_c: C
+        color_for_grade_d: D
+        color_for_grade_e: E
+        color_for_grade_f: F
+        stanine1_grade: Stanine 1
+        stanine2_grade: Stanine 2
+        stanine3_grade: Stanine 3
+        stanine4_grade: Stanine 4
+        stanine5_grade: Stanine 5
+        stanine6_grade: Stanine 6
+        stanine7_grade: Stanine 7
+        stanine8_grade: Stanine 8
+        stanine9_grade: Stanine 9
       result:
         evaluation: Test
         student: Elev
@@ -130,3 +145,6 @@ sv:
           attributes:
             data_text:
               faulty_lines: Texten innehåller fel på rad %{lines}
+        evaluation:
+          faulty_grade_color: Felaktig färgordning
+          faulty_grade_stanine: Felaktig stanineordning
