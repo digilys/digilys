@@ -94,60 +94,17 @@ class Evaluation < ActiveRecord::Base
     },
     presence: { if: :stanines? }
   )
-  validates(:stanine2,
-    numericality: {
-      allow_nil:                true,
-      only_integer:             true,
-      greater_than_or_equal_to: ->(evaluation) { evaluation.stanine1 || 0 },
-      less_than_or_equal_to:    ->(evaluation) { evaluation.stanine3 || evaluation.max_result }
-    },
-    presence: { if: :stanines? }
-  )
-  validates(:stanine3,
-    numericality: {
-      allow_nil:                true,
-      only_integer:             true,
-      greater_than_or_equal_to: ->(evaluation) { evaluation.stanine2 || 0 },
-      less_than_or_equal_to:    ->(evaluation) { evaluation.stanine4 || evaluation.max_result }
-    },
-    presence: { if: :stanines? }
-  )
-  validates(:stanine4,
-    numericality: {
-      allow_nil:                true,
-      only_integer:             true,
-      greater_than_or_equal_to: ->(evaluation) { evaluation.stanine3 || 0 },
-      less_than_or_equal_to:    ->(evaluation) { evaluation.stanine5 || evaluation.max_result }
-    },
-    presence: { if: :stanines? }
-  )
-  validates(:stanine5,
-    numericality: {
-      allow_nil:                true,
-      only_integer:             true,
-      greater_than_or_equal_to: ->(evaluation) { evaluation.stanine4 || 0 },
-      less_than_or_equal_to:    ->(evaluation) { evaluation.stanine6 || evaluation.max_result }
-    },
-    presence: { if: :stanines? }
-  )
-  validates(:stanine6,
-    numericality: {
-      allow_nil:                true,
-      only_integer:             true,
-      greater_than_or_equal_to: ->(evaluation) { evaluation.stanine5 || 0 },
-      less_than_or_equal_to:    ->(evaluation) { evaluation.stanine7 || evaluation.max_result }
-    },
-    presence: { if: :stanines? }
-  )
-  validates(:stanine7,
-    numericality: {
-      allow_nil:                true,
-      only_integer:             true,
-      greater_than_or_equal_to: ->(evaluation) { evaluation.stanine6 || 0 },
-      less_than_or_equal_to:    ->(evaluation) { evaluation.stanine8 || evaluation.max_result }
-    },
-    presence: { if: :stanines? }
-  )
+  2.upto(7) do |i|
+    validates(:"stanine#{i}",
+      numericality: {
+        allow_nil:                true,
+        only_integer:             true,
+        greater_than_or_equal_to: ->(evaluation) { evaluation.send(:"stanine#{i-1}") || 0 },
+        less_than_or_equal_to:    ->(evaluation) { evaluation.send(:"stanine#{i+1}") || evaluation.max_result }
+      },
+      presence: { if: :stanines? }
+    )
+  end
   validates(:stanine8,
     numericality: {
       allow_nil:                true,

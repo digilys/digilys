@@ -36,14 +36,9 @@ describe Evaluation do
     it { should allow_mass_assignment_of(:max_result) }
     it { should allow_mass_assignment_of(:red_below) }
     it { should allow_mass_assignment_of(:green_above) }
-    it { should allow_mass_assignment_of(:stanine1) }
-    it { should allow_mass_assignment_of(:stanine2) }
-    it { should allow_mass_assignment_of(:stanine3) }
-    it { should allow_mass_assignment_of(:stanine4) }
-    it { should allow_mass_assignment_of(:stanine5) }
-    it { should allow_mass_assignment_of(:stanine6) }
-    it { should allow_mass_assignment_of(:stanine7) }
-    it { should allow_mass_assignment_of(:stanine8) }
+    1.upto(8).each do |i|
+      it { should allow_mass_assignment_of(:"stanine#{i}") }
+    end
     it { should allow_mass_assignment_of(:category_list) }
     it { should allow_mass_assignment_of(:target) }
     it { should allow_mass_assignment_of(:value_type) }
@@ -68,14 +63,9 @@ describe Evaluation do
       it { should_not allow_value(nil).for(:red_below) }
       it { should_not allow_value(nil).for(:green_above) }
 
-      it { should validate_numericality_of(:stanine1).only_integer }
-      it { should validate_numericality_of(:stanine2).only_integer }
-      it { should validate_numericality_of(:stanine3).only_integer }
-      it { should validate_numericality_of(:stanine4).only_integer }
-      it { should validate_numericality_of(:stanine5).only_integer }
-      it { should validate_numericality_of(:stanine6).only_integer }
-      it { should validate_numericality_of(:stanine7).only_integer }
-      it { should validate_numericality_of(:stanine8).only_integer }
+      1.upto(8) do |i|
+        it { should validate_numericality_of(:"stanine#{i}").only_integer }
+      end
 
       context "limit ranges" do
         subject { build(:evaluation, value_type: :numeric, max_result: 50, red_below: 20, green_above: 30) }
