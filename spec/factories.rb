@@ -56,19 +56,20 @@ FactoryGirl.define do
     value_aliases   nil
     value_type      :numeric
     colors          nil
+    stanines        nil
 
     ignore do
-      stanines      [7, 12, 17, 22, 27, 32, 37, 42]
+      stanine_values [7, 12, 17, 22, 27, 32, 37, 42]
     end
 
-    stanine1        { stanines ? stanines[0] : nil }
-    stanine2        { stanines ? stanines[1] : nil }
-    stanine3        { stanines ? stanines[2] : nil }
-    stanine4        { stanines ? stanines[3] : nil }
-    stanine5        { stanines ? stanines[4] : nil }
-    stanine6        { stanines ? stanines[5] : nil }
-    stanine7        { stanines ? stanines[6] : nil }
-    stanine8        { stanines ? stanines[7] : nil }
+    stanine1        { stanine_values ? stanine_values[0] : nil }
+    stanine2        { stanine_values ? stanine_values[1] : nil }
+    stanine3        { stanine_values ? stanine_values[2] : nil }
+    stanine4        { stanine_values ? stanine_values[3] : nil }
+    stanine5        { stanine_values ? stanine_values[4] : nil }
+    stanine6        { stanine_values ? stanine_values[5] : nil }
+    stanine7        { stanine_values ? stanine_values[6] : nil }
+    stanine8        { stanine_values ? stanine_values[7] : nil }
 
     factory :suite_evaluation do
       suite
@@ -84,12 +85,12 @@ FactoryGirl.define do
     factory :numeric_evaluation do
     end
     factory :boolean_evaluation do
-      value_type  :boolean
-      max_result  1
-      red_below   nil
-      green_above nil
-      stanines    nil
-      colors(     { "0" => "red", "1" => "green" })
+      value_type     :boolean
+      max_result     1
+      red_below      nil
+      green_above    nil
+      stanine_values nil
+      colors         ({ "0" => "red", "1" => "green" })
     end
   end
 

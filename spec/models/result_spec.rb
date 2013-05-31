@@ -56,8 +56,8 @@ describe Result do
   end
 
   describe ".stanine" do
-    let(:stanine_limits) { [10, 20, 30, 40, 50, 60, 70, 80] }
-    let(:evaluation)     { create(:evaluation, max_result: 90, stanines: stanine_limits) }
+    let(:stanine_values) { [10, 20, 30, 40, 50, 60, 70, 80] }
+    let(:evaluation)     { create(:evaluation, max_result: 90, stanine_values: stanine_values) }
     let(:value)          { 35 }
     subject(:result)     { create(:result, evaluation: evaluation, value: value) }
 
@@ -84,7 +84,7 @@ describe Result do
     end
 
     context "with overlapping stanines" do
-      let(:stanine_limits) { [10, 20, 30, 40, 40, 40, 70, 80]}
+      let(:stanine_values) { [10, 20, 30, 40, 40, 40, 70, 80]}
       context "when matching several" do
         let(:value)   { 40 }
         its(:stanine) { should == 6 }
@@ -100,7 +100,7 @@ describe Result do
     end
 
     context "without stanines" do
-      let(:stanine_limits) { nil }
+      let(:stanine_values) { nil }
       its(:stanine)        { should be_nil }
     end
 

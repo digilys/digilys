@@ -77,20 +77,20 @@ describe Evaluation do
 
       context "stanine" do
         context "with stanines" do
-          let(:stanine_limits) { [10,20,30,40,50,60,70,80] }
-          subject { build(:evaluation, value_type: :numeric, max_result: 90, stanines: stanine_limits)}
+          let(:stanine_values) { [10,20,30,40,50,60,70,80] }
+          subject { build(:evaluation, value_type: :numeric, max_result: 90, stanine_values: stanine_values)}
 
           # 8 stanine limits
           1.upto(8).each do |i|
             it { should_not allow_value(nil).for(:"stanine#{i}") }
             it { should_not allow_value(-1).for(:"stanine#{i}") }
-            it { should_not allow_value(stanine_limits[i - 2] - 1).for(:"stanine#{i}") }   if i > 1
-            it { should_not allow_value(stanine_limits[i]     + 1).for(:"stanine#{i}") }   if i < 8
+            it { should_not allow_value(stanine_values[i - 2] - 1).for(:"stanine#{i}") }   if i > 1
+            it { should_not allow_value(stanine_values[i]     + 1).for(:"stanine#{i}") }   if i < 8
           end
         end
 
         context "without stanines" do
-          subject { build(:evaluation, value_type: :numeric, max_result: 90, stanines: Array.new(8) )}
+          subject { build(:evaluation, value_type: :numeric, max_result: 90, stanine_values: Array.new(8) )}
           it { should be_valid }
         end
       end
@@ -231,8 +231,8 @@ describe Evaluation do
     end
   end
   describe ".stanine_for" do
-    let(:stanine_limits) { [10, 20, 30, 40, 50, 60, 70, 80] }
-    let(:evaluation) { create(:evaluation, max_result: 90, stanines: stanine_limits) }
+    let(:stanine_values) { [10, 20, 30, 40, 50, 60, 70, 80] }
+    let(:evaluation) { create(:evaluation, max_result: 90, stanine_values: stanine_values) }
     let(:value)      { nil }
     subject          { evaluation.stanine_for(value) }
 
@@ -261,7 +261,7 @@ describe Evaluation do
     end
 
     context "with overlapping stanines" do
-      let(:stanine_limits) { [10, 20, 30, 40, 40, 40, 70, 80]}
+      let(:stanine_values) { [10, 20, 30, 40, 40, 40, 70, 80]}
       context "giving largest stanine" do
         let(:value) { 40 }
         it          { should == 6 }
@@ -277,7 +277,7 @@ describe Evaluation do
     end
 
     context "without stanines" do
-      let(:stanine_limits) { nil }
+      let(:stanine_values) { nil }
       let(:value)          { 123 }
       it                   { should be_nil }
     end
@@ -335,22 +335,22 @@ describe Evaluation do
 
   describe ".stanines?" do
     it "returns true if all stanine values are set" do
-      create(:evaluation, stanines: Array.new(8, 1)).stanines?.should be_true
+      create(:evaluation, stanine_values: Array.new(8, 1)).stanines?.should be_true
     end
-    it "stanines are " do
-      create(:evaluation, stanines: Array.new(8)).stanines?.should be_false
+    it "returns false if no stanine values are set" do
+      create(:evaluation, stanine_values: Array.new(8)).stanines?.should be_false
     end
   end
 
-  describe ".stanines" do
-    let(:stanine_limits) { [ 10, 20, 30, 40, 50, 60, 70, 80 ] }
-    subject              { create(:evaluation, max_result: 90, stanines: stanine_limits )}
-    its(:stanines)       { should == stanine_limits}
+  describe ".stanine_limits" do
+    let(:stanine_values) { [ 10, 20, 30, 40, 50, 60, 70, 80 ] }
+    subject              { create(:evaluation, max_result: 90, stanine_values: stanine_values )}
+    its(:stanine_limits) { should == stanine_values}
   end
 
   describe ".stanine_ranges" do
-    let(:stanine_limits) { [ 10, 20, 30, 40, 50, 60, 70, 80 ] }
-    subject              { create(:evaluation, max_result: 90, stanines: stanine_limits ).stanine_ranges }
+    let(:stanine_values) { [ 10, 20, 30, 40, 50, 60, 70, 80 ] }
+    subject              { create(:evaluation, max_result: 90, stanine_values: stanine_values).stanine_ranges }
 
     it { should include(1 =>  0..10) }
     it { should include(2 => 11..20) }
@@ -363,7 +363,7 @@ describe Evaluation do
     it { should include(9 => 81..90) }
 
     context "with overlapping stanines" do
-      let(:stanine_limits) { [ 10, 20, 30, 40, 40, 40, 70, 80 ] }
+      let(:stanine_values) { [ 10, 20, 30, 40, 40, 40, 70, 80 ] }
 
       it { should include(4 => 31..40) }
       it { should include(5 => 40) }
@@ -372,7 +372,7 @@ describe Evaluation do
     end
 
     context "with edge-to-edge stanines" do
-      let(:stanine_limits) { [ 10, 11, 12, 13, 14, 15, 16, 17 ] }
+      let(:stanine_values) { [ 10, 11, 12, 13, 14, 15, 16, 17 ] }
 
       it { should include(1 =>  0..10) }
       it { should include(2 => 11) }
@@ -386,7 +386,7 @@ describe Evaluation do
     end
 
     context "without stanines" do
-      let(:stanine_limits) { nil }
+      let(:stanine_values) { nil }
       it { should be_blank }
     end
   end

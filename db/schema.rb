@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130530131003) do
+ActiveRecord::Schema.define(:version => 20130531104855) do
 
   create_table "activities", :force => true do |t|
     t.integer  "suite_id"
@@ -63,6 +63,7 @@ ActiveRecord::Schema.define(:version => 20130530131003) do
     t.text     "value_aliases"
     t.string   "value_type",                    :default => "numeric"
     t.text     "colors"
+    t.text     "stanines"
   end
 
   create_table "groups", :force => true do |t|

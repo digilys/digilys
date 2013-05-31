@@ -50,7 +50,8 @@ class Evaluation < ActiveRecord::Base
     :color_for_false
 
   serialize :value_aliases, JSON
-  serialize :colors, JSON
+  serialize :colors,        JSON
+  serialize :stanines,      JSON
 
 
   validate  :validate_suite
@@ -151,7 +152,7 @@ class Evaluation < ActiveRecord::Base
       stanine = 1
       prev = -1
 
-      self.stanines.each do |boundary|
+      self.stanine_limits.each do |boundary|
         stanine += 1 if boundary < value || boundary == value && prev == boundary
         prev = boundary
       end
@@ -192,10 +193,10 @@ class Evaluation < ActiveRecord::Base
 
   # Indicates if this evaluation uses stanine values
   def stanines?
-    self.stanines.any? { |s| !s.nil? }
+    self.stanine_limits.any? { |s| !s.nil? }
   end
-  def stanines
-    @stanines ||= [
+  def stanine_limits
+    @stanine_limits ||= [
       self.stanine1,
       self.stanine2,
       self.stanine3,
@@ -212,7 +213,7 @@ class Evaluation < ActiveRecord::Base
       @stanine_ranges = {}
 
       if self.stanines?
-        boundaries = [-1, *self.stanines, self.max_result]
+        boundaries = [-1, *self.stanine_limits, self.max_result]
 
         1.upto(boundaries.length - 1) do |i|
           upper = boundaries[i]
