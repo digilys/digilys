@@ -23,8 +23,8 @@ sv:
   index:
     index:
       title: Välkommen till DigiLys!
-      body_html: |
-        <p></p>
+      more: Se fler
+      my_suites: Mina planeringar
     admin:
       title: Administrationssektion
       body_html: |

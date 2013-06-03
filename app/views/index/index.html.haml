@@ -1,2 +1,20 @@
-%h1= t(:".title")
-= t(:".body_html")
+.page-header
+  %h1= t(:".title")
+
+.row-fluid
+  .span6
+    - if !@suites.blank?
+      %table.table.table-bordered.table-hover
+        %thead
+          %tr
+            %th
+              = t(:".my_suites")
+              = link_to suites_path(), class: "pull-right" do
+                = t(:".more")
+                %i.icon-circle-arrow-right
+        %tbody
+          - @suites.each do |suite|
+            %tr
+              %td= link_to suite.name, suite
+
+  .span6
