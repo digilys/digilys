@@ -13,3 +13,6 @@ $ ->
                 data: (term, page) ->
                     { q: { first_name_or_last_name_cont: term }, page: page }
         )
+
+        if $field.data("autofocus")
+            $field.select2("open")

@@ -24,6 +24,10 @@ window.Digilys.Autocomplete.activityStudentsGroups = (field) ->
     if data
         $field.select2("data", data)
 
+
+    if $field.data("autofocus")
+        $field.select2("open")
+
 $ ->
     $(".activity-students-autocomplete-field").each ->
         window.Digilys.Autocomplete.activityStudentsGroups(this)

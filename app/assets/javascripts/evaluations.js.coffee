@@ -133,3 +133,6 @@ $ ->
                 data: (term, page) ->
                     { q: { name_cont: term }, page: page }
         )
+
+        if $field.data("autofocus")
+            $field.select2("open")

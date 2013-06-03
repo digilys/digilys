@@ -13,6 +13,9 @@ $ ->
                     { q: { name_cont: term }, page: page }
         )
 
+        if $field.data("autofocus")
+            $field.select2("open")
+
     $("#new_suite #suite_is_template").on "change", ->
         if ($(this).is(":checked"))
             $("#new_participant").hide()

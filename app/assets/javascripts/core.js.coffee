@@ -15,6 +15,9 @@ $ ->
             tags: tags
         )
 
+        if $field.data("autofocus")
+            $field.select2("open")
+
     $("form").on("change", ":input", ->
         window.onbeforeunload = ->
             return window.Digilys.navigationConfirmation

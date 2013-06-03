@@ -19,3 +19,6 @@ $ ->
 
                     { q: q, page: page }
         )
+
+        if $field.data("autofocus")
+            $field.select2("open")
