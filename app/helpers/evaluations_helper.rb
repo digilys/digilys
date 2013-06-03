@@ -38,6 +38,6 @@ module EvaluationsHelper
       bars << content_tag(:div, "", class:"bar bar-danger",  style: "width: #{result_distribution[:red].round(1)}%")
     end
 
-    bar_container = content_tag(:div, bars.join("").html_safe, class: "progress")
+    bar_container = content_tag(:div, bars.join("").html_safe, class: "progress evaluation-status-progress")
   end
 end

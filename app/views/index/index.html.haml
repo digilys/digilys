@@ -4,7 +4,7 @@
 .row-fluid
   .span6
     - if !@suites.blank?
-      %table.table.table-bordered.table-hover
+      %table.table.table-bordered.table-hover.dashboard-table
         %thead
           %tr
             %th
@@ -18,3 +18,18 @@
               %td= link_to suite.name, suite
 
   .span6
+    - if !@evaluations.blank?
+      %table.table.table-bordered.table-hover.dashboard-table
+        %tbody
+          - @evaluations.each do |key, evaluations|
+            %tr
+              %th(colspan=3)= t(:".#{key}_evaluations")
+            - evaluations.each do |evaluation|
+              %tr
+                %td= link_to evaluation.suite.name, evaluation.suite
+                %td.main
+                  = link_to evaluation.name, evaluation
+                  %small.date= l evaluation.date
+                %td.actions
+                  %a.btn.btn-mini.btn-primary{href: report_evaluation_path(evaluation)}= t(:".evaluation_report_action")
+                  = evaluation_progress_bar(evaluation)

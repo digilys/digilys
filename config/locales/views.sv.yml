@@ -25,6 +25,8 @@ sv:
       title: Välkommen till DigiLys!
       more: Se fler
       my_suites: Mina planeringar
+      overdue_evaluations: Sena test
+      upcoming_evaluations: Kommande test
     admin:
       title: Administrationssektion
       body_html: |

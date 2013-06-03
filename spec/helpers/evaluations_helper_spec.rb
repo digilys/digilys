@@ -89,7 +89,7 @@ describe EvaluationsHelper do
     subject { Capybara::Node::Simple.new(helper.evaluation_progress_bar(evaluation)) }
 
     context "with no results" do
-      it { should     have_selector(".progress") }
+      it { should     have_selector(".progress.evaluation-status-progress") }
       it { should_not have_selector(".progress .bar") }
     end
 
@@ -101,7 +101,7 @@ describe EvaluationsHelper do
         create(:result, student: participants[3].student, evaluation: evaluation, value: 8) # green
       end
 
-      it { should have_selector(".progress") }
+      it { should have_selector(".progress.evaluation-status-progress") }
       it { should have_selector(".progress .bar", count: 3) }
       it { should have_selector(".progress .bar-success[style=\"width: 20.0%\"]") }
       it { should have_selector(".progress .bar-yellow[style=\"width: 40.0%\"]") }
@@ -113,7 +113,7 @@ describe EvaluationsHelper do
         create(:result, student: participants[2].student, evaluation: evaluation, value: 6) # yellow
       end
 
-      it { should have_selector(".progress") }
+      it { should have_selector(".progress.evaluation-status-progress") }
       it { should have_selector(".progress .bar", count: 3) }
       it { should have_selector(".progress .bar-success[style=\"width: 0.0%\"]") }
       it { should have_selector(".progress .bar-yellow[style=\"width: 40.0%\"]") }

@@ -417,6 +417,9 @@ class Evaluation < ActiveRecord::Base
   def self.overdue
     with_status(:empty, :partial).where([ "date < ?", Date.today ])
   end
+  def self.upcoming
+    where([ "date >= ?", Date.today ])
+  end
 
   def self.where_suite_manager(user)
     query = <<-SQL

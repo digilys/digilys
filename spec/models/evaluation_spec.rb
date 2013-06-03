@@ -694,6 +694,13 @@ describe Evaluation do
     it { should have(6).items }
     it { should match_array(with_partial_results + without_results) }
   end
+  describe "#upcoming" do
+    let!(:passed)   { create_list(:suite_evaluation, 3, date: Date.yesterday) }
+    let!(:upcoming) { create_list(:suite_evaluation, 3, date: Date.today) }
+    subject         { Evaluation.upcoming.all }
+    it              { should have(3).items }
+    it              { should match_array(upcoming) }
+  end
 
   describe "#where_suite_manager" do
     let(:user)                     { create(:superuser) }
