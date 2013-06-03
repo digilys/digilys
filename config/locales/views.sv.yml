@@ -28,6 +28,7 @@ sv:
       overdue_evaluations: Sena test
       upcoming_evaluations: Kommande test
       upcoming_meetings: Kommande möten
+      active_activities: Pågående insatser/frågeställningar
     admin:
       title: Administrationssektion
       body_html: |

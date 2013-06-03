@@ -46,3 +46,17 @@
                 %td.actions
                   %a.btn.btn-mini.btn-primary{href: report_evaluation_path(evaluation)}= t(:".evaluation_report_action")
                   = evaluation_progress_bar(evaluation)
+
+    - if !@activities.blank?
+      %table.table.table-bordered.table-hover.dashboard-table
+        %thead
+          %tr
+            %th(colspan=2)
+              = t(:".active_activities")
+        %tbody
+          - @activities.each do |activity|
+            %tr
+              %td= link_to activity.suite.name, activity.suite
+              %td.main= link_to activity.name, activity
+              %td
+                %span.label= activity.type_text

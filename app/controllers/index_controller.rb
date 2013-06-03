@@ -21,6 +21,8 @@ class IndexController < ApplicationController
 
     @meetings               = Meeting.where_suite_manager(current_user).upcoming.order("date asc").limit(10)
 
+    @activities             = Activity.where_suite_manager(current_user).with_status(:open).all
+
     unless current_user.has_role?(:admin)
       @suites.with_role(:suite_manager, current_user)
     end
