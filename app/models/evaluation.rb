@@ -418,6 +418,24 @@ class Evaluation < ActiveRecord::Base
     with_status(:empty, :partial).where([ "date < ?", Date.today ])
   end
 
+  def self.where_suite_manager(user)
+    query = <<-SQL
+      suite_id in (
+        select
+          resource_id
+        from
+          roles
+          left join users_roles on roles.id = users_roles.role_id
+        where
+          resource_type = 'Suite'
+          and name = 'suite_manager'
+          and user_id = ?
+      )
+    SQL
+
+    where(query, user.id)
+  end
+
 
   private
 

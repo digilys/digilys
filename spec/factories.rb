@@ -8,6 +8,9 @@ FactoryGirl.define do
     factory :admin do
       after(:create) { |user| user.add_role :admin }
     end
+    factory :superuser do
+      after(:create) { |user| user.add_role :superuser }
+    end
   end
 
   factory :student do

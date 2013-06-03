@@ -695,4 +695,20 @@ describe Evaluation do
     it { should match_array(with_partial_results + without_results) }
   end
 
+  describe "#where_suite_manager" do
+    let(:user)                     { create(:superuser) }
+    let(:allowed_suite)            { create(:suite) }
+    let(:not_allowed_suite)        { create(:suite) }
+    let!(:allowed_evaluations)     { create_list(:suite_evaluation, 3, suite: allowed_suite) }
+    let!(:not_allowed_evaluations) { create_list(:suite_evaluation, 3, suite: not_allowed_suite) }
+
+    before(:each) do
+      user.add_role :suite_manager, allowed_suite
+    end
+
+    subject { Evaluation.where_suite_manager(user).all }
+
+    it { should have(3).items }
+    it { should match_array(allowed_evaluations) }
+  end
 end
