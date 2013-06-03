@@ -42,6 +42,10 @@ class Suite < ActiveRecord::Base
     return read_attribute(:generic_evaluations)
   end
 
+  def update_evaluation_statuses!
+    self.evaluations(true).each { |e| e.update_status! }
+  end
+
 
   def self.template
     where(is_template: true)

@@ -127,4 +127,23 @@ describe Result do
       its(:display_value) { should == "3" }
     end
   end
+
+  describe ".update_evaluation_status!" do
+    let(:suite) { create(:suite) }
+    let(:evaluation) { create(:suite_evaluation, suite: suite) }
+    let(:participants) { create_list(:participant, 2, suite: suite) }
+    let!(:results) { [ create(:result, evaluation: evaluation, student: participants.first.student) ]  }
+
+    it "updates the suite's evaluations' statuses" do
+      evaluation.update_status!
+      evaluation.reload
+      evaluation.status.should == "partial"
+      result = create(:result, evaluation: evaluation, student: participants.second.student)
+      evaluation.reload
+      evaluation.status.should == "complete"
+      result.destroy
+      evaluation.reload
+      evaluation.status.should == "partial"
+    end
+  end
 end

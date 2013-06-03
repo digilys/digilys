@@ -21,6 +21,7 @@ class Evaluation < ActiveRecord::Base
   enumerize :type,       in: [ :generic, :template, :suite ], predicates: { prefix: true }, scope: true
   enumerize :target,     in: [ :all, :male, :female ],        predicates: { prefix: true }, default: :all
   enumerize :value_type, in: [ :numeric, :boolean, :grade ],  predicates: { prefix: true }, default: :numeric
+  enumerize :status,     in: [ :empty, :partial, :complete ], predicates: { prefix: true }, scope: true, default: :empty
 
   accepts_nested_attributes_for :results,
     reject_if: proc { |attributes| attributes[:value].blank? }
@@ -371,6 +372,21 @@ class Evaluation < ActiveRecord::Base
       !@stanine_for_grade_d.blank? ||
       !@stanine_for_grade_e.blank? ||
       !@stanine_for_grade_f.blank?
+  end
+
+  def update_status!
+    num_results = self.results(true).count(:all)
+    num_participants = self.participants(true).count(:all)
+
+    if num_results > 0 && num_results < num_participants
+      self.status = :partial
+    elsif num_results > 0 && num_results >= num_participants
+      self.status = :complete
+    else
+      self.status = :empty
+    end
+
+    self.save!
   end
 
   # Initializes a new evaluation from a template

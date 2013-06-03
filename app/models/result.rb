@@ -11,7 +11,10 @@ class Result < ActiveRecord::Base
   }
   validates :evaluation, :student, presence: true
 
-  before_save :update_color_and_stanine
+  before_save   :update_color_and_stanine
+  after_create  :update_evaluation_status!
+  after_destroy :update_evaluation_status!
+
 
   def color
     read_attribute(:color).to_sym
@@ -39,5 +42,9 @@ class Result < ActiveRecord::Base
   def update_color_and_stanine
     self.color   = self.evaluation.color_for(self.value)
     self.stanine = self.evaluation.stanine_for(self.value)
+  end
+
+  def update_evaluation_status!
+    self.evaluation.update_status! if self.evaluation
   end
 end

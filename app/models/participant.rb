@@ -12,6 +12,9 @@ class Participant < ActiveRecord::Base
   validates :suite,   presence:   true
   validates :student_id, uniqueness: { scope: :suite_id }
 
+  after_create  :update_evaluation_statuses!
+  after_destroy :update_evaluation_statuses!
+
   def name
     self.student.name
   end
@@ -22,5 +25,12 @@ class Participant < ActiveRecord::Base
 
   def self.with_gender(gender)
     includes(:student).where("students.gender" => gender.to_s)
+  end
+
+
+  private
+
+  def update_evaluation_statuses!
+    self.suite.update_evaluation_statuses! if self.suite
   end
 end

@@ -57,6 +57,7 @@ FactoryGirl.define do
     value_type      :numeric
     colors          nil
     stanines        nil
+    status          :empty
 
     ignore do
       stanine_values [7, 12, 17, 22, 27, 32, 37, 42]

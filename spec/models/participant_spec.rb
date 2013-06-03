@@ -37,6 +37,26 @@ describe Participant do
   end
 
 
+  describe ".update_evaluation_statuses!" do
+    let(:suite) { create(:suite) }
+    let(:evaluation) { create(:suite_evaluation, suite: suite) }
+    let(:participants) { create_list(:participant, 2, suite: suite) }
+    let!(:results) { participants.collect { |p| create(:result, evaluation: evaluation, student: p.student) } }
+
+    it "updates the suite's evaluations' statuses" do
+      evaluation.update_status!
+      evaluation.reload
+      evaluation.status.should == "complete"
+      participant = create(:participant, suite: suite)
+      evaluation.reload
+      evaluation.status.should == "partial"
+      participant.destroy
+      evaluation.reload
+      evaluation.status.should == "complete"
+    end
+  end
+
+
   describe "#with_gender" do
     let!(:male_participants)   { create_list(:male_participant, 3) }
     let!(:female_participants) { create_list(:female_participant, 3) }

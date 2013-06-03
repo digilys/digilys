@@ -614,7 +614,36 @@ describe Evaluation do
     end
   end
 
-  describe
+  describe ".update_status!" do
+    let!(:suite)           { create(:suite) }
+    let(:num_participants) { 0 }
+    let(:num_results)      { 0 }
+    let!(:evaluation)      { create(:suite_evaluation, suite: suite) }
+
+    before(:each) do
+      participants = 1.upto(num_participants).collect { |i| create(:participant, suite: suite) }
+      results      = 1.upto(num_results).collect      { |i| create(:result, evaluation: evaluation, student: participants[i-1].student) }
+      evaluation.update_status!
+    end
+
+    subject { evaluation }
+
+    its(:status) { should == "empty" }
+
+    context "with participants" do
+      let(:num_participants) { 3 }
+      its(:status)           { should == "empty" }
+
+      context "and complete results" do
+        let(:num_results) { 3 }
+        its(:status)      { should == "complete" }
+      end
+      context "and partial results" do
+        let(:num_results) { 2 }
+        its(:status)      { should == "partial" }
+      end
+    end
+  end
 
   describe "#new_from_template" do
     let(:template) { create(:evaluation_template, category_list: "foo, bar, baz", target: :male) }
