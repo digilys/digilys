@@ -17,6 +17,19 @@
             %tr
               %td= link_to suite.name, suite
 
+    - if !@meetings.blank?
+      %table.table.table-bordered.table-hover.dashboard-table
+        %thead
+          %tr
+            %th(colspan=3)
+              = t(:".upcoming_meetings")
+        %tbody
+          - @meetings.each do |meeting|
+            %tr
+              %td= link_to meeting.suite.name, meeting.suite
+              %td= l meeting.date
+              %td.main= link_to meeting.name, meeting
+
   .span6
     - if !@evaluations.blank?
       %table.table.table-bordered.table-hover.dashboard-table

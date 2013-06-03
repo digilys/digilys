@@ -27,6 +27,7 @@ sv:
       my_suites: Mina planeringar
       overdue_evaluations: Sena test
       upcoming_evaluations: Kommande test
+      upcoming_meetings: Kommande möten
     admin:
       title: Administrationssektion
       body_html: |
