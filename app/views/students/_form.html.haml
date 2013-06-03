@@ -10,7 +10,10 @@
 
   = f.inputs t(:".data_fields_title") do
 
-    = f.input :data_text, as: :text, input_html: { rows: 7, class: "input-xxlarge" }
+    = f.input :data_text,
+      as: :text,
+      hint: t(:".data_text_help_html"),
+      input_html: { rows: 7, class: "input-xxlarge" }
 
     = f.inputs for: :generic_results do |rf|
       - case rf.object.evaluation.value_type.to_sym
