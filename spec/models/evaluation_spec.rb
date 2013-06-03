@@ -670,4 +670,29 @@ describe Evaluation do
     end
   end
 
+  describe "#overdue" do
+    let(:suite)                  { create(:suite) }
+    let!(:participants)          { create_list(:participant, 2, suite: suite) }
+    let!(:wrong_type)            { create_list(:generic_evaluation, 2) + create_list(:evaluation_template, 2) }
+    let!(:upcoming)              { create_list(:suite_evaluation, 3, suite: suite, date: Date.today) }
+    let!(:with_complete_results) { create_list(:suite_evaluation, 3, suite: suite, date: Date.yesterday) }
+    let!(:with_partial_results)  { create_list(:suite_evaluation, 3, suite: suite, date: Date.yesterday) }
+    let!(:without_results)       { create_list(:suite_evaluation, 3, suite: suite, date: Date.yesterday) }
+
+    before(:each) do
+      with_complete_results.each do |e|
+        create(:result, evaluation: e, student: participants.first.student)
+        create(:result, evaluation: e, student: participants.second.student)
+      end
+      with_partial_results.each do |e|
+        create(:result, evaluation: e, student: participants.first.student)
+      end
+    end
+
+    subject(:result) { Evaluation.overdue.all }
+
+    it { should have(6).items }
+    it { should match_array(with_partial_results + without_results) }
+  end
+
 end

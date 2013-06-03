@@ -414,6 +414,10 @@ class Evaluation < ActiveRecord::Base
     end
   end
 
+  def self.overdue
+    with_status(:empty, :partial).where([ "date < ?", Date.today ])
+  end
+
 
   private
 
