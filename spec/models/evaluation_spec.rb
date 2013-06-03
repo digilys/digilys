@@ -628,6 +628,7 @@ describe Evaluation do
     its(:green_above)   { should == template.green_above }
     its(:category_list) { should == template.category_list }
     its(:target)        { should == template.target }
+    its(:type)          { should == template.type }
 
     1.upto(8).each do |i|
       its(:"stanine#{i}") { should == template.send(:"stanine#{i}") }

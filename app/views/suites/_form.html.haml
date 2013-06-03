@@ -20,6 +20,7 @@
       = f.inputs Evaluation.model_name.human(count: 2) do
         = f.inputs for: :evaluations do |ef|
           = ef.hidden_field :template_id
+          = ef.hidden_field :type
           = ef.hidden_field :max_result
           = ef.hidden_field :red_below
           = ef.hidden_field :green_above

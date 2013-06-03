@@ -392,6 +392,7 @@ class Evaluation < ActiveRecord::Base
       e.stanine8      = template.stanine8
       e.category_list = template.category_list
       e.target        = template.target
+      e.type          = template.type
 
       e.assign_attributes(attrs)
     end
