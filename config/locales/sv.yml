@@ -235,6 +235,10 @@ sv:
   "yes":  Ja
   "no":   Nej
 
+  red: Röd
+  yellow: Gul
+  green: Grön
+
   # Basic common actions
   # These are not put under a sub-key because we want i18n cascading to work
   index_action:   "Lista"

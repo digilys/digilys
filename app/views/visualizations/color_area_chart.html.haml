@@ -1,0 +1,19 @@
+%h1
+  = @suite.name
+  %small= Suite.model_name.human
+
+= render partial: "suites/navigation", locals: { suite: @suite, active: :charts }
+= render partial: "navigation", locals: { suite: @suite, active: :color_area }
+
+- gchart_init
+- gchart id: "chart",
+  type:        :area,
+  url:         url_for(params.merge(format: :json)),
+  height:      400,
+  isStacked:   true,
+  areaOpacity: 1.0,
+  chartArea:   { width: "90%", height: "90%" },
+  colors:      ["#da4f49", "#f4f809", "#5bb75b"],
+  legend:      { position: "none" }
+
+#chart.gchart

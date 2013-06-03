@@ -95,6 +95,7 @@ sv:
     navigation:
       templates_action: Mallar
       color_chart: Färgkarta
+      charts: Trender
     form:
       student_placeholder: Sök och välj elever
       group_placeholder: Sök och välj grupper
@@ -165,9 +166,6 @@ sv:
         html: Elevdata
         text: Elevdata
 
-    red: Röd
-    yellow: Gul
-    green: Grön
     color_ranges: Färgintervall
     stanines: Stanine-värden
     result_info: Resultatinformation
@@ -258,6 +256,10 @@ sv:
       confirmation: Är du säker på att du vill radera användaren?
     destroy:
       success: Användaren raderades
+
+  visualizations:
+    navigation:
+      color_area_chart: Färgkodning
 
 
   template:

@@ -55,6 +55,12 @@ Digilys::Application.routes.draw do
     resources :evaluations,  only: :new
     resources :participants, only: :new
     resources :meetings,     only: :new
+
+    resource :visualization, only: [] do
+      member do
+        get :color_area_chart
+      end
+    end
   end
 
   resources :participants, only: [ :create, :destroy ] do

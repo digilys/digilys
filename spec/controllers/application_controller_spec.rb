@@ -63,41 +63,4 @@ describe ApplicationController do
       }
     end
   end
-
-  describe "#results_to_datatable" do
-    let!(:students)     { create_list(:student, 2) }
-    let!(:evaluations)  { create_list(:evaluation, 2, max_result: 10, red_below: 4, green_above: 7) }
-    let!(:result_s1_e1) { create(:result, evaluation: evaluations.first,  student: students.first,  value: 4) }
-    let!(:result_s1_e2) { create(:result, evaluation: evaluations.second, student: students.first,  value: 5) }
-    let!(:result_s2_e1) { create(:result, evaluation: evaluations.first,  student: students.second, value: 6) }
-    let!(:result_s2_e2) { create(:result, evaluation: evaluations.second, student: students.second, value: 7) }
-
-    subject(:table) { controller.send(:results_to_datatable, evaluations) }
-
-    it { should have(3).items }
-
-    context "title row" do
-      subject { table.first }
-      it { should have(3).items }
-      its(:first)  { should == Evaluation.model_name.human(count: 2) }
-      its(:second) { should == students.first.name }
-      its(:third)  { should == students.second.name }
-    end
-
-    context "row for evaluation 1" do
-      subject { table.second }
-      it { should have(3).items }
-      its(:first)  { should == evaluations.first.name }
-      its(:second) { should == result_s1_e1.value }
-      its(:third)  { should == result_s2_e1.value }
-    end
-
-    context "row for evaluation 2" do
-      subject { table.third }
-      it { should have(3).items }
-      its(:first)  { should == evaluations.second.name }
-      its(:second) { should == result_s1_e2.value }
-      its(:third)  { should == result_s2_e2.value }
-    end
-  end
 end
