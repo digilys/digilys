@@ -56,6 +56,14 @@ describe Meeting do
     end
   end
 
+  describe "#upcoming" do
+    let!(:passed)   { create_list(:meeting, 3, date: Date.yesterday) }
+    let!(:upcoming) { create_list(:meeting, 3, date: Date.today) }
+    subject         { Meeting.upcoming.all }
+    it              { should have(3).items }
+    it              { should match_array(upcoming) }
+  end
+
   describe "#where_suite_manager" do
     let(:user)                  { create(:superuser) }
     let(:allowed_suite)         { create(:suite) }

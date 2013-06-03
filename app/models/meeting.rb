@@ -26,6 +26,10 @@ class Meeting < ActiveRecord::Base
     !self.completed? && self.date < Date.today
   end
 
+  def self.upcoming
+    where([ "date >= ?", Date.today ])
+  end
+
   def self.where_suite_manager(user)
     query = <<-SQL
       suite_id in (
