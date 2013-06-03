@@ -10,9 +10,11 @@
 
   = f.input :max_result, input_html: { disabled: true }
 
+  - first = true
   = f.inputs for: :results do |rf|
-    = rf.input :value, label: rf.object.student.name, input_html: { data: { "error-message" => t(:".result_error_message") } }
+    = rf.input :value, label: rf.object.student.name, input_html: { autofocus: first, data: { "error-message" => t(:".result_error_message") } }
     = rf.hidden_field :student_id
+    - first = false
 
   = f.actions do
     = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary" }
