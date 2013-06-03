@@ -7,6 +7,7 @@
 - content_for :page_end do
   = tinymce_assets
   = tinymce
+  = tinymce_autofocus("meeting_notes")
 
 = semantic_form_for @meeting,
   url: submit_report_meeting_path(@meeting),
