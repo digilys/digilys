@@ -1,6 +1,4 @@
 class ParticipantsController < ApplicationController
-  layout "admin"
-
   load_and_authorize_resource :suite
   load_and_authorize_resource :participant, through: :suite, shallow: true, except: :create
   before_filter :authorize_suite!

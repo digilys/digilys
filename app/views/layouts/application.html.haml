@@ -18,10 +18,6 @@
         .container-fluid
           %a.brand{href: root_url()}
             DigiLys
-          - if can? :admin, :index
-            %ul.nav
-              %li{class: active_if(is_admin ||= false)}
-                %a{href: index_admin_path()}= t(:".administration")
 
           %ul.nav.pull-right
             - if user_signed_in?
@@ -49,8 +45,43 @@
 
       = bootstrap_flash
 
-      .row-fluid
+      - if fullpage ||= false || !user_signed_in? || !current_user.has_any_role?(:admin, :superuser)
         = content_for?(:content) ? yield(:content) : yield
+      - else
+        .row-fluid
+          .sidebar.span3
+            .well
+              %ul.nav.nav-list
+                - if can? :list, Suite
+                  %li{class: active_if(working_with_suite?(@suite, @evaluation))}
+                    %a{href: suites_path()}= Suite.model_name.human(count: 2)
+                - if can? :manage, Student
+                  %li{class: active_if(params?(controller: "students"))}
+                    %a{href: students_path()}= Student.model_name.human(count: 2)
+                - if can? :manage, Group
+                  %li{class: active_if(params?(controller: "groups"))}
+                    %a{href: groups_path()}= Group.model_name.human(count: 2)
+
+                - if can? :manage, Evaluation
+                  %li.nav-header= t(:".generics")
+                  %li{class: active_if(working_with_generic_evaluation?(@evaluation))}
+                    %a{href: generic_evaluations_path()}= t(:"generic.evaluations.title")
+
+                %li.nav-header= t(:".templates")
+                - if can? :manage, Evaluation
+                  %li{class: active_if(working_with_evaluation_template?(@evaluation))}
+                    %a{href: template_evaluations_path()}= t(:"template.evaluations.title")
+                - if can? :create, Suite
+                  %li{class: active_if(working_with_suite_template?(@suite))}
+                    %a{href: template_suites_path()}= t(:"suites.templates_title")
+
+                - if can? :manage, User
+                  %li.nav-header= t(:".administration")
+                  %li{class: active_if(params?(controller: "users"))}
+                    %a{href: users_path()}= User.model_name.human(count: 2)
+
+          .content.span9
+            = content_for?(:content) ? yield(:content) : yield
     
     /
       Javascripts

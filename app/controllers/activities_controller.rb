@@ -1,6 +1,4 @@
 class ActivitiesController < ApplicationController
-  layout "admin"
-
   load_and_authorize_resource :suite
   load_and_authorize_resource :activity, through: :suite, shallow: true
   before_filter :authorize_suite!

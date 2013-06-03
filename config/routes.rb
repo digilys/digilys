@@ -1,7 +1,6 @@
 Digilys::Application.routes.draw do
-  # Landing pages
+  # Landing page
   get "index/index"
-  get "index/admin"
 
   resources :users, only: [ :index, :edit, :update, :destroy ] do
     collection do

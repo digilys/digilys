@@ -1,5 +1,4 @@
 class SuitesController < ApplicationController
-  layout "admin", except: :color_chart
 
   before_filter :process_incoming_participant_data, only: :create
   before_filter :load_from_template,                only: :new_from_template
@@ -36,6 +35,7 @@ class SuitesController < ApplicationController
   def show
   end
 
+  layout "fullpage", only: :color_chart
   def color_chart
     evaluations = Evaluation.with_type(:generic).order("name asc").partition { |e| @suite.generic_evaluations.include?(e.id) }
     @generic_evaluations = {

@@ -1,6 +1,4 @@
 class EvaluationsController < ApplicationController
-  layout "admin"
-
   before_filter :load_from_template, only: :new_from_template
 
   load_and_authorize_resource :suite

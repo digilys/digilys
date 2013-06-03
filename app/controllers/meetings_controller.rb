@@ -1,6 +1,4 @@
 class MeetingsController < ApplicationController
-  layout "admin"
-
   load_and_authorize_resource :suite
   load_and_authorize_resource :meeting, through: :suite, shallow: true
   before_filter :authorize_suite!

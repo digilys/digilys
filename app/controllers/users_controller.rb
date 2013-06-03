@@ -63,9 +63,9 @@ class UsersController < ApplicationController
 
   def admin_layout_for_admins
     if current_user.has_role?(:admin)
-      return "admin"
-    else
       return "application"
+    else
+      return "fullpage"
     end
   end
 end

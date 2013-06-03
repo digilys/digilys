@@ -1,0 +1,4 @@
+- content_for :content do
+  = content_for?(:fullpage_content) ? yield(:fullpage_content) : yield
+
+= render template: "layouts/application", locals: { fullpage: true }
