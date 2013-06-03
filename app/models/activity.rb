@@ -42,6 +42,25 @@ class Activity < ActiveRecord::Base
       self.groups.collect { |g| { id: "g-#{g.id}", text: g.name } }
   end
 
+
+  def self.where_suite_manager(user)
+    query = <<-SQL
+      suite_id in (
+        select
+          resource_id
+        from
+          roles
+          left join users_roles on roles.id = users_roles.role_id
+        where
+          resource_type = 'Suite'
+          and name = 'suite_manager'
+          and user_id = ?
+      )
+    SQL
+
+    where(query, user.id)
+  end
+
   private
 
   def set_suite_from_meeting

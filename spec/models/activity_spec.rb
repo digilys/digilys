@@ -89,4 +89,21 @@ describe Activity do
     its(:students_and_groups_select2_data) { should include(id: "g-#{groups.second.id}",   text: groups.second.name) }
     its(:students_and_groups_select2_data) { should include(id: "g-#{groups.third.id}",    text: groups.third.name) }
   end
+
+  describe "#where_suite_manager" do
+    let(:user)                    { create(:superuser) }
+    let(:allowed_suite)           { create(:suite) }
+    let(:not_allowed_suite)       { create(:suite) }
+    let!(:allowed_activities)     { create_list(:activity, 3, suite: allowed_suite) }
+    let!(:not_allowed_activities) { create_list(:activity, 3, suite: not_allowed_suite) }
+
+    before(:each) do
+      user.add_role :suite_manager, allowed_suite
+    end
+
+    subject { Activity.where_suite_manager(user).all }
+
+    it { should have(3).items }
+    it { should match_array(allowed_activities) }
+  end
 end
