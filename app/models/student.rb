@@ -111,15 +111,16 @@ class Student < ActiveRecord::Base
 
   def convert_data_text_to_data
     data_text = self.data_text
-    return if data_text.blank?
 
     data = {}
 
-    data_text.each_line do |line|
-      next if line.blank?
+    unless data_text.blank?
+      data_text.each_line do |line|
+        next if line.blank?
 
-      key, value = line.split(":").collect(&:strip)
-      data[key] = text_value_to_json_value(value)
+        key, value = line.split(":").collect(&:strip)
+        data[key] = text_value_to_json_value(value)
+      end
     end
 
     self.data = data
