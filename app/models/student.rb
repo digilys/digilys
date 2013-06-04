@@ -144,7 +144,7 @@ class Student < ActiveRecord::Base
     maybe_numeric = value.gsub(",", ".").gsub(/\s/, "")
 
     case maybe_numeric
-    when /^[+-]?\d+.\d*$/ # Float
+    when /^[+-]?\d+\.\d*$/ # Float
       return maybe_numeric.to_f
     when /^[+-]?\d+$/ # Int
       return maybe_numeric.to_i

@@ -35,7 +35,7 @@ describe Student do
   end
 
   context ".data_text=" do
-    subject { create(:student, data_text: text) }
+    subject(:student) { create(:student, data_text: text) }
 
     context "with multiple rows" do
       let(:text) { "foo: bar\nbar: baz" }
@@ -48,8 +48,11 @@ describe Student do
       its(:data) { should have(2).items }
     end
     context "with an integer" do
-      let(:text) { "foo: 1" }
-      its(:data) { should == { "foo" => 1 } }
+      let(:text) { "foo: 2010" }
+      its(:data) { should == { "foo" => 2010 } }
+      it "returns an integer" do
+        student.data["foo"].should be_an_instance_of(Fixnum)
+      end
     end
     context "with a float" do
       context "using dots" do
