@@ -239,6 +239,7 @@ sv:
   yellow: Gul
   green: Grön
   stanine: Stanine
+  normal_distribution: Normalfördelning
 
   # Basic common actions
   # These are not put under a sub-key because we want i18n cascading to work

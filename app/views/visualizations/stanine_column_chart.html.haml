@@ -15,6 +15,7 @@
   url:    url_for(params.merge(format: :json)),
   height: 400,
   vAxes:  [ { title: t(:".amount"), minValue: 0, maxValue: num_participants, gridlines: { count: num_participants } } ],
-  hAxis:  { title: t(:".stanine") }
+  hAxis:  { title: t(:".stanine") },
+  series: { 0 => { type: "line" } }
 
 #chart.gchart

@@ -112,10 +112,29 @@ class VisualizationsController < ApplicationController
 
   def result_stanines_to_datatable(evaluations)
     rows = []
-    rows << [ I18n.t(:stanine), *evaluations.collect(&:name) ]
+    rows << [ I18n.t(:stanine), I18n.t(:normal_distribution), *evaluations.collect(&:name) ]
+
+    if evaluations.first
+      num_participants = evaluations.first.participants.count(:all).to_f
+    else
+      num_participants = 0
+    end
+
+    # http://en.wikipedia.org/wiki/Stanine
+    normal_distribution = {
+      1 => 0.04 * num_participants,
+      2 => 0.07 * num_participants,
+      3 => 0.12 * num_participants,
+      4 => 0.17 * num_participants,
+      5 => 0.20 * num_participants,
+      6 => 0.17 * num_participants,
+      7 => 0.12 * num_participants,
+      8 => 0.07 * num_participants,
+      9 => 0.04 * num_participants
+    }
 
     1.upto(9).each do |stanine|
-      row = [ stanine.to_s ]
+      row = [ stanine.to_s, normal_distribution[stanine] ]
       evaluations.each { |e| row << (e.stanine_distribution[stanine] || 0) }
       rows << row
     end
