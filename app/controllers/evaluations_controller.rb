@@ -41,14 +41,17 @@ class EvaluationsController < ApplicationController
   def confirm_destroy
   end
   def destroy
-    suite = @evaluation.suite
     @evaluation.destroy
 
     flash[:success] = t(:"evaluations.destroy.success.#{@evaluation.type}")
-    if suite
-      redirect_to suite
-    else
-      redirect_to evaluations_url()
+
+    case @evaluation.type.to_sym
+    when :suite
+      redirect_to @evaluation.suite
+    when :template
+      redirect_to template_evaluations_url()
+    when :generic
+      redirect_to generic_evaluations_url()
     end
   end
 
