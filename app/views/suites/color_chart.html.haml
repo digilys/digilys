@@ -65,7 +65,9 @@
         %td.result{class: result_color_class(average_value, evaluation)}
           %ul
             %li.value
-              - if !evaluation.value_aliases.blank?
+              - if average_value.nil?
+                = "-"
+              - elsif !evaluation.value_aliases.blank?
                 = evaluation.alias_for(average_value.round)
               - else
                 = number_with_precision(average_value, precision: 2) || "-"
