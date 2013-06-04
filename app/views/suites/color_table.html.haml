@@ -2,7 +2,7 @@
   = @suite.name
   %small= @suite.is_template? ? t(:".template_title") : Suite.model_name.human
 
-= render partial: "navigation", locals: { suite: @suite, active: :color_chart }
+= render partial: "navigation", locals: { suite: @suite, active: :color_table }
 
 -# Track values and stanines for averages
 - values = {}

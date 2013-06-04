@@ -94,7 +94,7 @@ sv:
     averages: Medelvärde
     navigation:
       templates_action: Mallar
-      color_chart: Färgkarta
+      color_table: Färgkarta
       charts: Trender
     form:
       student_placeholder: Sök och välj elever
@@ -113,7 +113,7 @@ sv:
       activity:
         open_title: Pågående
         closed_title: Avslutade
-    color_chart:
+    color_table:
       add_generic_evaluation_action: Lägg till
     connected_users:
       remove_user_action: Ta bort från planeringen

@@ -30,7 +30,7 @@ class Ability
       can [
         :show,
         :update,
-        :color_chart
+        :color_table
       ], Suite do |suite|
         suite.is_template? || user.has_role?(:suite_manager, suite)
       end

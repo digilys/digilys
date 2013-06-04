@@ -43,7 +43,7 @@ Digilys::Application.routes.draw do
     end
     member do
       get    :search_participants
-      get    :color_chart
+      get    :color_table
       get    :confirm_destroy
       get    :select_users
       put    :add_users

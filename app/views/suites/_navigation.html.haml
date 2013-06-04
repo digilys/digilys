@@ -9,8 +9,8 @@
     %li{class: active_if(active == :show)}
       %a{href:suite_path(suite)}= t(:".show_action")
     - if !suite.is_template?
-      %li{class: active_if(active == :color_chart)}
-        %a{href:color_chart_suite_path(@suite)}= t(:".color_chart")
+      %li{class: active_if(active == :color_table)}
+        %a{href:color_table_suite_path(@suite)}= t(:".color_table")
       %li{class: active_if(active == :charts)}
         %a{href:color_area_chart_suite_visualization_path(@suite)}= t(:".charts")
 

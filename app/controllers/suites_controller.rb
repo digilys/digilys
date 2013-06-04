@@ -35,8 +35,8 @@ class SuitesController < ApplicationController
   def show
   end
 
-  layout "fullpage", only: :color_chart
-  def color_chart
+  layout "fullpage", only: :color_table
+  def color_table
     evaluations = Evaluation.with_type(:generic).order("name asc").partition { |e| @suite.generic_evaluations.include?(e.id) }
     @generic_evaluations = {
       included: evaluations.first,
@@ -115,13 +115,13 @@ class SuitesController < ApplicationController
     evaluation = Evaluation.with_type(:generic).find(params[:suite][:generic_evaluations])
     @suite.generic_evaluations << evaluation.id
     @suite.save
-    redirect_to color_chart_suite_url(@suite)
+    redirect_to color_table_suite_url(@suite)
   end
   def remove_generic_evaluations
     evaluation = Evaluation.with_type(:generic).find(params[:evaluation_id])
     @suite.generic_evaluations.delete(evaluation.id)
     @suite.save
-    redirect_to color_chart_suite_url(@suite)
+    redirect_to color_table_suite_url(@suite)
   end
 
   private
