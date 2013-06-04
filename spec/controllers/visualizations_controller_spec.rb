@@ -88,4 +88,58 @@ describe VisualizationsController do
       its(:fourth) { should == 0 }
     end
   end
+
+  describe "#result_stanines_to_datatable" do
+    let!(:suite)        { create(:suite) }
+    let!(:students)     { create_list(:student, 9) }
+    let!(:participants) { students.collect { |s| create(:participant, suite: suite, student: s) } }
+    let!(:evaluations)  { create_list(:suite_evaluation, 2,
+      suite: suite,
+      max_result: 8,
+      red_below: 4,
+      green_above: 6,
+      stanine_values: [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+    ) }
+
+    before(:each) do
+      [ 0, 1, 2, 3, 3, 5, 6, 7, 8].each do |value|
+        create(:result, evaluation: evaluations.first, value: value)
+      end
+      [ 0, 1, 2, 4, 4, 5, 6, 7, 8].each do |value|
+        create(:result, evaluation: evaluations.second, value: value)
+      end
+    end
+
+    subject(:table) { controller.send(:result_stanines_to_datatable, evaluations) }
+
+    it { should have(10).items }
+
+    context "title row" do
+      subject      { table.first }
+      it           { should have(3).items }
+      its(:first)  { should == I18n.t(:stanine) }
+      its(:second) { should == evaluations.first.name }
+      its(:third)  { should == evaluations.second.name }
+    end
+
+    [
+      [1, 1, 1],
+      [2, 1, 1],
+      [3, 1, 1],
+      [4, 2, 0],
+      [5, 0, 2],
+      [6, 1, 1],
+      [7, 1, 1],
+      [8, 1, 1],
+      [9, 1, 1],
+    ].each do |row, expected_second, expected_third|
+      context "row #{row}" do
+        subject      { table[row] }
+        it           { should have(3).items }
+        its(:first)  { should == row.to_s }
+        its(:second) { should == expected_second }
+        its(:third)  { should == expected_third }
+      end
+    end
+  end
 end

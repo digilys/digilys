@@ -596,6 +596,33 @@ describe Evaluation do
     end
   end
 
+  describe ".stanine_distribution" do
+    subject(:evaluation) { create(:evaluation,
+      max_result: 8,
+      red_below: 3,
+      green_above: 5,
+      stanine_values: [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+    ) }
+
+    before(:each) do
+      # No 5, two 4:s (stanine)
+      [0, 1, 2, 3, 3, 5, 6, 7, 8].each do |value|
+        create(:result, evaluation: evaluation, value: value)
+      end
+    end
+
+    its(:stanine_distribution) { should have(8).items }
+    its(:stanine_distribution) { should include(1 => 1) }
+    its(:stanine_distribution) { should include(2 => 1) }
+    its(:stanine_distribution) { should include(3 => 1) }
+    its(:stanine_distribution) { should include(4 => 2) }
+    its(:stanine_distribution) { should include(6 => 1) }
+    its(:stanine_distribution) { should include(7 => 1) }
+    its(:stanine_distribution) { should include(8 => 1) }
+    its(:stanine_distribution) { should include(9 => 1) }
+    its(:stanine_distribution) { should_not have_key(5) }
+  end
+
   describe ".alias_for" do
     let(:aliases)    { { 1 => "foo", 2 => "bar" } }
     let(:evaluation) { create(:evaluation, value_aliases: aliases) }
@@ -717,5 +744,16 @@ describe Evaluation do
 
     it { should have(3).items }
     it { should match_array(allowed_evaluations) }
+  end
+
+  describe "#with_stanines" do
+    let!(:without_stanines)         { create(:suite_evaluation, stanine_values: nil, stanines: nil) }
+    let!(:with_field_stanines)      { create(:suite_evaluation, stanine_values: [7, 12, 17, 22, 27, 32, 37, 42], stanines: nil) }
+    let!(:with_serialized_stanines) { create(:grade_evaluation, stanine_values: nil, stanine_for_grades: [ 1, 3, 4, 5, 6, 9 ]) }
+
+    subject { Evaluation.with_stanines.all }
+
+    it { should have(2).items }
+    it { should match_array([with_field_stanines, with_serialized_stanines]) }
   end
 end

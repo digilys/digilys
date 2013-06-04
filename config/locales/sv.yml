@@ -238,6 +238,7 @@ sv:
   red: Röd
   yellow: Gul
   green: Grön
+  stanine: Stanine
 
   # Basic common actions
   # These are not put under a sub-key because we want i18n cascading to work

@@ -1,0 +1,18 @@
+%h1
+  = @suite.name
+  %small= Suite.model_name.human
+
+= render partial: "suites/navigation", locals: { suite: @suite, active: :charts }
+= render partial: "navigation", locals: { suite: @suite, active: :stanine_column }
+
+- num_participants = @suite.participants.count
+
+- gchart_init
+- gchart id: "chart",
+  type:   :column,
+  url:    url_for(params.merge(format: :json)),
+  height: 400,
+  vAxes:  [ { title: t(:".amount"), minValue: 0, maxValue: num_participants, gridlines: { count: num_participants } } ],
+  hAxis:  { title: t(:".stanine") }
+
+#chart.gchart

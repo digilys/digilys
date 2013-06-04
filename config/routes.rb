@@ -59,6 +59,7 @@ Digilys::Application.routes.draw do
     resource :visualization, only: [] do
       member do
         get :color_area_chart
+        get :stanine_column_chart
       end
     end
   end

@@ -12,6 +12,15 @@ class VisualizationsController < ApplicationController
     end
   end
 
+  def stanine_column_chart
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: result_stanines_to_datatable(@entity.evaluations.with_stanines)
+      end
+    end
+  end
+
 
   private
 
@@ -68,6 +77,19 @@ class VisualizationsController < ApplicationController
           result_distribution[:green]
         ]
       end
+    end
+
+    return rows
+  end
+
+  def result_stanines_to_datatable(evaluations)
+    rows = []
+    rows << [ I18n.t(:stanine), *evaluations.collect(&:name) ]
+
+    1.upto(9).each do |stanine|
+      row = [ stanine.to_s ]
+      evaluations.each { |e| row << (e.stanine_distribution[stanine] || 0) }
+      rows << row
     end
 
     return rows

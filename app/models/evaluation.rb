@@ -323,6 +323,21 @@ class Evaluation < ActiveRecord::Base
     return result_distribution
   end
 
+  # Builds an amount distribution of the result stanine values
+  # of the following form:
+  #
+  #  {
+  #     1: 5,
+  #     2: 3,
+  #     ...
+  #     9: 4
+  #  }
+  #
+  # Missing stanine values are not included in the hash
+  def stanine_distribution
+    @stanine_distribution ||= self.results.group(:stanine).count
+  end
+
 
   def alias_for(value)
     if self.value_aliases.blank?
@@ -437,6 +452,12 @@ class Evaluation < ActiveRecord::Base
     SQL
 
     where(query, user.id)
+  end
+
+  def self.with_stanines
+    # The check for null as a string is due to the fact that the stanines
+    # field is a seralized field, and a nil value will be serialized as "null"
+    where("(stanine1 is not null or (stanines is not null and stanines != 'null'))")
   end
 
 
