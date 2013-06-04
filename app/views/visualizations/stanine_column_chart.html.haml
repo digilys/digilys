@@ -5,6 +5,8 @@
 = render partial: "suites/navigation", locals: { suite: @suite, active: :charts }
 = render partial: "navigation", locals: { suite: @suite, active: :stanine_column }
 
+= render partial: "filter", locals: { suite: @suite }
+
 - num_participants = @suite.participants.count
 
 - gchart_init

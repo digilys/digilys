@@ -1,13 +1,15 @@
 class VisualizationsController < ApplicationController
   layout "fullpage"
 
+  skip_authorization_check only: :filter
+
   before_filter :load_target
 
   def color_area_chart
     respond_to do |format|
       format.html
       format.json do
-        render json: result_colors_to_datatable(@entity.evaluations)
+        render json: result_colors_to_datatable(evaluations)
       end
     end
   end
@@ -16,7 +18,7 @@ class VisualizationsController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        render json: result_stanines_to_datatable(@entity.evaluations.with_stanines)
+        render json: result_stanines_to_datatable(evaluations.with_stanines)
       end
     end
   end
@@ -25,9 +27,16 @@ class VisualizationsController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        render json: results_to_datatable(@entity.evaluations)
+        render json: results_to_datatable(evaluations)
       end
     end
+  end
+
+
+  def filter
+    session[:visualization_filter] ||= {}
+    session[:visualization_filter][:categories] = params[:filter_categories]
+    redirect_to(params[:return_to] || root_url())
   end
 
 
@@ -39,6 +48,16 @@ class VisualizationsController < ApplicationController
       authorize! :update, @suite
       @entity = @suite
     end
+  end
+
+  def evaluations
+    evaluations = @entity.evaluations
+
+    if evaluations && session[:visualization_filter] && !session[:visualization_filter][:categories].blank?
+      evaluations = evaluations.tagged_with(session[:visualization_filter][:categories], on: :categories)
+    end
+
+    return evaluations
   end
 
   ## Google Charts data transformers

@@ -5,6 +5,8 @@
 = render partial: "suites/navigation", locals: { suite: @suite, active: :charts }
 = render partial: "navigation", locals: { suite: @suite, active: :color_area }
 
+= render partial: "filter", locals: { suite: @suite }
+
 - gchart_init
 - gchart id: "chart",
   type:        :area,

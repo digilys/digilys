@@ -99,6 +99,12 @@ Digilys::Application.routes.draw do
     end
   end
 
+  resource :visualization, only: [] do
+    member do
+      put :filter
+    end
+  end
+
   namespace :template do
     resources :evaluations, only: [ :index, :new ] do
       get :search, on: :collection
