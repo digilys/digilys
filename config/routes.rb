@@ -60,6 +60,7 @@ Digilys::Application.routes.draw do
       member do
         get :color_area_chart
         get :stanine_column_chart
+        get :result_line_chart
       end
     end
   end

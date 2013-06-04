@@ -1,0 +1,16 @@
+%h1
+  = @suite.name
+  %small= Suite.model_name.human
+
+= render partial: "suites/navigation", locals: { suite: @suite, active: :charts }
+= render partial: "navigation", locals: { suite: @suite, active: :result_line }
+
+- gchart_init
+- gchart id: "chart",
+  type:      :line,
+  url:       url_for(params.merge(format: :json)),
+  height:    400,
+  curveType: "function",
+  vAxes:     [ { format: "#%", maxValue: 1.0 } ]
+
+#chart.gchart

@@ -262,6 +262,7 @@ sv:
     navigation:
       color_area_chart: Färgkodning
       stanine_column_chart: Staninefördelning
+      result_line_chart: Resultat
 
 
   template:

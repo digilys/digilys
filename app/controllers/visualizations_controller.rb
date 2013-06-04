@@ -21,6 +21,15 @@ class VisualizationsController < ApplicationController
     end
   end
 
+  def result_line_chart
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: results_to_datatable(@entity.evaluations)
+      end
+    end
+  end
+
 
   private
 
@@ -46,7 +55,7 @@ class VisualizationsController < ApplicationController
       row = [ evaluation.name ]
 
       students.each do |student|
-        row << evaluation.result_for(student).try(:value)
+        row << (evaluation.result_for(student).try(:value) || 0).to_f / evaluation.max_result.to_f
       end
 
       rows << row

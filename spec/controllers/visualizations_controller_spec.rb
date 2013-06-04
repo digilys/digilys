@@ -27,16 +27,16 @@ describe VisualizationsController do
       subject { table.second }
       it { should have(3).items }
       its(:first)  { should == evaluations.first.name }
-      its(:second) { should == result_s1_e1.value }
-      its(:third)  { should == result_s2_e1.value }
+      its(:second) { should == result_s1_e1.value.to_f / 10.0 }
+      its(:third)  { should == result_s2_e1.value.to_f / 10.0 }
     end
 
     context "row for evaluation 2" do
       subject { table.third }
       it { should have(3).items }
       its(:first)  { should == evaluations.second.name }
-      its(:second) { should == result_s1_e2.value }
-      its(:third)  { should == result_s2_e2.value }
+      its(:second) { should == result_s1_e2.value.to_f / 10.0 }
+      its(:third)  { should == result_s2_e2.value.to_f / 10.0 }
     end
   end
 
