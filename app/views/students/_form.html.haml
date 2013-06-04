@@ -1,4 +1,4 @@
-= semantic_form_for student, html: { class: "form-horizontal" } do |f|
+= semantic_form_for student, html: { id: "student-form", class: "form-horizontal" } do |f|
 
   = f.inputs t(:".basic_fields_title") do
 
@@ -15,7 +15,7 @@
       hint: t(:".data_text_help_html"),
       input_html: { rows: 7, class: "input-xxlarge" }
 
-    = f.inputs for: :generic_results do |rf|
+    = f.inputs for: :generic_results, class: "inputs generic-results-inputs" do |rf|
       - case rf.object.evaluation.value_type.to_sym
       - when :boolean
         = rf.input :value, label: rf.object.evaluation.name, as: :select, collection: [[t(:yes), 1],[t(:no), 0]]
@@ -24,6 +24,7 @@
       - else
         = rf.input :value, label: rf.object.evaluation.name
       = rf.hidden_field :evaluation_id
+      = rf.hidden_field :_destroy, value: 0 if !rf.object.new_record?
 
   = f.actions do
     = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
