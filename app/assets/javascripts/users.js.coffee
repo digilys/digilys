@@ -4,7 +4,7 @@ $ ->
 
         $field.select2(
             multiple: true,
-            minimumInputLength: 3
+            minimumInputLength: 1
             placeholder: $field.data("placeholder")
             ajax:
                 url: $field.data("url")

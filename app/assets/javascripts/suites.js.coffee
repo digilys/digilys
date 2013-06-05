@@ -3,7 +3,7 @@ $ ->
         $field = $(this)
 
         $field.select2(
-            minimumInputLength: 3,
+            minimumInputLength: 1,
             placeholder: $field.data("placeholder")
             ajax:
                 url: $field.data("url")

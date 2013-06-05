@@ -6,7 +6,7 @@ window.Digilys.Autocomplete.activityStudentsGroups = (field) ->
 
     $field.select2(
         multiple: $field.data("multiple"),
-        minimumInputLength: 3
+        minimumInputLength: 1
         placeholder: $field.data("placeholder")
         ajax:
             url: $field.data("url")
