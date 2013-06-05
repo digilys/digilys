@@ -59,8 +59,9 @@
               = result.try(:display_value) || "-"
 
           -# Add to track variables
-          - values[evaluation.id]   << result.value   if result.try(:value)
-          - stanines[evaluation.id] << result.stanine if result.try(:stanine)
+          - unless evaluation.value_type.boolean?
+            - values[evaluation.id]   << result.value   if result.try(:value)
+            - stanines[evaluation.id] << result.stanine if result.try(:stanine)
 
   %tfoot
     %tr
