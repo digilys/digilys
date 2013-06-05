@@ -49,6 +49,18 @@ class Group < ActiveRecord::Base
     end
   end
 
+  def add_users(users)
+    return if users.blank?
+    users = User.find(users.split(/\s*,\s*/))
+    users.each { |user| self.users << user unless self.users.include?(user) }
+  end
+
+  def remove_users(users)
+    return if users.blank?
+    users = User.find(users.split(/\s*,\s*/))
+    users.each { |user| self.users.delete(user) }
+  end
+
 
   # Joins n parents up in the hierarchy.
   #

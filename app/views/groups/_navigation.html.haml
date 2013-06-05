@@ -10,6 +10,8 @@
       %a{href:group_path(group)}= t(:".show_action")
     %li{class: active_if(active == :select_students)}
       %a{href:select_students_group_path(group)}= t(:".select_students_action")
+    %li{class: active_if(active == :select_users)}
+      %a{href:select_users_group_path(group)}= t(:".select_users_action")
     %li.secondary-tab{class: active_if(active == :destroy)}
       %a{href:confirm_destroy_group_path(group)}= t(:".destroy_action")
     %li.secondary-tab{class: active_if(active == :edit)}

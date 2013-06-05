@@ -70,10 +70,12 @@ sv:
 
   groups:
     select_students_action: Lägg till elever
+    select_users_action: Lägg till användare
     form:
       parent_placeholder: Sök och välj en grupp
     show:
       remove_students_action: Ta bort markerade elever från gruppen
+      remove_users_action: Ta bort markerade användare från gruppen
     create:
       success: Gruppen skapades
     update:
@@ -88,6 +90,12 @@ sv:
       success: Eleverna lades till i gruppen
     remove_students:
       success: Eleverna togs bort från gruppen
+    select_users:
+      users_placeholder: Sök och välj en eller flera användare
+    add_users:
+      success: Användaren lades till i gruppen
+    remove_users:
+      success: Användaren togs bort från gruppen
 
   suites:
     show_action: Översikt

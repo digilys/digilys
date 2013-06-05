@@ -122,4 +122,38 @@ describe Group do
       group.students.should be_blank
     end
   end
+
+  context ".add_users" do
+    let(:group) { create(:group) }
+    let(:users) { create_list(:user, 3) }
+
+    it "adds users from a comma separated list of user ids" do
+      group.add_users(users.collect(&:id).join(","))
+      group.users(true).should match_array(users)
+    end
+    it "handles an empty string" do
+      group.add_users("")
+      group.users(true).should be_blank
+    end
+    it "does not add duplicates" do
+      group.users << users.first
+      group.add_users("#{users.first.id},#{users.first.id}")
+      group.users(true).should == [users.first]
+    end
+  end
+
+  context ".remove_users" do
+    let(:group)   { create(:group) }
+    let(:users)   { create_list(:user, 3) }
+    before(:each) { group.users = users }
+
+    it "removes users from an array of user ids" do
+      group.remove_users(users.collect(&:id))
+      group.users(true).should be_blank
+    end
+    it "handles an empty array" do
+      group.remove_users([])
+      group.users(true).should match_array(users)
+    end
+  end
 end
