@@ -51,13 +51,16 @@
         - evaluations.each do |evaluation|
           - result = evaluation.result_for(student)
           %td.result{class: result_color_class(result)}
-            %ul
-              %li.value=   result.try(:display_value) || "-"
-              %li.stanine= result.try(:stanine)       || "-"
+            - if result.stanine
+              %ul
+                %li.value=   result.try(:display_value) || "-"
+                %li.stanine= result.try(:stanine)       || "-"
+            - else
+              = result.try(:display_value) || "-"
 
-              -# Add to track variables
-              - values[evaluation.id]   << result.value   if result.try(:value)
-              - stanines[evaluation.id] << result.stanine if result.try(:stanine)
+          -# Add to track variables
+          - values[evaluation.id]   << result.value   if result.try(:value)
+          - stanines[evaluation.id] << result.stanine if result.try(:stanine)
 
   %tfoot
     %tr
@@ -71,23 +74,20 @@
 
         - if !values[evaluation.id].blank?
           - average_value = values[evaluation.id].instance_eval { reduce(:+).to_f / size }
+          - if !evaluation.value_aliases.blank?
+            - average_value = evaluation.alias_for(average_value.round)
+          - else
+            - average_value = number_with_precision(average_value, precision: 2) || "-"
         - else
-          - average_value = nil
+          - average_value = "-"
 
         %td.result{class: result_color_class(average_value, evaluation)}
-          %ul
-            %li.value
-              - if average_value.nil?
-                = "-"
-              - elsif !evaluation.value_aliases.blank?
-                = evaluation.alias_for(average_value.round)
-              - else
-                = number_with_precision(average_value, precision: 2) || "-"
-            %li.stanine
-              - if !stanines[evaluation.id].blank?
-                = number_with_precision(stanines[evaluation.id].instance_eval { reduce(:+).to_f / size }, precision: 2)
-              - else
-                = "-"
+          - if !stanines[evaluation.id].blank?
+            %ul
+              %li.value= average_value
+              %li.stanine= number_with_precision(stanines[evaluation.id].instance_eval { reduce(:+).to_f / size }, precision: 2)
+          - else
+            = average_value
 
 = semantic_form_for @suite,
   url: add_generic_evaluations_suite_path(@suite),
