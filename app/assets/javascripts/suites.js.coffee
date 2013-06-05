@@ -47,6 +47,20 @@ $ ->
             cls.replace /suite-show-\w+/, "suite-show-#{$button.data("value")}"
 
     # Display a popover of student data
-    $(".suite-results a.student").popover(html: true).click (e) ->
-        e.preventDefault()
-        $(".suite-results a.student").not(this).popover("hide")
+    addedCloseHandler = false
+
+    $(".suite-results a.student").each ->
+        $trigger = $(this)
+        $trigger.popover(html: true)
+        $trigger.click (e) ->
+            e.preventDefault()
+            $(".suite-results a.student").not(this).popover("hide")
+
+        if !addedCloseHandler
+            $("html").on "click.popover.data-api", (event) ->
+                $target = $(event.target)
+
+                if $target.data("toggle") != "popover" && $target.closest(".popover").length == 0
+                    $(".suite-results a.student").popover("hide")
+
+            addedCloseHandler = true
