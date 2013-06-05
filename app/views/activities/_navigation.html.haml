@@ -7,7 +7,7 @@
 %ul.nav.nav-tabs
   %li{class: active_if(active == :show)}
     %a{href:activity_path(activity)}= t(:".show_action")
-  - unless activity.closed?
+  - if !activity.closed? || activity.status_changed?
     %li{class: active_if(active == :report)}
       %a{href:report_activity_path(activity)}= t(:".activity_report_action")
   %li.secondary-tab{class: active_if(active == :destroy)}
