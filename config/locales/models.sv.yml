@@ -90,6 +90,7 @@ sv:
         parent_id: Tillhör
         children: Undergrupper
         students: Elever
+        users: Användare
       participant:
         suite: Planering
         student: Elev
