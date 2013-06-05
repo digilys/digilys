@@ -1,11 +1,21 @@
-%h1
-  = @suite.name
-  %small= Suite.model_name.human
+- if @suite
+  %h1
+    = @suite.name
+    %small= Suite.model_name.human
 
-= render partial: "suites/navigation", locals: { suite: @suite, active: :charts }
-= render partial: "navigation", locals: { suite: @suite, active: :result_line }
+  - locals_base = { suite: @suite }
+  = render partial: "suites/navigation", locals: { active: :charts }.merge(locals_base)
 
-= render partial: "filter", locals: { suite: @suite }
+- elsif @student
+  %h1
+    = @student.name
+    %small= Student.model_name.human
+
+  - locals_base = { student: @student }
+  = render partial: "students/navigation", locals: { active: :charts }.merge(locals_base)
+
+= render partial: "navigation", locals: { active: :result_line }.merge(locals_base)
+= render partial: "filter", locals: locals_base
 
 - gchart_init
 - gchart id: "chart",

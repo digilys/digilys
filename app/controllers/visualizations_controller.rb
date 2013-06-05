@@ -27,7 +27,7 @@ class VisualizationsController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        render json: results_to_datatable(evaluations)
+        render json: results_to_datatable(evaluations, @student)
       end
     end
   end
@@ -46,12 +46,20 @@ class VisualizationsController < ApplicationController
     if params[:suite_id]
       @suite = Suite.find(params[:suite_id])
       authorize! :update, @suite
-      @entity = @suite
+    elsif params[:student_id]
+      @student = Student.find(params[:student_id])
+      authorize! :show, @suite
     end
   end
 
   def evaluations
-    evaluations = @entity.evaluations
+    if @suite
+      evaluations = @suite.evaluations
+    elsif @student
+      evaluations = @student.suite_evaluations
+    else
+      return
+    end
 
     if evaluations && session[:visualization_filter] && !session[:visualization_filter][:categories].blank?
       evaluations = evaluations.tagged_with(session[:visualization_filter][:categories], on: :categories)
@@ -61,10 +69,14 @@ class VisualizationsController < ApplicationController
   end
 
   ## Google Charts data transformers
-  def results_to_datatable(evaluations)
+  def results_to_datatable(evaluations, student = nil)
     rows = []
 
-    students = evaluations.collect(&:students).flatten.uniq
+    if student
+      students = [student]
+    else
+      students = evaluations.collect(&:students).flatten.uniq
+    end
 
     # Title row
     rows << [ Evaluation.model_name.human(count: 2), *students.collect(&:name) ]

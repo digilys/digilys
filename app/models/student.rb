@@ -18,6 +18,10 @@ class Student < ActiveRecord::Base
     conditions: "evaluations.type = 'suite'",
     order:      "evaluations.date ASC",
     inverse_of: :student
+  has_many :suite_evaluations,
+    through:    :suite_results,
+    order:      "evaluations.date ASC",
+    source:     :evaluation
 
   has_and_belongs_to_many :groups
   has_and_belongs_to_many :activities

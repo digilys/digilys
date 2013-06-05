@@ -33,6 +33,12 @@ Digilys::Application.routes.draw do
       put    :add_groups
       delete :remove_groups
     end
+
+    resource :visualization, only: [] do
+      member do
+        get :result_line_chart
+      end
+    end
   end
 
   resources :suites do

@@ -44,6 +44,8 @@ sv:
 
   students:
     select_groups_action: Lägg till i grupper
+    navigation:
+      charts: Trender
     show:
       remove_groups_action: Ta bort eleven från de markerade grupperna
       stanines: Stanine

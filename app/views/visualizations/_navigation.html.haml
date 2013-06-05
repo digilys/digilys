@@ -1,7 +1,11 @@
+- suite   ||= nil
+- student ||= nil
+
 %ul.nav.nav-pills
-  %li{class: active_if(active == :color_area)}
-    %a{href:url_for(action: "color_area_chart")}= t(:".color_area_chart")
-  %li{class: active_if(active == :stanine_column)}
-    %a{href:url_for(action: "stanine_column_chart")}= t(:".stanine_column_chart")
+  - if suite
+    %li{class: active_if(active == :color_area)}
+      %a{href:url_for(action: "color_area_chart")}= t(:".color_area_chart")
+    %li{class: active_if(active == :stanine_column)}
+      %a{href:url_for(action: "stanine_column_chart")}= t(:".stanine_column_chart")
   %li{class: active_if(active == :result_line)}
     %a{href:url_for(action: "result_line_chart")}= t(:".result_line_chart")

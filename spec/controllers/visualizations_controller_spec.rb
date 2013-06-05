@@ -38,6 +38,31 @@ describe VisualizationsController do
       its(:second) { should == result_s1_e2.value.to_f / 10.0 }
       its(:third)  { should == result_s2_e2.value.to_f / 10.0 }
     end
+
+    context "limited by student" do
+      let(:table) { controller.send(:results_to_datatable, evaluations, students.first) }
+
+      context "title row" do
+        subject { table.first }
+        it { should have(2).items }
+        its(:first)  { should == Evaluation.model_name.human(count: 2) }
+        its(:second) { should == students.first.name }
+      end
+
+      context "row for evaluation 1" do
+        subject { table.second }
+        it { should have(2).items }
+        its(:first)  { should == evaluations.first.name }
+        its(:second) { should == result_s1_e1.value.to_f / 10.0 }
+      end
+
+      context "row for evaluation 2" do
+        subject { table.third }
+        it { should have(2).items }
+        its(:first)  { should == evaluations.second.name }
+        its(:second) { should == result_s1_e2.value.to_f / 10.0 }
+      end
+    end
   end
 
   describe "#result_colors_to_datatable" do
