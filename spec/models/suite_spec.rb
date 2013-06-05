@@ -21,6 +21,15 @@ describe Suite do
       its(:generic_evaluations) { should == [1,2,3] }
     end
   end
+  describe ".student_data" do
+    subject { create(:suite, student_data: nil) }
+    its(:student_data) { should == [] }
+
+    context "with existing data" do
+      subject { create(:suite, student_data: %w(foo bar baz)) }
+      its(:student_data) { should == %w(foo bar baz) }
+    end
+  end
 
   describe "#new_from_template" do
     let(:template)     { create(:suite, is_template: true) }

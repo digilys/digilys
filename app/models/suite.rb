@@ -29,6 +29,7 @@ class Suite < ActiveRecord::Base
   validates :name, presence: true
 
   serialize :generic_evaluations, JSON
+  serialize :student_data,        JSON
 
 
   def users
@@ -40,6 +41,12 @@ class Suite < ActiveRecord::Base
       write_attribute(:generic_evaluations, [])
     end
     return read_attribute(:generic_evaluations)
+  end
+  def student_data
+    if read_attribute(:student_data).nil?
+      write_attribute(:student_data, [])
+    end
+    return read_attribute(:student_data)
   end
 
   def update_evaluation_statuses!
