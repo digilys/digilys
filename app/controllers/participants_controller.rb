@@ -14,8 +14,16 @@ class ParticipantsController < ApplicationController
 
     participant_data = process_participant_autocomplete_params(params[:participant])
 
+    group_ids = []
+
     participant_data.each do |data|
       @suite.participants.create(data) unless @suite.participants.exists?(student_id: data[:student_id])
+      group_ids << data[:group_id] if data[:group_id]
+    end
+
+    unless group_ids.blank?
+      users = Group.find(group_ids).collect(&:users).flatten
+      users.each { |u| u.add_role :suite_manager, @suite }
     end
 
     flash[:success] = t(:"participants.create.success")
