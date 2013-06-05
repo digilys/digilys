@@ -5,6 +5,8 @@ window.Digilys.loadMask = ($fields) ->
     $fields.append('<div class="load-mask"/>')
 
 $ ->
+    $("[autofocus]:not(:focus)").eq(0).focus()
+
     $("input.datepicker").datepicker(
         language:  "sv"
         format:    "yyyy-mm-dd"
