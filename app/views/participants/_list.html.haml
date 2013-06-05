@@ -8,7 +8,7 @@
     - participants.each do |participant|
       %tr
         %td.name
-          = link_to(participant.name, participant.student)
+          = link_to(participant.name, suite_student_path(participant.suite, participant.student))
           %small= participant.group_names
         %td.actions
           .btn-group

@@ -61,6 +61,7 @@ Digilys::Application.routes.draw do
     resources :evaluations,  only: :new
     resources :participants, only: :new
     resources :meetings,     only: :new
+    resources :students,     only: :show
 
     resource :visualization, only: [] do
       member do

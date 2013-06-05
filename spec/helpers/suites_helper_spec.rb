@@ -59,6 +59,10 @@ describe SuitesHelper do
       let(:params) { { "controller" => "evaluations", "action" => "new", suite_id: 1 } }
       it           { should be_true }
     end
+    context "with suite_id and students controller" do
+      let(:params) { { "controller" => "students", "action" => "show", suite_id: 1 } }
+      it           { should be_false }
+    end
     context "with an evaluation assigned to a suite" do
       let(:evaluation) { create(:suite_evaluation) }
       it               { should be_true }

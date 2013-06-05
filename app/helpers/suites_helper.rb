@@ -12,7 +12,7 @@ module SuitesHelper
   # Returns true if the user is currently working within a suite
   def working_with_suite?(suite, evaluation)
     @working_with_suite ||= suite && !suite.is_template? ||
-      params.has_key?(:suite_id) ||
+      (params.has_key?(:suite_id) && !params?(controller: "students")) ||
       params?(controller: "suites", action: "index") ||
       evaluation && !evaluation.suite_id.blank?
   end
