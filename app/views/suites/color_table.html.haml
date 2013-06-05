@@ -61,10 +61,11 @@
 
   %tfoot
     %tr
-      %th{colspan: evaluations.length + 1} &nbsp;
+      %th{colspan: @suite.student_data.length + evaluations.length + 1} &nbsp;
     %tr.averages
       %th= t(:".averages")
-      %td{colspan: @suite.student_data.length}
+      - unless @suite.student_data.blank?
+        %td{colspan: @suite.student_data.length}
 
       - evaluations.each do |evaluation|
 
