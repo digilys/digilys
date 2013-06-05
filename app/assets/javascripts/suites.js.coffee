@@ -16,6 +16,18 @@ $ ->
         if $field.data("autofocus")
             $field.select2("open")
 
+        $field.data("preventNavigationConfirmation", true)
+        $field.on "change", (event) ->
+            window.Digilys.loadMask($("form"))
+
+            $form = $field.parents("form")
+
+            $submitButton = $form.find(":submit")
+            $submitButton.attr("disabled", "disabled")
+            $submitButton.val($submitButton.data("loading-text"))
+
+            $form.submit()
+
     $("#new_suite #suite_is_template").on "change", ->
         if ($(this).is(":checked"))
             $("#new_participant").hide()

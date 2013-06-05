@@ -1,3 +1,9 @@
+window.Digilys ?= {}
+
+window.Digilys.loadMask = ($fields) ->
+    $fields.css("position", "relative")
+    $fields.append('<div class="load-mask"/>')
+
 $ ->
     $("input.datepicker").datepicker(
         language:  "sv"
@@ -18,9 +24,10 @@ $ ->
         if $field.data("autofocus")
             $field.select2("open")
 
-    $("form").on("change", ":input", ->
-        window.onbeforeunload = ->
-            return window.Digilys.navigationConfirmation
+    $("form").on("change", ":input", (event) ->
+        if !$(event.target).data("preventNavigationConfirmation")
+            window.onbeforeunload = ->
+                return window.Digilys.navigationConfirmation
     ).on("submit", ->
         window.onbeforeunload = null
     )
