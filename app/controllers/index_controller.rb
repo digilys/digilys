@@ -9,7 +9,7 @@ class IndexController < ApplicationController
   private
 
   def load_dashboard_data
-    @suites                 = Suite.regular.order(:updated_at).limit(10)
+    @suites                 = Suite.regular.with_role(:suite_manager, current_user).order(:updated_at).limit(10)
 
     evaluations             = Evaluation.with_type(:suite).where_suite_manager(current_user).order("date asc")
     overdue_evaluations     = evaluations.overdue
