@@ -12,6 +12,12 @@ class Student < ActiveRecord::Base
     conditions: "evaluations.type = 'generic'",
     order:      "evaluations.name ASC",
     inverse_of: :student
+  has_many :suite_results,
+    class_name: "Result",
+    include:    :evaluation,
+    conditions: "evaluations.type = 'suite'",
+    order:      "evaluations.date ASC",
+    inverse_of: :student
 
   has_and_belongs_to_many :groups
   has_and_belongs_to_many :activities

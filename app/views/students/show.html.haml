@@ -24,43 +24,57 @@
           %tr.data
             %th= key
             %td= value
-  .span6
-    %table.table.table-bordered.table-hover.evaluation-results.results-table
-      %thead
-        %tr
-          %th= t(:"generic.evaluations.title")
-          %th= Result.model_name.human
-          %th= t(:".stanines")
-      %tbody
-        - @student.generic_results.each do |result|
-          %tr
-            %td= result.evaluation.name
-            %td.result{class: result_color_class(result)}= result.display_value
-            %td.result{class: result_color_class(result)}= result.evaluation.stanines? ? result.stanine : "-"
 
-.row-fluid
-  %h3= Group.model_name.human(count: 2)
-
-  = form_for @student, url: remove_groups_student_path(@student), method: :delete do |f|
+    %h3= Group.model_name.human(count: 2)
 
     .btn-student
       %a.btn.btn-small{href: select_groups_student_path(@student)}= t(:".select_groups_action")
-      = submit_tag t(:".remove_groups_action"), class: "btn btn-small btn-danger"
 
-    %table.table.table-striped.groups-table
-      %thead
-        %tr
-          %th.select &nbsp;
-          %th.name= Group.human_attribute_name(:name)
-          %th.actions &nbsp;
-      %tbody
-        - @student.groups.each do |group|
-          %tr
-            %td.select
-              = check_box_tag "group_ids[]", group.id, false, id: "group_ids_#{group.id}"
-            %td.name
-              %label(for="group_ids_#{group.id}")
-                = group.name
-                %small= [ group.parent.try(:name), group.parent.try(:parent).try(:name) ].compact.join(", ")
-            %td.actions
-              %a.btn.btn-mini{href:url_for(group)}= t(:".show_action")
+    - unless @student.groups.blank?
+      = form_for @student, url: remove_groups_student_path(@student), method: :delete do |f|
+
+        %table.table.table-striped.groups-table
+          %thead
+            %tr
+              %th.select &nbsp;
+              %th.name= Group.human_attribute_name(:name)
+              %th.actions &nbsp;
+          %tbody
+            - @student.groups.each do |group|
+              %tr
+                %td.select
+                  = check_box_tag "group_ids[]", group.id, false, id: "group_ids_#{group.id}"
+                %td.name
+                  %label(for="group_ids_#{group.id}")
+                    = group.name
+                    %small= [ group.parent.try(:name), group.parent.try(:parent).try(:name) ].compact.join(", ")
+                %td.actions
+                  %a.btn.btn-mini{href:url_for(group)}= t(:".show_action")
+
+        = submit_tag t(:".remove_groups_action"), class: "btn btn-small btn-danger"
+
+  .span6
+    - if !@student.generic_results.blank? || !@student.suite_results.blank?
+      %table.table.table-bordered.table-hover.evaluation-results.results-table
+        %tbody
+          - if !@student.generic_results.blank?
+            %tr
+              %th= t(:"generic.evaluations.title")
+              %th= Result.model_name.human
+              %th= t(:".stanines")
+            - @student.generic_results.each do |result|
+              %tr
+                %td= result.evaluation.name
+                %td.result{class: result_color_class(result)}= result.display_value
+                %td.result{class: result_color_class(result)}= result.evaluation.stanines? ? result.stanine : "-"
+          - if !@student.suite_results.blank?
+            %tr
+              %th= Evaluation.model_name.human
+              %th= Result.model_name.human
+              %th= t(:".stanines")
+            - @student.suite_results.each do |result|
+              %tr
+                %td= link_to result.evaluation.name, result.evaluation
+                %td.result{class: result_color_class(result)}= result.display_value
+                %td.result{class: result_color_class(result)}= result.evaluation.stanines? ? result.stanine : "-"
+
