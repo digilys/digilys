@@ -2,6 +2,12 @@
   %tbody
     - calendar_entries(suite).each do |entity|
       %tr
+        %td.icon
+          - case entity
+          - when Evaluation
+            %i.icon-tasks
+          - when Meeting
+            %i.icon-time
         %td.date= link_to(entity.date, entity)
         %td.name= link_to(entity.name, entity)
         %td.actions
