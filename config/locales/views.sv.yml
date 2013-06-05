@@ -195,6 +195,7 @@ sv:
       percentage_help: Lägg till "%" efter numret för att ange intervallet som procent
       suggestion_copy: Använd %from% &ndash; %to%
       color_range_error_text: Intervallet måste vara giltiga heltal och ligga mellan 0 och maxresultatet
+      stanine9: Stanine 9
     create:
       success:
         suite: Testet skapades
