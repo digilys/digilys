@@ -11,7 +11,7 @@
 = semantic_form_for @activity do |f|
 
   = f.inputs do
-    .alert.alert-info= t(:".edit_for_suite", suite_name: f.object.suite.name)
+    .alert.alert-info= t(:".edit_for_suite.#{@activity.type}", suite_name: @activity.suite.name)
 
     = f.input :name, required: true, input_html: { required: true, autofocus: true }
 

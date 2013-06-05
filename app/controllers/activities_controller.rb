@@ -12,7 +12,7 @@ class ActivitiesController < ApplicationController
 
   def update
     if @activity.update_attributes(params[:activity])
-      flash[:success] = t(:"activities.update.success")
+      flash[:success] = t(:"activities.update.success.#{@activity.type}")
       redirect_to @activity
     else
       render action: "edit"
@@ -25,7 +25,7 @@ class ActivitiesController < ApplicationController
 
   def submit_report
     if @activity.update_attributes(params[:activity])
-      flash[:success] = t(:"activities.submit_report.success")
+      flash[:success] = t(:"activities.submit_report.success.#{@activity.type}")
       redirect_to @activity
     else
       render action: "report"
@@ -38,7 +38,7 @@ class ActivitiesController < ApplicationController
     suite = @activity.suite
     @activity.destroy
 
-    flash[:success] = t(:"activities.destroy.success")
+    flash[:success] = t(:"activities.destroy.success.#{@activity.type}")
     redirect_to suite
   end
 

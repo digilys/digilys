@@ -23,8 +23,8 @@ sv:
         one: Möte
         other: Möten
       activity:
-        one: Ärende
-        other: Ärenden
+        one: Insats/frågeställning
+        other: Insatser/frågeställningar
       role:
         one: Roll
         other: Roller
@@ -36,7 +36,7 @@ sv:
         template: Mall
         template_id: Mall
         suite: Planering
-        name: Namn
+        name: Rubrik
         description: Beskrivning
         date: Datum
         max_result: Maxresultat
@@ -98,14 +98,14 @@ sv:
         group: Grupp
         group_id: Grupp
       suite:
-        name: Namn
+        name: Rubrik
         template_id: Mall
         template: Mall
         is_template: Använd som mall
       meeting:
         suite: Planering
         suite_id: Planering
-        name: Namn
+        name: Rubrik
         date: Datum
         agenda: Agenda
         completed: Mötet genomfört
@@ -121,7 +121,7 @@ sv:
         group_ids: Grupper
         type: Typ
         status: Status
-        name: Namn
+        name: Rubrik
         description: Beskrivning
         notes: Anteckningar
         students_and_groups: Elever/grupper
@@ -139,7 +139,7 @@ sv:
         last_sign_in_at: Senaste inloggningen
         current_sign_in_ip: Nuvarande IP-adress
         last_sign_in_ip: Senaste IP-adress
-        name: Namn
+        name: Rubrik
     errors:
       models:
         student:

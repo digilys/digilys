@@ -232,7 +232,7 @@ sv:
     update:
       success: Mötet uppdaterades
     report:
-      add_activity_action: Lägg till ärende
+      add_activity_action: Lägg till insats/frågeställning
     submit_report:
       success: Mötet protokollfördes
     confirm_destroy:
@@ -241,16 +241,30 @@ sv:
       success: Mötet togs bort från planeringen
 
   activities:
-    edit_for_suite: Ärendet tillhör planeringen %{suite_name}
-    activity_report_action: Stäng ärendet
+    navigation:
+      activity_report_action:
+        action: Stäng insatsen
+        inquiry: Stäng frågeställningen
+    edit:
+      edit_for_suite:
+        action: Insatsen tillhör planeringen %{suite_name}
+        inquiry: Frågeställningen tillhör planeringen %{suite_name}
     update:
-      success: Ärendet uppdaterades
+      success:
+        action: Insatsen uppdaterades
+        inquiry: Frågeställningen uppdaterades
     submit_report:
-      success: Ärendet stängdes
+      success:
+        action: Insatsen stängdes
+        inquiry: Frågeställningen stängdes
     confirm_destroy:
-      confirmation: Är du säker på att du vill ta bort ärendet?
+      confirmation:
+        action: Är du säker på att du vill ta bort insatsen?
+        inquiry: Är du säker på att du vill ta bort frågeställningen?
     destroy:
-      success: Ärendet togs bort från planeringen
+      success:
+        action: Insatsen togs bort från planeringen
+        inquiry: Frågeställningen togs bort från planeringen
 
   users:
     edit:

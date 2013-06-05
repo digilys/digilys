@@ -4,4 +4,4 @@
 
 = render partial: "navigation", locals: { activity: @activity, active: :destroy }
 
-= confirm_destroy_form(@activity, t(:".confirmation"))
+= confirm_destroy_form(@activity, t(:".confirmation.#{@activity.type}"))
