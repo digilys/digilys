@@ -66,7 +66,10 @@
               %tr
                 %td= result.evaluation.name
                 %td.result{class: result_color_class(result)}= result.display_value
-                %td.result{class: result_color_class(result)}= result.evaluation.stanines? ? result.stanine : "-"
+                - if result.evaluation.stanines?
+                  %td.result{class: result_color_class(result)}= result.stanine
+                - else
+                  %td.result -
           - if !@student.suite_results.blank?
             %tr
               %th= Evaluation.model_name.human
@@ -76,5 +79,8 @@
               %tr
                 %td= link_to result.evaluation.name, result.evaluation
                 %td.result{class: result_color_class(result)}= result.display_value
-                %td.result{class: result_color_class(result)}= result.evaluation.stanines? ? result.stanine : "-"
+                - if result.evaluation.stanines?
+                  %td.result{class: result_color_class(result)}= result.stanine
+                - else
+                  %td.result -
 
