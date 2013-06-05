@@ -8,6 +8,6 @@
       %td= student.gender_text
     - student.data_humanized.each_pair do |key, value|
       %tr
-        %th= key
+        %th= link_to(key, { action: "add_student_data", key: key }, method: :put)
         %td= value
 

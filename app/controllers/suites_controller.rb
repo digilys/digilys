@@ -123,6 +123,16 @@ class SuitesController < ApplicationController
     @suite.save
     redirect_to color_table_suite_url(@suite)
   end
+  def add_student_data
+    @suite.student_data << params[:key]
+    @suite.save
+    redirect_to color_table_suite_url(@suite)
+  end
+  def remove_student_data
+    @suite.student_data.delete(params[:key])
+    @suite.save
+    redirect_to color_table_suite_url(@suite)
+  end
 
   private
 

@@ -56,6 +56,8 @@ Digilys::Application.routes.draw do
       delete :remove_users
       put    :add_generic_evaluations
       delete :remove_generic_evaluations
+      put    :add_student_data
+      delete :remove_student_data
     end
 
     resources :evaluations,  only: :new

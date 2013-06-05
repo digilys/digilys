@@ -17,6 +17,13 @@
         .btn-group.result-toggles
           %button.btn.active(data-value="value") Resultat
           %button.btn(data-value="stanine") Stanine
+      - @suite.student_data.each do |key|
+        %th.student-data
+          = key
+          = link_to "",
+            remove_student_data_suite_path(@suite, key: key),
+            method: :delete,
+            class: "icon-trash"
       - evaluations.each do |evaluation|
         %th.evaluation
           = evaluation.name
@@ -39,6 +46,8 @@
           title: student.name,
           content: render(partial: "students/details_table", locals: { student: student })} }= student.name
 
+        - @suite.student_data.each do |key|
+          %td.result= student.data_humanized[key] || "-"
         - evaluations.each do |evaluation|
           - result = evaluation.result_for(student)
           %td.result{class: result_color_class(result)}
@@ -55,6 +64,8 @@
       %th{colspan: evaluations.length + 1} &nbsp;
     %tr.averages
       %th= t(:".averages")
+      %td{colspan: @suite.student_data.length}
+
       - evaluations.each do |evaluation|
 
         - if !values[evaluation.id].blank?
