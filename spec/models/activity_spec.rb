@@ -19,6 +19,7 @@ describe Activity do
     it { should allow_mass_assignment_of(:type) }
     it { should allow_mass_assignment_of(:status) }
     it { should allow_mass_assignment_of(:name) }
+    it { should allow_mass_assignment_of(:date) }
     it { should allow_mass_assignment_of(:description) }
     it { should allow_mass_assignment_of(:notes) }
   end
@@ -27,6 +28,10 @@ describe Activity do
     it { should validate_presence_of(:name) }
     it { should ensure_inclusion_of(:type).in_array(%w(action inquiry)) }
     it { should ensure_inclusion_of(:status).in_array(%w(open closed)) }
+
+    it { should     allow_value(nil).for(:date) }
+    it { should     allow_value("").for(:date) }
+    it { should_not allow_value("201-06-07").for(:date) }
   end
 
   describe ".set_suite_from_meeting" do

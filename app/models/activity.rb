@@ -12,6 +12,7 @@ class Activity < ActiveRecord::Base
 
   attr_accessible :description,
     :name,
+    :date,
     :notes,
     :status,
     :suite_id,
@@ -22,6 +23,7 @@ class Activity < ActiveRecord::Base
 
   validates :suite, presence: true
   validates :name,  presence: true
+  validate  :validate_date_format
 
   enumerize :type,   in: [ :action, :inquiry ], predicates: true, scope: true, default: :action
   enumerize :status, in: [ :open, :closed ],    predicates: true, scope: true, default: :open
@@ -88,5 +90,12 @@ class Activity < ActiveRecord::Base
 
   def clear_students_and_groups
     @students_and_groups = nil
+  end
+
+  def validate_date_format
+    date = self.date_before_type_cast
+    if !date.blank? && !date.is_a?(Date) && date !~ /^\d{4}-\d{2}-\d{2}$/
+      errors.add(:date, :invalid)
+    end
   end
 end

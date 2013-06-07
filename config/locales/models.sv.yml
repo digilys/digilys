@@ -122,6 +122,7 @@ sv:
         type: Typ
         status: Status
         name: Rubrik
+        date: Datum
         description: Beskrivning
         notes: Anteckningar
         students_and_groups: Elever/grupper
