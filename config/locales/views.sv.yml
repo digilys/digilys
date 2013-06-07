@@ -3,7 +3,6 @@ sv:
     application:
       feedback: Feedback
       logged_in_as: Inloggad som %{name}
-      administration: Administrera
       templates: Mallar
       generics: Grunddata
   shared:

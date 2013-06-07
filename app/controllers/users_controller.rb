@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  layout :admin_layout_for_admins
+  layout "fullpage"
 
   load_and_authorize_resource
 
@@ -56,16 +56,5 @@ class UsersController < ApplicationController
     @user.destroy
     flash[:success] = t(:"users.destroy.success")
     redirect_to users_url()
-  end
-
-
-  private
-
-  def admin_layout_for_admins
-    if current_user.has_role?(:admin)
-      return "application"
-    else
-      return "fullpage"
-    end
   end
 end
