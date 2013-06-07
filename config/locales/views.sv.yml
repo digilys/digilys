@@ -132,13 +132,21 @@ sv:
       template_placeholder: Sök och välj en mall
       use_template_action: Använd mall
     create:
-      success: Planeringen skapades
+      success:
+        regular: Planeringen skapades
+        template: Planeringsmallen skapades
     update:
-      success: Planeringen uppdaterades
+      success:
+        regular: Planeringen uppdaterades
+        template: Planeringsmallen uppdaterades
     confirm_destroy:
-      confirmation: Om du raderar planeringen raderas även alla tillhörande tester och testresultat.
+      confirmation:
+        regular: Om du raderar planeringen raderas även alla tillhörande tester och testresultat.
+        template: Är du säker på att du vill radera planeringsmallen?
     destroy:
-      success: Planeringen och tillhörande information raderades
+      success:
+        regular: Planeringen och tillhörande information raderades
+        template: Planeringsmallen raderades
     select_users:
       title: Lägg till deltagare
       users_placeholder: Sök och välj användare
@@ -291,6 +299,10 @@ sv:
 
 
   template:
+    suites:
+      title: Planeringsmallar
+      use_template_action: Använd mall
+      template_placeholder: Sök och välj en mall
     evaluations:
       title: Testmallar
 

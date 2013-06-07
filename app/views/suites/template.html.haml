@@ -1,6 +1,0 @@
-%h1= t(:".templates_title")
-
-= render partial: "navigation", locals: { active: :template }
-= render partial: "list",       locals: { suites: @suites }
-
-= paginate(@suites)

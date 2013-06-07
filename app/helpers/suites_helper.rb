@@ -13,14 +13,14 @@ module SuitesHelper
   def working_with_suite?(suite, evaluation)
     @working_with_suite ||= suite && !suite.is_template? ||
       (params.has_key?(:suite_id) && !params?(controller: "students")) ||
-      params?(controller: "suites", action: "index") ||
+      params?(controller: "suites") && !suite.try(:is_template?) ||
       evaluation && !evaluation.suite_id.blank?
   end
 
   # Returns true if the user is currently working with a suite template
   def working_with_suite_template?(suite)
-    @working_with_suite_template ||= suite && suite.is_template? ||
-      params?(controller: "suites", action: "template")
+    @working_with_suite_template ||= params?(controller: "template/suites") ||
+      suite && suite.is_template?
   end
 
   def result_color_class(result_or_value, evaluation = nil)

@@ -3,19 +3,17 @@
   = f.inputs do
 
     = f.hidden_field :template_id
+    = f.hidden_field :is_template
 
     = f.input :name, required: true, input_html: { required: true, autofocus: true }
 
-    - if suite.new_record?
-      - if suite.template
-        .control-group
-          .controls
-            = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
-            %a.btn{href:suite.new_record? ? suites_path() : url_for(suite)}= t(:".cancel_action")
-      - else
-        = f.input :is_template
+    - if suite.new_record? && suite.template && !suite.is_template?
+      .control-group
+        .controls
+          = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
+          %a.btn{href:suite.new_record? ? suites_path() : url_for(suite)}= t(:".cancel_action")
 
-  - if suite.new_record?
+  - if suite.new_record? && !suite.is_template?
     - if suite.template
       = f.inputs Evaluation.model_name.human(count: 2) do
         = f.inputs for: :evaluations do |ef|

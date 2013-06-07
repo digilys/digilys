@@ -13,15 +13,6 @@ class SuitesController < ApplicationController
     @suites = @suites.regular.order(:name).page(params[:page])
   end
 
-  def template
-    @suites = @suites.template.order(:name).page(params[:page])
-  end
-
-  def search
-    @suites = @suites.template.page(params[:page]).search(params[:q]).result
-    render json: @suites.collect { |s| { id: s.id, text: s.name } }.to_json
-  end
-
   def search_participants
     students = @suite.students.page(params[:page]).search(params[:sq]).result
     groups   = @suite.groups.page(params[:page]).search(params[:gq]).result
@@ -56,7 +47,7 @@ class SuitesController < ApplicationController
   def create
     if @suite.save
       current_user.add_role :suite_manager, @suite
-      flash[:success] = t(:"suites.create.success")
+      flash[:success] = t(:"suites.create.success.#{@suite.is_template? ? "template" : "regular"}")
       redirect_to @suite
     else
       @suite.participants.clear
@@ -70,7 +61,7 @@ class SuitesController < ApplicationController
 
   def update
     if @suite.update_attributes(params[:suite])
-      flash[:success] = t(:"suites.update.success")
+      flash[:success] = t(:"suites.update.success.#{@suite.is_template? ? "template" : "regular"}")
       redirect_to @suite
     else
       render action: "edit"
@@ -81,8 +72,12 @@ class SuitesController < ApplicationController
   end
   def destroy
     @suite.destroy
-    flash[:success] = t(:"suites.destroy.success")
-    redirect_to suites_url()
+    flash[:success] = t(:"suites.destroy.success.#{@suite.is_template? ? "template" : "regular"}")
+    if @suite.is_template?
+      redirect_to template_suites_url()
+    else
+      redirect_to suites_url()
+    end
   end
 
 
@@ -149,7 +144,7 @@ class SuitesController < ApplicationController
   # to distinct entities that are compatible with rails
   # accepts_attributes_for
   def process_incoming_participant_data
-    if params[:suite][:is_template].to_i == 1
+    if params[:suite][:is_template] == "true" || params[:suite][:is_template].to_i == 1
       # No participants allowed for templates
       params[:suite].delete(:participants_attributes)
     else

@@ -67,6 +67,11 @@ describe SuitesHelper do
       let(:evaluation) { create(:suite_evaluation) }
       it               { should be_true }
     end
+    context "under suites controller with a suite template" do
+      let(:params) { { "controller" => "suites" } }
+      let(:suite)  { create(:suite, is_template: true) }
+      it           { should be_false }
+    end
   end
 
   context "#working_with_suite_template?" do
@@ -87,7 +92,7 @@ describe SuitesHelper do
       it          { should be_true }
     end
     context "under suites#template" do
-      let(:params) { { "controller" => "suites", "action" => "template" } }
+      let(:params) { { "controller" => "template/suites" } }
       it           { should be_true }
     end
   end

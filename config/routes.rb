@@ -46,8 +46,6 @@ Digilys::Application.routes.draw do
 
   resources :suites do
     collection do
-      get  :template
-      get  :search
       post :new_from_template
     end
     member do
@@ -118,6 +116,9 @@ Digilys::Application.routes.draw do
   end
 
   namespace :template do
+    resources :suites, only: [ :index, :new ] do
+      get :search, on: :collection
+    end
     resources :evaluations, only: [ :index, :new ] do
       get :search, on: :collection
     end

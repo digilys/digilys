@@ -1,0 +1,6 @@
+%h1= t(:".title")
+
+= render partial: "navigation", locals: { active: :index }
+
+= render partial: "suites/list", locals: { suites: @suites }
+= paginate(@suites)
