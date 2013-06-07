@@ -1,0 +1,7 @@
+.alert.alert-block.alert-error
+  %h1= t(:".title")
+  = t(:".body_html")
+  %p
+    - if request.referer
+      %a.btn.primary{href: request.referrer}= t(:".back_action")
+    %a.btn.primary{href: root_url()}= t(:".start_over_action")

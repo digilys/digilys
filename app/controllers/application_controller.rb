@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
   check_authorization unless: :skip_authorization?
 
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+  rescue_from CanCan::AccessDenied,         with: :access_denied
 
   protected
 
@@ -78,6 +79,10 @@ class ApplicationController < ActionController::Base
   # This picks up any layout set in the inheriting controller
   def record_not_found
     render template: "shared/404", status: 404
+  end
+  # This picks up any layout set in the inheriting controller
+  def access_denied
+    render template: "shared/401", status: 401
   end
 
   def skip_authorization?
