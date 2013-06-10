@@ -489,6 +489,8 @@ class Evaluation < ActiveRecord::Base
     stanine6
     stanine7
     stanine8
+    colors
+    stanines
   )
 
   def touch_results
