@@ -15,6 +15,7 @@ window.Digilys.autocomplete = (selectorOrElem, options = {}) ->
         $field = $(this)
 
         $field.select2(
+            width: "off",
             multiple: $field.data("multiple"),
             minimumInputLength: 1
             placeholder: $field.data("placeholder")
