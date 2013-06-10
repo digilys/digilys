@@ -48,6 +48,24 @@ describe Activity do
     end
   end
 
+  context ".overdue?" do
+    it "returns true for past activities that are not completed" do
+      create(:activity, date: Date.today - 1, status: :open).should     be_overdue
+    end
+    it "returns false for future activities" do
+      create(:activity, date: Date.today + 1, status: :open).should_not be_overdue
+    end
+    it "returns false for past activities that are completed" do
+      create(:activity, date: Date.today - 1, status: :closed).should_not be_overdue
+    end
+    it "considers today's date to be a future activity" do
+      create(:activity, date: Date.today    , status: :open).should_not be_overdue
+    end
+    it "handle's nil dates" do
+      create(:activity, date: nil           , status: :open).should_not be_overdue
+    end
+  end
+
   describe ".parse_students_and_groups" do
     let!(:students)           { create_list(:student, 3) }
     let!(:groups)             { create_list(:group,   3) }

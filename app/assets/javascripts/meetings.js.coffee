@@ -25,4 +25,10 @@ $ ->
             $fields = buildFields($activitiesContainer.find("fieldset.inputs").length)
             $form.find(".tinymce").removeClass("tinymce")
             $activitiesContainer.find("fieldset.inputs:last").after($fields)
+            $fields.find("input.datepicker").datepicker(
+                language:  "sv"
+                format:    "yyyy-mm-dd"
+                weekStart: 1
+                autoclose: true
+            )
             eval(tinymceCode)

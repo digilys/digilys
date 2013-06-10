@@ -28,6 +28,7 @@
 
       .span6
         = af.input :name, input_html: { class: "input-block-level" }
+        = af.input :date, as: :string, input_html: { class: "datepicker" }
         = af.input :type, as: :radio
 
         = af.input :students_and_groups,
@@ -41,7 +42,7 @@
         = af.hidden_field :status
 
       .span6
-        = af.input :description, input_html: { class: "input-block-level tinymce", rows: 7 }
+        = af.input :description, input_html: { class: "input-block-level tinymce", rows: 10 }
 
     %p
       %a.btn.add-activity-action(href="#")= t(:".add_activity_action")

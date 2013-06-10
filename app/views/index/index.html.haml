@@ -48,7 +48,7 @@
                   = evaluation_progress_bar(evaluation)
 
     - if !@activities.blank?
-      %table.table.table-bordered.table-hover.dashboard-table
+      %table.table.table-bordered.table-hover.dashboard-table.activity-list
         %thead
           %tr
             %th(colspan=2)
@@ -57,6 +57,9 @@
           - @activities.each do |activity|
             %tr
               %td= link_to activity.suite.name, activity.suite
-              %td.main= link_to activity.name, activity
-              %td
-                %span.label= activity.type_text
+              %td.main{class: activity.overdue? ? "overdue" : ""}
+                = link_to activity do
+                  %span.name= activity.name
+                  - if activity.date
+                    %small.date= l(activity.date)
+                  %span.label= activity.type_text

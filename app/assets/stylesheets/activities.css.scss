@@ -1,3 +1,5 @@
+@import "variables";
+
 form.activity {
     .hidden {
         visibility: visible;
@@ -6,5 +8,40 @@ form.activity {
 
     .select2-container {
         width: 30em;
+    }
+}
+
+.activity-list {
+    border-bottom: 1px solid $tableBorder;
+
+    li {
+        border-top: 1px solid $tableBorder;
+    }
+
+    > li:nth-child(odd) {
+        background-color: $tableBackgroundAccent;
+    }
+
+    a {
+        display: block;
+        padding: 8px;
+        line-height: $baseLineHeight;
+    }
+
+    .name {
+        display: block;
+    }
+
+    &.dashboard-table {
+        small.date {
+            display: inline;
+        }
+        a {
+            padding: 0;
+        }
+    }
+
+    .overdue .date {
+        color: $red;
     }
 }

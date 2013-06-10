@@ -33,6 +33,10 @@ class Activity < ActiveRecord::Base
 
   after_save :clear_students_and_groups
 
+  def overdue?
+    !self.closed? && self.date && self.date < Date.today
+  end
+
 
   # Virtual attribute for a comma separated list of student ids and group ids.
   # The ids should have the prefix s-#{id} and g-#{id} for students and groups,
