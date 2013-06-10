@@ -26,6 +26,14 @@ $ ->
         else
             $("#new_participant").show()
 
+    $(".suite-results").dataTable(
+        bFilter:    false
+        bPaginate:  false
+        bInfo:      false
+        bSort:      false
+        bStateSave: true
+    )
+
     # Toggle between different values in the result table
     $(".suite-results .result-toggles").on "click", ".btn:not(.active)", ->
         $button = $(this)
