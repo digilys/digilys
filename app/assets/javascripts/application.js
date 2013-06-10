@@ -17,6 +17,7 @@
 //= require bootstrap-datepicker/core
 //= require bootstrap-datepicker/locales/bootstrap-datepicker.sv
 //= require dataTables/jquery.dataTables
+//= require dataTables/extras/ColReorder
 //= require_tree .
 
 
@@ -128,7 +129,7 @@
     });
 
     $.extend($.fn.dataTable.defaults, {
-        "sDom": "<'row'<'span8'l><'span8'f>r>t<'row'<'span8'i><'span8'p>>",
+        "sDom": "R<'row'<'span8'l><'span8'f>r>t<'row'<'span8'i><'span8'p>>",
         "sPaginationType": "bootstrap"
     });
     $.extend($.fn.dataTableExt.oStdClasses, {
