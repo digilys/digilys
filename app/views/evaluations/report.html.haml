@@ -12,8 +12,13 @@
 
   - first = true
   = f.inputs for: :results do |rf|
-    = rf.input :value, label: rf.object.student.name, input_html: { autofocus: first, data: { "error-message" => t(:".result_error_message") } }
+    = rf.input :value,
+      label: rf.object.student.name,
+      input_html: { autofocus: first, data: { "error-message" => t(:".result_error_message") } }
+
     = rf.hidden_field :student_id
+    = rf.hidden_field :_destroy, value: 0 if !rf.object.new_record?
+
     - first = false
 
   = f.actions do

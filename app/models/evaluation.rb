@@ -24,7 +24,8 @@ class Evaluation < ActiveRecord::Base
   enumerize :status,     in: [ :empty, :partial, :complete ], predicates: { prefix: true }, scope: true, default: :empty
 
   accepts_nested_attributes_for :results,
-    reject_if: proc { |attributes| attributes[:value].blank? }
+    reject_if: proc { |attributes| attributes[:value].blank? },
+    allow_destroy: true
 
   attr_accessible :type,
     :template_id,
