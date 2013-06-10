@@ -9,7 +9,7 @@ window.Digilys.loadMask = ($fields) ->
 window.Digilys.autocomplete = (selectorOrElem, options = {}) ->
 
     options["results"] ?= (data, page) ->
-        { results: data }
+        { results: data.results, more: data.more }
 
     $(selectorOrElem).each ->
         $field = $(this)

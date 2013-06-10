@@ -9,12 +9,15 @@ class GroupsController < ApplicationController
   end
 
   def search
-    @groups = @groups.with_parents(2).page(params[:page]).search(params[:q]).result
-
-    render json: @groups.collect { |s|
+    @groups        = @groups.with_parents(2, true).search(params[:q]).result.page(params[:page])
+    json           = {}
+    json[:results] = @groups.collect { |s|
       text = [ s.name, s.parent.try(:name), s.parent.try(:parent).try(:name) ].compact.join(", ")
       { id: s.id, text: text }
-    }.to_json
+    }
+    json[:more]    = !@groups.last_page?
+
+    render json: json.to_json
   end
 
   def new

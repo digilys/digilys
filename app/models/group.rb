@@ -65,7 +65,7 @@ class Group < ActiveRecord::Base
   # Joins n parents up in the hierarchy.
   #
   # The parents can be queried using parent_#{i}.field syntax.
-  def self.with_parents(n)
+  def self.with_parents(n, ordered = false)
     return self if n < 1
 
     joins = ""
@@ -77,7 +77,13 @@ class Group < ActiveRecord::Base
       prev = current
     end
 
-    self.joins(joins)
+    result = self.joins(joins)
+
+    if ordered
+      result = result.order(["groups.name", *1.upto(n).collect { |i| "parent_#{i}.name" }].join(","))
+    end
+
+    return result
   end
 
   # Adds a condition removing all groups with a parent,

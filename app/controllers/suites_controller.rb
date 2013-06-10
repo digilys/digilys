@@ -14,13 +14,18 @@ class SuitesController < ApplicationController
   end
 
   def search_participants
-    students = @suite.students.page(params[:page]).search(params[:sq]).result
-    groups   = @suite.groups.page(params[:page]).search(params[:gq]).result
+    students = @suite.students.order(:last_name, :first_name).search(params[:sq]).result.page(params[:page])
+    groups   = @suite.groups.order(:name).search(params[:gq]).result.page(params[:page])
 
     result  = students.collect { |s| { id: "s-#{s.id}", text: s.name } }
     result += groups.collect   { |g| { id: "g-#{g.id}", text: g.name } }
 
-    render json: result.to_json
+    json           = {}
+    json[:results] = result
+    json[:more]    = !students.last_page? || !groups.last_page?
+
+
+    render json: json.to_json
   end
 
   def show

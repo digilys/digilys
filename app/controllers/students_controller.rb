@@ -6,8 +6,12 @@ class StudentsController < ApplicationController
   end
 
   def search
-    @students = @students.page(params[:page]).search(params[:q]).result
-    render json: @students.collect { |s| { id: s.id, text: s.name } }.to_json
+    @students      = @students.order(:last_name, :first_name).search(params[:q]).result.page(params[:page])
+    json           = {}
+    json[:results] = @students.collect { |s| { id: s.id, text: s.name } }
+    json[:more]    = !@students.last_page?
+
+    render json: json.to_json
   end
 
   def show

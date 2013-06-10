@@ -6,8 +6,12 @@ class Template::SuitesController < ApplicationController
   end
 
   def search
-    @suites = @suites.template.page(params[:page]).search(params[:q]).result
-    render json: @suites.collect { |s| { id: s.id, text: s.name } }.to_json
+    @suites        = @suites.template.order(:name).search(params[:q]).result.page(params[:page])
+    json           = {}
+    json[:results] = @suites.collect { |s| { id: s.id, text: s.name } }
+    json[:more]    = !@suites.last_page?
+
+    render json: json.to_json
   end
 
   def new

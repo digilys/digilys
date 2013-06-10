@@ -8,8 +8,12 @@ class UsersController < ApplicationController
   end
 
   def search
-    @users = @users.page(params[:page]).search(params[:q]).result
-    render json: @users.collect { |u| { id: u.id, text: "#{u.name}, #{u.email}" } }.to_json
+    @users         = @users.order(:name).search(params[:q]).result.page(params[:page])
+    json           = {}
+    json[:results] = @users.collect { |u| { id: u.id, text: "#{u.name}, #{u.email}" } }
+    json[:more]    = !@users.last_page?
+
+    render json: json.to_json
   end
 
   def edit
