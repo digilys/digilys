@@ -33,6 +33,7 @@ gem "select2-rails",              "~> 3.4.2"
 gem "bootstrap-datepicker-rails", "~> 1.0.0.5"
 gem "tinymce-rails",              "~> 3.5.8.1"
 gem "tinymce-rails-langs",        "~> 0.1"
+gem "jquery-datatables-rails",    "~> 1.11.2"
 
 group :development do
   gem "capistrano", "~> 2.14.2"

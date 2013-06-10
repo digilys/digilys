@@ -16,6 +16,7 @@
 //= require select2
 //= require bootstrap-datepicker/core
 //= require bootstrap-datepicker/locales/bootstrap-datepicker.sv
+//= require dataTables/jquery.dataTables
 //= require_tree .
 
 
