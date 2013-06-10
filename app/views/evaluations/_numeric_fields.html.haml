@@ -3,9 +3,7 @@
   class: "form-horizontal inputs value-type-fields numeric-fields",
   style: hide ? "display:none;" : "" do
 
-  = f.input :max_result,
-    required: true,
-    input_html: { required: true, "data-suggestion-lower" => Conf.evaluation.suggestion_lower, "data-suggestion-upper" => Conf.evaluation.suggestion_upper }
+  = f.input :max_result, required: true, input_html: { required: true }
 
   .control-group
     %label.control-label= t(:".red")
@@ -23,7 +21,6 @@
       = f.text_field :red_below,   required: true, class: "input-mini"
       &ndash;
       = f.text_field :green_above, required: true, class: "input-mini"
-      .suggestion-container{"data-suggestion-copy" => t(:".suggestion_copy")}
       - if has_color_range_error
         .help-block= t(:".color_range_error_text")
       - else
