@@ -58,7 +58,7 @@ sv:
     form:
       basic_fields_title: Basinformation
       data_fields_title: Övrig information
-      data_text_help_html: "Elevinformationen anges enligt formatet <b>\"titel: data\"</b> på varje rad, exempelvis <b>\"Hemspråk: Svenska\"</b>. Om informationen inte anges rätt visas ett felmeddelande."
+      data_text_help_html: "Elevinformationen anges enligt formatet <b>\"titel: data\"</b> på varje rad, exempelvis <b>\"Modersmål: Svenska\"</b>. Om informationen inte anges rätt visas ett felmeddelande."
     create:
       success: Eleven skapades
     update:
