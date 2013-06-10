@@ -10,6 +10,7 @@
       as: :hidden,
       input_html: { class: "student-autocomplete-field",
         data: { url: search_students_path(format: :json),
+          multiple: true,
           autofocus: true,
           placeholder: t(:".student_placeholder") } }
 

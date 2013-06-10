@@ -13,6 +13,7 @@
       as: :hidden,
       input_html: { class: "user-autocomplete-field",
         data: { url: search_users_path(format: :json),
+          multiple: true,
           placeholder: t(:".users_placeholder"),
           autofocus: true } }
 

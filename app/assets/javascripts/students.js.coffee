@@ -1,21 +1,9 @@
 $ ->
-    $(".student-autocomplete-field").each ->
-        $field = $(this)
-
-        $field.select2(
-            multiple: true,
-            minimumInputLength: 1
-            placeholder: $field.data("placeholder")
-            ajax:
-                url: $field.data("url")
-                results: (data, page) ->
-                    { results: data }
-                data: (term, page) ->
-                    { q: { first_name_or_last_name_cont: term }, page: page }
-        )
-
-        if $field.data("autofocus")
-            $field.select2("open")
+    window.Digilys.autocomplete(
+        ".student-autocomplete-field",
+        data: (term, page) ->
+            { q: { first_name_or_last_name_cont: term }, page: page }
+    )
 
     # Trigger the destroy field for a generic result if the value is changed to
     # a blank value

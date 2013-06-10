@@ -1,20 +1,12 @@
 $ ->
     $(".suite-template-autocomplete-field").each ->
+        window.Digilys.autocomplete(
+            this,
+            data: (term, page) ->
+                { q: { name_cont: term }, page: page }
+        )
         $field = $(this)
 
-        $field.select2(
-            minimumInputLength: 1,
-            placeholder: $field.data("placeholder")
-            ajax:
-                url: $field.data("url")
-                results: (data, page) ->
-                    { results: data }
-                data: (term, page) ->
-                    { q: { name_cont: term }, page: page }
-        )
-
-        if $field.data("autofocus")
-            $field.select2("open")
 
         $field.data("preventNavigationConfirmation", true)
         $field.on "change", (event) ->

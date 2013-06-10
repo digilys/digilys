@@ -1,18 +1,6 @@
 $ ->
-    $(".user-autocomplete-field").each ->
-        $field = $(this)
-
-        $field.select2(
-            multiple: true,
-            minimumInputLength: 1
-            placeholder: $field.data("placeholder")
-            ajax:
-                url: $field.data("url")
-                results: (data, page) ->
-                    { results: data }
-                data: (term, page) ->
-                    { q: { name_or_email_cont: term }, page: page }
-        )
-
-        if $field.data("autofocus")
-            $field.select2("open")
+    window.Digilys.autocomplete(
+        ".user-autocomplete-field",
+        data: (term, page) ->
+            { q: { name_or_email_cont: term }, page: page }
+    )
