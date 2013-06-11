@@ -14,7 +14,7 @@ class Evaluation < ActiveRecord::Base
   belongs_to :suite,        inverse_of: :evaluations
   has_many   :participants, through:    :suite
   has_many   :results,      dependent:  :destroy
-  has_many   :students,     through:    :results
+  has_many   :students,     through:    :results,     order: "students.last_name, students.first_name"
 
   acts_as_taggable_on :categories
 
