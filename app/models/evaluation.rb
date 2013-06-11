@@ -183,12 +183,9 @@ class Evaluation < ActiveRecord::Base
 
     case self.value_type.to_sym
     when :numeric
-      if value < self.red_below
-        return :red
-      elsif value > self.green_above
-        return :green
-      else
-        return :yellow
+      return nil if self.colors.blank?
+      self.colors.each do |color, range|
+        return color.to_sym if value >= range["min"] && value <= range["max"]
       end
     when :boolean
       return self.colors.try(:[], value.to_s).try(:to_sym)
@@ -203,15 +200,10 @@ class Evaluation < ActiveRecord::Base
 
     case self.value_type.to_sym
     when :numeric
-      return nil unless self.stanines?
-
-      stanine = 1
-
-      self.stanine_limits.each do |boundary|
-        stanine += 1 if boundary < value
+      return nil if self.stanines.blank?
+      self.stanines.each do |stanine, range|
+        return stanine.to_i if value >= range["min"] && value <= range["max"]
       end
-
-      return stanine
     when :grade
       return self.stanines.try(:[], value.to_s)
     end
