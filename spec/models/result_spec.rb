@@ -26,7 +26,7 @@ describe Result do
   end
 
   context "color filter" do
-    let(:evaluation) { create(:numeric_evaluation, max_result: 10, yellow_values: 4..7) }
+    let(:evaluation) { create(:numeric_evaluation, max_result: 10, _yellow: 4..7) }
     let(:value)      { 5 }
     subject(:result) { create(:result, evaluation: evaluation, value: value) }
 
@@ -56,8 +56,8 @@ describe Result do
   end
 
   describe ".stanine" do
-    let(:stanine_values) { [10, 20, 30, 40, 50, 60, 70, 80] }
-    let(:evaluation)     { create(:evaluation, max_result: 90, stanine_values: stanine_values) }
+    let(:_stanines) { [10, 20, 30, 40, 50, 60, 70, 80] }
+    let(:evaluation)     { create(:evaluation, max_result: 90, _stanines: _stanines) }
     let(:value)          { 35 }
     subject(:result)     { create(:result, evaluation: evaluation, value: value) }
 
@@ -84,7 +84,7 @@ describe Result do
     end
 
     context "with overlapping stanines" do
-      let(:stanine_values) { [10, 20, 30, 40, 40, 40, 70, 80]}
+      let(:_stanines) { [10, 20, 30, 40, 40, 40, 70, 80]}
       context "when matching several" do
         let(:value)   { 40 }
         its(:stanine) { should == 4 }
@@ -96,7 +96,7 @@ describe Result do
     end
 
     context "without stanines" do
-      let(:stanine_values) { nil }
+      let(:_stanines) { nil }
       its(:stanine)        { should be_nil }
     end
 

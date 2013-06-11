@@ -61,21 +61,21 @@ FactoryGirl.define do
     status          :empty
 
     ignore do
-      yellow_values  15..35
-      stanine_values [7, 12, 17, 22, 27, 32, 37, 42]
+      _yellow  15..35
+      _stanines [7, 12, 17, 22, 27, 32, 37, 42]
     end
 
-    red_below       { yellow_values ? yellow_values.min : nil }
-    green_above     { yellow_values ? yellow_values.max : nil }
+    red_below       { _yellow ? _yellow.min : nil }
+    green_above     { _yellow ? _yellow.max : nil }
 
-    stanine1        { stanine_values ? stanine_values[0] : nil }
-    stanine2        { stanine_values ? stanine_values[1] : nil }
-    stanine3        { stanine_values ? stanine_values[2] : nil }
-    stanine4        { stanine_values ? stanine_values[3] : nil }
-    stanine5        { stanine_values ? stanine_values[4] : nil }
-    stanine6        { stanine_values ? stanine_values[5] : nil }
-    stanine7        { stanine_values ? stanine_values[6] : nil }
-    stanine8        { stanine_values ? stanine_values[7] : nil }
+    stanine1        { _stanines ? _stanines[0] : nil }
+    stanine2        { _stanines ? _stanines[1] : nil }
+    stanine3        { _stanines ? _stanines[2] : nil }
+    stanine4        { _stanines ? _stanines[3] : nil }
+    stanine5        { _stanines ? _stanines[4] : nil }
+    stanine6        { _stanines ? _stanines[5] : nil }
+    stanine7        { _stanines ? _stanines[6] : nil }
+    stanine8        { _stanines ? _stanines[7] : nil }
 
     factory :suite_evaluation do
       suite
@@ -91,40 +91,41 @@ FactoryGirl.define do
     factory :numeric_evaluation do
     end
     factory :boolean_evaluation do
-      value_type     :boolean
-      max_result     1
-      red_below      nil
-      green_above    nil
-      stanine_values nil
-      colors         ({ "0" => "red", "1" => "green" })
+      value_type :boolean
+      max_result 1
+      _yellow    nil
+      _stanines  nil
+      colors     ({ "0" => "red", "1" => "green" })
     end
     factory :grade_evaluation do
-      value_type        :grade
+      value_type :grade
+      _yellow    nil
+      _stanines  nil
 
       # 1 = red, 2 = yellow, 3 = green
       ignore do
         # F, E, D, C, B, A
-        color_for_grades [ 1, 1, 2, 2, 3, 3 ]
+        _grade_colors [ 1, 1, 2, 2, 3, 3 ]
       end
-      color_for_grade_a { color_for_grades[5] }
-      color_for_grade_b { color_for_grades[4] }
-      color_for_grade_c { color_for_grades[3] }
-      color_for_grade_d { color_for_grades[2] }
-      color_for_grade_e { color_for_grades[1] }
-      color_for_grade_f { color_for_grades[0] }
+      color_for_grade_a { _grade_colors[5] }
+      color_for_grade_b { _grade_colors[4] }
+      color_for_grade_c { _grade_colors[3] }
+      color_for_grade_d { _grade_colors[2] }
+      color_for_grade_e { _grade_colors[1] }
+      color_for_grade_f { _grade_colors[0] }
 
       ignore do
         stanines nil
         # F, E, D, C, B, A
-        stanine_for_grades nil
+        _grade_stanines nil
       end
 
-      stanine_for_grade_a { stanine_for_grades ? stanine_for_grades[5] : nil }
-      stanine_for_grade_b { stanine_for_grades ? stanine_for_grades[4] : nil }
-      stanine_for_grade_c { stanine_for_grades ? stanine_for_grades[3] : nil }
-      stanine_for_grade_d { stanine_for_grades ? stanine_for_grades[2] : nil }
-      stanine_for_grade_e { stanine_for_grades ? stanine_for_grades[1] : nil }
-      stanine_for_grade_f { stanine_for_grades ? stanine_for_grades[0] : nil }
+      stanine_for_grade_a { _grade_stanines ? _grade_stanines[5] : nil }
+      stanine_for_grade_b { _grade_stanines ? _grade_stanines[4] : nil }
+      stanine_for_grade_c { _grade_stanines ? _grade_stanines[3] : nil }
+      stanine_for_grade_d { _grade_stanines ? _grade_stanines[2] : nil }
+      stanine_for_grade_e { _grade_stanines ? _grade_stanines[1] : nil }
+      stanine_for_grade_f { _grade_stanines ? _grade_stanines[0] : nil }
     end
   end
 
