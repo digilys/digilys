@@ -297,6 +297,19 @@ describe Evaluation do
         let(:value) { 21 }
         it { should == :green }
       end
+
+      context "with only a yellow range" do
+        let(:evaluation) { create(:numeric_evaluation, red_below: 0, green_above: 30, max_result: 30) }
+
+        context "and lower bound" do
+          let(:value) { 0 }
+          it { should == :yellow }
+        end
+        context "and upper bound" do
+          let(:value) { 30 }
+          it { should == :yellow }
+        end
+      end
     end
     context "for boolean value types" do
       let(:evaluation) { create(:boolean_evaluation, color_for_false: :yellow, color_for_true: :red) }
