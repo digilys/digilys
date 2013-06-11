@@ -53,8 +53,6 @@ FactoryGirl.define do
     description     "Description"
     date            nil
     max_result      50
-    red_below       15
-    green_above     35
     target          :all
     value_aliases   nil
     value_type      :numeric
@@ -63,8 +61,12 @@ FactoryGirl.define do
     status          :empty
 
     ignore do
+      yellow_values  15..35
       stanine_values [7, 12, 17, 22, 27, 32, 37, 42]
     end
+
+    red_below       { yellow_values ? yellow_values.min : nil }
+    green_above     { yellow_values ? yellow_values.max : nil }
 
     stanine1        { stanine_values ? stanine_values[0] : nil }
     stanine2        { stanine_values ? stanine_values[1] : nil }

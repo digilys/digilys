@@ -26,7 +26,7 @@ describe Result do
   end
 
   context "color filter" do
-    let(:evaluation) { create(:numeric_evaluation, max_result: 10, red_below: 4, green_above: 7) }
+    let(:evaluation) { create(:numeric_evaluation, max_result: 10, yellow_values: 4..7) }
     let(:value)      { 5 }
     subject(:result) { create(:result, evaluation: evaluation, value: value) }
 

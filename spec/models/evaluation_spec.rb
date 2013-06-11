@@ -76,7 +76,7 @@ describe Evaluation do
       end
 
       context "limit ranges" do
-        subject { build(:evaluation, value_type: :numeric, max_result: 50, red_below: 20, green_above: 30) }
+        subject { build(:evaluation, value_type: :numeric, max_result: 50, yellow_values: 20..30) }
         it { should_not allow_value(-1).for(:red_below) }
         it { should_not allow_value(51).for(:green_above) }
         it { should_not allow_value(19).for(:green_above) }
@@ -252,14 +252,13 @@ describe Evaluation do
       its(:stanines) { should include("5" => 9) }
     end
     context "for numeric value types" do
-      let(:yellow_range) { 10..20 }
+      let(:yellow_values) { 10..20 }
       let(:stanine_values) { [ 3, 6, 7, 12, 15, 18, 21, 24 ] }
       subject { create(
         :numeric_evaluation,
         colors: nil,
         stanines: nil,
-        red_below: yellow_range.min,
-        green_above: yellow_range.max,
+        yellow_values: yellow_values,
         max_result: 30,
         stanine_values: stanine_values
       ) }
@@ -279,7 +278,7 @@ describe Evaluation do
       its(:stanines) { should include("9" => { "min" => 25, "max" => 30 } ) }
 
       context "with extreme yellow range" do
-        let(:yellow_range) { 0..30 }
+        let(:yellow_values) { 0..30 }
         its(:colors) { should include("yellow" => { "min" => 0, "max" => 30 }) }
         its(:colors) { should_not have_key("red") }
         its(:colors) { should_not have_key("green") }
@@ -323,7 +322,7 @@ describe Evaluation do
     subject          { evaluation.color_for(value) }
 
     context "for numeric value types" do
-      let(:evaluation) { create(:numeric_evaluation, red_below: 10, green_above: 20, max_result: 30) }
+      let(:evaluation) { create(:numeric_evaluation, yellow_values: 10..20, max_result: 30) }
 
       it { should be_nil }
 
@@ -345,7 +344,7 @@ describe Evaluation do
       end
 
       context "with only a yellow range" do
-        let(:evaluation) { create(:numeric_evaluation, red_below: 0, green_above: 30, max_result: 30) }
+        let(:evaluation) { create(:numeric_evaluation, yellow_values: 0..30, max_result: 30) }
 
         context "and lower bound" do
           let(:value) { 0 }
@@ -548,7 +547,7 @@ describe Evaluation do
     let!(:male_participants)   { create_list(:male_participant,   1, suite: suite) }
     let!(:female_participants) { create_list(:female_participant, 4, suite: suite) }
     let(:participants)         { male_participants + female_participants }
-    let(:evaluation)           { create(:suite_evaluation, suite: suite, max_result: 10, red_below: 4, green_above: 7, target: target) }
+    let(:evaluation)           { create(:suite_evaluation, suite: suite, max_result: 10, yellow_values: 4..7, target: target) }
 
     context "with all types" do
       before(:each) do
@@ -609,8 +608,7 @@ describe Evaluation do
   describe ".stanine_distribution" do
     subject(:evaluation) { create(:evaluation,
       max_result: 8,
-      red_below: 3,
-      green_above: 5,
+      yellow_values: 3..5,
       stanine_values: [ 0, 1, 2, 3, 4, 5, 6, 7 ]
     ) }
 

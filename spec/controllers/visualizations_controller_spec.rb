@@ -5,7 +5,7 @@ describe VisualizationsController do
     let!(:suite)        { create(:suite) }
     let!(:students)     { create_list(:student, 2) }
     let!(:participants) { students.collect { |s| create(:participant, suite: suite, student: s) } }
-    let!(:evaluations)  { create_list(:suite_evaluation, 2, suite: suite, max_result: 10, red_below: 4, green_above: 7) }
+    let!(:evaluations)  { create_list(:suite_evaluation, 2, suite: suite, max_result: 10, yellow_values: 4..7) }
     let!(:result_s1_e1) { create(:result, evaluation: evaluations.first,  student: students.first,  value: 4) }
     let!(:result_s1_e2) { create(:result, evaluation: evaluations.second, student: students.first,  value: 5) }
     let!(:result_s2_e1) { create(:result, evaluation: evaluations.first,  student: students.second, value: 6) }
@@ -69,7 +69,7 @@ describe VisualizationsController do
     let!(:suite)        { create(:suite) }
     let!(:students)     { create_list(:student, 2) }
     let!(:participants) { students.collect { |s| create(:participant, suite: suite, student: s) } }
-    let!(:evaluations)  { create_list(:suite_evaluation, 3, suite: suite, max_result: 10, red_below: 4, green_above: 7) }
+    let!(:evaluations)  { create_list(:suite_evaluation, 3, suite: suite, max_result: 10, yellow_values: 4..7) }
     let!(:result_s1_e1) { create(:result, evaluation: evaluations.first,  student: students.first,  value: 3) }
     let!(:result_s1_e2) { create(:result, evaluation: evaluations.second, student: students.first,  value: 5) }
     let!(:result_s2_e1) { create(:result, evaluation: evaluations.first,  student: students.second, value: 6) }
@@ -121,8 +121,7 @@ describe VisualizationsController do
     let!(:evaluations)  { create_list(:suite_evaluation, 2,
       suite: suite,
       max_result: 8,
-      red_below: 4,
-      green_above: 6,
+      yellow_values: 4..6,
       stanine_values: [ 0, 1, 2, 3, 4, 5, 6, 7 ]
     ) }
 

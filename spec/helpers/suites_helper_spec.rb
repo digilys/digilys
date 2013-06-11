@@ -102,7 +102,7 @@ describe SuitesHelper do
       helper.result_color_class(nil).should be_blank
     end
 
-    let(:evaluation) { create(:evaluation, max_result: 20, red_below: 10, green_above: 15) }
+    let(:evaluation) { create(:evaluation, max_result: 20, yellow_values: 10..15) }
 
     context "with result object" do
       context "for red result" do
