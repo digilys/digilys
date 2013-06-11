@@ -534,7 +534,7 @@ describe Evaluation do
   end
 
   describe ".stanines?" do
-    it "returns true if all stanine values are set" do
+    it "returns true if there are any stanine values set" do
       create(:evaluation, stanine_values: Array.new(8, 1)).stanines?.should be_true
     end
     it "returns false if no stanine values are set" do

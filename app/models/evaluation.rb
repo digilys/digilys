@@ -107,7 +107,7 @@ class Evaluation < ActiveRecord::Base
       greater_than_or_equal_to: 0,
       less_than_or_equal_to:    ->(evaluation) { evaluation.stanine2 || evaluation.max_result }
     },
-    presence: { if: :stanines? }
+    presence: { if: :has_numeric_stanines? }
   )
   2.upto(7) do |i|
     validates(:"stanine#{i}",
@@ -117,7 +117,7 @@ class Evaluation < ActiveRecord::Base
         greater_than_or_equal_to: ->(evaluation) { evaluation.send(:"stanine#{i-1}") || 0 },
         less_than_or_equal_to:    ->(evaluation) { evaluation.send(:"stanine#{i+1}") || evaluation.max_result }
       },
-      presence: { if: :stanines? }
+      presence: { if: :has_numeric_stanines? }
     )
   end
   validates(:stanine8,
@@ -126,7 +126,7 @@ class Evaluation < ActiveRecord::Base
       only_integer:             true,
       greater_than_or_equal_to: ->(evaluation) { evaluation.stanine7 || 0 }
     },
-    presence: { if: :stanines? }
+    presence: { if: :has_numeric_stanines? }
   )
 
   VALID_COLORS = [:red, :yellow, :green]
@@ -161,7 +161,7 @@ class Evaluation < ActiveRecord::Base
           ->(evaluation) { i >= 5 ? 9 : evaluation.send(:"stanine_for_grade_#{GRADES[i+1]}") || 9 },
         message: :faulty_grade_stanine
       },
-      presence: { if: :stanine_for_grades? },
+      presence: { if: :has_grade_stanines? },
       if: :value_type_grade?
     )
   end
@@ -244,7 +244,7 @@ class Evaluation < ActiveRecord::Base
 
   # Indicates if this evaluation uses stanine values
   def stanines?
-    self.stanine_limits.any? { |s| !s.nil? }
+    !self.stanines.blank?
   end
   def stanine_limits
     @stanine_limits ||= [
@@ -375,15 +375,6 @@ class Evaluation < ActiveRecord::Base
     end
   end
 
-  def stanine_for_grades?
-    !@stanine_for_grade_a.blank? ||
-      !@stanine_for_grade_b.blank? ||
-      !@stanine_for_grade_c.blank? ||
-      !@stanine_for_grade_d.blank? ||
-      !@stanine_for_grade_e.blank? ||
-      !@stanine_for_grade_f.blank?
-  end
-
   def update_status!
     num_results = self.results(true).count(:all)
     num_participants = self.participants(true).count(:all)
@@ -456,6 +447,26 @@ class Evaluation < ActiveRecord::Base
   end
 
 
+  def has_grade_stanines?
+    return !@stanine_for_grade_a.blank? ||
+      !@stanine_for_grade_b.blank? ||
+      !@stanine_for_grade_c.blank? ||
+      !@stanine_for_grade_d.blank? ||
+      !@stanine_for_grade_e.blank? ||
+      !@stanine_for_grade_f.blank?
+  end
+  def has_numeric_stanines?
+    return !stanine1.blank? ||
+      !stanine2.blank? ||
+      !stanine3.blank? ||
+      !stanine4.blank? ||
+      !stanine5.blank? ||
+      !stanine6.blank? ||
+      !stanine7.blank? ||
+      !stanine8.blank?
+  end
+
+
   private
 
   def convert_percentages
@@ -496,6 +507,7 @@ class Evaluation < ActiveRecord::Base
       errors.add(:date, :not_nil) if !self.date_before_type_cast.blank?
     end
   end
+
 
   def set_default_values_for_value_type
     case self.value_type
@@ -551,7 +563,7 @@ class Evaluation < ActiveRecord::Base
       self.colors["red"]    = { min: 0,                    max: self.red_below - 1 } if self.red_below > 0
       self.colors["yellow"] = { min: self.red_below,       max: self.green_above }
       self.colors["green"]  = { min: self.green_above + 1, max: self.max_result }    if self.green_above < self.max_result
-      if self.stanines?
+      if self.has_numeric_stanines?
         self.stanines = {}
         self.stanines[1] = { min: 0, max: self.stanine1 }
         self.stanines[2] = { min: self.stanine1 + 1, max: self.stanine2 } if self.stanine2 > self.stanine1

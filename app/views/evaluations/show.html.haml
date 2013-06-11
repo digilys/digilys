@@ -45,7 +45,7 @@
             - 5.downto(0) do |grade|
               %li{class: @evaluation.color_for(grade)}= Evaluation::GRADES[grade].upcase
 
-    - if @evaluation.stanines? || !@evaluation.stanines.blank?
+    - if @evaluation.stanines?
       %tr.stanines
         %th= t(:".stanines")
         %td
