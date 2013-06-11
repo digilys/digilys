@@ -246,41 +246,6 @@ class Evaluation < ActiveRecord::Base
   def stanines?
     !self.stanines.blank?
   end
-  def stanine_limits
-    @stanine_limits ||= [
-      self.stanine1,
-      self.stanine2,
-      self.stanine3,
-      self.stanine4,
-      self.stanine5,
-      self.stanine6,
-      self.stanine7,
-      self.stanine8
-    ]
-  end
-  # Generates ruby ranges for the stanine ranges based on stanine boundaries
-  def stanine_ranges
-    unless @stanine_ranges
-      @stanine_ranges = {}
-
-      if self.stanines?
-        boundaries = [-1, *self.stanine_limits, self.max_result]
-
-        1.upto(boundaries.length - 1) do |i|
-          upper = boundaries[i]
-          lower = boundaries[i - 1] + 1
-
-          if upper > lower
-            @stanine_ranges[i] = lower..upper
-          else
-            @stanine_ranges[i] = upper
-          end
-        end
-      end
-    end
-
-    return @stanine_ranges
-  end
 
 
   # Builds a percentage distribution of the results

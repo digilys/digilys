@@ -150,5 +150,8 @@ describe SuitesHelper do
     it "handles single values" do
       helper.format_range(10).should == 10
     end
+    it "handles single value ranges" do
+      helper.format_range(10..10).should == 10
+    end
   end
 end

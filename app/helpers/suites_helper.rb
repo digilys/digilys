@@ -37,7 +37,11 @@ module SuitesHelper
   def format_range(range)
     case range
     when Range
-      "#{range.min} &ndash; #{range.max}".html_safe
+      if range.min < range.max
+        "#{range.min} &ndash; #{range.max}".html_safe
+      else
+        range.min
+      end
     else
       range
     end

@@ -51,10 +51,14 @@
         %td
           %ul.unstyled.stanine-ranges-list
             - if @evaluation.value_type.numeric?
-              - @evaluation.stanine_ranges.each_pair do |stanine, range|
+              - 1.upto(9) do |stanine|
                 %li
                   %strong= stanine
-                  = format_range(range)
+                  - range = @evaluation.stanines[stanine.to_s]
+                  - if range
+                    = format_range(range["min"]..range["max"])
+                  - else
+                    = "-"
             - if @evaluation.value_type.grade?
               - 5.downto(0) do |grade|
                 %li
