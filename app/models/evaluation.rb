@@ -215,26 +215,30 @@ class Evaluation < ActiveRecord::Base
   end
 
   def red_range
-    @red_range = if self.red_below > 1
-      0..(self.red_below - 1)
-    elsif self.red_below == 1
-      0
-    else
+    @red_range ||= if !self.colors.try(:has_key?, "red")
       nil
+    elsif self.colors["red"]["min"] == self.colors["red"]["max"]
+      self.colors["red"]["min"]
+    else
+      self.colors["red"]["min"]..self.colors["red"]["max"] 
     end
   end
   def yellow_range
-    @yellow_range = if self.red_below == self.green_above
-      self.red_below
+    @yellow_range ||= if !self.colors.try(:has_key?, "yellow")
+      nil
+    elsif self.colors["yellow"]["min"] == self.colors["yellow"]["max"]
+      self.colors["yellow"]["min"]
     else
-      self.red_below..self.green_above
+      self.colors["yellow"]["min"]..self.colors["yellow"]["max"] 
     end
   end
   def green_range
-    @green_range = if self.green_above < self.max_result - 1
-      (self.green_above + 1)..self.max_result
-    elsif self.green_above == self.max_result - 1
-      self.max_result
+    @green_range ||= if !self.colors.try(:has_key?, "green")
+      nil
+    elsif self.colors["green"]["min"] == self.colors["green"]["max"]
+      self.colors["green"]["min"]
+    else
+      self.colors["green"]["min"]..self.colors["green"]["max"] 
     end
   end
 
