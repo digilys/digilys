@@ -689,16 +689,12 @@ describe Evaluation do
     its(:template_id)   { should == template.id }
     its(:name)          { should == template.name }
     its(:description)   { should == template.description }
+    its(:colors)        { should == template.colors }
+    its(:stanines)      { should == template.stanines }
     its(:max_result)    { should == template.max_result }
-    its(:red_below)     { should == template.red_below }
-    its(:green_above)   { should == template.green_above }
     its(:category_list) { should == template.category_list }
     its(:target)        { should == template.target }
     its(:type)          { should == template.type }
-
-    1.upto(8).each do |i|
-      its(:"stanine#{i}") { should == template.send(:"stanine#{i}") }
-    end
 
     context "with attrs" do
       subject { Evaluation.new_from_template(template, { suite_id: 1, name: "Overridden" }) }

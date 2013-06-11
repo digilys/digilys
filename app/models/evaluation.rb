@@ -362,19 +362,12 @@ class Evaluation < ActiveRecord::Base
       e.name          = template.name
       e.description   = template.description
       e.max_result    = template.max_result
-      e.red_below     = template.red_below
-      e.green_above   = template.green_above
-      e.stanine1      = template.stanine1
-      e.stanine2      = template.stanine2
-      e.stanine3      = template.stanine3
-      e.stanine4      = template.stanine4
-      e.stanine5      = template.stanine5
-      e.stanine6      = template.stanine6
-      e.stanine7      = template.stanine7
-      e.stanine8      = template.stanine8
+      e.colors        = template.colors
+      e.stanines      = template.stanines
       e.category_list = template.category_list
       e.target        = template.target
       e.type          = template.type
+      e.value_type    = template.value_type
 
       e.assign_attributes(attrs)
     end
