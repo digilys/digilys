@@ -34,6 +34,9 @@ class Evaluation < ActiveRecord::Base
     :name,
     :description,
     :date,
+    :target,
+    :value_type,
+    :category_list,
     :red_below,
     :green_above,
     :stanine1,
@@ -44,10 +47,6 @@ class Evaluation < ActiveRecord::Base
     :stanine6,
     :stanine7,
     :stanine8,
-    :results_attributes,
-    :category_list,
-    :target,
-    :value_type,
     :color_for_true,
     :color_for_false,
     :color_for_grade_a,
@@ -61,7 +60,8 @@ class Evaluation < ActiveRecord::Base
     :stanine_for_grade_c,
     :stanine_for_grade_d,
     :stanine_for_grade_e,
-    :stanine_for_grade_f
+    :stanine_for_grade_f,
+    :results_attributes
 
   serialize :value_aliases, JSON
   serialize :colors,        JSON
