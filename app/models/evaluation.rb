@@ -478,27 +478,8 @@ class Evaluation < ActiveRecord::Base
     end
   end
 
-  # If any of these attributes are changed, touch the results
-  TOUCH_RESULT_ON_CHANGED = %w(
-    red_below
-    green_above
-    stanine1
-    stanine2
-    stanine3
-    stanine4
-    stanine5
-    stanine6
-    stanine7
-    stanine8
-    colors
-    stanines
-  )
-
   def touch_results
-    # Intersect the changed array with the touch on array
-    if !(TOUCH_RESULT_ON_CHANGED & self.changed).blank?
-      self.results.map(&:save)
-    end
+    self.results(true).map(&:save) if self.colors_changed? || self.stanines_changed?
   end
 
 
@@ -551,10 +532,10 @@ class Evaluation < ActiveRecord::Base
   end
 
   def persist_colors_and_stanines
-    case self.value_type.to_sym
-    when :boolean
+    case self.value_type
+    when "boolean"
       self.colors = { "0" => self.color_for_false, "1" => self.color_for_true }
-    when :grade
+    when "grade"
       self.colors = {
         "0" => self.color_for_grade_f,
         "1" => self.color_for_grade_e,
@@ -571,6 +552,23 @@ class Evaluation < ActiveRecord::Base
         "4" => self.stanine_for_grade_b,
         "5" => self.stanine_for_grade_a
       }
+    when "numeric"
+      self.colors = {}
+      self.colors["red"]    = { min: 0,                    max: self.red_below - 1 } if self.red_below > 0
+      self.colors["yellow"] = { min: self.red_below,       max: self.green_above }
+      self.colors["green"]  = { min: self.green_above + 1, max: self.max_result }    if self.green_above < self.max_result
+      if self.stanines?
+        self.stanines = {}
+        self.stanines[1] = { min: 0, max: self.stanine1 }
+        self.stanines[2] = { min: self.stanine1 + 1, max: self.stanine2 } if self.stanine2 > self.stanine1
+        self.stanines[3] = { min: self.stanine2 + 1, max: self.stanine3 } if self.stanine3 > self.stanine2
+        self.stanines[4] = { min: self.stanine3 + 1, max: self.stanine4 } if self.stanine4 > self.stanine3
+        self.stanines[5] = { min: self.stanine4 + 1, max: self.stanine5 } if self.stanine5 > self.stanine4
+        self.stanines[6] = { min: self.stanine5 + 1, max: self.stanine6 } if self.stanine6 > self.stanine5
+        self.stanines[7] = { min: self.stanine6 + 1, max: self.stanine7 } if self.stanine7 > self.stanine6
+        self.stanines[8] = { min: self.stanine7 + 1, max: self.stanine8 } if self.stanine8 > self.stanine7
+        self.stanines[9] = { min: self.stanine8 + 1, max: self.max_result } if self.max_result > self.stanine8
+      end
     end
   end
 end

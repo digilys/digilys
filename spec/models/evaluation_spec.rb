@@ -251,6 +251,52 @@ describe Evaluation do
       its(:stanines) { should include("4" => 7) }
       its(:stanines) { should include("5" => 9) }
     end
+    context "for numeric value types" do
+      let(:yellow_range) { 10..20 }
+      let(:stanine_values) { [ 3, 6, 7, 12, 15, 18, 21, 24 ] }
+      subject { create(
+        :numeric_evaluation,
+        colors: nil,
+        stanines: nil,
+        red_below: yellow_range.min,
+        green_above: yellow_range.max,
+        max_result: 30,
+        stanine_values: stanine_values
+      ) }
+
+      its(:colors) { should include("red"    => { "min" => 0,  "max" => 9 }) }
+      its(:colors) { should include("yellow" => { "min" => 10, "max" => 20 }) }
+      its(:colors) { should include("green"  => { "min" => 21, "max" => 30 }) }
+
+      its(:stanines) { should include("1" => { "min" => 0,  "max" => 3 } ) }
+      its(:stanines) { should include("2" => { "min" => 4,  "max" => 6 } ) }
+      its(:stanines) { should include("3" => { "min" => 7,  "max" => 7 } ) }
+      its(:stanines) { should include("4" => { "min" => 8,  "max" => 12 } ) }
+      its(:stanines) { should include("5" => { "min" => 13, "max" => 15 } ) }
+      its(:stanines) { should include("6" => { "min" => 16, "max" => 18 } ) }
+      its(:stanines) { should include("7" => { "min" => 19, "max" => 21 } ) }
+      its(:stanines) { should include("8" => { "min" => 22, "max" => 24 } ) }
+      its(:stanines) { should include("9" => { "min" => 25, "max" => 30 } ) }
+
+      context "with extreme yellow range" do
+        let(:yellow_range) { 0..30 }
+        its(:colors) { should include("yellow" => { "min" => 0, "max" => 30 }) }
+        its(:colors) { should_not have_key("red") }
+        its(:colors) { should_not have_key("green") }
+      end
+      context "with overlapping stanines" do
+        let(:stanine_values) { [ 3, 6, 9, 9, 9, 18, 21, 30 ] }
+        its(:stanines) { should include("1" => { "min" => 0,  "max" => 3 } ) }
+        its(:stanines) { should include("2" => { "min" => 4,  "max" => 6 } ) }
+        its(:stanines) { should include("3" => { "min" => 7,  "max" => 9 } ) }
+        its(:stanines) { should include("6" => { "min" => 10, "max" => 18 } ) }
+        its(:stanines) { should include("7" => { "min" => 19, "max" => 21 } ) }
+        its(:stanines) { should include("8" => { "min" => 22, "max" => 30 } ) }
+        its(:stanines) { should_not have_key("4") }
+        its(:stanines) { should_not have_key("5") }
+        its(:stanines) { should_not have_key("9") }
+      end
+    end
   end
 
   describe ".has_regular_suite?" do

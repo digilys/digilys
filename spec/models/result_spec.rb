@@ -26,7 +26,7 @@ describe Result do
   end
 
   context "color filter" do
-    let(:evaluation) { create(:evaluation, max_result: 10, red_below: 4, green_above: 7) }
+    let(:evaluation) { create(:numeric_evaluation, max_result: 10, red_below: 4, green_above: 7) }
     let(:value)      { 5 }
     subject(:result) { create(:result, evaluation: evaluation, value: value) }
 
@@ -104,7 +104,7 @@ describe Result do
       its(:stanine)        { should be_nil }
     end
 
-    it "updates the color when the evaluation changes" do
+    it "updates the stanine when the evaluation changes" do
       result.stanine.should == 4
       evaluation.update_attributes(stanine3: 40, stanine4: 45)
       result.reload
