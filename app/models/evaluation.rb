@@ -206,11 +206,9 @@ class Evaluation < ActiveRecord::Base
       return nil unless self.stanines?
 
       stanine = 1
-      prev = -1
 
       self.stanine_limits.each do |boundary|
-        stanine += 1 if boundary < value || boundary == value && prev == boundary
-        prev = boundary
+        stanine += 1 if boundary < value
       end
 
       return stanine

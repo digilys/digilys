@@ -434,7 +434,7 @@ describe Evaluation do
         let(:stanine_values) { [10, 20, 30, 40, 40, 40, 70, 80]}
         context "giving largest stanine" do
           let(:value) { 40 }
-          it          { should == 6 }
+          it          { should == 4 }
         end
         context "giving the correct stanine below" do
           let(:value) { 39 }

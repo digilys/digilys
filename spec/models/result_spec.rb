@@ -87,10 +87,6 @@ describe Result do
       let(:stanine_values) { [10, 20, 30, 40, 40, 40, 70, 80]}
       context "when matching several" do
         let(:value)   { 40 }
-        its(:stanine) { should == 6 }
-      end
-      context "when matching below" do
-        let(:value)   { 39 }
         its(:stanine) { should == 4 }
       end
       context "when matching above" do
