@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130607112128) do
+ActiveRecord::Schema.define(:version => 20130611120724) do
 
   create_table "activities", :force => true do |t|
     t.integer  "suite_id"
@@ -44,18 +44,8 @@ ActiveRecord::Schema.define(:version => 20130607112128) do
     t.integer  "suite_id"
     t.string   "name"
     t.integer  "max_result"
-    t.integer  "red_below"
-    t.integer  "green_above"
     t.datetime "created_at",                                            :null => false
     t.datetime "updated_at",                                            :null => false
-    t.integer  "stanine1"
-    t.integer  "stanine2"
-    t.integer  "stanine3"
-    t.integer  "stanine4"
-    t.integer  "stanine5"
-    t.integer  "stanine6"
-    t.integer  "stanine7"
-    t.integer  "stanine8"
     t.date     "date"
     t.integer  "template_id"
     t.string   "description",   :limit => 1024

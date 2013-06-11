@@ -79,12 +79,13 @@ class Evaluation < ActiveRecord::Base
       greater_than_or_equal_to: 0
     },
   )
+
   validates(:red_below,
     presence: true,
     numericality: {
       only_integer: true,
       greater_than_or_equal_to: 0,
-      less_than_or_equal_to: :green_above,
+      less_than_or_equal_to: proc { |e| e.green_above.to_i },
       unless: proc { |e| e.red_below.nil? || e.green_above.nil? }
     },
     if: :value_type_numeric?
@@ -93,7 +94,7 @@ class Evaluation < ActiveRecord::Base
     presence: true,
     numericality: {
       only_integer: true,
-      greater_than_or_equal_to: :red_below,
+      greater_than_or_equal_to: proc { |e| e.red_below.to_i },
       less_than_or_equal_to: :max_result,
       unless: proc { |e| e.red_below.nil? || e.green_above.nil? }
     },
@@ -105,7 +106,7 @@ class Evaluation < ActiveRecord::Base
       allow_nil:                true,
       only_integer:             true,
       greater_than_or_equal_to: 0,
-      less_than_or_equal_to:    ->(evaluation) { evaluation.stanine2 || evaluation.max_result }
+      less_than_or_equal_to:    ->(evaluation) { (evaluation.stanine2 || evaluation.max_result).to_i }
     },
     presence: { if: :has_numeric_stanines? }
   )
@@ -114,8 +115,8 @@ class Evaluation < ActiveRecord::Base
       numericality: {
         allow_nil:                true,
         only_integer:             true,
-        greater_than_or_equal_to: ->(evaluation) { evaluation.send(:"stanine#{i-1}") || 0 },
-        less_than_or_equal_to:    ->(evaluation) { evaluation.send(:"stanine#{i+1}") || evaluation.max_result }
+        greater_than_or_equal_to: ->(evaluation) { (evaluation.send(:"stanine#{i-1}") || 0).to_i },
+        less_than_or_equal_to:    ->(evaluation) { (evaluation.send(:"stanine#{i+1}") || evaluation.max_result).to_i }
       },
       presence: { if: :has_numeric_stanines? }
     )
@@ -124,7 +125,7 @@ class Evaluation < ActiveRecord::Base
     numericality: {
       allow_nil:                true,
       only_integer:             true,
-      greater_than_or_equal_to: ->(evaluation) { evaluation.stanine7 || 0 }
+      greater_than_or_equal_to: ->(evaluation) { (evaluation.stanine7 || 0).to_i }
     },
     presence: { if: :has_numeric_stanines? }
   )
@@ -308,6 +309,30 @@ class Evaluation < ActiveRecord::Base
   end
 
 
+  # Virtual accessors for numeric colors and stanines
+  attr_writer :red_below, :green_above
+  def red_below
+    unless defined?(@red_below)
+      @red_below = self.colors.try(:[], "yellow").try(:[], "min")
+    end
+    @red_below
+  end
+  def green_above
+    unless defined?(@green_above)
+      @green_above = self.colors.try(:[], "yellow").try(:[], "max")
+    end
+    @green_above
+  end
+
+  1.upto(8).each do |i|
+    attr_writer :"stanine#{i}"
+    define_method(:"stanine#{i}") do
+      v = instance_variable_get("@stanine#{i}")
+      v ||= upper_limit_for_stanine(i)
+      v.blank? ? nil : v
+    end
+  end
+
   # Virtual accessor for boolean colors
   def color_for_true=(value)
     @color_for_true = value.to_s
@@ -401,7 +426,7 @@ class Evaluation < ActiveRecord::Base
   def self.with_stanines
     # The check for null as a string is due to the fact that the stanines
     # field is a seralized field, and a nil value will be serialized as "null"
-    where("(stanine1 is not null or (stanines is not null and stanines != 'null'))")
+    where("stanines is not null and stanines != 'null'")
   end
 
 
@@ -427,11 +452,20 @@ class Evaluation < ActiveRecord::Base
 
   private
 
+  def upper_limit_for_stanine(stanine)
+    if self.value_type_numeric? && self.stanines
+      stanine.downto(1) do |i|
+        return self.stanines[i.to_s]["max"].to_i if self.stanines[i.to_s]
+      end
+    end
+    return nil
+  end
+
   def convert_percentages
     return unless self.max_result
 
     %w(red_below green_above).each do |attr|
-      value = self.attributes_before_type_cast[attr]
+      value = send(attr)
 
       if value.is_a?(String) &&
           /\A([+-]?\d+)\s*%\Z/.match(value) # Regex used for integer validation + a percent sign at the end
@@ -517,21 +551,24 @@ class Evaluation < ActiveRecord::Base
         "5" => self.stanine_for_grade_a
       }
     when "numeric"
-      self.colors = {}
-      self.colors["red"]    = { min: 0,                    max: self.red_below - 1 } if self.red_below > 0
-      self.colors["yellow"] = { min: self.red_below,       max: self.green_above }
-      self.colors["green"]  = { min: self.green_above + 1, max: self.max_result }    if self.green_above < self.max_result
+      colors = {}
+      colors["red"]    = { min: 0,                    max: self.red_below - 1 } if self.red_below > 0
+      colors["yellow"] = { min: self.red_below,       max: self.green_above }
+      colors["green"]  = { min: self.green_above + 1, max: self.max_result }    if self.green_above < self.max_result
+      self.colors = colors
+
       if self.has_numeric_stanines?
-        self.stanines = {}
-        self.stanines[1] = { min: 0, max: self.stanine1 }
-        self.stanines[2] = { min: self.stanine1 + 1, max: self.stanine2 } if self.stanine2 > self.stanine1
-        self.stanines[3] = { min: self.stanine2 + 1, max: self.stanine3 } if self.stanine3 > self.stanine2
-        self.stanines[4] = { min: self.stanine3 + 1, max: self.stanine4 } if self.stanine4 > self.stanine3
-        self.stanines[5] = { min: self.stanine4 + 1, max: self.stanine5 } if self.stanine5 > self.stanine4
-        self.stanines[6] = { min: self.stanine5 + 1, max: self.stanine6 } if self.stanine6 > self.stanine5
-        self.stanines[7] = { min: self.stanine6 + 1, max: self.stanine7 } if self.stanine7 > self.stanine6
-        self.stanines[8] = { min: self.stanine7 + 1, max: self.stanine8 } if self.stanine8 > self.stanine7
-        self.stanines[9] = { min: self.stanine8 + 1, max: self.max_result } if self.max_result > self.stanine8
+        stanines = {}
+        stanines[1] = { min: 0, max: self.stanine1 }
+        stanines[2] = { min: self.stanine1 + 1, max: self.stanine2 } if self.stanine2 > self.stanine1
+        stanines[3] = { min: self.stanine2 + 1, max: self.stanine3 } if self.stanine3 > self.stanine2
+        stanines[4] = { min: self.stanine3 + 1, max: self.stanine4 } if self.stanine4 > self.stanine3
+        stanines[5] = { min: self.stanine4 + 1, max: self.stanine5 } if self.stanine5 > self.stanine4
+        stanines[6] = { min: self.stanine5 + 1, max: self.stanine6 } if self.stanine6 > self.stanine5
+        stanines[7] = { min: self.stanine6 + 1, max: self.stanine7 } if self.stanine7 > self.stanine6
+        stanines[8] = { min: self.stanine7 + 1, max: self.stanine8 } if self.stanine8 > self.stanine7
+        stanines[9] = { min: self.stanine8 + 1, max: self.max_result } if self.max_result > self.stanine8
+        self.stanines = stanines
       end
     end
   end
