@@ -38,10 +38,15 @@ describe Evaluation do
     it { should allow_mass_assignment_of(:description) }
     it { should allow_mass_assignment_of(:date) }
     it { should allow_mass_assignment_of(:max_result) }
-    it { should allow_mass_assignment_of(:red_below) }
-    it { should allow_mass_assignment_of(:green_above) }
-    1.upto(8).each do |i|
-      it { should allow_mass_assignment_of(:"stanine#{i}") }
+    it { should allow_mass_assignment_of(:red_min) }
+    it { should allow_mass_assignment_of(:red_max) }
+    it { should allow_mass_assignment_of(:yellow_min) }
+    it { should allow_mass_assignment_of(:yellow_max) }
+    it { should allow_mass_assignment_of(:green_min) }
+    it { should allow_mass_assignment_of(:green_max) }
+    1.upto(9).each do |i|
+      it { should allow_mass_assignment_of(:"stanine#{i}_min") }
+      it { should allow_mass_assignment_of(:"stanine#{i}_max") }
     end
     it { should allow_mass_assignment_of(:category_list) }
     it { should allow_mass_assignment_of(:target) }
@@ -63,44 +68,39 @@ describe Evaluation do
     it { should_not allow_value(-1).for(:max_result) }
 
     context "numeric value type" do
-      subject { build(:numeric_evaluation) }
+      subject(:evaluation) { build(:numeric_evaluation,
+        max_result: 30,
+        _yellow:    10..20,
+        _stanines:  [ 0..3, 4..6, 7..9, 10..12, 13..15, 16..18, 19..21, 22..24, 25..30 ]
+      ) }
 
-      it { should validate_numericality_of(:red_below).only_integer }
-      it { should validate_numericality_of(:green_above).only_integer }
+      Evaluation::VALID_COLORS.each do |color|
+        it { should validate_numericality_of(:"#{color}_min").only_integer }
+        it { should validate_numericality_of(:"#{color}_max").only_integer }
+        it { should allow_value(nil).for(:"#{color}_min") }
+        it { should allow_value(nil).for(:"#{color}_max") }
 
-      it { should_not allow_value(nil).for(:red_below) }
-      it { should_not allow_value(nil).for(:green_above) }
-
-      1.upto(8) do |i|
-        it { should validate_numericality_of(:"stanine#{i}").only_integer }
+        it { should_not allow_value(-1).for(:"#{color}_min") }
+        it { should_not allow_value(evaluation.send(:"#{color}_max") + 1).for(:"#{color}_min") }
+        it { should_not allow_value(evaluation.send(:"#{color}_min") - 1).for(:"#{color}_max") }
+        it { should_not allow_value(evaluation.max_result + 1).for(:"#{color}_max") }
       end
 
-      context "limit ranges" do
-        subject { build(:evaluation, value_type: :numeric, max_result: 50, _yellow: 20..30) }
-        it { should_not allow_value(-1).for(:red_below) }
-        it { should_not allow_value(51).for(:green_above) }
-        it { should_not allow_value(19).for(:green_above) }
-        it { should_not allow_value(31).for(:red_below) }
+      1.upto(9) do |i|
+        it { should validate_numericality_of(:"stanine#{i}_min").only_integer }
+        it { should validate_numericality_of(:"stanine#{i}_max").only_integer }
+        it { should allow_value(nil).for(:"stanine#{i}_min") }
+        it { should allow_value(nil).for(:"stanine#{i}_max") }
+
+        it { should_not allow_value(-1).for(:"stanine#{i}_min") }
+        it { should_not allow_value(evaluation.send(:"stanine#{i}_max") + 1).for(:"stanine#{i}_min") }
+        it { should_not allow_value(evaluation.send(:"stanine#{i}_min") - 1).for(:"stanine#{i}_max") }
+        it { should_not allow_value(evaluation.max_result + 1).for(:"stanine#{i}_max") }
       end
 
-      context "stanine" do
-        context "with stanines" do
-          let(:_stanines) { [10,20,30,40,50,60,70,80] }
-          subject { build(:evaluation, value_type: :numeric, max_result: 90, _stanines: _stanines)}
-
-          # 8 stanine limits
-          1.upto(8).each do |i|
-            it { should_not allow_value(nil).for(:"stanine#{i}") }
-            it { should_not allow_value(-1).for(:"stanine#{i}") }
-            it { should_not allow_value(_stanines[i - 2] - 1).for(:"stanine#{i}") }   if i > 1
-            it { should_not allow_value(_stanines[i]     + 1).for(:"stanine#{i}") }   if i < 8
-          end
-        end
-
-        context "without stanines" do
-          subject { build(:evaluation, value_type: :numeric, max_result: 90, _stanines: Array.new(8) )}
-          it { should be_valid }
-        end
+      context "without stanines" do
+        subject { build(:numeric_evaluation, _stanines: Array.new(9) )}
+        it { should be_valid }
       end
     end
 
@@ -202,12 +202,6 @@ describe Evaluation do
     end
   end
 
-  describe ".convert_percentages" do
-    subject { create(:evaluation, max_result: 50, red_below: "40%", green_above: "60%") }
-    its(:red_below)   { should == 20 }
-    its(:green_above) { should == 30 }
-  end
-
   describe ".set_aliases_from_value_type" do
     context "for numeric value type" do
       subject { create(:numeric_evaluation) }
@@ -253,7 +247,7 @@ describe Evaluation do
     end
     context "for numeric value types" do
       let(:_yellow) { 10..20 }
-      let(:_stanines) { [ 3, 6, 7, 12, 15, 18, 21, 24 ] }
+      let(:_stanines) { [ 0..3, 4..6, 7..7, 8..12, 13..15, 16..18, 19..21, 22..24, 25..30 ] }
       subject { create(
         :numeric_evaluation,
         colors: nil,
@@ -277,23 +271,22 @@ describe Evaluation do
       its(:stanines) { should include("8" => { "min" => 22, "max" => 24 } ) }
       its(:stanines) { should include("9" => { "min" => 25, "max" => 30 } ) }
 
-      context "with extreme yellow range" do
+      context "with only a yellow range" do
         let(:_yellow) { 0..30 }
-        its(:colors) { should include("yellow" => { "min" => 0, "max" => 30 }) }
-        its(:colors) { should_not have_key("red") }
-        its(:colors) { should_not have_key("green") }
+        its(:colors)  { should include("yellow" => { "min" => 0, "max" => 30 }) }
+        its(:colors)  { should_not have_key("red") }
+        its(:colors)  { should_not have_key("green") }
       end
       context "with overlapping stanines" do
-        let(:_stanines) { [ 3, 6, 9, 9, 9, 18, 21, 30 ] }
+        let(:_stanines) { [ 0..3, 4..6, 7..9, 9..9, 9..9, 10..18, 19..21, 22..30 ] }
         its(:stanines) { should include("1" => { "min" => 0,  "max" => 3 } ) }
         its(:stanines) { should include("2" => { "min" => 4,  "max" => 6 } ) }
         its(:stanines) { should include("3" => { "min" => 7,  "max" => 9 } ) }
+        its(:stanines) { should include("4" => { "min" => 9,  "max" => 9 } ) }
+        its(:stanines) { should include("5" => { "min" => 9,  "max" => 9 } ) }
         its(:stanines) { should include("6" => { "min" => 10, "max" => 18 } ) }
         its(:stanines) { should include("7" => { "min" => 19, "max" => 21 } ) }
         its(:stanines) { should include("8" => { "min" => 22, "max" => 30 } ) }
-        its(:stanines) { should_not have_key("4") }
-        its(:stanines) { should_not have_key("5") }
-        its(:stanines) { should_not have_key("9") }
       end
     end
   end
@@ -402,7 +395,7 @@ describe Evaluation do
     subject          { evaluation.stanine_for(value) }
 
     context "for numeric value types" do
-      let(:_stanines) { [10, 20, 30, 40, 50, 60, 70, 80] }
+      let(:_stanines) { [ 0..10, 11..20, 21..30, 31..40, 41..50, 51..60, 61..70, 71..80, 81..90 ] }
       let(:evaluation) { create(:evaluation, max_result: 90, _stanines: _stanines) }
 
       it { should be_nil }
@@ -430,8 +423,8 @@ describe Evaluation do
       end
 
       context "with overlapping stanines" do
-        let(:_stanines) { [10, 20, 30, 40, 40, 40, 70, 80]}
-        context "giving largest stanine" do
+        let(:_stanines) { [ 0..10, 11..20, 21..30, 31..40, 40..40, 40..40, 41..70, 71..80, 81..90 ]}
+        context "giving smallest stanine" do
           let(:value) { 40 }
           it          { should == 4 }
         end
@@ -496,48 +489,12 @@ describe Evaluation do
     end
   end
 
-  context "color range methods" do
-    let(:max_result)  { 66 }
-    let(:red_below)   { 22 }
-    let(:green_above) { 44 }
-    subject           { create(:evaluation, max_result: max_result, red_below: red_below, green_above: green_above) }
-
-
-    its(:red_range)    { should == ( 0..21) }
-    its(:yellow_range) { should == (22..44) }
-    its(:green_range)  { should == (45..66) }
-
-    context "with red edge" do
-      let(:red_below) { 1 }
-      its(:red_range) { should == 0 }
-    end
-    context "with no red range" do
-      let(:red_below) { 0 }
-      its(:red_range) { should be_blank }
-    end
-
-    context "with yellow edge" do
-      let(:red_below)    { 33 }
-      let(:green_above)  { 33 }
-      its(:yellow_range) { should == 33 }
-    end
-
-    context "with green edge" do
-      let(:green_above) { 65 }
-      its(:green_range) { should == 66 }
-    end
-    context "with no green range" do
-      let(:green_above) { 66 }
-      its(:green_range) { should be_blank }
-    end
-  end
-
   describe ".stanines?" do
     it "returns true if there are any stanine values set" do
-      create(:evaluation, _stanines: Array.new(8, 1)).stanines?.should be_true
+      create(:evaluation, _stanines: Array.new(9, 1..1)).stanines?.should be_true
     end
     it "returns false if no stanine values are set" do
-      create(:evaluation, _stanines: Array.new(8)).stanines?.should be_false
+      create(:evaluation, _stanines: Array.new(9)).stanines?.should be_false
     end
   end
 
@@ -609,7 +566,7 @@ describe Evaluation do
     subject(:evaluation) { create(:evaluation,
       max_result: 8,
       _yellow: 3..5,
-      _stanines: [ 0, 1, 2, 3, 4, 5, 6, 7 ]
+      _stanines: [ 0..0, 1..1, 2..2, 3..3, 4..4, 5..5, 6..6, 7..7, 8..8 ]
     ) }
 
     before(:each) do
@@ -751,13 +708,13 @@ describe Evaluation do
   end
 
   describe "#with_stanines" do
-    let!(:without_stanines)         { create(:suite_evaluation, _stanines: nil, stanines: nil) }
-    let!(:with_field_stanines)      { create(:suite_evaluation, _stanines: [7, 12, 17, 22, 27, 32, 37, 42], stanines: nil) }
-    let!(:with_serialized_stanines) { create(:grade_evaluation, _stanines: nil, _grade_stanines: [ 1, 3, 4, 5, 6, 9 ]) }
+    let!(:without_stanines)      { create(:boolean_evaluation, stanines: nil) }
+    let!(:with_numeric_stanines) { create(:numeric_evaluation, _stanines: Array.new(9, 1..1)) }
+    let!(:with_grade_stanines)   { create(:grade_evaluation,   _grade_stanines: [ 1, 3, 4, 5, 6, 9 ]) }
 
     subject { Evaluation.with_stanines.all }
 
     it { should have(2).items }
-    it { should match_array([with_field_stanines, with_serialized_stanines]) }
+    it { should match_array([with_numeric_stanines, with_grade_stanines]) }
   end
 end

@@ -8,19 +8,17 @@
   .control-group
     %label.control-label= t(:".red")
     .controls
-      %input(disabled="disabled" class="input-mini red-min" type="text" value="0")
+      = f.text_field :red_min, id: "evaluation_red_min_text", class: "input-mini", disabled: true
       &ndash;
-      %input(disabled="disabled" class="input-mini red-max" type="text" value="0" id="evaluation-red-max")
+      = f.text_field :red_max, id: "evaluation_red_max_text", class: "input-mini", disabled: true
 
-  - has_color_range_error = !(evaluation.errors[:red_below] + evaluation.errors[:green_above]).blank?
+  - has_color_range_error = !(evaluation.errors[:yellow_min] + evaluation.errors[:yellow_max]).blank?
   .control-group{class: "#{"error" if has_color_range_error}"}
-    = f.label :red_below,
-      "#{t(:".yellow")}<abbr title=\"#{t(:"formtastic.required")}\">*</abbr>".html_safe,
-      class: "control-label"
+    = f.label :yellow_min, t(:".yellow"), class: "control-label"
     .controls
-      = f.text_field :red_below,   required: true, class: "input-mini"
+      = f.text_field :yellow_min, id: "evaluation_yellow_min_text", class: "input-mini"
       &ndash;
-      = f.text_field :green_above, required: true, class: "input-mini"
+      = f.text_field :yellow_max, id: "evaluation_yellow_max_text", class: "input-mini"
       - if has_color_range_error
         .help-block= t(:".color_range_error_text")
       - else
@@ -29,9 +27,17 @@
   .control-group
     %label.control-label= t(:".green")
     .controls
-      %input(disabled="disabled" class="input-mini green-min" type="text" value="0" id="evaluation-green-min")
+      = f.text_field :green_min, id: "evaluation_green_min_text", class: "input-mini", disabled: true
       &ndash;
-      %input(disabled="disabled" class="input-mini green-max" type="text" value="0" id="evaluation-green-max")
+      = f.text_field :green_max, id: "evaluation_green_max_text", class: "input-mini", disabled: true
+
+  -# These are values that are actually submitted
+  = f.hidden_field :red_min
+  = f.hidden_field :red_max
+  = f.hidden_field :yellow_min
+  = f.hidden_field :yellow_max
+  = f.hidden_field :green_min
+  = f.hidden_field :green_max
 
   .control-group
     .controls
@@ -42,16 +48,21 @@
   class: "form-horizontal inputs value-type-fields numeric-fields",
   style: hide ? "display:none;" : "" do
 
-  - 1.upto(8) do |i|
-    = f.input :"stanine#{i}",
-      input_html: { class: "input-mini stanine-field" },
-      prepend: '<span class="stanine-below">0</span> &ndash;'.html_safe
-
-  .control-group
-    %label.control-label= t(:".stanine9")
-    .controls
-      .input-prepend
-        %span.add-on
-          %span.stanine-below 0
-          &ndash;
-        %input(disabled="disabled" class="input-mini stanine-max" type="number" value="0" id="evaluation-stanine-max")
+  - 1.upto(9) do |i|
+    - has_error = !(evaluation.errors[:"stanine#{i}_min"] + evaluation.errors[:"stanine#{i}_max"]).blank?
+    .control-group{class: "#{"error" if has_error}"}
+      %label.control-label= t(:".stanine#{i}")
+      .controls
+        = f.text_field   :"stanine#{i}_min",
+          id: "evaluation_stanine#{i}_min_text",
+          class: "input-mini stanine-field-min",
+          disabled: true,
+          data: { target: "evaluation_stanine#{i}_min" }
+        = f.hidden_field :"stanine#{i}_min", class: "stanine-field-min"
+        &ndash;
+        = f.text_field   :"stanine#{i}_max",
+          id: "evaluation_stanine#{i}_max_text",
+          class: "input-mini stanine-field-max",
+          data: { stanine: i }
+        - if has_error
+          .help-block= t(:".stanine_range_error_text")

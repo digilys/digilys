@@ -37,16 +37,30 @@ class Evaluation < ActiveRecord::Base
     :target,
     :value_type,
     :category_list,
-    :red_below,
-    :green_above,
-    :stanine1,
-    :stanine2,
-    :stanine3,
-    :stanine4,
-    :stanine5,
-    :stanine6,
-    :stanine7,
-    :stanine8,
+    :red_min,
+    :red_max,
+    :yellow_min,
+    :yellow_max,
+    :green_min,
+    :green_max,
+    :stanine1_min,
+    :stanine1_max,
+    :stanine2_min,
+    :stanine2_max,
+    :stanine3_min,
+    :stanine3_max,
+    :stanine4_min,
+    :stanine4_max,
+    :stanine5_min,
+    :stanine5_max,
+    :stanine6_min,
+    :stanine6_max,
+    :stanine7_min,
+    :stanine7_max,
+    :stanine8_min,
+    :stanine8_max,
+    :stanine9_min,
+    :stanine9_max,
     :color_for_true,
     :color_for_false,
     :color_for_grade_a,
@@ -80,57 +94,49 @@ class Evaluation < ActiveRecord::Base
     },
   )
 
-  validates(:red_below,
-    presence: true,
-    numericality: {
-      only_integer: true,
-      greater_than_or_equal_to: 0,
-      less_than_or_equal_to: proc { |e| e.green_above.to_i },
-      unless: proc { |e| e.red_below.nil? || e.green_above.nil? }
-    },
-    if: :value_type_numeric?
-  )
-  validates(:green_above,
-    presence: true,
-    numericality: {
-      only_integer: true,
-      greater_than_or_equal_to: proc { |e| e.red_below.to_i },
-      less_than_or_equal_to: :max_result,
-      unless: proc { |e| e.red_below.nil? || e.green_above.nil? }
-    },
-    if: :value_type_numeric?
-  )
+  VALID_COLORS = [:red, :yellow, :green]
 
-  validates(:stanine1,
-    numericality: {
-      allow_nil:                true,
-      only_integer:             true,
-      greater_than_or_equal_to: 0,
-      less_than_or_equal_to:    ->(evaluation) { (evaluation.stanine2 || evaluation.max_result).to_i }
-    },
-    presence: { if: :has_numeric_stanines? }
-  )
-  2.upto(7) do |i|
-    validates(:"stanine#{i}",
+  VALID_COLORS.each do |color|
+    validates(:"#{color}_min",
       numericality: {
         allow_nil:                true,
         only_integer:             true,
-        greater_than_or_equal_to: ->(evaluation) { (evaluation.send(:"stanine#{i-1}") || 0).to_i },
-        less_than_or_equal_to:    ->(evaluation) { (evaluation.send(:"stanine#{i+1}") || evaluation.max_result).to_i }
+        greater_than_or_equal_to: 0,
+        less_than_or_equal_to:    proc { |e| e.send(:"#{color}_max").to_i }
       },
-      presence: { if: :has_numeric_stanines? }
+      if: :value_type_numeric?
+    )
+    validates(:"#{color}_max",
+      numericality: {
+        allow_nil:                true,
+        only_integer:             true,
+        greater_than_or_equal_to: proc { |e| e.send(:"#{color}_min").to_i },
+        less_than_or_equal_to:    :max_result
+      },
+      if: :value_type_numeric?
     )
   end
-  validates(:stanine8,
-    numericality: {
-      allow_nil:                true,
-      only_integer:             true,
-      greater_than_or_equal_to: ->(evaluation) { (evaluation.stanine7 || 0).to_i }
-    },
-    presence: { if: :has_numeric_stanines? }
-  )
 
-  VALID_COLORS = [:red, :yellow, :green]
+  1.upto(9) do |i|
+    validates(:"stanine#{i}_min",
+      numericality: {
+        allow_nil:                true,
+        only_integer:             true,
+        greater_than_or_equal_to: 0,
+        less_than_or_equal_to:    proc { |e| e.send(:"stanine#{i}_max").to_i }
+      },
+      if: :value_type_numeric?
+    )
+    validates(:"stanine#{i}_max",
+      numericality: {
+        allow_nil:                true,
+        only_integer:             true,
+        greater_than_or_equal_to: proc { |e| e.send(:"stanine#{i}_min").to_i },
+        less_than_or_equal_to:    :max_result,
+      },
+      if: :value_type_numeric?
+    )
+  end
 
   validates(:color_for_true, :color_for_false,
     inclusion: { in: VALID_COLORS },
@@ -169,7 +175,6 @@ class Evaluation < ActiveRecord::Base
 
 
   before_validation :set_default_values_for_value_type
-  before_validation :convert_percentages
   after_update      :touch_results
   before_save       :set_aliases_from_value_type
   before_save       :persist_colors_and_stanines
@@ -213,34 +218,6 @@ class Evaluation < ActiveRecord::Base
 
   def result_for(student)
     results.where(student_id: student).first
-  end
-
-  def red_range
-    @red_range ||= if !self.colors.try(:has_key?, "red")
-      nil
-    elsif self.colors["red"]["min"] == self.colors["red"]["max"]
-      self.colors["red"]["min"]
-    else
-      self.colors["red"]["min"]..self.colors["red"]["max"] 
-    end
-  end
-  def yellow_range
-    @yellow_range ||= if !self.colors.try(:has_key?, "yellow")
-      nil
-    elsif self.colors["yellow"]["min"] == self.colors["yellow"]["max"]
-      self.colors["yellow"]["min"]
-    else
-      self.colors["yellow"]["min"]..self.colors["yellow"]["max"] 
-    end
-  end
-  def green_range
-    @green_range ||= if !self.colors.try(:has_key?, "green")
-      nil
-    elsif self.colors["green"]["min"] == self.colors["green"]["max"]
-      self.colors["green"]["min"]
-    else
-      self.colors["green"]["min"]..self.colors["green"]["max"] 
-    end
   end
 
   # Indicates if this evaluation uses stanine values
@@ -310,25 +287,54 @@ class Evaluation < ActiveRecord::Base
 
 
   # Virtual accessors for numeric colors and stanines
-  attr_writer :red_below, :green_above
-  def red_below
-    unless defined?(@red_below)
-      @red_below = self.colors.try(:[], "yellow").try(:[], "min")
+  attr_writer :red_min, :red_max, :yellow_min, :yellow_max, :green_min, :green_max
+  def red_min
+    unless defined?(@red_min)
+      @red_min = self.colors.try(:[], "red").try(:[], "min")
     end
-    @red_below
+    @red_min
   end
-  def green_above
-    unless defined?(@green_above)
-      @green_above = self.colors.try(:[], "yellow").try(:[], "max")
+  def red_max
+    unless defined?(@red_max)
+      @red_max = self.colors.try(:[], "red").try(:[], "max")
     end
-    @green_above
+    @red_max
+  end
+  def yellow_min
+    unless defined?(@yellow_min)
+      @yellow_min = self.colors.try(:[], "yellow").try(:[], "min")
+    end
+    @yellow_min
+  end
+  def yellow_max
+    unless defined?(@yellow_max)
+      @yellow_max = self.colors.try(:[], "yellow").try(:[], "max")
+    end
+    @yellow_max
+  end
+  def green_min
+    unless defined?(@green_min)
+      @green_min = self.colors.try(:[], "green").try(:[], "min")
+    end
+    @green_min
+  end
+  def green_max
+    unless defined?(@green_max)
+      @green_max = self.colors.try(:[], "green").try(:[], "max")
+    end
+    @green_max
   end
 
-  1.upto(8).each do |i|
-    attr_writer :"stanine#{i}"
-    define_method(:"stanine#{i}") do
-      v = instance_variable_get("@stanine#{i}")
-      v ||= upper_limit_for_stanine(i)
+  1.upto(9).each do |i|
+    attr_writer :"stanine#{i}_min", :"stanine#{i}_max"
+    define_method(:"stanine#{i}_min") do
+      v = instance_variable_get("@stanine#{i}_min")
+      v ||= self.stanines.try(:[], i.to_s).try(:[], "min")
+      v.blank? ? nil : v
+    end
+    define_method(:"stanine#{i}_max") do
+      v = instance_variable_get("@stanine#{i}_max")
+      v ||= self.stanines.try(:[], i.to_s).try(:[], "max")
       v.blank? ? nil : v
     end
   end
@@ -439,14 +445,24 @@ class Evaluation < ActiveRecord::Base
       !@stanine_for_grade_f.blank?
   end
   def has_numeric_stanines?
-    return !stanine1.blank? ||
-      !stanine2.blank? ||
-      !stanine3.blank? ||
-      !stanine4.blank? ||
-      !stanine5.blank? ||
-      !stanine6.blank? ||
-      !stanine7.blank? ||
-      !stanine8.blank?
+    return !stanine1_min.blank? ||
+      !stanine1_max.blank? ||
+      !stanine2_min.blank? ||
+      !stanine2_max.blank? ||
+      !stanine3_min.blank? ||
+      !stanine3_max.blank? ||
+      !stanine4_min.blank? ||
+      !stanine4_max.blank? ||
+      !stanine5_min.blank? ||
+      !stanine5_max.blank? ||
+      !stanine6_min.blank? ||
+      !stanine6_max.blank? ||
+      !stanine7_min.blank? ||
+      !stanine7_max.blank? ||
+      !stanine8_min.blank? ||
+      !stanine8_max.blank? ||
+      !stanine9_min.blank? ||
+      !stanine9_max.blank?
   end
 
 
@@ -459,20 +475,6 @@ class Evaluation < ActiveRecord::Base
       end
     end
     return nil
-  end
-
-  def convert_percentages
-    return unless self.max_result
-
-    %w(red_below green_above).each do |attr|
-      value = send(attr)
-
-      if value.is_a?(String) &&
-          /\A([+-]?\d+)\s*%\Z/.match(value) # Regex used for integer validation + a percent sign at the end
-        percentage = $1.to_f                # $1 contains the number matched by the regex
-        send(:"#{attr}=", (self.max_result * percentage/100.0).to_i)
-      end
-    end
   end
 
   def touch_results
@@ -552,24 +554,23 @@ class Evaluation < ActiveRecord::Base
       }
     when "numeric"
       colors = {}
-      colors["red"]    = { min: 0,                    max: self.red_below - 1 } if self.red_below > 0
-      colors["yellow"] = { min: self.red_below,       max: self.green_above }
-      colors["green"]  = { min: self.green_above + 1, max: self.max_result }    if self.green_above < self.max_result
+      colors["red"]    = { min: self.red_min.to_i,    max: self.red_max.to_i }    if self.red_min    && self.red_max
+      colors["yellow"] = { min: self.yellow_min.to_i, max: self.yellow_max.to_i } if self.yellow_min && self.yellow_max
+      colors["green"]  = { min: self.green_min.to_i,  max: self.green_max.to_i }  if self.green_min  && self.green_max
       self.colors = colors
 
-      if self.has_numeric_stanines?
-        stanines = {}
-        stanines[1] = { min: 0, max: self.stanine1 }
-        stanines[2] = { min: self.stanine1 + 1, max: self.stanine2 } if self.stanine2 > self.stanine1
-        stanines[3] = { min: self.stanine2 + 1, max: self.stanine3 } if self.stanine3 > self.stanine2
-        stanines[4] = { min: self.stanine3 + 1, max: self.stanine4 } if self.stanine4 > self.stanine3
-        stanines[5] = { min: self.stanine4 + 1, max: self.stanine5 } if self.stanine5 > self.stanine4
-        stanines[6] = { min: self.stanine5 + 1, max: self.stanine6 } if self.stanine6 > self.stanine5
-        stanines[7] = { min: self.stanine6 + 1, max: self.stanine7 } if self.stanine7 > self.stanine6
-        stanines[8] = { min: self.stanine7 + 1, max: self.stanine8 } if self.stanine8 > self.stanine7
-        stanines[9] = { min: self.stanine8 + 1, max: self.max_result } if self.max_result > self.stanine8
-        self.stanines = stanines
-      end
+      stanines = {}
+      stanines[1] = { min: self.stanine1_min.to_i, max: self.stanine1_max.to_i } if self.stanine1_min && self.stanine1_max
+      stanines[2] = { min: self.stanine2_min.to_i, max: self.stanine2_max.to_i } if self.stanine2_min && self.stanine2_max
+      stanines[3] = { min: self.stanine3_min.to_i, max: self.stanine3_max.to_i } if self.stanine3_min && self.stanine3_max
+      stanines[4] = { min: self.stanine4_min.to_i, max: self.stanine4_max.to_i } if self.stanine4_min && self.stanine4_max
+      stanines[5] = { min: self.stanine5_min.to_i, max: self.stanine5_max.to_i } if self.stanine5_min && self.stanine5_max
+      stanines[6] = { min: self.stanine6_min.to_i, max: self.stanine6_max.to_i } if self.stanine6_min && self.stanine6_max
+      stanines[7] = { min: self.stanine7_min.to_i, max: self.stanine7_max.to_i } if self.stanine7_min && self.stanine7_max
+      stanines[8] = { min: self.stanine8_min.to_i, max: self.stanine8_max.to_i } if self.stanine8_min && self.stanine8_max
+      stanines[9] = { min: self.stanine9_min.to_i, max: self.stanine9_max.to_i } if self.stanine9_min && self.stanine9_max
+
+      self.stanines = !stanines.blank? ? stanines : nil
     end
   end
 end

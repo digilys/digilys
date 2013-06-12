@@ -61,21 +61,37 @@ FactoryGirl.define do
     status          :empty
 
     ignore do
-      _yellow  15..35
-      _stanines [7, 12, 17, 22, 27, 32, 37, 42]
+      _yellow   15..35
+      _red      nil
+      _green    nil
+      _stanines nil # [0..7, 8..12, 13..17, 18..22, 23..27, 28..32, 33..37, 38..42, 43..50]
     end
 
-    red_below       { _yellow ? _yellow.min : nil }
-    green_above     { _yellow ? _yellow.max : nil }
+    red_min    { _red ? _red.min : (_yellow && _yellow.min > 0 ? 0 : nil) }
+    red_max    { _red ? _red.max : (_yellow && _yellow.min > 0 ? _yellow.min - 1 : nil) }
+    yellow_min { _yellow ? _yellow.min : nil }
+    yellow_max { _yellow ? _yellow.max : nil }
+    green_min  { _green ? _green.min : (_yellow && _yellow.max < max_result ? _yellow.max + 1 : nil) }
+    green_max  { _green ? _green.max : (_yellow && _yellow.max < max_result ? max_result : nil) }
 
-    stanine1        { _stanines ? _stanines[0] : nil }
-    stanine2        { _stanines ? _stanines[1] : nil }
-    stanine3        { _stanines ? _stanines[2] : nil }
-    stanine4        { _stanines ? _stanines[3] : nil }
-    stanine5        { _stanines ? _stanines[4] : nil }
-    stanine6        { _stanines ? _stanines[5] : nil }
-    stanine7        { _stanines ? _stanines[6] : nil }
-    stanine8        { _stanines ? _stanines[7] : nil }
+    stanine1_min { _stanines ? _stanines[0].try(:min) : nil }
+    stanine1_max { _stanines ? _stanines[0].try(:max) : nil }
+    stanine2_min { _stanines ? _stanines[1].try(:min) : nil }
+    stanine2_max { _stanines ? _stanines[1].try(:max) : nil }
+    stanine3_min { _stanines ? _stanines[2].try(:min) : nil }
+    stanine3_max { _stanines ? _stanines[2].try(:max) : nil }
+    stanine4_min { _stanines ? _stanines[3].try(:min) : nil }
+    stanine4_max { _stanines ? _stanines[3].try(:max) : nil }
+    stanine5_min { _stanines ? _stanines[4].try(:min) : nil }
+    stanine5_max { _stanines ? _stanines[4].try(:max) : nil }
+    stanine6_min { _stanines ? _stanines[5].try(:min) : nil }
+    stanine6_max { _stanines ? _stanines[5].try(:max) : nil }
+    stanine7_min { _stanines ? _stanines[6].try(:min) : nil }
+    stanine7_max { _stanines ? _stanines[6].try(:max) : nil }
+    stanine8_min { _stanines ? _stanines[7].try(:min) : nil }
+    stanine8_max { _stanines ? _stanines[7].try(:max) : nil }
+    stanine9_min { _stanines ? _stanines[8].try(:min) : nil }
+    stanine9_max { _stanines ? _stanines[8].try(:max) : nil }
 
     factory :suite_evaluation do
       suite

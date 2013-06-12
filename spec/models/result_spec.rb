@@ -49,14 +49,14 @@ describe Result do
 
     it "updates the color when the evaluation changes" do
       result.color.should == :yellow
-      evaluation.update_attributes(red_below: 6)
+      evaluation.update_attributes(red_max: 6, yellow_min: 7)
       result.reload
       result.color.should == :red
     end
   end
 
   describe ".stanine" do
-    let(:_stanines) { [10, 20, 30, 40, 50, 60, 70, 80] }
+    let(:_stanines) { [ 0..10, 11..20, 21..30, 31..40, 41..50, 51..60, 61..70, 71..80, 81..90 ] }
     let(:evaluation)     { create(:evaluation, max_result: 90, _stanines: _stanines) }
     let(:value)          { 35 }
     subject(:result)     { create(:result, evaluation: evaluation, value: value) }
@@ -85,6 +85,7 @@ describe Result do
 
     context "with overlapping stanines" do
       let(:_stanines) { [10, 20, 30, 40, 40, 40, 70, 80]}
+      let(:_stanines) { [ 0..10, 11..20, 21..30, 31..40, 40..40, 40..40, 41..70, 71..80, 81..90 ] }
       context "when matching several" do
         let(:value)   { 40 }
         its(:stanine) { should == 4 }
@@ -102,7 +103,7 @@ describe Result do
 
     it "updates the stanine when the evaluation changes" do
       result.stanine.should == 4
-      evaluation.update_attributes(stanine3: 40, stanine4: 45)
+      evaluation.update_attributes(stanine3_max: 38, stanine4_min: 39)
       result.reload
       result.stanine.should == 3
     end
