@@ -17,10 +17,14 @@
       %tr.meeting
         %th= Activity.human_attribute_name(:meeting)
         %td= link_to @activity.meeting.name, @activity.meeting
-    - if @activity.date
-      %tr.date
-        %th= Evaluation.human_attribute_name(:date)
-        %td= l @activity.date
+    - if @activity.start_date
+      %tr.start-date
+        %th= Activity.human_attribute_name(:start_date)
+        %td= l @activity.start_date
+    - if @activity.end_date
+      %tr.end-date
+        %th= Activity.human_attribute_name(:end_date)
+        %td= l @activity.end_date
     %tr.status
       %th= Activity.human_attribute_name(:status)
       %td

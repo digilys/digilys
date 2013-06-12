@@ -12,7 +12,8 @@ class Activity < ActiveRecord::Base
 
   attr_accessible :description,
     :name,
-    :date,
+    :start_date,
+    :end_date,
     :notes,
     :status,
     :suite_id,
@@ -34,7 +35,7 @@ class Activity < ActiveRecord::Base
   after_save :clear_students_and_groups
 
   def overdue?
-    !self.closed? && self.date && self.date < Date.today
+    !self.closed? && self.end_date && self.end_date < Date.today
   end
 
 
@@ -97,9 +98,13 @@ class Activity < ActiveRecord::Base
   end
 
   def validate_date_format
-    date = self.date_before_type_cast
-    if !date.blank? && !date.is_a?(Date) && date !~ /^\d{4}-\d{2}-\d{2}$/
-      errors.add(:date, :invalid)
+    start_date = self.start_date_before_type_cast
+    if !start_date.blank? && !start_date.is_a?(Date) && start_date !~ /^\d{4}-\d{2}-\d{2}$/
+      errors.add(:start_date, :invalid)
+    end
+    end_date = self.end_date_before_type_cast
+    if !end_date.blank? && !end_date.is_a?(Date) && end_date !~ /^\d{4}-\d{2}-\d{2}$/
+      errors.add(:end_date, :invalid)
     end
   end
 end

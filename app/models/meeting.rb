@@ -1,6 +1,6 @@
 class Meeting < ActiveRecord::Base
   belongs_to :suite,      inverse_of: :meetings
-  has_many   :activities, inverse_of: :meeting, order: "date asc nulls last, name asc"
+  has_many   :activities, inverse_of: :meeting, order: "start_date asc nulls last, end_date asc nulls last, name asc"
 
   accepts_nested_attributes_for :activities,
     reject_if: proc { |attributes| attributes[:name].blank? && attributes[:description].blank? }

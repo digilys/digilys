@@ -19,7 +19,8 @@ describe Activity do
     it { should allow_mass_assignment_of(:type) }
     it { should allow_mass_assignment_of(:status) }
     it { should allow_mass_assignment_of(:name) }
-    it { should allow_mass_assignment_of(:date) }
+    it { should allow_mass_assignment_of(:start_date) }
+    it { should allow_mass_assignment_of(:end_date) }
     it { should allow_mass_assignment_of(:description) }
     it { should allow_mass_assignment_of(:notes) }
   end
@@ -29,9 +30,12 @@ describe Activity do
     it { should ensure_inclusion_of(:type).in_array(%w(action inquiry)) }
     it { should ensure_inclusion_of(:status).in_array(%w(open closed)) }
 
-    it { should     allow_value(nil).for(:date) }
-    it { should     allow_value("").for(:date) }
-    it { should_not allow_value("201-06-07").for(:date) }
+    it { should     allow_value(nil).for(:start_date) }
+    it { should     allow_value("").for(:start_date) }
+    it { should_not allow_value("201-06-07").for(:start_date) }
+    it { should     allow_value(nil).for(:end_date) }
+    it { should     allow_value("").for(:end_date) }
+    it { should_not allow_value("201-06-07").for(:end_date) }
   end
 
   describe ".set_suite_from_meeting" do
@@ -50,19 +54,19 @@ describe Activity do
 
   context ".overdue?" do
     it "returns true for past activities that are not completed" do
-      create(:activity, date: Date.today - 1, status: :open).should     be_overdue
+      create(:activity, end_date: Date.today - 1, status: :open).should     be_overdue
     end
     it "returns false for future activities" do
-      create(:activity, date: Date.today + 1, status: :open).should_not be_overdue
+      create(:activity, end_date: Date.today + 1, status: :open).should_not be_overdue
     end
     it "returns false for past activities that are completed" do
-      create(:activity, date: Date.today - 1, status: :closed).should_not be_overdue
+      create(:activity, end_date: Date.today - 1, status: :closed).should_not be_overdue
     end
     it "considers today's date to be a future activity" do
-      create(:activity, date: Date.today    , status: :open).should_not be_overdue
+      create(:activity, end_date: Date.today    , status: :open).should_not be_overdue
     end
     it "handle's nil dates" do
-      create(:activity, date: nil           , status: :open).should_not be_overdue
+      create(:activity, end_date: nil           , status: :open).should_not be_overdue
     end
   end
 

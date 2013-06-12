@@ -111,7 +111,8 @@ sv:
         type: Typ
         status: Status
         name: Rubrik
-        date: Datum
+        start_date: Startdatum
+        end_date: Slutdatum
         description: Beskrivning
         notes: Anteckningar
         students_and_groups: Elever/grupper

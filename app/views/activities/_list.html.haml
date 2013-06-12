@@ -4,6 +4,9 @@
       %li{class: activity.overdue? ? "overdue" : ""}
         = link_to activity do
           %span.name= activity.name
-          - if activity.date
-            %small.date= l(activity.date)
+          - if activity.start_date || activity.end_date
+            - dates = []
+            - dates << l(activity.start_date) if activity.start_date
+            - dates << l(activity.end_date)   if activity.end_date
+            %small.date= dates.join(" - ")
           %span.label= activity.type_text

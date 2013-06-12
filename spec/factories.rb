@@ -168,7 +168,8 @@ FactoryGirl.define do
     type            :action
     status          :open
     sequence(:name) { |i| "Activity %09d" % i }
-    date            nil
+    start_date      nil
+    end_date        nil
     description     nil
     notes           nil
 
