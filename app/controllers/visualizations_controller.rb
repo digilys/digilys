@@ -35,7 +35,8 @@ class VisualizationsController < ApplicationController
 
   def filter
     session[:visualization_filter] ||= {}
-    session[:visualization_filter][:categories] = params[:filter_categories]
+    session[:visualization_filter][params[:type].to_sym] ||= {}
+    session[:visualization_filter][params[:type].to_sym][:categories] = params[:filter_categories]
     redirect_to(params[:return_to] || root_url())
   end
 
@@ -55,14 +56,19 @@ class VisualizationsController < ApplicationController
   def evaluations
     if @suite
       evaluations = @suite.evaluations
+      type = :suite
     elsif @student
       evaluations = @student.suite_evaluations
+      type = :student
     else
       return
     end
 
-    if evaluations && session[:visualization_filter] && !session[:visualization_filter][:categories].blank?
-      evaluations = evaluations.tagged_with(session[:visualization_filter][:categories], on: :categories)
+    if evaluations &&
+        session[:visualization_filter] &&
+        session[:visualization_filter][type] &&
+        !session[:visualization_filter][type][:categories].blank?
+      evaluations = evaluations.tagged_with(session[:visualization_filter][type][:categories], on: :categories)
     end
 
     return evaluations

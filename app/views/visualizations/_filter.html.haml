@@ -1,8 +1,12 @@
+- suite   ||= nil
+- student ||= nil
+
 = form_tag filter_visualization_path(), method: :put, class: "form-inline" do
   = label_tag :filter_categories, "Visa endast"
-  = hidden_field_tag :filter_categories, session[:visualization_filter].try(:[], :categories),
+  = hidden_field_tag :filter_categories, session[:visualization_filter].try(:[], suite ? :suite : :student).try(:[], :categories),
     class: "tag-field",
     data: { "existing-tags" => Evaluation.all_tags(on: :categories).collect(&:name).to_json }
 
   = hidden_field_tag :return_to, url_for()
+  = hidden_field_tag :type, suite ? :suite : :student
   = submit_tag "Filtrera", class: "btn"
