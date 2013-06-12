@@ -121,42 +121,6 @@ describe Evaluation do
         it { should_not allow_value(0).for(:"stanine_for_grade_#{grade}") }
         it { should_not allow_value(10).for(:"stanine_for_grade_#{grade}") }
       end
-
-      context "grade and color ordering" do
-        subject { build(:grade_evaluation, _grade_colors: [2] * 6) } # All colors are yellow
-
-        # All values have to be >= than the previous value
-        it { should_not allow_value(1).for(:color_for_grade_e) }
-        it { should_not allow_value(1).for(:color_for_grade_d) }
-        it { should_not allow_value(1).for(:color_for_grade_c) }
-        it { should_not allow_value(1).for(:color_for_grade_b) }
-        it { should_not allow_value(1).for(:color_for_grade_a) }
-
-        # All values have to be <= than the next value
-        it { should_not allow_value(3).for(:color_for_grade_f) }
-        it { should_not allow_value(3).for(:color_for_grade_e) }
-        it { should_not allow_value(3).for(:color_for_grade_d) }
-        it { should_not allow_value(3).for(:color_for_grade_c) }
-        it { should_not allow_value(3).for(:color_for_grade_b) }
-      end
-
-      context "grade and stanine ordering" do
-        subject { build(:grade_evaluation, _grade_stanines: [5] * 6) } # Stanine 5 for all
-
-        # All values have to be >= than the previous value
-        it { should_not allow_value(4).for(:stanine_for_grade_e) }
-        it { should_not allow_value(4).for(:stanine_for_grade_d) }
-        it { should_not allow_value(4).for(:stanine_for_grade_c) }
-        it { should_not allow_value(4).for(:stanine_for_grade_b) }
-        it { should_not allow_value(4).for(:stanine_for_grade_a) }
-
-        # All values have to be <= than the next value
-        it { should_not allow_value(6).for(:stanine_for_grade_f) }
-        it { should_not allow_value(6).for(:stanine_for_grade_e) }
-        it { should_not allow_value(6).for(:stanine_for_grade_d) }
-        it { should_not allow_value(6).for(:stanine_for_grade_c) }
-        it { should_not allow_value(6).for(:stanine_for_grade_b) }
-      end
     end
 
     context "with type" do

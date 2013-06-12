@@ -148,25 +148,21 @@ class Evaluation < ActiveRecord::Base
   GRADES.each_with_index do |grade, i|
     validates(:"color_for_grade_#{grade}",
       numericality: {
-        only_integer: true,
-        greater_than_or_equal_to:
-          ->(evaluation) { i <= 0 ? 1 : evaluation.send(:"color_for_grade_#{GRADES[i-1]}") || 1 },
-        less_than_or_equal_to:
-          ->(evaluation) { i >= 5 ? 3 : evaluation.send(:"color_for_grade_#{GRADES[i+1]}") || 3 },
-        message: :faulty_grade_color
+        only_integer:             true,
+        greater_than_or_equal_to: 1,
+        less_than_or_equal_to:    3,
+        message:                  :faulty_grade_color
       },
       if: :value_type_grade?
     )
     validates(:"stanine_for_grade_#{grade}",
       numericality: {
-        allow_nil: true,
-        allow_blank: true,
-        only_integer: true,
-        greater_than_or_equal_to:
-          ->(evaluation) { i <= 0 ? 1 : evaluation.send(:"stanine_for_grade_#{GRADES[i-1]}") || 1 },
-        less_than_or_equal_to:
-          ->(evaluation) { i >= 5 ? 9 : evaluation.send(:"stanine_for_grade_#{GRADES[i+1]}") || 9 },
-        message: :faulty_grade_stanine
+        allow_nil:                true,
+        allow_blank:              true,
+        only_integer:             true,
+        greater_than_or_equal_to: 1,
+        less_than_or_equal_to:    9,
+        message:                  :faulty_grade_stanine
       },
       presence: { if: :has_grade_stanines? },
       if: :value_type_grade?
