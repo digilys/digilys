@@ -54,7 +54,6 @@
           %tr
             %th.select &nbsp;
             %th.name= User.human_attribute_name(:name)
-            %th.actions &nbsp;
         %tbody
           - @group.users.each do |user|
             %tr
@@ -62,7 +61,5 @@
                 = check_box_tag "user_ids[]", user.id, false, id: "user_ids_#{user.id}"
               %td.name
                 %label(for="user_ids_#{user.id}")= user.name
-              %td.actions
-                %a.btn.btn-mini{href:url_for(user)}= t(:".show_action")
 
       = submit_tag t(:".remove_users_action"), class: "btn btn-small btn-danger"
