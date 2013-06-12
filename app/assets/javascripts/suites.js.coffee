@@ -27,7 +27,6 @@ $ ->
             $("#new_participant").show()
 
     $(".suite-results").dataTable(
-        bFilter:    false
         bPaginate:  false
         bInfo:      false
         bSort:      false
