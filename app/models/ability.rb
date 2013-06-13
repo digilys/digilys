@@ -4,9 +4,15 @@ class Ability
   def initialize(user)
     return unless user
 
-    alias_action [ :index, :search, :template ], to: :list
-    alias_action :new_from_template,             to: :create
-    alias_action :confirm_destroy,               to: :destroy
+    alias_action [ :index, :search ], to: :list
+    alias_action :new_from_template,  to: :create
+    alias_action :confirm_destroy,    to: :destroy
+
+    alias_action [
+      :show,
+      :color_table,
+      :search_participants
+    ], to: :view
 
     alias_action [
       :select_users,
@@ -23,18 +29,15 @@ class Ability
 
       # Users
       cannot :manage, User
+      can    :search, User
 
       # Suites
-      cannot :manage, Suite
-      can [ :list, :create ], Suite
-      can [
-        :show,
-        :update,
-        :color_table
-      ], Suite do |suite|
+      cannot :manage,         Suite
+      can :create,            Suite
+      can [ :view, :update ], Suite do |suite|
         suite.is_template? || user.has_role?(:suite_manager, suite)
       end
-      can :destroy, Suite do |suite|
+      can :destroy,           Suite do |suite|
         !suite.is_template && user.has_role?(:suite_manager, suite)
       end
 
