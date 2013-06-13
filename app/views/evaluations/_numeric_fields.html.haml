@@ -21,8 +21,6 @@
       = f.text_field :yellow_max, id: "evaluation_yellow_max_text", class: "input-mini"
       - if has_color_range_error
         .help-block= t(:".color_range_error_text")
-      - else
-        %span.help-block= t(:".percentage_help")
 
   .control-group
     %label.control-label= t(:".green")
@@ -30,6 +28,7 @@
       = f.text_field :green_min, id: "evaluation_green_min_text", class: "input-mini", disabled: true
       &ndash;
       = f.text_field :green_max, id: "evaluation_green_max_text", class: "input-mini", disabled: true
+      .help-block= t(:".color_range_help_html")
 
   -# These are values that are actually submitted
   = f.hidden_field :red_min
