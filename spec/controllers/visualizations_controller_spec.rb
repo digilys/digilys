@@ -9,7 +9,6 @@ describe VisualizationsController do
     let!(:result_s1_e1) { create(:result, evaluation: evaluations.first,  student: students.first,  value: 4) }
     let!(:result_s1_e2) { create(:result, evaluation: evaluations.second, student: students.first,  value: 5) }
     let!(:result_s2_e1) { create(:result, evaluation: evaluations.first,  student: students.second, value: 6) }
-    let!(:result_s2_e2) { create(:result, evaluation: evaluations.second, student: students.second, value: 7) }
 
     subject(:table) { controller.send(:results_to_datatable, evaluations) }
 
@@ -36,7 +35,7 @@ describe VisualizationsController do
       it { should have(3).items }
       its(:first)  { should == evaluations.second.name }
       its(:second) { should == result_s1_e2.value.to_f / 10.0 }
-      its(:third)  { should == result_s2_e2.value.to_f / 10.0 }
+      its(:third)  { should be_nil }
     end
 
     context "limited by student" do

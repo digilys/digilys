@@ -92,7 +92,13 @@ class VisualizationsController < ApplicationController
       row = [ evaluation.name ]
 
       students.each do |student|
-        row << (evaluation.result_for(student).try(:value) || 0).to_f / evaluation.max_result.to_f
+        result = evaluation.result_for(student)
+
+        if result && result.value
+          row << result.value.to_f / evaluation.max_result.to_f
+        else
+          row << nil
+        end
       end
 
       rows << row

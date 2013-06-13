@@ -18,11 +18,12 @@
 = render partial: "filter", locals: locals_base
 
 - gchart_init
-- gchart id: "chart",
-  type:      :line,
-  url:       url_for(params.merge(format: :json)),
-  height:    400,
-  curveType: "function",
-  vAxes:     [ { format: "#%", maxValue: 1.0 } ]
+- gchart id:        "chart",
+  type:             :line,
+  url:              url_for(params.merge(format: :json)),
+  height:           400,
+  curveType:        "function",
+  interpolateNulls: true,
+  vAxes:            [ { format: "#%", maxValue: 1.0 } ]
 
 #chart.gchart
