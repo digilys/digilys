@@ -34,8 +34,8 @@ class Evaluation < ActiveRecord::Base
     :name,
     :description,
     :date,
-    :colors,
-    :stanines,
+    :colors_serialized,
+    :stanines_serialized,
     :target,
     :value_type,
     :category_list,
@@ -176,6 +176,20 @@ class Evaluation < ActiveRecord::Base
   after_update      :touch_results
   before_save       :set_aliases_from_value_type
   before_save       :persist_colors_and_stanines
+
+
+  def colors_serialized
+    self.colors.try(:to_json)
+  end
+  def colors_serialized=(value)
+    self.colors = !value.blank? ? JSON.parse(value) : nil
+  end
+  def stanines_serialized
+    self.stanines.try(:to_json)
+  end
+  def stanines_serialized=(value)
+    self.stanines = !value.blank? ? JSON.parse(value) : nil
+  end
 
 
   def has_regular_suite?
@@ -560,7 +574,7 @@ class Evaluation < ActiveRecord::Base
         colors["red"]    = { min: self.red_min.to_i,    max: self.red_max.to_i }    if self.red_min    && self.red_max
         colors["yellow"] = { min: self.yellow_min.to_i, max: self.yellow_max.to_i } if self.yellow_min && self.yellow_max
         colors["green"]  = { min: self.green_min.to_i,  max: self.green_max.to_i }  if self.green_min  && self.green_max
-        self.colors = colors
+        self.colors = !colors.blank? ? colors : nil
       end
 
       unless self.stanines_changed?

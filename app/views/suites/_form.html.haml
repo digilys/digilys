@@ -20,16 +20,8 @@
           = ef.hidden_field :template_id
           = ef.hidden_field :type
           = ef.hidden_field :max_result
-          = ef.hidden_field :red_below
-          = ef.hidden_field :green_above
-          = ef.hidden_field :stanine1
-          = ef.hidden_field :stanine2
-          = ef.hidden_field :stanine3
-          = ef.hidden_field :stanine4
-          = ef.hidden_field :stanine5
-          = ef.hidden_field :stanine6
-          = ef.hidden_field :stanine7
-          = ef.hidden_field :stanine8
+          = ef.hidden_field :colors_serialized
+          = ef.hidden_field :stanines_serialized
 
           = ef.input :name,                              input_html: { readonly: true }
           = ef.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }

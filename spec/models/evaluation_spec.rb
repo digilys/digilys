@@ -38,8 +38,8 @@ describe Evaluation do
     it { should allow_mass_assignment_of(:description) }
     it { should allow_mass_assignment_of(:date) }
     it { should allow_mass_assignment_of(:max_result) }
-    it { should allow_mass_assignment_of(:colors) }
-    it { should allow_mass_assignment_of(:stanines) }
+    it { should allow_mass_assignment_of(:colors_serialized) }
+    it { should allow_mass_assignment_of(:stanines_serialized) }
     it { should allow_mass_assignment_of(:red_min) }
     it { should allow_mass_assignment_of(:red_max) }
     it { should allow_mass_assignment_of(:yellow_min) }
@@ -274,6 +274,61 @@ describe Evaluation do
         its(:colors)   { should == { "explicit" => 1 } }
         its(:stanines) { should == { "explicit" => 2 } }
       end
+    end
+  end
+
+  describe ".colors_serialized" do
+    subject                 { create(:evaluation, colors: colors, _yellow: nil) }
+
+    context "with values" do
+      let(:colors)            { { foo: 1, bar: 2 } }
+      its(:colors_serialized) { should == colors.to_json }
+    end
+    context "with nil" do
+      let(:colors)            { nil }
+      its(:colors_serialized) { should be_nil }
+    end
+  end
+  describe ".colors_serialized=" do
+    let(:evaluation) { create(:evaluation, colors: nil, _yellow: nil) }
+    before(:each)    { evaluation.colors_serialized = value }
+    subject          { evaluation }
+
+    context "with values" do
+      let(:raw_value) { { "foo" => 1, "bar" => 2 } }
+      let(:value)     { raw_value.to_json }
+      its(:colors)    { should == raw_value }
+    end
+    context "with nil" do
+      let(:value)  { nil }
+      its(:colors) { should be_nil }
+    end
+  end
+  describe ".stanines_serialized" do
+    subject                 { create(:evaluation, stanines: stanines) }
+
+    context "with values" do
+      let(:stanines)            { { foo: 1, bar: 2 } }
+      its(:stanines_serialized) { should == stanines.to_json }
+    end
+    context "with nil" do
+      let(:stanines)            { nil }
+      its(:stanines_serialized) { should be_nil }
+    end
+  end
+  describe ".stanines_serialized=" do
+    let(:evaluation) { create(:evaluation, stanines: nil) }
+    before(:each)    { evaluation.stanines_serialized = value }
+    subject          { evaluation }
+
+    context "with values" do
+      let(:raw_value) { { "foo" => 1, "bar" => 2 } }
+      let(:value)     { raw_value.to_json }
+      its(:stanines)    { should == raw_value }
+    end
+    context "with nil" do
+      let(:value)  { nil }
+      its(:stanines) { should be_nil }
     end
   end
 
