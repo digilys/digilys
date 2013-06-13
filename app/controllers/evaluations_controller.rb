@@ -1,9 +1,9 @@
 class EvaluationsController < ApplicationController
   before_filter :load_from_template, only: :new_from_template
 
-  load_and_authorize_resource :suite
-  load_and_authorize_resource :evaluation, through: :suite, shallow: true
-  before_filter :authorize_suite!
+  load_resource :suite
+  load_resource :evaluation, through: :suite, shallow: true
+  before_filter :authorize_evaluation!
 
 
   def show
@@ -102,9 +102,15 @@ class EvaluationsController < ApplicationController
     @evaluation = Evaluation.new_from_template(template, params[:evaluation])
   end
 
-  def authorize_suite!
-    if @evaluation.try(:suite)
-      authorize! :update, @evaluation.suite
+  def authorize_evaluation!
+    if @suite
+      authorize! :contribute_to, @suite
+    elsif @evaluation.try(:suite)
+      authorize! :contribute_to, @evaluation.suite
+    elsif @evaluation
+      authorize! params[:action].to_sym, @evaluation
+    else
+      authorize! params[:action].to_sym, Evaluation
     end
   end
 end

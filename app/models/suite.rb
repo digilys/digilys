@@ -7,6 +7,7 @@ class Suite < ActiveRecord::Base
     foreign_key: "template_id",
     dependent:   :nullify
 
+  has_many :users,        through: :roles,        uniq: true,          order: "name asc, email asc"
   has_many :participants, inverse_of: :suite,     include: :student,   dependent: :destroy
   has_many :students,     through: :participants, order: "first_name asc, last_name asc"
   has_many :groups,       through: :students,     order: "groups.name asc", uniq: true
@@ -31,10 +32,6 @@ class Suite < ActiveRecord::Base
   serialize :generic_evaluations, JSON
   serialize :student_data,        JSON
 
-
-  def users
-    User.with_role(:suite_manager, self).order("email asc")
-  end
 
   def generic_evaluations
     if read_attribute(:generic_evaluations).nil?

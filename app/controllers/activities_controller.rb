@@ -1,7 +1,7 @@
 class ActivitiesController < ApplicationController
-  load_and_authorize_resource :suite
-  load_and_authorize_resource :activity, through: :suite, shallow: true
-  before_filter :authorize_suite!
+  load_resource :suite
+  load_resource :activity, through: :suite, shallow: true
+  before_filter :authorize_activity!
 
   
   def show
@@ -44,9 +44,15 @@ class ActivitiesController < ApplicationController
 
   private
 
-  def authorize_suite!
-    if @activity.try(:suite)
-      authorize! :update, @activity.suite
+  def authorize_activity!
+    if @suite
+      authorize! :contribute_to, @suite
+    elsif @activity.try(:suite)
+      authorize! :contribute_to, @activity.suite
+    elsif @activity
+      authorize! params[:method].to_sym, @activity
+    else
+      authorize! params[:method].to_sym, Activity
     end
   end
 end

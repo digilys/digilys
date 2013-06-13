@@ -1,7 +1,7 @@
 class MeetingsController < ApplicationController
-  load_and_authorize_resource :suite
-  load_and_authorize_resource :meeting, through: :suite, shallow: true
-  before_filter :authorize_suite!
+  load_resource :suite
+  load_resource :meeting, through: :suite, shallow: true
+  before_filter :authorize_meeting!
 
   def show
   end
@@ -57,9 +57,15 @@ class MeetingsController < ApplicationController
 
   private
 
-  def authorize_suite!
-    if @meeting.try(:suite)
-      authorize! :update, @meeting.suite
+  def authorize_meeting!
+    if @suite
+      authorize! :contribute_to, @suite
+    elsif @meeting.try(:suite)
+      authorize! :contribute_to, @meeting.suite
+    elsif @meeting
+      authorize! params[:method].to_sym, @meeting
+    else
+      authorize! params[:method].to_sym, Meeting
     end
   end
 end

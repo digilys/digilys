@@ -20,7 +20,7 @@ class Ability
       :remove_users,
       :add_generic_evaluations,
       :remove_generic_evaluations
-    ], to: :update
+    ], to: :contribute_to
 
     if user.has_role?(:admin)
       can :manage, :all
@@ -29,12 +29,11 @@ class Ability
 
       # Users
       cannot :manage, User
-      can    :search, User
 
       # Suites
       cannot :manage,         Suite
       can :create,            Suite
-      can [ :view, :update ], Suite do |suite|
+      can [ :view, :contribute_to, :update ], Suite do |suite|
         suite.is_template? || user.has_role?(:suite_manager, suite)
       end
       can :destroy,           Suite do |suite|
@@ -45,7 +44,14 @@ class Ability
       cannot :destroy, Student
     end
 
-    # Generic user functionality
+    # Suites and associated models
+    can :list,                     Suite
+    can [ :view, :contribute_to ], Suite do |suite|
+      user.has_role?(:suite_contributor, suite)
+    end
+    can :search, [ User, Student, Group, Evaluation ]
+
+    # Updating the user's details
     can :update, User, id: user.id
   end
 end

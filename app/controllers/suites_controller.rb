@@ -6,8 +6,8 @@ class SuitesController < ApplicationController
   load_and_authorize_resource
 
   def index
-    if current_user.has_role?(:superuser)
-      @suites = @suites.with_role(:suite_manager, current_user)
+    if !current_user.has_role?(:admin)
+      @suites = @suites.with_role([:suite_manager, :suite_contributor], current_user)
     end
 
     @suites = @suites.regular.order(:name).page(params[:page])
@@ -93,7 +93,7 @@ class SuitesController < ApplicationController
     users = User.where(id: params[:suite][:user_id].split(",")).all
 
     users.each do |user|
-      user.add_role :suite_manager, @suite
+      user.add_role :suite_contributor, @suite
     end
 
     flash[:success] = t(:"suites.add_users.success")
@@ -104,7 +104,7 @@ class SuitesController < ApplicationController
     users = User.where(id: params[:suite][:user_id].split(",")).all
 
     users.each do |user|
-      user.remove_role :suite_manager, @suite
+      user.remove_role :suite_contributor, @suite
     end
 
     flash[:success] = t(:"suites.remove_users.success")

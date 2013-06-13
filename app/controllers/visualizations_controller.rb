@@ -46,10 +46,10 @@ class VisualizationsController < ApplicationController
   def load_target
     if params[:suite_id]
       @suite = Suite.find(params[:suite_id])
-      authorize! :update, @suite
+      authorize! :view, @suite
     elsif params[:student_id]
       @student = Student.find(params[:student_id])
-      authorize! :show, @suite
+      authorize! :show, @student
     end
   end
 

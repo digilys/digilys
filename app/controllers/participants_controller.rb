@@ -1,6 +1,6 @@
 class ParticipantsController < ApplicationController
-  load_and_authorize_resource :suite
-  load_and_authorize_resource :participant, through: :suite, shallow: true, except: :create
+  load_resource :suite
+  load_resource :participant
   before_filter :authorize_suite!
 
   def new
@@ -9,8 +9,6 @@ class ParticipantsController < ApplicationController
 
   def create
     @suite = Suite.find(params[:participant][:suite_id])
-
-    authorize! :update, @suite
 
     participant_data = process_participant_autocomplete_params(params[:participant])
 
@@ -23,7 +21,7 @@ class ParticipantsController < ApplicationController
 
     unless group_ids.blank?
       users = Group.find(group_ids).collect(&:users).flatten
-      users.each { |u| u.add_role :suite_manager, @suite }
+      users.each { |u| u.add_role :suite_contributor, @suite }
     end
 
     flash[:success] = t(:"participants.create.success")
@@ -49,8 +47,6 @@ class ParticipantsController < ApplicationController
   private
 
   def authorize_suite!
-    if @participant.try(:suite)
-      authorize! :update, @participant.suite
-    end
+    authorize!(:contribute_to, @suite || @participant.suite)
   end
 end
