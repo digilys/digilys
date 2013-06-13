@@ -6,20 +6,25 @@
 
 %ul.nav.nav-tabs
   - if student
-    %li{class: active_if(active == :show)}
-      %a{href:student_path(student)}= t(:".show_action")
-    %li{class: active_if(active == :charts)}
-      %a{href:result_line_chart_student_visualization_path(student)}= t(:".charts")
+    - if can? :show, student
+      %li{class: active_if(active == :show)}
+        %a{href:student_path(student)}= t(:".show_action")
+    - if can? :view, student
+      %li{class: active_if(active == :charts)}
+        %a{href:result_line_chart_student_visualization_path(student)}= t(:".charts")
     - if params[:suite_id]
       %li
         %a{href:suite_path(params[:suite_id])}= t(:".return_to_suite")
+
     - if can? :destroy, student
       %li.secondary-tab{class: active_if(active == :destroy)}
         %a{href:confirm_destroy_student_path(student)}= t(:".destroy_action")
-    %li.secondary-tab{class: active_if(active == :edit)}
-      %a{href:edit_student_path(student)}= t(:".edit_action")
-    %li.secondary-tab{class: active_if(active == :select_groups)}
-      %a{href:select_groups_student_path(student)}= t(:".select_groups_action")
+    - if can? :edit, student
+      %li.secondary-tab{class: active_if(active == :edit)}
+        %a{href:edit_student_path(student)}= t(:".edit_action")
+    - if can? :select_groups, student
+      %li.secondary-tab{class: active_if(active == :select_groups)}
+        %a{href:select_groups_student_path(student)}= t(:".select_groups_action")
 
   - else
     %li{class: active_if(active == :index)}

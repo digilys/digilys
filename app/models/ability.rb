@@ -50,6 +50,7 @@ class Ability
       user.has_role?(:suite_contributor, suite)
     end
     can :search, [ User, Student, Group, Evaluation ]
+    can :view,   [ Student, Group ]
 
     # Updating the user's details
     can :update, User, id: user.id

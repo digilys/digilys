@@ -27,8 +27,9 @@
 
     %h3= Group.model_name.human(count: 2)
 
-    .btn-student
-      %a.btn.btn-small{href: select_groups_student_path(@student)}= t(:".select_groups_action")
+    - if can? :update, :user
+      .btn-student
+        %a.btn.btn-small{href: select_groups_student_path(@student)}= t(:".select_groups_action")
 
     - unless @student.groups.blank?
       = form_for @student, url: remove_groups_student_path(@student), method: :delete do |f|
@@ -36,22 +37,27 @@
         %table.table.table-striped.groups-table
           %thead
             %tr
-              %th.select &nbsp;
+              - if can? :update, @student
+                %th.select &nbsp;
               %th.name= Group.human_attribute_name(:name)
-              %th.actions &nbsp;
+              - if can? :show, Group
+                %th.actions &nbsp;
           %tbody
             - @student.groups.each do |group|
               %tr
-                %td.select
-                  = check_box_tag "group_ids[]", group.id, false, id: "group_ids_#{group.id}"
+                - if can? :update, @student
+                  %td.select
+                    = check_box_tag "group_ids[]", group.id, false, id: "group_ids_#{group.id}"
                 %td.name
                   %label(for="group_ids_#{group.id}")
                     = group.name
                     %small= [ group.parent.try(:name), group.parent.try(:parent).try(:name) ].compact.join(", ")
-                %td.actions
-                  %a.btn.btn-mini{href:url_for(group)}= t(:".show_action")
+                - if can? :show, Group
+                  %td.actions
+                    %a.btn.btn-mini{href:url_for(group)}= t(:".show_action")
 
-        = submit_tag t(:".remove_groups_action"), class: "btn btn-small btn-danger"
+        - if can? :update, :user
+          = submit_tag t(:".remove_groups_action"), class: "btn btn-small btn-danger"
 
   .span6
     - if !@student.generic_results.blank? || !@student.suite_results.blank?
@@ -71,13 +77,14 @@
                 - else
                   %td.result -
           - if !@student.suite_results.blank?
+            - show_link = can? :show, Evaluation
             %tr
               %th= Evaluation.model_name.human
               %th= Result.model_name.human
               %th= t(:".stanines")
             - @student.suite_results.each do |result|
               %tr
-                %td= link_to result.evaluation.name, result.evaluation
+                %td= link_to_if show_link, result.evaluation.name, result.evaluation
                 %td.result{class: result_color_class(result)}= result.display_value
                 - if result.evaluation.stanines?
                   %td.result{class: result_color_class(result)}= result.stanine

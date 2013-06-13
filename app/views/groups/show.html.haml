@@ -23,43 +23,53 @@
 .row-fluid
   .span6
     %h3= Student.model_name.human(:count => 2)
-    %a.btn.btn-small{href: select_students_group_path(@group)}= t(:".select_students_action")
+
+    - if can? :update, @group
+      %a.btn.btn-small{href: select_students_group_path(@group)}= t(:".select_students_action")
 
     = form_for @group, url: remove_students_group_path(@group), method: :delete do |f|
       %table.table.table-striped.students-table
         %thead
           %tr
-            %th.select &nbsp;
+            - if can? :update, @group
+              %th.select &nbsp;
             %th.name= Student.human_attribute_name(:name)
             %th.actions &nbsp;
         %tbody
           - @group.students.each do |student|
             %tr
-              %td.select
-                = check_box_tag "student_ids[]", student.id, false, id: "student_ids_#{student.id}"
+              - if can? :update, @group
+                %td.select
+                  = check_box_tag "student_ids[]", student.id, false, id: "student_ids_#{student.id}"
               %td.name
                 %label(for="student_ids_#{student.id}")= student.name
               %td.actions
                 %a.btn.btn-mini{href:url_for(student)}= t(:".show_action")
 
-      = submit_tag t(:".remove_students_action"), class: "btn btn-small btn-danger"
+      - if can? :update, @group
+        = submit_tag t(:".remove_students_action"), class: "btn btn-small btn-danger"
 
   .span6
     %h3= User.model_name.human(:count => 2)
-    %a.btn.btn-small{href: select_users_group_path(@group)}= t(:".select_users_action")
+
+    - if can? :update, @group
+      %a.btn.btn-small{href: select_users_group_path(@group)}= t(:".select_users_action")
 
     = form_for @group, url: remove_users_group_path(@group), method: :delete do |f|
       %table.table.table-striped.users-table
         %thead
           %tr
-            %th.select &nbsp;
+            - if can? :update, @group
+              %th.select &nbsp;
             %th.name= User.human_attribute_name(:name)
         %tbody
           - @group.users.each do |user|
             %tr
-              %td.select
-                = check_box_tag "user_ids[]", user.id, false, id: "user_ids_#{user.id}"
+              - if can? :update, @group
+                %td.select
+                  = check_box_tag "user_ids[]", user.id, false, id: "user_ids_#{user.id}"
               %td.name
                 %label(for="user_ids_#{user.id}")= user.name
 
-      = submit_tag t(:".remove_users_action"), class: "btn btn-small btn-danger"
+      - if can? :update, @group
+        = submit_tag t(:".remove_users_action"), class: "btn btn-small btn-danger"

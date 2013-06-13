@@ -12,10 +12,13 @@ describe Ability do
     it               { should_not be_able_to(:update, other_user) }
 
     it               { should     be_able_to(:search, User) }
-    it               { should     be_able_to(:search, Student) }
-    it               { should     be_able_to(:search, Group) }
     it               { should     be_able_to(:search, Evaluation) }
 
+    it               { should     be_able_to(:view,   Student) }
+    it               { should     be_able_to(:search, Student) }
+
+    it               { should     be_able_to(:view,   Group) }
+    it               { should     be_able_to(:search, Group) }
 
     it               { should     be_able_to(:index,  Suite) }
 
