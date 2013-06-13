@@ -423,7 +423,7 @@ class Evaluation < ActiveRecord::Base
     where([ "date >= ?", Date.today ])
   end
 
-  def self.where_suite_manager(user)
+  def self.where_suite_contributor(user)
     query = <<-SQL
       suite_id in (
         select
@@ -433,7 +433,7 @@ class Evaluation < ActiveRecord::Base
           left join users_roles on roles.id = users_roles.role_id
         where
           resource_type = 'Suite'
-          and name = 'suite_manager'
+          and (name = 'suite_contributor' or name = 'suite_manager')
           and user_id = ?
       )
     SQL

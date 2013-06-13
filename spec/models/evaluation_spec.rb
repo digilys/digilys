@@ -731,20 +731,22 @@ describe Evaluation do
     it              { should match_array(upcoming) }
   end
 
-  describe "#where_suite_manager" do
+  describe "#where_suite_contributor" do
     let(:user)                     { create(:superuser) }
-    let(:allowed_suite)            { create(:suite) }
+    let(:contributed_suite)        { create(:suite) }
+    let(:managed_suite)            { create(:suite) }
     let(:not_allowed_suite)        { create(:suite) }
-    let!(:allowed_evaluations)     { create_list(:suite_evaluation, 3, suite: allowed_suite) }
+    let!(:allowed_evaluations)     { create_list(:suite_evaluation, 3, suite: contributed_suite) + create_list(:suite_evaluation, 3, suite: managed_suite) }
     let!(:not_allowed_evaluations) { create_list(:suite_evaluation, 3, suite: not_allowed_suite) }
 
     before(:each) do
-      user.add_role :suite_manager, allowed_suite
+      user.add_role :suite_contributor, contributed_suite
+      user.add_role :suite_manager,     managed_suite
     end
 
-    subject { Evaluation.where_suite_manager(user).all }
+    subject { Evaluation.where_suite_contributor(user).all }
 
-    it { should have(3).items }
+    it { should have(6).items }
     it { should match_array(allowed_evaluations) }
   end
 
