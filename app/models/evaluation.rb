@@ -34,6 +34,8 @@ class Evaluation < ActiveRecord::Base
     :name,
     :description,
     :date,
+    :colors,
+    :stanines,
     :target,
     :value_type,
     :category_list,
@@ -530,43 +532,51 @@ class Evaluation < ActiveRecord::Base
   def persist_colors_and_stanines
     case self.value_type
     when "boolean"
-      self.colors = { "0" => self.color_for_false, "1" => self.color_for_true }
+      self.colors = { "0" => self.color_for_false, "1" => self.color_for_true } unless self.colors_changed?
     when "grade"
-      self.colors = {
-        "0" => self.color_for_grade_f,
-        "1" => self.color_for_grade_e,
-        "2" => self.color_for_grade_d,
-        "3" => self.color_for_grade_c,
-        "4" => self.color_for_grade_b,
-        "5" => self.color_for_grade_a
-      }
-      self.stanines = {
-        "0" => self.stanine_for_grade_f,
-        "1" => self.stanine_for_grade_e,
-        "2" => self.stanine_for_grade_d,
-        "3" => self.stanine_for_grade_c,
-        "4" => self.stanine_for_grade_b,
-        "5" => self.stanine_for_grade_a
-      }
+      unless self.colors_changed?
+        self.colors = {
+          "0" => self.color_for_grade_f,
+          "1" => self.color_for_grade_e,
+          "2" => self.color_for_grade_d,
+          "3" => self.color_for_grade_c,
+          "4" => self.color_for_grade_b,
+          "5" => self.color_for_grade_a
+        }
+      end
+      unless self.stanines_changed?
+        self.stanines = {
+          "0" => self.stanine_for_grade_f,
+          "1" => self.stanine_for_grade_e,
+          "2" => self.stanine_for_grade_d,
+          "3" => self.stanine_for_grade_c,
+          "4" => self.stanine_for_grade_b,
+          "5" => self.stanine_for_grade_a
+        }
+      end
     when "numeric"
-      colors = {}
-      colors["red"]    = { min: self.red_min.to_i,    max: self.red_max.to_i }    if self.red_min    && self.red_max
-      colors["yellow"] = { min: self.yellow_min.to_i, max: self.yellow_max.to_i } if self.yellow_min && self.yellow_max
-      colors["green"]  = { min: self.green_min.to_i,  max: self.green_max.to_i }  if self.green_min  && self.green_max
-      self.colors = colors
+      unless self.colors_changed?
+        colors = {}
+        colors["red"]    = { min: self.red_min.to_i,    max: self.red_max.to_i }    if self.red_min    && self.red_max
+        colors["yellow"] = { min: self.yellow_min.to_i, max: self.yellow_max.to_i } if self.yellow_min && self.yellow_max
+        colors["green"]  = { min: self.green_min.to_i,  max: self.green_max.to_i }  if self.green_min  && self.green_max
+        self.colors = colors
+      end
 
-      stanines = {}
-      stanines[1] = { min: self.stanine1_min.to_i, max: self.stanine1_max.to_i } if self.stanine1_min && self.stanine1_max
-      stanines[2] = { min: self.stanine2_min.to_i, max: self.stanine2_max.to_i } if self.stanine2_min && self.stanine2_max
-      stanines[3] = { min: self.stanine3_min.to_i, max: self.stanine3_max.to_i } if self.stanine3_min && self.stanine3_max
-      stanines[4] = { min: self.stanine4_min.to_i, max: self.stanine4_max.to_i } if self.stanine4_min && self.stanine4_max
-      stanines[5] = { min: self.stanine5_min.to_i, max: self.stanine5_max.to_i } if self.stanine5_min && self.stanine5_max
-      stanines[6] = { min: self.stanine6_min.to_i, max: self.stanine6_max.to_i } if self.stanine6_min && self.stanine6_max
-      stanines[7] = { min: self.stanine7_min.to_i, max: self.stanine7_max.to_i } if self.stanine7_min && self.stanine7_max
-      stanines[8] = { min: self.stanine8_min.to_i, max: self.stanine8_max.to_i } if self.stanine8_min && self.stanine8_max
-      stanines[9] = { min: self.stanine9_min.to_i, max: self.stanine9_max.to_i } if self.stanine9_min && self.stanine9_max
+      unless self.stanines_changed?
+        stanines = {}
+        stanines[1] = { min: self.stanine1_min.to_i, max: self.stanine1_max.to_i } if self.stanine1_min && self.stanine1_max
+        stanines[2] = { min: self.stanine2_min.to_i, max: self.stanine2_max.to_i } if self.stanine2_min && self.stanine2_max
+        stanines[3] = { min: self.stanine3_min.to_i, max: self.stanine3_max.to_i } if self.stanine3_min && self.stanine3_max
+        stanines[4] = { min: self.stanine4_min.to_i, max: self.stanine4_max.to_i } if self.stanine4_min && self.stanine4_max
+        stanines[5] = { min: self.stanine5_min.to_i, max: self.stanine5_max.to_i } if self.stanine5_min && self.stanine5_max
+        stanines[6] = { min: self.stanine6_min.to_i, max: self.stanine6_max.to_i } if self.stanine6_min && self.stanine6_max
+        stanines[7] = { min: self.stanine7_min.to_i, max: self.stanine7_max.to_i } if self.stanine7_min && self.stanine7_max
+        stanines[8] = { min: self.stanine8_min.to_i, max: self.stanine8_max.to_i } if self.stanine8_min && self.stanine8_max
+        stanines[9] = { min: self.stanine9_min.to_i, max: self.stanine9_max.to_i } if self.stanine9_min && self.stanine9_max
 
-      self.stanines = !stanines.blank? ? stanines : nil
+        self.stanines = !stanines.blank? ? stanines : nil
+      end
     end
   end
 end

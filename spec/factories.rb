@@ -107,11 +107,12 @@ FactoryGirl.define do
     factory :numeric_evaluation do
     end
     factory :boolean_evaluation do
-      value_type :boolean
-      max_result 1
-      _yellow    nil
-      _stanines  nil
-      colors     ({ "0" => "red", "1" => "green" })
+      value_type      :boolean
+      max_result      1
+      _yellow         nil
+      _stanines       nil
+      color_for_false :red
+      color_for_true  :green
     end
     factory :grade_evaluation do
       value_type :grade
@@ -131,7 +132,6 @@ FactoryGirl.define do
       color_for_grade_f { _grade_colors[0] }
 
       ignore do
-        stanines nil
         # F, E, D, C, B, A
         _grade_stanines nil
       end

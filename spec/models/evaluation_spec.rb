@@ -38,6 +38,8 @@ describe Evaluation do
     it { should allow_mass_assignment_of(:description) }
     it { should allow_mass_assignment_of(:date) }
     it { should allow_mass_assignment_of(:max_result) }
+    it { should allow_mass_assignment_of(:colors) }
+    it { should allow_mass_assignment_of(:stanines) }
     it { should allow_mass_assignment_of(:red_min) }
     it { should allow_mass_assignment_of(:red_max) }
     it { should allow_mass_assignment_of(:yellow_min) }
@@ -182,16 +184,23 @@ describe Evaluation do
   end
   
   describe ".persist_colors_and_stanines" do
+    let(:colors)   { nil }
+    let(:stanines) { nil }
     context "for boolean value types" do
-      subject      { create(:boolean_evaluation, colors: nil, color_for_true: :red, color_for_false: :green) }
+      subject      { create(:boolean_evaluation, colors: colors, color_for_true: :red, color_for_false: :green) }
       its(:colors) { should include("1" => "red") }
       its(:colors) { should include("0" => "green") }
+
+      context "with explicitly set colors" do
+        let(:colors) { { explicit: 1 } }
+        its(:colors) { should == { "explicit" => 1 } }
+      end
     end
     context "for grade value types" do
-      subject      { create(
+      subject        { create(
         :grade_evaluation,
-        colors:             nil,
-        stanines:           nil,
+        colors:          colors,
+        stanines:        stanines,
         _grade_colors:   [ 1, 1, 2, 2, 3, 3 ],
         _grade_stanines: [ 2, 3, 5, 6, 7, 9 ]
       ) }
@@ -208,17 +217,23 @@ describe Evaluation do
       its(:stanines) { should include("3" => 6) }
       its(:stanines) { should include("4" => 7) }
       its(:stanines) { should include("5" => 9) }
+
+      context "with explicitly set colors and stanines" do
+        let(:colors)   { { "explicit" => 1 } }
+        let(:stanines) { { "explicit" => 2 } }
+        its(:colors)   { should == { "explicit" => 1 } }
+        its(:stanines) { should == { "explicit" => 2 } }
+      end
     end
     context "for numeric value types" do
       let(:_yellow) { 10..20 }
       let(:_stanines) { [ 0..3, 4..6, 7..7, 8..12, 13..15, 16..18, 19..21, 22..24, 25..30 ] }
-      subject { create(
-        :numeric_evaluation,
-        colors: nil,
-        stanines: nil,
-        _yellow: _yellow,
+      subject { create(:numeric_evaluation,
+        colors:     colors,
+        stanines:   stanines,
+        _yellow:    _yellow,
         max_result: 30,
-        _stanines: _stanines
+        _stanines:  _stanines
       ) }
 
       its(:colors) { should include("red"    => { "min" => 0,  "max" => 9 }) }
@@ -251,6 +266,13 @@ describe Evaluation do
         its(:stanines) { should include("6" => { "min" => 10, "max" => 18 } ) }
         its(:stanines) { should include("7" => { "min" => 19, "max" => 21 } ) }
         its(:stanines) { should include("8" => { "min" => 22, "max" => 30 } ) }
+      end
+
+      context "with explicitly set colors and stanines" do
+        let(:colors)   { { "explicit" => 1 } }
+        let(:stanines) { { "explicit" => 2 } }
+        its(:colors)   { should == { "explicit" => 1 } }
+        its(:stanines) { should == { "explicit" => 2 } }
       end
     end
   end
