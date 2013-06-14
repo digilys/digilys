@@ -31,6 +31,9 @@ sv:
       user:
         one: Användare
         other: Användare
+      instruction:
+        one: Instruktionsfilm
+        other: Instruktionsfilmer
     attributes:
       evaluation:
         template: Mall
@@ -131,6 +134,10 @@ sv:
         current_sign_in_ip: Nuvarande IP-adress
         last_sign_in_ip: Senaste IP-adress
         name: Namn
+      instruction:
+        title: Titel
+        body: HTML-kod för film
+
     errors:
       models:
         student:

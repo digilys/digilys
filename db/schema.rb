@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130612134737) do
+ActiveRecord::Schema.define(:version => 20130614120119) do
 
   create_table "activities", :force => true do |t|
     t.integer  "suite_id"
@@ -81,6 +81,16 @@ ActiveRecord::Schema.define(:version => 20130612134737) do
   end
 
   add_index "groups_users", ["group_id", "user_id"], :name => "index_groups_users_on_group_id_and_user_id"
+
+  create_table "instructions", :force => true do |t|
+    t.string   "title"
+    t.string   "for_page"
+    t.text     "body"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "instructions", ["for_page"], :name => "index_instructions_on_for_page"
 
   create_table "meetings", :force => true do |t|
     t.integer  "suite_id"

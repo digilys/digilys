@@ -179,4 +179,10 @@ FactoryGirl.define do
       type :inquiry
     end
   end
+
+  factory :instruction do
+    sequence(:title) { |i| "Instruction %09d" % i }
+    for_page         "/foo/bar"
+    body             "foo"
+  end
 end
