@@ -8,7 +8,7 @@ class Template::EvaluationsController < ApplicationController
   def search
     @evaluations   = @evaluations.order(:name).with_type(:template).search(params[:q]).result.page(params[:page])
     json           = {}
-    json[:results] = @evaluations.collect { |e| { id: e.id, text: e.name } }
+    json[:results] = @evaluations.collect { |e| { id: e.id, name: e.name, description: e.description } }
     json[:more]    = !@evaluations.last_page?
 
     render json: json.to_json

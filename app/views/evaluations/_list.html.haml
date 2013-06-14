@@ -1,7 +1,8 @@
 %table.table.table-striped.evaluations-table
   %thead
     %tr
-      %th.name= Evaluation.human_attribute_name(:name)
+      %th.name=        Evaluation.human_attribute_name(:name)
+      %th.description= Evaluation.human_attribute_name(:description)
   %tbody
     - evaluations.each do |evaluation|
       %tr
@@ -9,3 +10,5 @@
           = link_to evaluation.name, evaluation
           - evaluation.category_list.each do |category|
             %span.label.label-info= category
+        %td.description
+          = evaluation.description

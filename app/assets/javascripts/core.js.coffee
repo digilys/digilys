@@ -8,22 +8,25 @@ window.Digilys.loadMask = ($fields) ->
 # Common method for initializing a select2-based autocomplete
 window.Digilys.autocomplete = (selectorOrElem, options = {}) ->
 
-    options["results"] ?= (data, page) ->
+    options.results ?= (data, page) ->
         { results: data.results, more: data.more }
 
     $(selectorOrElem).each ->
         $field = $(this)
 
-        $field.select2(
-            width: "off",
-            multiple: $field.data("multiple"),
+        opts =
+            width:              "off"
+            multiple:           $field.data("multiple")
             minimumInputLength: 0
-            placeholder: $field.data("placeholder")
+            placeholder:        $field.data("placeholder")
             ajax:
-                url: $field.data("url")
-                results: options["results"]
-                data: options["data"]
-        )
+                url:            $field.data("url")
+                results:        options.results
+                data:           options.data
+
+        opts.formatResult = options.formatResult if options.formatResult
+
+        $field.select2(opts)
 
         data = $field.data("data")
 
