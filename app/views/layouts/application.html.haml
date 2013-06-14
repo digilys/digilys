@@ -49,6 +49,15 @@
                     %h3#feedback-modal-header= t(:".feedback")
                   .modal-body
                     %iframe{src:Conf.feedback.url, width:"760", height:"500", frameborder:"0", marginheight:"0", marginwidth:"0"}
+            - if instruction = Instruction.for_controller_action(params[:controller], params[:action])
+              %li
+                %a(href="#instruction-modal" role="button" data-toggle="modal")= t(:".help")
+                #instruction-modal.modal.hide.fade(role="dialog" aria-hidden="true" aria-labelledby="feedback-modal-header")
+                  .modal-header
+                    %button.close(data-dismiss="modal" aria-hidden="true") x
+                    %h3#instruction-modal-header= instruction.title
+                  .modal-body
+                    = instruction.body.html_safe
 
 
 
