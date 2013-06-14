@@ -115,6 +115,12 @@ Digilys::Application.routes.draw do
     end
   end
 
+  resources :instructions, except: [ :index, :show ] do
+    member do
+      get :confirm_destroy
+    end
+  end
+
   namespace :template do
     resources :suites, only: [ :index, :new ] do
       get :search, on: :collection

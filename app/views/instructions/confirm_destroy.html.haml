@@ -1,0 +1,6 @@
+.page-header
+  %h1
+    = @instruction.title
+    %small= Instruction.model_name.human
+
+= confirm_destroy_form(@instruction, t(:".confirmation"), cancel_to: params[:return_to] || root_url())

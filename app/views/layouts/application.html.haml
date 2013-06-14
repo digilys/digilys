@@ -56,8 +56,21 @@
                   .modal-header
                     %button.close(data-dismiss="modal" aria-hidden="true") x
                     %h3#instruction-modal-header= instruction.title
+                    - if can? :manage, instruction
+                      .btn-group
+                        = link_to t(:".edit_action"),
+                          edit_instruction_path(instruction, return_to: url_for()),
+                          class: "btn btn-mini"
+                        = link_to t(:".destroy_action"),
+                          confirm_destroy_instruction_path(instruction, return_to: url_for()),
+                          class: "btn btn-mini btn-danger"
                   .modal-body
                     = instruction.body.html_safe
+            - elsif can? :manage, Instruction
+              %li
+                = link_to new_instruction_path(return_to: url_for(), for_page: "#{params[:controller]}/#{params[:action]}") do
+                  %i.icon-pencil
+                  %em= t(:".help")
 
 
 

@@ -1,5 +1,7 @@
 = semantic_form_for entity, method: :delete do |f|
 
+  = hidden_field_tag :return_to, params[:return_to]
+
   .alert.alert-block.alert-error
     %p= message
 

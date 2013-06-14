@@ -312,6 +312,18 @@ sv:
       stanine_column_chart: Staninefördelning
       result_line_chart: Resultat
 
+  instructions:
+    form:
+      body_hint: Klistra in den kod som videotjänsten använder för att bädda in en film på en webbsida.
+    create:
+      success: Instruktionsfilmen skapades
+    update:
+      success: Instruktionsfilmen uppdaterades
+    confirm_destroy:
+      confirmation: Är du säker på att du vill radera instruktionsfilmen?
+    destroy:
+      success: Instruktionsfilmen raderades
+
 
   template:
     suites:
