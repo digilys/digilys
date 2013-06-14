@@ -12,6 +12,7 @@ class Participant < ActiveRecord::Base
   validates :suite,   presence:   true
   validates :student_id, uniqueness: { scope: :suite_id }
 
+  after_create  :add_group_users_to_suite
   after_create  :update_evaluation_statuses!
   after_destroy :update_evaluation_statuses!
 
@@ -29,6 +30,12 @@ class Participant < ActiveRecord::Base
 
 
   private
+
+  def add_group_users_to_suite
+    if self.group && self.suite
+      self.group.users.each { |u| u.add_role :suite_contributor, self.suite }
+    end
+  end
 
   def update_evaluation_statuses!
     self.suite.update_evaluation_statuses! if self.suite

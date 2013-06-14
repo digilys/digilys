@@ -19,11 +19,6 @@ class ParticipantsController < ApplicationController
       group_ids << data[:group_id] if data[:group_id]
     end
 
-    unless group_ids.blank?
-      users = Group.find(group_ids).collect(&:users).flatten
-      users.each { |u| u.add_role :suite_contributor, @suite }
-    end
-
     flash[:success] = t(:"participants.create.success")
     redirect_to @suite
   rescue ActiveRecord::RecordInvalid

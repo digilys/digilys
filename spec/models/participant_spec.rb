@@ -37,6 +37,16 @@ describe Participant do
   end
 
 
+  describe ".add_group_users_to_suite" do
+    let(:user)    { create(:user) }
+    let(:group)   { create(:group,   users:  [user]) }
+    let(:student) { create(:student, groups: [group]) }
+
+    subject       { create(:participant, student: student, group: group).suite }
+
+    its(:users)   { should include(user) }
+  end
+
   describe ".update_evaluation_statuses!" do
     let(:suite) { create(:suite) }
     let(:evaluation) { create(:suite_evaluation, suite: suite) }
