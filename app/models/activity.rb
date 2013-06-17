@@ -9,6 +9,7 @@ class Activity < ActiveRecord::Base
 
   has_and_belongs_to_many :students
   has_and_belongs_to_many :groups
+  has_and_belongs_to_many :users
 
   attr_accessible :description,
     :name,
@@ -20,6 +21,7 @@ class Activity < ActiveRecord::Base
     :type,
     :student_ids,
     :group_ids,
+    :user_ids,
     :students_and_groups
 
   validates :suite, presence: true

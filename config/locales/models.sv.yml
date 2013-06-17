@@ -111,6 +111,8 @@ sv:
         student_ids: Elever
         groups: Grupper
         group_ids: Grupper
+        users: Användare
+        user_ids: Användare
         type: Typ
         status: Status
         name: Rubrik
