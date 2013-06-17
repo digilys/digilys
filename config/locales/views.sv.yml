@@ -48,6 +48,7 @@ sv:
   meeting_report_action: Protokollför
   meeting_completed: Mötet genomfört och protokollfört
   activity_students_placeholder: Sök och välj elever eller grupper
+  users_placeholder: Sök och välj en eller flera användare
 
   students:
     select_groups_action: Lägg till i grupper
@@ -98,7 +99,6 @@ sv:
     remove_students:
       success: Eleverna togs bort från gruppen
     select_users:
-      users_placeholder: Sök och välj en eller flera användare
     add_users:
       success: Användaren lades till i gruppen
     remove_users:
@@ -156,7 +156,6 @@ sv:
         template: Planeringsmallen raderades
     select_users:
       title: Lägg till deltagare
-      users_placeholder: Sök och välj användare
     add_users:
       success: Deltagarna lades till i planeringen.
     remove_users:

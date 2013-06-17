@@ -40,6 +40,13 @@ class Activity < ActiveRecord::Base
     !self.closed? && self.end_date && self.end_date < Date.today
   end
 
+  def user_ids=(ids)
+    if !ids.kind_of?(Array) && ids.respond_to?(:split)
+      ids = ids.split(",")
+    end
+    super(ids)
+  end
+
 
   # Virtual attribute for a comma separated list of student ids and group ids.
   # The ids should have the prefix s-#{id} and g-#{id} for students and groups,
@@ -49,6 +56,11 @@ class Activity < ActiveRecord::Base
   def students_and_groups_select2_data
     self.students.collect { |s| { id: "s-#{s.id}", text: s.name } } +
       self.groups.collect { |g| { id: "g-#{g.id}", text: g.name } }
+  end
+
+
+  def users_select2_data
+    self.users.collect { |u| { id: u.id, text: "#{u.name}, #{u.email}" } }
   end
 
 

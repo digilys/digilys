@@ -40,6 +40,15 @@
               placeholder: t(:".activity_students_placeholder"),
               multiple: true } }
 
+        = af.input :user_ids,
+          value: nil,
+          as: :hidden,
+          input_html: { class: "user-autocomplete-field",
+            data: { url: search_users_path(format: :json),
+              data: af.object.users_select2_data.to_json,
+              multiple: true,
+              placeholder: t(:".users_placeholder") } }
+
         = af.hidden_field :status
 
       .span6

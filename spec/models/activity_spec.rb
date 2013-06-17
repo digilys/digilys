@@ -70,6 +70,31 @@ describe Activity do
     end
   end
 
+  context ".user_ids=" do
+    let(:users)        { create_list(:user, 2) }
+    subject(:activity) { create(:activity) }
+    it "supports normal ids" do
+      activity.users.should be_blank
+      activity.user_ids = users.collect(&:id)
+      activity.users(true).should match_array(users)
+    end
+    it "supports strings in arrays" do
+      activity.users.should be_blank
+      activity.user_ids = users.collect(&:id).collect(&:to_s)
+      activity.users(true).should match_array(users)
+    end
+    it "supports single ids" do
+      activity.users.should be_blank
+      activity.user_ids = users.first.id
+      activity.users(true).should match_array([users.first])
+    end
+    it "supports comma separated ids" do
+      activity.users.should be_blank
+      activity.user_ids = "#{users.first.id},#{users.second.id}"
+      activity.users(true).should match_array(users)
+    end
+  end
+
   describe ".parse_students_and_groups" do
     let!(:students)           { create_list(:student, 3) }
     let!(:groups)             { create_list(:group,   3) }
@@ -115,6 +140,15 @@ describe Activity do
     its(:students_and_groups_select2_data) { should include(id: "g-#{groups.first.id}",    text: groups.first.name) }
     its(:students_and_groups_select2_data) { should include(id: "g-#{groups.second.id}",   text: groups.second.name) }
     its(:students_and_groups_select2_data) { should include(id: "g-#{groups.third.id}",    text: groups.third.name) }
+  end
+
+  describe ".users_select2_data" do
+    let(:users)        { create_list(:user, 2) }
+    subject(:activity) { create(:activity, users: users) }
+
+    its(:users_select2_data) { should have(2).items }
+    its(:users_select2_data) { should include(id: users.first.id,  text: "#{users.first.name}, #{users.first.email}") }
+    its(:users_select2_data) { should include(id: users.second.id, text: "#{users.second.name}, #{users.second.email}") }
   end
 
   describe "#where_suite_contributor" do

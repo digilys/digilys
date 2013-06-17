@@ -18,6 +18,14 @@ $ ->
                 $(this).data("data", null)
                 window.Digilys.Autocomplete.activityStudentsGroups(this)
 
+            $fields.find(".user-autocomplete-field").each ->
+                $(this).data("data", null)
+                window.Digilys.autocomplete(
+                    this,
+                    data: (term, page) ->
+                        { q: { name_or_email_cont: term }, page: page }
+                )
+
             $fields
 
         $activitiesContainer.on "click", ".add-activity-action", (event) ->
