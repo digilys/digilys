@@ -46,6 +46,7 @@ RSpec.configure do |config|
 
   # FactoryGirl
   config.include FactoryGirl::Syntax::Methods
+  config.include FactoryUtils
 
   # Devise
   config.include Devise::TestHelpers, type: :controller
