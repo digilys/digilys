@@ -2,8 +2,6 @@ require 'spec_helper'
 
 # https://www.relishapp.com/rspec/rspec-rails/v/2-4/docs/controller-specs/anonymous-controller
 describe ApplicationController do
-  login_admin
-
   describe "#process_participant_autocomplete_params" do
     let(:students) { create_list(:student, 3) }
     let(:groups)   { create_list(:group, 2) }
