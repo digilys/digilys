@@ -30,6 +30,10 @@ describe Evaluation do
       subject { build(:grade_evaluation) }
       it { should be_valid }
     end
+    context "invalid" do
+      subject { build(:invalid_evaluation) }
+      it { should_not be_valid }
+    end
   end
   context "accessible attributes" do
     it { should allow_mass_assignment_of(:type) }

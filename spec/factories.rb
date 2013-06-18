@@ -143,6 +143,9 @@ FactoryGirl.define do
       stanine_for_grade_e { _grade_stanines ? _grade_stanines[1] : nil }
       stanine_for_grade_f { _grade_stanines ? _grade_stanines[0] : nil }
     end
+    factory :invalid_evaluation do
+      name nil
+    end
   end
 
   factory :result do
