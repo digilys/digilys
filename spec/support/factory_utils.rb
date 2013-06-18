@@ -1,5 +1,14 @@
 module FactoryUtils
   # Generates parameters for a model that will result
+  # in the model being valid. For use when sending
+  # parameters to a controller action that creates/updates
+  # a model.
+  def valid_parameters_for(model)
+    accessible_attrs = model.to_s.classify.constantize.accessible_attributes
+    attributes_for(model).keep_if { |k, _| accessible_attrs.include?(k.to_s) }
+  end
+
+  # Generates parameters for a model that will result
   # in the model being invalid. For use when sending
   # parameters to a controller action that creates/updates
   # a model.
