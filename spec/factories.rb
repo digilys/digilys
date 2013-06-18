@@ -167,6 +167,10 @@ FactoryGirl.define do
     agenda          nil
     completed       false
     notes           nil
+
+    factory :invalid_meeting do
+      name nil
+    end
   end
 
   factory :activity do

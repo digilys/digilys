@@ -4,6 +4,11 @@ describe Meeting do
   context "factory" do
     subject { build(:meeting) }
     it { should be_valid }
+
+    context "invalid" do
+      subject { build(:invalid_meeting) }
+      it { should_not be_valid }
+    end
   end
   context "accessible attributes" do
     it { should allow_mass_assignment_of(:suite_id) }
