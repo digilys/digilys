@@ -4,6 +4,11 @@ describe Student do
   context "factory" do
     subject { build(:student) }
     it { should be_valid }
+
+    context "invalid" do
+      subject { build(:invalid_student) }
+      it { should_not be_valid }
+    end
   end
   context "accessible attributes" do
     it { should allow_mass_assignment_of(:personal_id) }
