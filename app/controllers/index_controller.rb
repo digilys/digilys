@@ -2,7 +2,7 @@ class IndexController < ApplicationController
   skip_authorization_check
 
   def index
-    load_dashboard_data if user_signed_in?
+    load_dashboard_data
   end
 
 
