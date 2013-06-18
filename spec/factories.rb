@@ -178,6 +178,9 @@ FactoryGirl.define do
     factory :inquiry_activity do
       type :inquiry
     end
+    factory :invalid_activity do
+      name nil
+    end
   end
 
   factory :instruction do

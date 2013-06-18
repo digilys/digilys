@@ -13,6 +13,10 @@ describe Activity do
       subject { build(:inquiry_activity) }
       it      { should be_valid }
     end
+    context "for invalid activity" do
+      subject { build(:invalid_activity) }
+      it      { should_not be_valid }
+    end
   end
   context "accessible attributes" do
     it { should allow_mass_assignment_of(:suite_id) }
