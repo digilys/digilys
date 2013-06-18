@@ -24,6 +24,10 @@ FactoryGirl.define do
   factory :group do
     sequence(:name) { |i| "Group %09d" % i }
     parent          nil
+
+    factory :invalid_group do
+      name nil
+    end
   end
 
   factory :suite do
