@@ -194,5 +194,9 @@ FactoryGirl.define do
     sequence(:title) { |i| "Instruction %09d" % i }
     for_page         "/foo/bar"
     body             "foo"
+
+    factory :invalid_instruction do
+      title nil
+    end
   end
 end

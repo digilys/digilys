@@ -6,6 +6,10 @@ describe Instruction do
       subject { build(:instruction) }
       it      { should be_valid }
     end
+    context "invalid" do
+      subject { build(:invalid_instruction) }
+      it      { should_not be_valid }
+    end
   end
   context "accessible attributes" do
     it { should allow_mass_assignment_of(:body) }
