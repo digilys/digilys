@@ -14,6 +14,11 @@ describe GroupsController do
       response.should be_successful
       assigns(:groups).should match_array(top_level)
     end
+    it "filters all groups" do
+      get :index, q: { name_cont: children.first.name }
+      response.should be_successful
+      assigns(:groups).should == [children.first]
+    end
   end
 
   describe "GET #show" do

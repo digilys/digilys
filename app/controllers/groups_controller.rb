@@ -2,7 +2,15 @@ class GroupsController < ApplicationController
   load_and_authorize_resource
 
   def index
-    @groups = @groups.top_level.order(:name).all
+    @groups = @groups.order(:name)
+
+    if has_search_param?
+      @groups = @groups.search(params[:q]).result
+    else
+      @groups = @groups.top_level
+    end
+
+    @groups = @groups.page(params[:page])
   end
 
   def show

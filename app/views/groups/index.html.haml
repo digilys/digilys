@@ -2,6 +2,8 @@
 
 = render partial: "navigation", locals: { active: :index }
 
+= simple_search_form(:name_cont)
+
 %table.table.table-striped.groups-table
   %thead
     %tr
@@ -10,3 +12,4 @@
     = render_group_tree(@groups)
   %tbody
 
+= paginate(@groups)
