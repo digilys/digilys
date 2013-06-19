@@ -8,10 +8,15 @@ describe StudentsController do
   describe "GET #index" do
     let!(:students) { create_list(:student, 2) }
 
-    it "lists top level students" do
+    it "lists students" do
       get :index
       response.should be_successful
       assigns(:students).should match_array(students)
+    end
+    it "is filterable" do
+      get :index, q: { last_name_cont: students.first.last_name }
+      response.should be_successful
+      assigns(:students).should == [students.first]
     end
   end
 

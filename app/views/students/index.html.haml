@@ -2,6 +2,8 @@
 
 = render partial: "navigation", locals: { active: :index }
 
+= simple_search_form(:first_name_or_last_name_cont)
+
 %table.table.table-striped.students-table
   %thead
     %tr
