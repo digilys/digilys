@@ -4,6 +4,11 @@ describe Suite do
   context "factory" do
     subject { build(:suite) }
     it { should be_valid }
+
+    context "invalid" do
+      subject { build(:invalid_suite) }
+      it { should_not be_valid }
+    end
   end
   context "accessible attributes" do
     it { should allow_mass_assignment_of(:name) }

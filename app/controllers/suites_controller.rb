@@ -149,10 +149,12 @@ class SuitesController < ApplicationController
   # to distinct entities that are compatible with rails
   # accepts_attributes_for
   def process_incoming_participant_data
-    if params[:suite][:is_template] == "true" || params[:suite][:is_template].to_i == 1
+    if params[:suite][:is_template] == "true" ||
+        params[:suite][:is_template] == true ||
+        (params[:suite][:is_template].respond_to?(:to_i) && params[:suite][:is_template].to_i == 1)
       # No participants allowed for templates
       params[:suite].delete(:participants_attributes)
-    else
+    elsif params[:suite][:participants_attributes]
       # Convert comma separated student and group ids to distinct participant data
       process_participant_autocomplete_params(
         params[:suite][:participants_attributes].delete("0")
