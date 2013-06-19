@@ -27,10 +27,18 @@ $ ->
             $("#new_participant").show()
 
     $(".suite-results").dataTable(
-        bPaginate:  false
-        bInfo:      false
-        bSort:      false
-        bStateSave: true
+        bPaginate:    false
+        bInfo:        false
+        bStateSave:   true
+        aoColumnDefs: [
+            {
+                aTargets: [ 0 ]
+                sType:    "html"
+            }, {
+                aTargets: [ "_all" ],
+                sType:    "result-value"
+            }
+        ]
     )
 
     # Toggle between different values in the result table

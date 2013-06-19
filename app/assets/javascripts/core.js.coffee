@@ -65,3 +65,24 @@ $ ->
     ).on("submit", ->
         window.onbeforeunload = null
     )
+
+pad = (str, max) ->
+    if str.length < max
+        return pad("0" + str, max)
+    else
+        return str
+
+window.jQuery.fn.dataTableExt.oSort["html-pre"] = (a) ->
+    return a.replace(/<[^>]*?>/g, "").toLowerCase()
+
+window.jQuery.fn.dataTableExt.oSort["result-value-pre"] = (a) ->
+    value = if a.indexOf("<") > -1
+        $(a).find(".value").text()
+    else
+        a
+
+    padded = pad(value, 10)
+    return padded
+
+window.jQuery.fn.dataTableExt.oSort["result-value-asc"] = window.jQuery.fn.dataTableExt.oSort["string-asc"]
+window.jQuery.fn.dataTableExt.oSort["result-value-desc"] = window.jQuery.fn.dataTableExt.oSort["string-desc"]
