@@ -243,16 +243,17 @@ sv:
 
   # Basic common actions
   # These are not put under a sub-key because we want i18n cascading to work
-  index_action:   "Lista"
-  show_action:    "Visa"
-  new_action:     "Skapa ny"
-  edit_action:    "Ändra"
-  destroy_action: "Radera"
-  save_action:    "Spara"
-  cancel_action:  "Avbryt"
-  login_action:   Logga in
-  logout_action:  Logga ut
-  search_action:  "Sök"
+  index_action:        "Lista"
+  show_action:         "Visa"
+  new_action:          "Skapa ny"
+  edit_action:         "Ändra"
+  destroy_action:      "Radera"
+  save_action:         "Spara"
+  cancel_action:       "Avbryt"
+  login_action:        Logga in
+  logout_action:       Logga ut
+  search_action:       "Sök"
+  clear_search_action: "Rensa"
 
   roles:
     admin: Administratör

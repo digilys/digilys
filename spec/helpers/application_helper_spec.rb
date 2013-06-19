@@ -103,8 +103,16 @@ describe ApplicationHelper do
     end
 
     subject { helper.simple_search_form(:name_cont) }
-    it      { should have_selector("input[name='q[name_cont]']") }
-    it      { should have_selector("form[action='/form/target']") }
+    it      { should     have_selector("input[name='q[name_cont]']") }
+    it      { should     have_selector("form[action='/form/target']") }
+    it      { should_not have_selector("a[href='/form/target']") }
+
+    context "with existing params" do
+      before(:each) do
+        helper.stub(:params).and_return(q: { name_cont: "name" })
+        it { should_not have_selector("a[href='/form/target']") }
+      end
+    end
   end
 
   context "google chart helpers" do
