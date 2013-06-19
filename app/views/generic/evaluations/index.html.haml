@@ -2,5 +2,7 @@
 
 = render partial: "navigation", locals: { active: :index }
 
+= simple_search_form(:name_or_description_cont)
+
 = render partial: "evaluations/list", object: @evaluations, as: :evaluations
 = paginate(@evaluations)

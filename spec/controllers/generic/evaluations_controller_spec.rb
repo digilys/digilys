@@ -12,6 +12,11 @@ describe Generic::EvaluationsController do
       response.should be_success
       assigns(:evaluations).should match_array(generics)
     end
+    it "is filterable" do
+      get :index, q: { name_cont: generics.first.name }
+      response.should be_success
+      assigns(:evaluations).should == [generics.first]
+    end
   end
 
   describe "GET #new" do
