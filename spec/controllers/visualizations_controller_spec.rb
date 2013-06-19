@@ -1,8 +1,42 @@
 require 'spec_helper'
 
 describe VisualizationsController do
+  login_admin
+
+  let(:suite) { create(:suite) }
+
+  describe "GET #color_area_chart" do
+    it "is successful" do
+      get :color_area_chart, suite_id: suite.id
+      response.should be_success
+    end
+  end
+  describe "GET #stanine_column_chart" do
+    it "is successful" do
+      get :stanine_column_chart, suite_id: suite.id
+      response.should be_success
+    end
+  end
+  describe "GET #result_line_chart" do
+    it "is successful" do
+      get :result_line_chart, suite_id: suite.id
+      response.should be_success
+    end
+  end
+
+  describe "POST #filter" do
+    it "sets a visualization filter" do
+      post :filter, type: "type", filter_categories: "foo,bar", return_to: "/foo/bar"
+      response.should redirect_to("/foo/bar")
+      session[:visualization_filter][:type][:categories].should == "foo,bar"
+    end
+    it "redirects to the root url if no return parameter is set" do
+      post :filter, type: "type", filter_categories: "foo,bar"
+      response.should redirect_to(root_url())
+    end
+  end
+
   describe "#results_to_datatable" do
-    let!(:suite)        { create(:suite) }
     let!(:students)     { create_list(:student, 2) }
     let!(:participants) { students.collect { |s| create(:participant, suite: suite, student: s) } }
     let!(:evaluations)  { create_list(:suite_evaluation, 2, suite: suite, max_result: 10, _yellow: 4..7) }
@@ -65,7 +99,6 @@ describe VisualizationsController do
   end
 
   describe "#result_colors_to_datatable" do
-    let!(:suite)        { create(:suite) }
     let!(:students)     { create_list(:student, 2) }
     let!(:participants) { students.collect { |s| create(:participant, suite: suite, student: s) } }
     let!(:evaluations)  { create_list(:suite_evaluation, 3, suite: suite, max_result: 10, _yellow: 4..7) }
@@ -114,7 +147,6 @@ describe VisualizationsController do
   end
 
   describe "#result_stanines_to_datatable" do
-    let!(:suite)        { create(:suite) }
     let!(:students)     { create_list(:student, 3) }
     let!(:participants) { students.collect { |s| create(:participant, suite: suite, student: s) } }
     let!(:evaluations)  { create_list(:suite_evaluation, 2,
