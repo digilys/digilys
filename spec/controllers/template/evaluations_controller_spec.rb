@@ -12,6 +12,11 @@ describe Template::EvaluationsController do
       response.should be_success
       assigns(:evaluations).should match_array(templates)
     end
+    it "is filterable" do
+      get :index, q: { name_cont: templates.first.name }
+      response.should be_success
+      assigns(:evaluations).should == [templates.first]
+    end
   end
 
   describe "GET #search" do

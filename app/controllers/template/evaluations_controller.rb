@@ -2,7 +2,9 @@ class Template::EvaluationsController < ApplicationController
   load_and_authorize_resource
 
   def index
-    @evaluations = @evaluations.with_type(:template).order(:name).page(params[:page])
+    @evaluations = @evaluations.with_type(:template)
+    @evaluations = @evaluations.search(params[:q]).result        if has_search_param?
+    @evaluations = @evaluations.order(:name).page(params[:page])
   end
 
   def search
