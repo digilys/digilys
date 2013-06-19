@@ -1,6 +1,9 @@
 %h1= Suite.model_name.human(count: 2)
 
 = render partial: "navigation", locals: { active: :index }
-= render partial: "list",       locals: { suites: @suites }
+
+= simple_search_form(:name_cont)
+
+= render partial: "list", locals: { suites: @suites }
 
 = paginate(@suites)

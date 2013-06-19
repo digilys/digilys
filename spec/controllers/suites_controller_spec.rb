@@ -14,6 +14,11 @@ describe SuitesController do
       response.should be_success
       assigns(:suites).should match_array(regular_suites)
     end
+    it "is filterable" do
+      get :index, q: { name_cont: regular_suites.first.name}
+      response.should be_success
+      assigns(:suites).should == [regular_suites.first]
+    end
 
     context "with a regular user" do
       let(:user) { create(:user) }

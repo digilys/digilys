@@ -10,7 +10,9 @@ class SuitesController < ApplicationController
       @suites = @suites.with_role([:suite_manager, :suite_contributor], current_user)
     end
 
-    @suites = @suites.regular.order(:name).page(params[:page])
+    @suites = @suites.regular.order(:name)
+    @suites = @suites.search(params[:q]).result if has_search_param?
+    @suites = @suites.page(params[:page])
   end
 
   def search_participants
