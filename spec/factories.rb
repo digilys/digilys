@@ -11,6 +11,9 @@ FactoryGirl.define do
     factory :superuser do
       after(:create) { |user| user.add_role :superuser }
     end
+    factory(:invalid_user) do
+      name nil
+    end
   end
 
   factory :student do

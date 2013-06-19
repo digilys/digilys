@@ -28,7 +28,7 @@ class UsersController < ApplicationController
       params[:user].delete(:password_confirmation)
       update_method = :update_attributes
     else
-      update_method = is_self_update ? :update_with_password : :update_with_attributes
+      update_method = is_self_update ? :update_with_password : :update_attributes
     end
 
     role_ids = params[:user].delete(:role_ids)
