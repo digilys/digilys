@@ -2,5 +2,7 @@
 
 = render partial: "navigation", locals: { active: :index }
 
+= simple_search_form(:name_cont)
+
 = render partial: "suites/list", locals: { suites: @suites }
 = paginate(@suites)

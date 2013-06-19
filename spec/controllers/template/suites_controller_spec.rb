@@ -12,6 +12,11 @@ describe Template::SuitesController do
       response.should be_success
       assigns(:suites).should match_array(templates)
     end
+    it "should be filterable" do
+      get :index, q: { name_cont: templates.first.name }
+      response.should be_success
+      assigns(:suites).should == [templates.first]
+    end
   end
 
   describe "GET #search" do
