@@ -54,6 +54,11 @@ module ApplicationHelper
       locals: { entity: entity, message: message, cancel_path: cancel_path }
   end
 
+  def simple_search_form(field)
+    render partial: "shared/simple_search_form",
+      locals: { field: field.to_s }
+  end
+
 
   ## Google visualization
 

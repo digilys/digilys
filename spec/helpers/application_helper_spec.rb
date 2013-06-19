@@ -97,6 +97,16 @@ describe ApplicationHelper do
     end
   end
 
+  describe "#simple_search_form" do
+    before(:each) do
+      helper.stub(:url_for).and_return("/form/target")
+    end
+
+    subject { helper.simple_search_form(:name_cont) }
+    it      { should have_selector("input[name='q[name_cont]']") }
+    it      { should have_selector("form[action='/form/target']") }
+  end
+
   context "google chart helpers" do
     before(:each) do
       helper.should_receive(:content_for).at_least(:once).with(:page_end, anything()) do |target, html|

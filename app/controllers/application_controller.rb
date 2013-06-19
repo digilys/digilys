@@ -10,6 +10,15 @@ class ApplicationController < ActionController::Base
 
   protected
 
+  def has_search_param?(allow_blank = false)
+    if params[:q] && !allow_blank
+      params[:q] = params[:q].reject { |_, v| v.blank? }
+    end
+
+    return !params[:q].blank?
+  end
+  helper_method :has_search_param?
+
   # When creating participants, two autocompletes are used, one for selecting
   # students, one for groups. The autocomplete generates two parameters, :student_id
   # and :group_id, which are comma separated list of the selected ids.

@@ -2,6 +2,30 @@ require 'spec_helper'
 
 # https://www.relishapp.com/rspec/rspec-rails/v/2-4/docs/controller-specs/anonymous-controller
 describe ApplicationController do
+  describe "#has_search_param?" do
+    let(:allow_blank) { false }
+    let(:params)      { {} }
+    before(:each)     { controller.stub(:params).and_return(params) }
+    subject           { controller.send(:has_search_param?, allow_blank) }
+
+    it { should be_false }
+
+    context "with search parameters" do
+      let(:params) { { q: { foo: "bar" } } }
+      it           { should be_true }
+    end
+
+    context "with blank search parameters" do
+      let(:params) { { q: { foo: "", bar: nil } } }
+      it           { should be_false }
+
+      context "allowing blanks" do
+        let(:allow_blank) { true }
+        it                { should be_true }
+      end
+    end
+  end
+
   describe "#process_participant_autocomplete_params" do
     let(:students) { create_list(:student, 3) }
     let(:groups)   { create_list(:group, 2) }

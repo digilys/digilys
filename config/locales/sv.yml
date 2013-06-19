@@ -252,6 +252,7 @@ sv:
   cancel_action:  "Avbryt"
   login_action:   Logga in
   logout_action:  Logga ut
+  search_action:  "Sök"
 
   roles:
     admin: Administratör
