@@ -9,14 +9,15 @@
 - stanines = {}
 - evaluations = @generic_evaluations[:included] + @suite.evaluations
 
+.btn-group.result-toggles
+  %button.btn.active(data-value="value") Resultat
+  %button.btn(data-value="stanine") Stanine
+
 %table.table.table-bordered.table-hover.suite-results.suite-show-value.results-table.results-fixed-table
 
   %thead
     %tr
-      %th.student
-        .btn-group.result-toggles
-          %button.btn.active(data-value="value") Resultat
-          %button.btn(data-value="stanine") Stanine
+      %th.student= Student.human_attribute_name(:name)
       - @suite.student_data.each do |key|
         %th.student-data
           = key

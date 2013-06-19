@@ -1,5 +1,9 @@
 @import "variables";
 
+.result-toggles {
+    float: right;
+}
+
 table.results-table {
     &.results-fixed-table {
         table-layout: fixed;
@@ -13,7 +17,6 @@ table.results-table {
             th:first-child {
                 width: 15em;
                 word-wrap: break-word;
-                text-align: right;
             }
         }
 
