@@ -4,7 +4,9 @@ class UsersController < ApplicationController
   load_and_authorize_resource
 
   def index
-    @users = @users.order(:name).page(params[:page])
+    @users = @users.order(:name)
+    @users = @users.search(params[:q]).result if has_search_param?
+    @users = @users.page(params[:page])
   end
 
   def search

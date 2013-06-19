@@ -8,10 +8,15 @@ describe UsersController do
   describe "GET #index" do
     let!(:users) { create_list(:user, 2) }
 
-    it "lists top level groups" do
+    it "lists users" do
       get :index
       response.should be_successful
       assigns(:users).should match_array(User.all)
+    end
+    it "is filterable" do
+      get :index, q: { name_cont: users.first.name }
+      response.should be_successful
+      assigns(:users).should == [users.first]
     end
   end
 
