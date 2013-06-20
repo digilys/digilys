@@ -26,11 +26,12 @@ $ ->
         else
             $("#new_participant").show()
 
-    $(".suite-results").dataTable(
-        bPaginate:    false
-        bInfo:        false
-        bStateSave:   true
-        aoColumnDefs: [
+    resultTable = $(".suite-results").dataTable(
+        bSortCellsTop: true
+        bPaginate:     false
+        bInfo:         false
+        bStateSave:    true
+        aoColumnDefs:  [
             {
                 aTargets: [ 0 ]
                 sType:    "html"
@@ -40,6 +41,10 @@ $ ->
             }
         ]
     )
+
+    $(".suite-results .filter input").on "keyup", ->
+        $input = $(this)
+        resultTable.fnFilter($input.val(), $input.closest("tr").find("input").index(this))
 
     # Toggle between different values in the result table
     $(".result-toggles").on "click", ".btn:not(.active)", ->

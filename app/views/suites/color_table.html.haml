@@ -38,6 +38,11 @@
         - values[evaluation.id]   = []
         - stanines[evaluation.id] = []
 
+    %tr
+      - 1.upto(@suite.student_data.length + evaluations.length + 1) do
+        %td.filter
+          %input{type: "text", placeholder: t(:".search_action")}
+
   %tbody
     - @suite.students.each do |student|
       %tr

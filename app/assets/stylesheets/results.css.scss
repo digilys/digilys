@@ -50,6 +50,14 @@ table.results-table {
         float: right;
     }
 
+    .filter input {
+        width: 6em;
+        margin: 0;
+    }
+    .filter:first-child input {
+        width: 14em;
+    }
+
     &.suite-show-value   .value   { display: block; }
     &.suite-show-stanine .stanine { display: block; }
 
