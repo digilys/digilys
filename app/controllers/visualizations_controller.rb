@@ -16,9 +16,15 @@ class VisualizationsController < ApplicationController
 
   def stanine_column_chart
     respond_to do |format|
-      format.html
+      format.html do
+        @evaluations = evaluations.with_stanines
+      end
       format.json do
-        render json: result_stanines_to_datatable(evaluations.with_stanines)
+        if params[:evaluation_id]
+          render json: result_stanines_by_color_to_datatable(Evaluation.find(params[:evaluation_id]))
+        else
+          render json: result_stanines_to_datatable(evaluations.with_stanines)
+        end
       end
     end
   end
@@ -144,18 +150,7 @@ class VisualizationsController < ApplicationController
       num_participants = 0
     end
 
-    # http://en.wikipedia.org/wiki/Stanine
-    normal_distribution = {
-      1 => 0.04 * num_participants,
-      2 => 0.07 * num_participants,
-      3 => 0.12 * num_participants,
-      4 => 0.17 * num_participants,
-      5 => 0.20 * num_participants,
-      6 => 0.17 * num_participants,
-      7 => 0.12 * num_participants,
-      8 => 0.07 * num_participants,
-      9 => 0.04 * num_participants
-    }
+    normal_distribution = normal_distribution(num_participants)
 
     1.upto(9).each do |stanine|
       row = [ stanine.to_s, normal_distribution[stanine] ]
@@ -166,5 +161,50 @@ class VisualizationsController < ApplicationController
     return rows
   end
 
+  def result_stanines_by_color_to_datatable(evaluation)
+    rows = []
+    rows << [ I18n.t(:stanine), I18n.t(:normal_distribution), I18n.t(:red), I18n.t(:yellow), I18n.t(:green) ]
+
+    return rows unless evaluation
+
+    num_participants = evaluation.participants.count(:all).to_f
+
+    normal_distribution = normal_distribution(num_participants)
+
+    stanine_distribution = evaluation.stanine_distribution
+
+    data = {
+      red:    stanine_distribution.select { |k, _| k < 4 },
+      yellow: stanine_distribution.select { |k, _| k > 3 && k < 7 },
+      green:  stanine_distribution.select { |k, _| k > 6 },
+    }
+
+    1.upto(9).each do |stanine|
+      rows << [
+        stanine.to_s,
+        normal_distribution[stanine],
+        data[:red][stanine]    || 0,
+        data[:yellow][stanine] || 0,
+        data[:green][stanine]  || 0,
+      ]
+    end
+
+    return rows
+  end
+
+  def normal_distribution(max)
+    # http://en.wikipedia.org/wiki/Stanine
+    {
+      1 => 0.04 * max,
+      2 => 0.07 * max,
+      3 => 0.12 * max,
+      4 => 0.17 * max,
+      5 => 0.20 * max,
+      6 => 0.17 * max,
+      7 => 0.12 * max,
+      8 => 0.07 * max,
+      9 => 0.04 * max
+    }
+  end
 
 end

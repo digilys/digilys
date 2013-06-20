@@ -199,4 +199,56 @@ describe VisualizationsController do
       end
     end
   end
+
+  describe "#result_stanines_by_color_to_datatable" do
+    let!(:students)     { create_list(:student, 3) }
+    let!(:participants) { students.collect { |s| create(:participant, suite: suite, student: s) } }
+    let!(:evaluation)   { create(:suite_evaluation,
+      suite: suite,
+      max_result: 8,
+      _yellow: 4..6,
+      _stanines: [ 0..0, 1..1, 2..2, 3..3, 4..4, 5..5, 6..6, 7..7, 8..8 ]
+    ) }
+
+    before(:each) do
+      [ 1, 4, 7 ].each do |value|
+        create(:result, evaluation: evaluation, value: value)
+      end
+    end
+
+    subject(:table) { controller.send(:result_stanines_by_color_to_datatable, evaluation) }
+
+    it { should have(10).items }
+
+    context "title row" do
+      subject      { table.first }
+      it           { should have(5).items }
+      its(:first)  { should == I18n.t(:stanine) }
+      its(:second) { should == I18n.t(:normal_distribution) }
+      its(:third)  { should == I18n.t(:red) }
+      its(:fourth) { should == I18n.t(:yellow) }
+      its(:fifth)  { should == I18n.t(:green) }
+    end
+    [
+      [1, 0.04 * 3.0, 0, 0, 0],
+      [2, 0.07 * 3.0, 1, 0, 0],
+      [3, 0.12 * 3.0, 0, 0, 0],
+      [4, 0.17 * 3.0, 0, 0, 0],
+      [5, 0.20 * 3.0, 0, 1, 0],
+      [6, 0.17 * 3.0, 0, 0, 0],
+      [7, 0.12 * 3.0, 0, 0, 0],
+      [8, 0.07 * 3.0, 0, 0, 1],
+      [9, 0.04 * 3.0, 0, 0, 0],
+    ].each do |row, expected_second, expected_third, expected_fourth, expected_fifth|
+      context "row #{row}" do
+        subject      { table[row] }
+        it           { should have(5).items }
+        its(:first)  { should == row.to_s }
+        its(:second) { should == expected_second }
+        its(:third)  { should == expected_third }
+        its(:fourth) { should == expected_fourth }
+        its(:fifth)  { should == expected_fifth }
+      end
+    end
+  end
 end
