@@ -26,9 +26,9 @@
           multiple: true } }
 
     = f.input :user_ids,
-      value: nil,
       as: :hidden,
       input_html: { class: "user-autocomplete-field",
+        value: nil,
         data: { url: search_users_path(format: :json),
           data: @activity.users_select2_data.to_json,
           multiple: true,
