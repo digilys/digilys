@@ -38,7 +38,7 @@
         - values[evaluation.id]   = []
         - stanines[evaluation.id] = []
 
-    %tr
+    %tr.filter-row
       - 1.upto(@suite.student_data.length + evaluations.length + 1) do
         %td.filter
           %input{type: "text", placeholder: t(:".search_action")}
@@ -53,16 +53,19 @@
           content: render(partial: "students/details_table", locals: { student: student })} }= student.name
 
         - @suite.student_data.each do |key|
-          %td.result= student.data_humanized[key] || "-"
+          %td.result
+            %div= student.data_humanized[key] || "-"
         - evaluations.each do |evaluation|
           - result = evaluation.result_for(student)
           %td.result{class: result_color_class(result)}
-            - if result && result.stanine
-              %ul
-                %li.value=   result.display_value
-                %li.stanine= result.stanine
-            - else
-              = result.try(:display_value) || "-"
+            %div
+              - if result && result.stanine
+                %ul
+                  %li.value=   result.display_value
+                  %li.stanine= result.stanine
+              - else
+                %span= result.try(:display_value) || "-"
+              = result_color_image(result)
 
           -# Add to track variables
           - unless evaluation.value_type.boolean?
@@ -91,16 +94,18 @@
           - average_value = "-"
 
         %td.result{class: result_color_class(average_value, evaluation)}
-          - if !stanines[evaluation.id].blank?
-            %ul
-              %li.value= average_value
-              %li.stanine= number_with_precision(stanines[evaluation.id].instance_eval { reduce(:+).to_f / size }, precision: 2)
-          - else
-            = average_value
+          %div
+            - if !stanines[evaluation.id].blank?
+              %ul
+                %li.value= average_value
+                %li.stanine= number_with_precision(stanines[evaluation.id].instance_eval { reduce(:+).to_f / size }, precision: 2)
+            - else
+              = average_value
+            = result_color_image(average_value, evaluation)
 
 = semantic_form_for @suite,
   url: add_generic_evaluations_suite_path(@suite),
-  html: { class: "form-inline" } do |f|
+  html: { class: "form-inline add-generic-evaluations-form" } do |f|
   = f.select :generic_evaluations, options_from_collection_for_select(@generic_evaluations[:missing], :id, :name)
   = f.action :submit, label: t(:".add_generic_evaluation_action")
 

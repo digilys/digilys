@@ -26,12 +26,32 @@ table.results-table {
     }
 
     .result {
+        padding: 0;
         text-align: center;
-        ul {
-            margin: 0;
-            list-style-type: none;
 
-            li { display: none; }
+        div {
+            position: relative;
+            padding: 8px;
+        }
+
+        ul, span {
+            position: relative;
+            z-index: 2;
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        li { display: none; }
+
+        img {
+            top: 0;
+            left: 0;
+            position: absolute;
+            display: none;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
         }
     }
 
@@ -65,6 +85,24 @@ table.results-table {
         &:hover > .result-red    { background-color: darken($red, 5%); }
         &:hover > .result-yellow { background-color: darken($yellow, 5%); }
         &:hover > .result-green  { background-color: darken($green, 5%); }
+    }
+}
+
+@media print {
+    table.results-table {
+        .result img {
+            display: block;
+        }
+        .filter-row,
+        .icon-trash {
+            display: none;
+        }
+    }
+
+    .result-toggles,
+    .dataTables_filter,
+    .add-generic-evaluations-form {
+        display: none;
     }
 }
 
