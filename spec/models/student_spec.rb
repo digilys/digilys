@@ -42,6 +42,11 @@ describe Student do
   context ".data_text=" do
     subject(:student) { create(:student, data_text: text) }
 
+    context "with empty values" do
+      let(:text) { "foo:" }
+      its(:data) { should have(1).items }
+      its(:data) { should include("foo" => nil) }
+    end
     context "with multiple rows" do
       let(:text) { "foo: bar\nbar: baz" }
       its(:data) { should have(2).items }

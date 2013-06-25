@@ -151,6 +151,8 @@ class Student < ActiveRecord::Base
   end
 
   def text_value_to_json_value(value)
+    return nil if value.nil?
+
     maybe_numeric = value.gsub(",", ".").gsub(/\s/, "")
 
     case maybe_numeric
