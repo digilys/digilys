@@ -105,3 +105,6 @@
     background: #fff;
     @include opacity(50);
 }
+
+.placeholder { color: #aaa; }
+.placeholderFocus { color: #333; }

@@ -18,6 +18,7 @@
 //= require bootstrap-datepicker/locales/bootstrap-datepicker.sv
 //= require dataTables/jquery.dataTables
 //= require dataTables/extras/ColReorder
+//= require lib/jquery.placeholder.js
 //= require defaults
 //= require core
 //= require_tree .

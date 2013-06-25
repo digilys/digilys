@@ -38,6 +38,7 @@ window.Digilys.autocomplete = (selectorOrElem, options = {}) ->
 
 $ ->
     $("[autofocus]:not(:focus)").eq(0).focus()
+    $(":input[placeholder]").placeholder()
 
     $("input.datepicker").datepicker(
         language:  "sv"
