@@ -32,7 +32,10 @@
         %a.btn.btn-small{href: select_groups_student_path(@student)}= t(:".select_groups_action")
 
     - unless @student.groups.blank?
-      = form_for @student, url: remove_groups_student_path(@student), method: :delete do |f|
+      = form_for @student,
+          url: remove_groups_student_path(@student),
+          html: { class: "prevent-navigation-confirmation" },
+          method: :delete do |f|
 
         %table.table.table-striped.groups-table
           %thead

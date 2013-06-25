@@ -27,7 +27,10 @@
     - if can? :update, @group
       %a.btn.btn-small{href: select_students_group_path(@group)}= t(:".select_students_action")
 
-    = form_for @group, url: remove_students_group_path(@group), method: :delete do |f|
+    = form_for @group,
+        url: remove_students_group_path(@group),
+        html: { class: "prevent-navigation-confirmation" },
+        method: :delete do |f|
       %table.table.table-striped.students-table
         %thead
           %tr
@@ -55,7 +58,10 @@
     - if can? :update, @group
       %a.btn.btn-small{href: select_users_group_path(@group)}= t(:".select_users_action")
 
-    = form_for @group, url: remove_users_group_path(@group), method: :delete do |f|
+    = form_for @group,
+        url: remove_users_group_path(@group),
+        html: { class: "prevent-navigation-confirmation" },
+        method: :delete do |f|
       %table.table.table-striped.users-table
         %thead
           %tr

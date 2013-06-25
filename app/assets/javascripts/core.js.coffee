@@ -59,7 +59,7 @@ $ ->
         if $field.data("autofocus")
             $field.select2("open")
 
-    $("form").on("change", ":input", (event) ->
+    $("form:not(.prevent-navigation-confirmation)").on("change", ":input", (event) ->
         if !$(event.target).data("preventNavigationConfirmation")
             window.onbeforeunload = ->
                 return window.Digilys.navigationConfirmation
