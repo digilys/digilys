@@ -77,10 +77,13 @@ window.jQuery.fn.dataTableExt.oSort["html-pre"] = (a) ->
     return a.replace(/<[^>]*?>/g, "").toLowerCase()
 
 window.jQuery.fn.dataTableExt.oSort["result-value-pre"] = (a) ->
-    value = if a.indexOf("<") > -1
-        $(a).find(".value").text()
+    $a = $(a)
+    $value = $(a).find(".value")
+
+    value = if $value.length > 0
+        $value.text()
     else
-        a
+        $(a).text()
 
     padded = pad(value, 10)
     return padded
