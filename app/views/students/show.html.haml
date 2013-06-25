@@ -71,11 +71,14 @@
             - @student.generic_results.each do |result|
               %tr
                 %td= result.evaluation.name
-                %td.result{class: result_color_class(result)}= result.display_value
+                %td.result{class: result_color_class(result)}
+                  %div= result.display_value
                 - if result.evaluation.stanines?
-                  %td.result{class: result_color_class(result)}= result.stanine
+                  %td.result{class: result_color_class(result)}
+                    %div= result.stanine
                 - else
-                  %td.result -
+                  %td.result
+                    %div -
           - if !@student.suite_results.blank?
             - show_link = can? :show, Evaluation
             %tr
@@ -85,9 +88,12 @@
             - @student.suite_results.each do |result|
               %tr
                 %td= link_to_if show_link, result.evaluation.name, result.evaluation
-                %td.result{class: result_color_class(result)}= result.display_value
+                %td.result{class: result_color_class(result)}
+                  %div= result.display_value
                 - if result.evaluation.stanines?
-                  %td.result{class: result_color_class(result)}= result.stanine
+                  %td.result{class: result_color_class(result)}
+                    %div= result.stanine
                 - else
-                  %td.result -
+                  %td.result
+                    %div -
 
