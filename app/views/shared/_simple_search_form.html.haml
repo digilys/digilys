@@ -2,7 +2,7 @@
   .input-prepend.input-append
     %span.add-on
       %i.icon-search
-    = text_field_tag "q[#{field}]", params[:q].try(:[], field)
+    = text_field_tag "q[#{field}]", params[:q].try(:[], field), autofocus: true
     = submit_tag t(:".search_action"), class: "btn", name: nil
     - if params[:q]
       = link_to t(:".clear_search_action"), url_for(), class: "btn"
