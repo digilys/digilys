@@ -1,0 +1,32 @@
+digraph ER {
+    
+    nodesep = 0.4;
+
+    graph [ rankdir=LR overlap=scalexy splines=true];
+    node  [ shape=box ];
+    edge  [ dir=none ];
+
+    User       -> Role        [ taillabel="*" headlabel="*" ];
+
+    Student    -> Group       [ taillabel="*" headlabel="*" ];
+    Student    -> Participant [ taillabel="1" headlabel="*" ]
+
+    Group      -> Group       [ taillabel="0..1" headlabel="*" ];
+    Group      -> User        [ taillabel="*" headlabel="*" ];
+    Group      -> Participant [ taillabel="1" headlabel="*" ];
+
+    Suite      -> Participant [ taillabel="1" headlabel="*" ];
+
+    Evaluation -> Suite       [ taillabel="*" headlabel="0..1" ];
+
+    Result     -> Evaluation  [ taillabel="*" headlabel="1" ];
+    Result     -> Student     [ taillabel="*" headlabel="1" ];
+
+    Meeting    -> Suite       [ taillabel="*" headlabel="1" ];
+
+    Activity   -> Suite       [ taillabel="*" headlabel="1" ];
+    Activity   -> Meeting     [ taillabel="*" headlabel="1" ];
+    Activity   -> Student     [ taillabel="*" headlabel="*" ];
+    Activity   -> User        [ taillabel="*" headlabel="*" ];
+    Activity   -> Group       [ taillabel="*" headlabel="*" ];
+}
