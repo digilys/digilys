@@ -58,6 +58,9 @@ $ ->
         $(".suite-results").attr "class", (i, cls) ->
             cls.replace /suite-show-\w+/, "suite-show-#{$button.data("value")}"
 
+        # Store the state globally
+        window.Digilys.currentResult = $button.data("value")
+
     # Display a popover of student data
     addedCloseHandler = false
 

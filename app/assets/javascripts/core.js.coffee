@@ -78,15 +78,28 @@ window.jQuery.fn.dataTableExt.oSort["html-pre"] = (a) ->
 
 window.jQuery.fn.dataTableExt.oSort["result-value-pre"] = (a) ->
     $a = $(a)
-    $value = $(a).find(".value")
+    $value = $a.find(".value")
 
     value = if $value.length > 0
         $value.text()
     else
-        $(a).text()
+        $a.text()
 
     padded = pad(value, 10)
     return padded
 
 window.jQuery.fn.dataTableExt.oSort["result-value-asc"] = window.jQuery.fn.dataTableExt.oSort["string-asc"]
 window.jQuery.fn.dataTableExt.oSort["result-value-desc"] = window.jQuery.fn.dataTableExt.oSort["string-desc"]
+
+window.jQuery.fn.dataTableExt.ofnSearch["result-value"] = (a) ->
+    $a = $(a)
+    cls = if !window.Digilys || !window.Digilys.currentResult then "value" else window.Digilys.currentResult
+
+    $value = $a.find(".#{cls}")
+
+    value = if $value.length > 0
+        $value.text()
+    else
+        $a.text()
+
+    return $.trim(value)
