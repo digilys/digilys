@@ -313,7 +313,7 @@ sv:
 
   instructions:
     form:
-      body_hint: Klistra in den kod som videotjänsten använder för att bädda in en film på en webbsida.
+      film_hint: Klistra in den kod som videotjänsten använder för att bädda in en film på en webbsida.
     create:
       success: Instruktionsfilmen skapades
     update:

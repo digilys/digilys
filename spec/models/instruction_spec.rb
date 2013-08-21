@@ -12,7 +12,8 @@ describe Instruction do
     end
   end
   context "accessible attributes" do
-    it { should allow_mass_assignment_of(:body) }
+    it { should allow_mass_assignment_of(:film) }
+    it { should allow_mass_assignment_of(:description) }
     it { should allow_mass_assignment_of(:for_page) }
     it { should allow_mass_assignment_of(:title) }
   end

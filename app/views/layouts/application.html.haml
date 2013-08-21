@@ -65,7 +65,8 @@
                           confirm_destroy_instruction_path(instruction, return_to: url_for()),
                           class: "btn btn-mini btn-danger"
                   .modal-body
-                    = instruction.body.html_safe
+                    = instruction.film.try(:html_safe)
+                    = instruction.description.try(:html_safe)
             - elsif can? :manage, Instruction
               %li
                 = link_to new_instruction_path(return_to: url_for(), for_page: "#{params[:controller]}/#{params[:action]}") do

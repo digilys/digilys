@@ -1,5 +1,6 @@
 class Instruction < ActiveRecord::Base
-  attr_accessible :body,
+  attr_accessible :film,
+    :description,
     :for_page,
     :title
 

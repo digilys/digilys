@@ -138,7 +138,8 @@ sv:
         name: Namn
       instruction:
         title: Titel
-        body: HTML-kod för film
+        film: HTML-kod för film
+        description: Hjälptext
 
     errors:
       models:

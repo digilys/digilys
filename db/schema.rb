@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130617062351) do
+ActiveRecord::Schema.define(:version => 20130821111850) do
 
   create_table "activities", :force => true do |t|
     t.integer  "suite_id"
@@ -92,9 +92,10 @@ ActiveRecord::Schema.define(:version => 20130617062351) do
   create_table "instructions", :force => true do |t|
     t.string   "title"
     t.string   "for_page"
-    t.text     "body"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.text     "film"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+    t.text     "description"
   end
 
   add_index "instructions", ["for_page"], :name => "index_instructions_on_for_page"
