@@ -18,9 +18,9 @@ namespace :app do
         red, yellow, green = parse_color_intervals(row[4], row[5], row[6], max_result)
 
         attributes = {
-          name:          row[0].gsub("\u00A0", " "),
-          description:   row[1].gsub("\u00A0", " "),
-          category_list: row[2].gsub("\u00A0", " "),
+          name:          row[0].try(:gsub, "\u00A0", " "),
+          description:   row[1].try(:gsub, "\u00A0", " "),
+          category_list: row[2].try(:gsub, "\u00A0", " "),
           max_result:    max_result,
           red:           red,
           yellow:        yellow,
