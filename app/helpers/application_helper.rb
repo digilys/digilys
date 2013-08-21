@@ -92,10 +92,10 @@ module ApplicationHelper
   ## TinyMCE
   def tinymce_autofocus(id)
     javascript_tag(%(
-      tinyMCE.onAddEditor.add(function(t, ed) {
-        if (ed.id == '#{id}') {
-          ed.onInit.add(function(ed) {
-            tinyMCE.execCommand("mceFocus", false, ed.id);
+      tinyMCE.on("AddEditor", function(e) {
+        if (e.editor.id == '#{id}') {
+          e.editor.on("init", function(ev) {
+            tinyMCE.execCommand("mceFocus", false, ev.target.id);
           });
         }
       });

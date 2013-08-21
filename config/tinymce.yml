@@ -1,6 +1,6 @@
-language: sv
-theme: advanced
-theme_advanced_buttons1: bold,italic,underline,strikethrough,|,bullist,numlist,|,link,unlink,|,formatselect
-theme_advanced_blockformats: p,h1,h2,h3,h4,h5,h6,blockquote
-theme_advanced_path: false
+language: sv_SE
+theme: modern
+menubar: false
+toolbar: bold italic underline strikethrough | bullist numlist | link unlink | formatselect
+block_formats: Normal=p;Rubrik 1=h1;Rubrik 2=h2;Rubrik 3=h3;Rubrik 4=h4;Rubrik 5=h5;Rubrik 6=h6;Citat=blockquote
 valid_elements: a[href|target|title],b,strong,i,em,span[style],p,ul,ol,li,h1,h2,h3,h4,h5,h6,blockquote
