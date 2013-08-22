@@ -543,6 +543,22 @@ describe Evaluation do
     end
   end
 
+  describe ".participant_count" do
+    let(:target)               { :all }
+    let(:suite)                { create(:suite) }
+    let!(:male_participants)   { create_list(:male_participant,   1, suite: suite) }
+    let!(:female_participants) { create_list(:female_participant, 4, suite: suite) }
+    let(:participants)         { male_participants + female_participants }
+    subject(:evaluation)       { create(:suite_evaluation, suite: suite, target: target) }
+
+    its(:participant_count) { should == participants.length }
+
+    context "limited by gender" do
+      let(:target) { :female }
+      its(:participant_count) { should == female_participants.length }
+    end
+  end
+
   describe ".result_distribution" do
     let(:target)               { :all }
     let(:suite)                { create(:suite) }

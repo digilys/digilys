@@ -238,6 +238,16 @@ class Evaluation < ActiveRecord::Base
   end
 
 
+  def participant_count(force_reload = false)
+    case self.target
+    when "all"
+      self.participants(force_reload).size.to_f
+    else
+      self.participants(force_reload).with_gender(self.target).size.to_f
+    end
+  end
+
+
   # Builds a percentage distribution of the results
   # of the following form:
   #
@@ -252,12 +262,7 @@ class Evaluation < ActiveRecord::Base
 
     result_distribution = {}
 
-    num_participants = case self.target
-    when "all"
-      self.participants.size.to_f
-    else
-      self.participants.with_gender(self.target).size.to_f
-    end
+    num_participants = self.participant_count
 
     result_distribution[:not_reported] = ((num_participants - self.results.length.to_f) / num_participants) * 100.0
 
@@ -385,7 +390,7 @@ class Evaluation < ActiveRecord::Base
 
   def update_status!
     num_results = self.results(true).count(:all)
-    num_participants = self.participants(true).count(:all)
+    num_participants = self.participant_count(true)
 
     if num_results > 0 && num_results < num_participants
       self.status = :partial

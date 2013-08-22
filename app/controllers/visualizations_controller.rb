@@ -145,7 +145,7 @@ class VisualizationsController < ApplicationController
     rows << [ I18n.t(:stanine), I18n.t(:normal_distribution), *evaluations.collect(&:name) ]
 
     if evaluations.first
-      num_participants = evaluations.first.participants.count(:all).to_f
+      num_participants = evaluations.first.participant_count
     else
       num_participants = 0
     end
@@ -167,7 +167,7 @@ class VisualizationsController < ApplicationController
 
     return rows unless evaluation
 
-    num_participants = evaluation.participants.count(:all).to_f
+    num_participants = evaluation.participant_count
 
     normal_distribution = normal_distribution(num_participants)
 
