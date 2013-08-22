@@ -11,6 +11,10 @@
     @include gradient-vertical(lighten($yellow, 15%), $yellow);
 }
 
+.progress-disabled .bar, .progress .bar-disabled {
+  @include gradient-vertical(lighten($grayLight, 15%), $grayLight);
+}
+
 .nav-tabs .secondary-tab {
     float: right;
 }
@@ -27,3 +31,10 @@ th .popover {
 .accordion-inner > ul.unstyled {
     margin: 0;
 }
+
+@media (min-width: 767px) {
+    .form-horizontal .secondary-controls .controls {
+        margin-left: 0;
+    }
+}
+

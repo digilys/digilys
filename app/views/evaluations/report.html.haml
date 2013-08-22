@@ -8,13 +8,23 @@
   url: submit_report_evaluation_path(@evaluation),
   html: { id: "result-entry-form", class: "form-horizontal" } do |f|
 
-  = f.input :max_result, input_html: { disabled: true }
+  .row
+    .span6
+      = f.input :max_result, input_html: { disabled: true, class: "span9" }
 
   - first = true
   = f.inputs for: :results do |rf|
-    = rf.input :value,
-      label: rf.object.student.name,
-      input_html: { autofocus: first, data: { "error-message" => t(:".result_error_message") } }
+    .row
+      .span6
+        = rf.input :value,
+          label: rf.object.student.name,
+          input_html: { autofocus: first,
+            tabindex: 1,
+            disabled: rf.object.absent,
+            class: "span9",
+            data: { "error-message" => t(:".result_error_message") } }
+      .span4
+        = rf.input :absent, wrapper_html: { class: "secondary-controls" }, input_html: { tabindex: 2 }
 
     = rf.hidden_field :student_id
     = rf.hidden_field :_destroy, value: 0 if !rf.object.new_record?
@@ -22,7 +32,11 @@
     - first = false
 
   = f.actions do
-    = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary" }
-    %a.btn{href:url_for(@suite)}= t(:".cancel_action")
-    = link_to t(:".destroy_action"), destroy_report_evaluation_path(@evaluation), method: :delete, class: "btn btn-danger"
+    = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary", tabindex: 3 }
+    %a.btn{href:url_for(@suite), tabindex: 3}= t(:".cancel_action")
+    = link_to t(:".destroy_action"),
+      destroy_report_evaluation_path(@evaluation),
+      method: :delete,
+      class: "btn btn-danger",
+      tabindex: 3
 
