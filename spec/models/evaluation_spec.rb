@@ -543,6 +543,31 @@ describe Evaluation do
     end
   end
 
+  describe ".participants" do
+    let(:target)               { :all }
+    let(:suite)                { create(:suite) }
+    let!(:male_participants)   { create_list(:male_participant,   1, suite: suite) }
+    let!(:female_participants) { create_list(:female_participant, 4, suite: suite) }
+    let(:suite_participants)   { male_participants + female_participants }
+    subject(:evaluation)       { create(:suite_evaluation, suite: suite, target: target) }
+
+    its(:participants) { should match_array(suite_participants) }
+
+    context "limited by gender" do
+      let(:target) { :female }
+      its(:participants) { should match_array(female_participants) }
+    end
+
+    context "with evaluation participants" do
+      before(:each) do
+        evaluation.evaluation_participants << female_participants.first
+        evaluation.evaluation_participants << male_participants.first
+      end
+
+      its(:participants) { should match_array([ female_participants.first, male_participants.first ]) }
+    end
+  end
+
   describe ".participant_count" do
     let(:target)               { :all }
     let(:suite)                { create(:suite) }

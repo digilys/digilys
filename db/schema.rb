@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130821120804) do
+ActiveRecord::Schema.define(:version => 20130822085154) do
 
   create_table "activities", :force => true do |t|
     t.integer  "suite_id"
@@ -67,6 +67,20 @@ ActiveRecord::Schema.define(:version => 20130821120804) do
   end
 
   add_index "evaluations", ["status"], :name => "index_evaluations_on_status"
+
+  create_table "evaluations_participants", :id => false, :force => true do |t|
+    t.integer "evaluation_id"
+    t.integer "participant_id"
+  end
+
+  add_index "evaluations_participants", ["evaluation_id", "participant_id"], :name => "index_evaluations_participants_on_ids"
+
+  create_table "evaluations_users", :id => false, :force => true do |t|
+    t.integer "evaluation_id"
+    t.integer "user_id"
+  end
+
+  add_index "evaluations_users", ["evaluation_id", "user_id"], :name => "index_evaluations_users_on_ids"
 
   create_table "groups", :force => true do |t|
     t.string   "name"

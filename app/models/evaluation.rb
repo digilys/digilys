@@ -11,10 +11,13 @@ class Evaluation < ActiveRecord::Base
     order:       "date asc",
     dependent:   :nullify
 
-  belongs_to :suite,        inverse_of: :evaluations
-  has_many   :participants, through:    :suite
-  has_many   :results,      dependent:  :destroy
-  has_many   :students,     through:    :results,     order: "students.last_name, students.first_name"
+  has_and_belongs_to_many :evaluation_participants,
+    class_name: "Participant"
+
+  belongs_to :suite,              inverse_of: :evaluations
+  has_many   :suite_participants, through:    :suite,       source: :participants
+  has_many   :results,            dependent:  :destroy
+  has_many   :students,           through:    :results,     order: "students.last_name, students.first_name"
 
   acts_as_taggable_on :categories
 
@@ -238,13 +241,18 @@ class Evaluation < ActiveRecord::Base
   end
 
 
-  def participant_count(force_reload = false)
-    case self.target
-    when "all"
-      self.participants(force_reload).size.to_f
+  def participants(force_reload = false)
+    if !self.evaluation_participants(force_reload).blank?
+      self.evaluation_participants
+    elsif self.target.all?
+      self.suite_participants(force_reload)
     else
-      self.participants(force_reload).with_gender(self.target).size.to_f
+      self.suite_participants(force_reload).with_gender(self.target)
     end
+  end
+
+  def participant_count(force_reload = false)
+    self.participants(force_reload).size.to_f
   end
 
 

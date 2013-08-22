@@ -57,13 +57,7 @@ class EvaluationsController < ApplicationController
 
   def report
     @suite        = @evaluation.suite
-
-    case @evaluation.target
-    when "all"
-      @participants = @suite.participants
-    else
-      @participants = @suite.participants.with_gender(@evaluation.target)
-    end
+    @participants = @evaluation.participants
 
     @participants.each do |participant|
       if !@evaluation.results.exists?(student_id: participant.student_id)
