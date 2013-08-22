@@ -16,9 +16,10 @@ class Result < ActiveRecord::Base
   )
   validates :evaluation, :student, presence: true
 
-  before_save   :update_color_and_stanine
-  after_create  :update_evaluation_status!
-  after_destroy :update_evaluation_status!
+  before_validation :ensure_nil_value_on_absent
+  before_save       :update_color_and_stanine
+  after_create      :update_evaluation_status!
+  after_destroy     :update_evaluation_status!
 
 
   def color
@@ -51,5 +52,9 @@ class Result < ActiveRecord::Base
 
   def update_evaluation_status!
     self.evaluation.update_status! if self.evaluation
+  end
+
+  def ensure_nil_value_on_absent
+    self.value = nil if self.absent?
   end
 end

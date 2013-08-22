@@ -158,4 +158,21 @@ describe Result do
       evaluation.status.should == "partial"
     end
   end
+
+  describe ".ensure_nil_value_on_absent" do
+    it "sets the value to nil if absent flag is set" do
+      result = build(:result, value: 1, absent: true)
+
+      result.value.should  == 1
+      result.valid?.should be_true
+      result.value.should  be_nil
+    end
+    it "does not touch the value if absent flag is not set" do
+      result = build(:result, value: 1, absent: false)
+
+      result.value.should  == 1
+      result.valid?.should be_true
+      result.value.should  == 1
+    end
+  end
 end
