@@ -9,11 +9,14 @@ describe Result do
     it { should allow_mass_assignment_of(:evaluation_id) }
     it { should allow_mass_assignment_of(:student_id) }
     it { should allow_mass_assignment_of(:value) }
+    it { should allow_mass_assignment_of(:absent) }
   end
   context "validation" do
     it { should validate_presence_of(:evaluation) }
     it { should validate_presence_of(:student) }
     it { should validate_numericality_of(:value).only_integer }
+
+    it { should_not allow_value(nil).for(:value) }
 
     context "of the value" do
       let(:evaluation) { build(:evaluation, max_result: rand(100))}
@@ -22,13 +25,19 @@ describe Result do
       it { should_not allow_value(evaluation.max_result + 1).for(:value) }
       it { should     allow_value(0).for(:value) }
       it { should     allow_value(evaluation.max_result).for(:value) }
+
+      context "when absent is true" do
+        subject { build(:result, evaluation: evaluation, absent: true) }
+        it { should allow_value(nil).for(:value) }
+      end
     end
   end
 
   context "color filter" do
     let(:evaluation) { create(:numeric_evaluation, max_result: 10, _yellow: 4..7) }
     let(:value)      { 5 }
-    subject(:result) { create(:result, evaluation: evaluation, value: value) }
+    let(:absent)     { false }
+    subject(:result) { create(:result, evaluation: evaluation, value: value, absent: absent) }
 
     context "with red value" do
       let(:value) { 3 }
@@ -45,6 +54,12 @@ describe Result do
     context "with green value" do
       let(:value) { 8 }
       its(:color) { should == :green }
+    end
+
+    context "with absent value" do
+      let(:absent) { true }
+      let(:value)  { nil }
+      its(:color)  { should be_nil }
     end
 
     it "updates the color when the evaluation changes" do

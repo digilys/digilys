@@ -24,7 +24,7 @@ class Evaluation < ActiveRecord::Base
   enumerize :status,     in: [ :empty, :partial, :complete ], predicates: { prefix: true }, scope: true, default: :empty
 
   accepts_nested_attributes_for :results,
-    reject_if: proc { |attributes| attributes[:value].blank? },
+    reject_if: proc { |attributes| attributes[:absent] != "1" && attributes[:value].blank? },
     allow_destroy: true
 
   attr_accessible :type,
@@ -261,9 +261,9 @@ class Evaluation < ActiveRecord::Base
 
     result_distribution[:not_reported] = ((num_participants - self.results.length.to_f) / num_participants) * 100.0
 
-    colors = { red: 0, yellow: 0, green: 0 }
+    colors = { red: 0, yellow: 0, green: 0, absent: 0 }
     self.results.each do |result|
-      colors[result.color] += 1
+      colors[result.color || :absent] += 1
     end
     
     colors.each_pair do |color, num|

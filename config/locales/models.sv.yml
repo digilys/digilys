@@ -67,6 +67,7 @@ sv:
         evaluation: Test
         student: Elev
         value: Resultat
+        absent: Deltog ej
       student:
         name: Namn
         first_name: Förnamn

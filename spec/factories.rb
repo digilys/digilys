@@ -170,6 +170,7 @@ FactoryGirl.define do
     value   25
     color   nil
     stanine nil
+    absent  false
   end
 
   factory :meeting do

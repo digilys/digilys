@@ -565,6 +565,7 @@ describe Evaluation do
       it { should include(red:          20.0) }
       it { should include(yellow:       40.0) }
       it { should include(green:        20.0) }
+      it { should include(absent:       0) }
     end
 
     context "without a color" do
@@ -581,6 +582,7 @@ describe Evaluation do
       it { should include(red:          0) }
       it { should include(yellow:       40.0) }
       it { should include(green:        40.0) }
+      it { should include(absent:       0) }
     end
 
     context "without results" do
@@ -604,6 +606,24 @@ describe Evaluation do
       it { should include(red:          25.0) }
       it { should include(yellow:       25.0) }
       it { should include(green:        50.0) }
+      it { should include(absent:       0) }
+    end
+
+    context "with absent results" do
+      before(:each) do
+        create(:result, student: participants[0].student, evaluation: evaluation, value: nil, absent: true) # absent
+        create(:result, student: participants[1].student, evaluation: evaluation, value: 5) # yellow
+        create(:result, student: participants[2].student, evaluation: evaluation, value: 6) # yellow
+        create(:result, student: participants[3].student, evaluation: evaluation, value: 8) # green
+      end
+
+      subject { evaluation.result_distribution }
+
+      it { should include(not_reported: 20.0) }
+      it { should include(red:          0) }
+      it { should include(yellow:       40.0) }
+      it { should include(green:        20.0) }
+      it { should include(absent:       20.0) }
     end
   end
 
