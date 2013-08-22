@@ -214,6 +214,7 @@ describe VisualizationsController do
       [ 1, 4, 7 ].each do |value|
         create(:result, evaluation: evaluation, value: value)
       end
+      create(:result, evaluation: evaluation, value: nil, absent: true)
     end
 
     subject(:table) { controller.send(:result_stanines_by_color_to_datatable, evaluation) }

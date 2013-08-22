@@ -174,9 +174,9 @@ class VisualizationsController < ApplicationController
     stanine_distribution = evaluation.stanine_distribution
 
     data = {
-      red:    stanine_distribution.select { |k, _| k < 4 },
-      yellow: stanine_distribution.select { |k, _| k > 3 && k < 7 },
-      green:  stanine_distribution.select { |k, _| k > 6 },
+      red:    stanine_distribution.select { |k, _| k && k < 4 },
+      yellow: stanine_distribution.select { |k, _| k && k > 3 && k < 7 },
+      green:  stanine_distribution.select { |k, _| k && k > 6 },
     }
 
     1.upto(9).each do |stanine|
