@@ -102,10 +102,11 @@ describe EvaluationsHelper do
       end
 
       it { should have_selector(".progress.evaluation-status-progress") }
-      it { should have_selector(".progress .bar", count: 3) }
+      it { should have_selector(".progress .bar", count: 4) }
       it { should have_selector(".progress .bar-success[style=\"width: 20.0%\"]") }
       it { should have_selector(".progress .bar-yellow[style=\"width: 40.0%\"]") }
       it { should have_selector(".progress .bar-danger[style=\"width: 20.0%\"]") }
+      it { should have_selector(".progress .bar-disabled[style=\"width: 0.0%\"]") }
     end
     context "with colors missing" do
       before(:each) do
@@ -114,10 +115,27 @@ describe EvaluationsHelper do
       end
 
       it { should have_selector(".progress.evaluation-status-progress") }
-      it { should have_selector(".progress .bar", count: 3) }
+      it { should have_selector(".progress .bar", count: 4) }
       it { should have_selector(".progress .bar-success[style=\"width: 0.0%\"]") }
       it { should have_selector(".progress .bar-yellow[style=\"width: 40.0%\"]") }
       it { should have_selector(".progress .bar-danger[style=\"width: 0.0%\"]") }
+      it { should have_selector(".progress .bar-disabled[style=\"width: 0.0%\"]") }
+    end
+    context "with absent results" do
+      before(:each) do
+        create(:result, student: participants[0].student, evaluation: evaluation, value: 1) # red
+        create(:result, student: participants[1].student, evaluation: evaluation, value: 5) # yellow
+        create(:result, student: participants[2].student, evaluation: evaluation, value: 6) # yellow
+        create(:result, student: participants[3].student, evaluation: evaluation, value: 8) # green
+        create(:result, student: participants[4].student, evaluation: evaluation, value: nil, absent: true) # absent
+      end
+
+      it { should have_selector(".progress.evaluation-status-progress") }
+      it { should have_selector(".progress .bar", count: 4) }
+      it { should have_selector(".progress .bar-success[style=\"width: 20.0%\"]") }
+      it { should have_selector(".progress .bar-yellow[style=\"width: 40.0%\"]") }
+      it { should have_selector(".progress .bar-danger[style=\"width: 20.0%\"]") }
+      it { should have_selector(".progress .bar-disabled[style=\"width: 20.0%\"]") }
     end
   end
 end

@@ -33,9 +33,10 @@ module EvaluationsHelper
     bars = []
 
     if !result_distribution.blank?
-      bars << content_tag(:div, "", class:"bar bar-success", style: "width: #{result_distribution[:green].round(1)}%")
-      bars << content_tag(:div, "", class:"bar bar-yellow",  style: "width: #{result_distribution[:yellow].round(1)}%")
-      bars << content_tag(:div, "", class:"bar bar-danger",  style: "width: #{result_distribution[:red].round(1)}%")
+      bars << content_tag(:div, "", class:"bar bar-success",  style: "width: #{result_distribution[:green].round(1)}%")
+      bars << content_tag(:div, "", class:"bar bar-yellow",   style: "width: #{result_distribution[:yellow].round(1)}%")
+      bars << content_tag(:div, "", class:"bar bar-danger",   style: "width: #{result_distribution[:red].round(1)}%")
+      bars << content_tag(:div, "", class:"bar bar-disabled", style: "width: #{result_distribution[:absent].round(1)}%")
     end
 
     bar_container = content_tag(:div, bars.join("").html_safe, class: "progress evaluation-status-progress")

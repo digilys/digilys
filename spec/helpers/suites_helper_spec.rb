@@ -123,6 +123,12 @@ describe SuitesHelper do
           helper.result_color_class(result).should == "result-green"
         end
       end
+      context "for absent result" do
+        let(:result) { create(:result, value: 18, evaluation: evaluation, absent: true) }
+        it "returns a blank string" do
+          helper.result_color_class(result).should be_blank
+        end
+      end
     end
     context "value and evaluation" do
       context "for red result" do
@@ -139,6 +145,67 @@ describe SuitesHelper do
         it "returns green" do
           helper.result_color_class(18, evaluation).should == "result-green"
         end
+      end
+    end
+  end
+  describe ".result_color_image" do
+    it "handles nil results" do
+      helper.result_color_image(nil).should be_blank
+    end
+
+    let(:evaluation) { create(:evaluation, max_result: 20, _yellow: 10..15) }
+
+    context "with result object" do
+      let(:value)  { nil }
+      let(:result) { create(:result, value: value, evaluation: evaluation) }
+      subject      { Capybara::Node::Simple.new(helper.result_color_image(result)) }
+
+      context "for red result" do
+        let(:value) { 5 }
+        it { should have_selector("img") }
+        it { should have_selector("img[src$='red.png']") }
+        it { should have_selector("img[alt='Red']") }
+      end
+      context "for yellow result" do
+        let(:value) { 12 }
+        it { should have_selector("img") }
+        it { should have_selector("img[src$='yellow.png']") }
+        it { should have_selector("img[alt='Yellow']") }
+      end
+      context "for green result" do
+        let(:value) { 18 }
+        it { should have_selector("img") }
+        it { should have_selector("img[src$='green.png']") }
+        it { should have_selector("img[alt='Green']") }
+      end
+      context "for absent result" do
+        let(:result) { create(:result, value: 18, evaluation: evaluation, absent: true) }
+        subject      { helper.result_color_image(result) }
+
+        it { should be_blank }
+      end
+    end
+    context "value and evaluation" do
+      let(:value) { nil }
+      subject     { Capybara::Node::Simple.new(helper.result_color_image(value, evaluation)) }
+
+      context "for red result" do
+        let(:value) { 5 }
+        it { should have_selector("img") }
+        it { should have_selector("img[src$='red.png']") }
+        it { should have_selector("img[alt='Red']") }
+      end
+      context "for yellow result" do
+        let(:value) { 12 }
+        it { should have_selector("img") }
+        it { should have_selector("img[src$='yellow.png']") }
+        it { should have_selector("img[alt='Yellow']") }
+      end
+      context "for green result" do
+        let(:value) { 18 }
+        it { should have_selector("img") }
+        it { should have_selector("img[src$='green.png']") }
+        it { should have_selector("img[alt='Green']") }
       end
     end
   end
