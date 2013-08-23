@@ -30,6 +30,14 @@ class Participant < ActiveRecord::Base
     includes(:student).where("students.gender" => gender.to_s)
   end
 
+  def self.with_student_ids(ids)
+    where(student_id: ids)
+  end
+
+  def self.with_implicit_group_ids(ids)
+    where([ "student_id in (select student_id from groups_students where group_id in (?))", ids])
+  end
+
 
   private
 

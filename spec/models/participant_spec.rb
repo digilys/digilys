@@ -74,4 +74,36 @@ describe Participant do
     subject { Participant.with_gender(:female).all }
     it      { should match_array(female_participants) }
   end
+
+  describe "#with_student_ids" do
+    let(:student1)      { create(:student) }
+    let(:student2)      { create(:student) }
+    let(:student3)      { create(:student) }
+    let!(:participant1) { create(:participant, student: student1) }
+    let!(:participant2) { create(:participant, student: student2) }
+    let!(:participant3) { create(:participant, student: student3) }
+
+    subject { Participant.with_student_ids([ student1.id, student2.id ]).all }
+    it      { should match_array([participant1, participant2])}
+  end
+  describe "#with_implicit_group_ids" do
+    let(:group1) { create(:group) }
+    let(:group2) { create(:group) }
+    let(:group3) { create(:group) }
+    let(:student1)      { create(:student) }
+    let(:student2)      { create(:student) }
+    let(:student3)      { create(:student) }
+    let!(:participant1) { create(:participant, student: student1) }
+    let!(:participant2) { create(:participant, student: student2) }
+    let!(:participant3) { create(:participant, student: student3) }
+
+    before(:each) do
+      student1.groups << group1
+      student2.groups << group2
+      student3.groups << group3
+    end
+
+    subject { Participant.with_implicit_group_ids([ group1.id, group2.id ]).all }
+    it      { should match_array([participant1, participant2])}
+  end
 end
