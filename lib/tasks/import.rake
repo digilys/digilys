@@ -25,15 +25,15 @@ namespace :app do
           red:           red,
           yellow:        yellow,
           green:         green,
-          stanine1:      parse_interval(row[8],  max_result),
-          stanine2:      parse_interval(row[9],  max_result),
-          stanine3:      parse_interval(row[10], max_result),
-          stanine4:      parse_interval(row[11], max_result),
-          stanine5:      parse_interval(row[12], max_result),
-          stanine6:      parse_interval(row[13], max_result),
-          stanine7:      parse_interval(row[14], max_result),
-          stanine8:      parse_interval(row[15], max_result),
-          stanine9:      parse_interval(row[16], max_result)
+          stanine1:      parse_interval(row[7],  max_result),
+          stanine2:      parse_interval(row[8],  max_result),
+          stanine3:      parse_interval(row[9],  max_result),
+          stanine4:      parse_interval(row[10], max_result),
+          stanine5:      parse_interval(row[11], max_result),
+          stanine6:      parse_interval(row[12], max_result),
+          stanine7:      parse_interval(row[13], max_result),
+          stanine8:      parse_interval(row[14], max_result),
+          stanine9:      parse_interval(row[15], max_result)
         }
 
         data << {
