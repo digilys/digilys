@@ -12,7 +12,7 @@ class IndexController < ApplicationController
     @suites                 = Suite.regular.with_role([:suite_manager, :suite_contributor], current_user).order(:updated_at).limit(10)
 
     evaluations             = Evaluation.with_type(:suite).where_suite_contributor(current_user).order("date asc")
-    overdue_evaluations     = evaluations.overdue
+    overdue_evaluations     = evaluations.overdue.without_explicit_users + current_user.evaluations.overdue.order(:updated_at)
     upcoming_evaluations    = evaluations.upcoming.limit(5)
 
     @evaluations            = {}

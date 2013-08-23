@@ -883,4 +883,17 @@ describe Evaluation do
     it { should have(2).items }
     it { should match_array([with_numeric_stanines, with_grade_stanines]) }
   end
+
+  describe "#without_explicit_users" do
+    let!(:user)                   { create(:user) }
+    let!(:with_explicit_users)    { create_list(:suite_evaluation, 2) }
+    let!(:without_explicit_users) { create_list(:suite_evaluation, 3) }
+
+    before(:each) { with_explicit_users.each { |e| e.users << user } }
+
+    subject { Evaluation.without_explicit_users.all }
+
+    it { should have(3).items }
+    it { should match_array(without_explicit_users) }
+  end
 end

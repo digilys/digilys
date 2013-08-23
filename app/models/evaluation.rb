@@ -476,6 +476,10 @@ class Evaluation < ActiveRecord::Base
     where("stanines is not null and stanines != 'null'")
   end
 
+  def self.without_explicit_users
+    where("id not in (select evaluation_id from evaluations_users)")
+  end
+
 
   def has_grade_stanines?
     return !@stanine_for_grade_a.blank? ||

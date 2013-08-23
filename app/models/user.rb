@@ -9,6 +9,7 @@ class User < ActiveRecord::Base
 
   has_and_belongs_to_many :groups,     order: "groups.name asc"
   has_and_belongs_to_many :activities
+  has_and_belongs_to_many :evaluations
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email,
