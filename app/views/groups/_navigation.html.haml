@@ -12,6 +12,9 @@
     - if can? :select_students, group
       %li{class: active_if(active == :select_students)}
         %a{href:select_students_group_path(group)}= t(:".select_students_action")
+    - if can? :move_students, group
+      %li{class: active_if(active == :move_students)}
+        %a{href:move_students_group_path(group)}= t(:".move_students_action")
     - if can? :select_users, group
       %li{class: active_if(active == :select_users)}
         %a{href:select_users_group_path(group)}= t(:".select_users_action")

@@ -113,6 +113,34 @@ describe GroupsController do
       group.students(true).should match_array(students)
     end
   end
+  describe "GET #move_students" do
+    it "is successful" do
+      get :move_students, id: group.id
+      response.should be_success
+    end
+  end
+  describe "PUT #move_students" do
+    let(:other_group)    { create(:group) }
+    let(:students)       { create_list(:student, 2) }
+    let(:students_moved) { create_list(:student, 2) }
+
+    before(:each) { group.students = students + students_moved }
+
+    it "moves students from a group to another" do
+      put :move_students, id: group.id, group: { group: other_group.id }, student_ids: students_moved.collect(&:id)
+      response.should redirect_to(group)
+
+      group.students(true).should       match_array(students)
+      other_group.students(true).should match_array(students_moved)
+    end
+
+    it "produces an error when no group has been selected" do
+      put :move_students, id: group.id, group: { group: "" }, student_ids: students_moved.collect(&:id)
+      response.should redirect_to(action: "move_students")
+
+      group.students(true).should match_array(students + students_moved)
+    end
+  end
   describe "DELETE #remove_students" do
     let(:students) { create_list(:student, 2) }
 

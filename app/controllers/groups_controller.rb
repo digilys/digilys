@@ -71,6 +71,23 @@ class GroupsController < ApplicationController
     redirect_to @group
   end
 
+  def move_students
+    return unless request.put?
+
+    if params[:group][:group].blank?
+      flash[:warning] = t(:"groups.move_students.group_missing")
+      redirect_to action: "move_students"
+    else
+      destination_group = Group.find(params[:group][:group])
+      destination_group.add_students(params[:student_ids].join(","))
+
+      @group.remove_students(params[:student_ids])
+
+      flash[:success] = t(:"groups.move_students.success")
+      redirect_to @group
+    end
+  end
+
   def remove_students
     @group.remove_students(params[:student_ids])
 

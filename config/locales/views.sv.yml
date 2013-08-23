@@ -78,6 +78,7 @@ sv:
 
   groups:
     select_students_action: Lägg till elever
+    move_students_action: Flytta elever
     select_users_action: Lägg till användare
     form:
       parent_placeholder: Sök och välj en grupp
@@ -96,9 +97,12 @@ sv:
       students_placeholder: Sök och välj en eller flera elever
     add_students:
       success: Eleverna lades till i gruppen
+    move_students:
+      groups_placeholder: Sök och välj en grupp
+      group_missing: Du måste välja en grupp att flytta eleverna till
+      success: Eleverna flyttades
     remove_students:
       success: Eleverna togs bort från gruppen
-    select_users:
     add_users:
       success: Användaren lades till i gruppen
     remove_users:

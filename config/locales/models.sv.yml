@@ -87,6 +87,7 @@ sv:
         children: Undergrupper
         students: Elever
         users: Användare
+        group: Flytta markerade till
       participant:
         suite: Planering
         student: Elev

@@ -19,6 +19,8 @@ Digilys::Application.routes.draw do
       get    :confirm_destroy
       get    :select_students
       put    :add_students
+      get    :move_students
+      put    :move_students
       delete :remove_students
       get    :select_users
       put    :add_users

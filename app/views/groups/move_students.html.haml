@@ -1,0 +1,26 @@
+%h1
+  = @group.name
+  %small= Group.model_name.human
+
+= render partial: "navigation", locals: { group: @group, active: :move_students }
+
+= semantic_form_for @group, url: move_students_group_path(@group), html: { id: "group-form", class: "form-horizontal" } do |f|
+
+  = f.inputs do
+    - @group.students.each do |student|
+      .boolean.input.optional.control-group
+        .controls
+          %label.checkbox(for="student_ids_#{student.id}")
+            = check_box_tag "student_ids[]", student.id, false, id: "student_ids_#{student.id}"
+            = student.name
+
+    = f.input :group,
+      value: nil,
+      as: :hidden,
+      input_html: { class: "group-autocomplete-field",
+        data: { url: search_groups_path(format: :json),
+          placeholder: t(:".groups_placeholder") } }
+
+  = f.actions do
+    = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
+    %a.btn{href:url_for(f.object)}= t(:".cancel_action")
