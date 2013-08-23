@@ -13,6 +13,7 @@ class Evaluation < ActiveRecord::Base
 
   has_and_belongs_to_many :evaluation_participants,
     class_name: "Participant"
+  has_and_belongs_to_many :users
 
   belongs_to :suite,              inverse_of: :evaluations
   has_many   :suite_participants, through:    :suite,       source: :participants
@@ -81,7 +82,8 @@ class Evaluation < ActiveRecord::Base
     :stanine_for_grade_e,
     :stanine_for_grade_f,
     :results_attributes,
-    :students_and_groups
+    :students_and_groups,
+    :user_ids
 
   serialize :value_aliases, JSON
   serialize :colors,        JSON
@@ -263,6 +265,10 @@ class Evaluation < ActiveRecord::Base
 
   def students_and_groups_select2_data
     self.evaluation_participants.collect { |p| { id: "s-#{p.student.id}", text: p.student.name } }
+  end
+
+  def users_select2_data
+    self.users.collect { |u| { id: u.id, text: "#{u.name}, #{u.email}" } }
   end
 
 

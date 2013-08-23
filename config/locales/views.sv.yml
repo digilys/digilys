@@ -193,10 +193,12 @@ sv:
     color_ranges: Färgintervall
     stanines: Stanine-värden
     result_info: Resultatinformation
-    participants: Elever
+    assign_to: Specifika elever, grupper och deltagare
 
     show:
       template_notice: Detta är en mall för test.
+      participants: Elever
+      users: Deltagare
     form:
       for_suite: Detta test tillhör %{suite_name}.
       from_template: Använder mallen %{template_name}.
@@ -206,7 +208,7 @@ sv:
       result_info: Resultatinformation
       category_help: Välj befintliga eller skriv in nya kategorier
       stanines: Stanine-värden <small>Lämna alla värden tomma om du inte vill använda staninevärden</small>
-      students_and_groups_help: Ange grupper/elever om testet inte ska vara för alla elever i planeringen. Lämna tom för att alla elever kopplade till planeringen ska delta i testet.
+      assign_to_help: Tilldela specifika elever, grupper och deltagare till testet om bara en del av eleverna i planeringen ska göra testet, eller om specifika deltagare ska handha testet. Lämna fälten tomma om du vill använda de elever, grupper och deltagare som tillhör planeringen.
     numeric_fields:
       color_range_help_html: Lägg till "%" efter numret för att ange intervallet som procent.<br>För att ändra ordning på färgintervallen, ange det gula intervallet i omvänd ordning, t.ex. "30-20".
       color_range_error_text: Intervallet måste vara giltiga heltal och ligga mellan 0 och maxresultatet

@@ -57,8 +57,8 @@
     = render partial: "evaluations/numeric_fields", locals: { evaluation: evaluation, f: f }
 
     - if evaluation.has_regular_suite?
-      = f.inputs t(:".participants") do
-        .alert.alert-info= t(:".students_and_groups_help")
+      = f.inputs t(:".assign_to") do
+        .alert.alert-info= t(:".assign_to_help")
         = f.input :students_and_groups,
           as: :hidden,
           input_html: { class: "evaluation-participants-autocomplete-field",
@@ -66,6 +66,14 @@
               data: evaluation.students_and_groups_select2_data.to_json,
               placeholder: t(:".activity_students_placeholder"),
               multiple: true } }
+        = f.input :user_ids,
+          as: :hidden,
+          input_html: { class: "user-autocomplete-field",
+            value: nil,
+            data: { url: search_users_path(format: :json),
+              data: evaluation.users_select2_data.to_json,
+              multiple: true,
+              placeholder: t(:".users_placeholder") } }
 
   = f.actions do
     = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}

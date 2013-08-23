@@ -64,6 +64,8 @@ sv:
         stanine8_grade: Stanine 8
         stanine9_grade: Stanine 9
         students_and_groups: Elever/grupper
+        users: Deltagare
+        user_ids: Deltagare
       result:
         evaluation: Test
         student: Elev

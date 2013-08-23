@@ -633,6 +633,15 @@ describe Evaluation do
     it { should include({ id: "s-#{participants.third.student_id}",  text: participants.third.student.name }) }
   end
 
+  describe ".users_select2_data" do
+    let(:users)          { create_list(:user, 2) }
+    subject(:evaluation) { create(:suite_evaluation, users: users) }
+
+    its(:users_select2_data) { should have(2).items }
+    its(:users_select2_data) { should include(id: users.first.id,  text: "#{users.first.name}, #{users.first.email}") }
+    its(:users_select2_data) { should include(id: users.second.id, text: "#{users.second.name}, #{users.second.email}") }
+  end
+
   describe ".result_distribution" do
     let(:target)               { :all }
     let(:suite)                { create(:suite) }
