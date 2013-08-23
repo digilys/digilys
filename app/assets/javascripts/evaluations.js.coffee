@@ -163,10 +163,10 @@ $ ->
                 { q: { name_or_description_cont: term }, page: page }
             formatResult: (result, container, query, escapeMarkup) ->
                 nameMarkup = []
-                window.Select2.util.markMatch(result.name, query.term, nameMarkup, escapeMarkup)
+                window.Select2.util.markMatch(result.name || "", query.term, nameMarkup, escapeMarkup)
 
                 descriptionMarkup = []
-                window.Select2.util.markMatch(result.description, query.term, descriptionMarkup, escapeMarkup)
+                window.Select2.util.markMatch(result.description || "", query.term, descriptionMarkup, escapeMarkup)
 
                 return nameMarkup.join("") + '<small>' + descriptionMarkup.join("") + "</small>"
         )
