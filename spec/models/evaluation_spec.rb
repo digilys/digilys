@@ -161,6 +161,37 @@ describe Evaluation do
     end
   end
 
+  describe ".parse_students_and_groups" do
+    let(:suite)        { create(:suite) }
+    let(:group)        { create(:group) }
+    let(:participants) { create_list(:participant, 3, suite: suite) }
+    let(:students)     { participants.collect(&:student) }
+
+    before(:each) do
+      group.students = [students.first, students.second ]
+    end
+
+    it "sets evaluation_participant_ids from student and group ids" do
+      evaluation = build(:suite_evaluation, suite: suite, students_and_groups: "[],,s-#{students.third.id},g-#{group.id}")
+      evaluation.valid?.should be_true
+      evaluation.evaluation_participant_ids.should match_array(participants.collect(&:id))
+    end
+
+    it "clears evaluation_participants if students and groups are cleared" do
+      evaluation = create(:suite_evaluation, suite: suite, students_and_groups: "[],,s-#{students.third.id},g-#{group.id}")
+      evaluation.students_and_groups = nil
+      evaluation.valid?.should be_true
+      evaluation.evaluation_participants.should be_blank
+    end
+
+    it "does not touch evaluation_participants if the students and groups have not been explicitly cleared" do
+      evaluation = create(:suite_evaluation, suite: suite, students_and_groups: "[],,s-#{students.third.id},g-#{group.id}")
+      evaluation = Evaluation.find(evaluation.id)
+      evaluation.valid?.should be_true
+      evaluation.evaluation_participant_ids.should_not be_blank
+    end
+  end
+
   describe ".set_default_values_for_value_type" do
     context "for boolean values" do
       subject { create(:boolean_evaluation, max_result: nil) }
@@ -582,6 +613,24 @@ describe Evaluation do
       let(:target) { :female }
       its(:participant_count) { should == female_participants.length }
     end
+  end
+
+  describe ".students_and_groups_select2_data" do
+    let(:suite)        { create(:suite) }
+    let(:participants) { create_list(:participant, 3, suite: suite) }
+    let(:evaluation)   { create(:suite_evaluation, suite: suite) }
+
+    before(:each) do
+      evaluation.evaluation_participants = participants
+    end
+
+    subject { evaluation.students_and_groups_select2_data }
+
+    its(:length) { should == 3 }
+
+    it { should include({ id: "s-#{participants.first.student_id}",  text: participants.first.student.name }) }
+    it { should include({ id: "s-#{participants.second.student_id}", text: participants.second.student.name }) }
+    it { should include({ id: "s-#{participants.third.student_id}",  text: participants.third.student.name }) }
   end
 
   describe ".result_distribution" do

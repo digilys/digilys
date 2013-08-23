@@ -65,3 +65,9 @@
           data: { stanine: i }
         - if has_error
           .help-block= t(:".stanine_range_error_text")
+
+  - if evaluation.has_regular_suite?
+    .control-group
+      .controls
+        = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
+        %a.btn{href:evaluation_cancel_path(evaluation) }= t(:".cancel_action")

@@ -53,3 +53,13 @@
     .controls { margin-left: 90px; }
 }
 
+form.evaluation {
+    .hidden {
+        visibility: visible;
+        display: block;
+    }
+
+    .select2-container {
+        width: 30em;
+    }
+}

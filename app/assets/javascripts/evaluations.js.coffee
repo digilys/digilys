@@ -15,6 +15,9 @@ $ ->
     $("#evaluation-form").each ->
         $form = $(this)
 
+        $form.find(".evaluation-participants-autocomplete-field").each ->
+            window.Digilys.Autocomplete.activityStudentsGroups(this)
+
         $maxResult     = $("#evaluation_max_result")
         $redMinText    = $("#evaluation_red_min_text")
         $redMaxText    = $("#evaluation_red_max_text")

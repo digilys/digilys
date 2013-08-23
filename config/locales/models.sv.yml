@@ -63,6 +63,7 @@ sv:
         stanine7_grade: Stanine 7
         stanine8_grade: Stanine 8
         stanine9_grade: Stanine 9
+        students_and_groups: Elever/grupper
       result:
         evaluation: Test
         student: Elev

@@ -80,7 +80,8 @@ class Evaluation < ActiveRecord::Base
     :stanine_for_grade_d,
     :stanine_for_grade_e,
     :stanine_for_grade_f,
-    :results_attributes
+    :results_attributes,
+    :students_and_groups
 
   serialize :value_aliases, JSON
   serialize :colors,        JSON
@@ -174,7 +175,7 @@ class Evaluation < ActiveRecord::Base
     )
   end
 
-
+  before_validation :parse_students_and_groups
   before_validation :set_default_values_for_value_type
   after_update      :touch_results
   before_save       :set_aliases_from_value_type
@@ -253,6 +254,15 @@ class Evaluation < ActiveRecord::Base
 
   def participant_count(force_reload = false)
     self.participants(force_reload).size.to_f
+  end
+
+  # Virtual attribute for a comma separated list of student ids and group ids.
+  # The ids should have the prefix s-#{id} and g-#{id} for students and groups,
+  # respectively
+  attr_accessor :students_and_groups
+
+  def students_and_groups_select2_data
+    self.evaluation_participants.collect { |p| { id: "s-#{p.student.id}", text: p.student.name } }
   end
 
 
@@ -604,6 +614,31 @@ class Evaluation < ActiveRecord::Base
 
         self.stanines = !stanines.blank? ? stanines : nil
       end
+    end
+  end
+
+  def parse_students_and_groups
+    return unless defined?(@students_and_groups)
+
+    if @students_and_groups.blank?
+      self.evaluation_participants.clear
+    else
+      student_ids = []
+      group_ids   = []
+
+      @students_and_groups.split(",").each do |id|
+        case id.strip
+        when /g-(\d+)/
+          group_ids << $1
+        when /s-(\d+)/
+          student_ids << $1
+        end
+      end
+
+      participants = self.suite_participants.with_student_ids(student_ids).all +
+        self.suite_participants.with_implicit_group_ids(group_ids)
+
+      self.evaluation_participant_ids = participants.collect(&:id)
     end
   end
 end

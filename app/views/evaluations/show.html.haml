@@ -65,6 +65,14 @@
                   = Evaluation::GRADES[grade].upcase
                   %strong= @evaluation.stanine_for(grade)
 
+    - if @evaluation.type.suite? && @evaluation.has_regular_suite? && @evaluation.results.blank?
+      %tr.participants
+        %th= t(:".participants")
+        %td
+          %ul.unstyled
+            - @evaluation.participants.each do |participant|
+              %li= link_to(participant.name, suite_student_path(participant.suite, participant.student))
+
 - if @evaluation.type.suite? && !@evaluation.results.blank?
   %table.table.table-bordered.table-hover.evaluation-results.results-table
     %thead
