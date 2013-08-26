@@ -23,6 +23,7 @@ set :deploy_via,       :copy
 
 set :deploy_to,        -> { capture("echo -n $HOME/app") }
 
+set :passenger_port,   -> { capture("cat #{deploy_to}/shared/config/passenger_port.txt || echo 24500").to_i }
 
 role :web, digilys_server                # Your HTTP server, Apache/etc
 role :app, digilys_server                # This may be the same as your `Web` server
@@ -33,10 +34,14 @@ after "deploy:restart", "deploy:cleanup"
 
 # If you are using Passenger mod_rails uncomment this:
 namespace :deploy do
-  task :start do ; end
-  task :stop do ; end
-  task :restart, :roles => :app, :except => { :no_release => true } do
-    run "#{try_sudo} touch #{File.join(current_path,"tmp","restart.txt")}"
+  task :start, roles: :app do
+    run "cd -- #{deploy_to}/current && bundle exec passenger start #{deploy_to}/current -p #{passenger_port} -e #{rails_env} -d --log-file #{deploy_to}/shared/log/passenger.log --pid-file #{deploy_to}/shared/pids/passenger.pid"
+  end
+  task :stop, roles: :app do
+    run "cd -- #{deploy_to}/current && bundle exec passenger stop #{deploy_to}/current -p #{passenger_port} --pid-file #{deploy_to}/shared/pids/passenger.pid"
+  end
+  task :restart, roles: :app, except: { no_release: true } do
+    run "touch #{File.join(current_path,"tmp","restart.txt")}"
   end
 end
 
