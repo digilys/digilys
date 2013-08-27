@@ -12,7 +12,7 @@ class Group < ActiveRecord::Base
 
   has_many :participants, dependent: :nullify
 
-  attr_accessible :name, :parent_id
+  attr_accessible :name, :parent_id, :imported
 
   validates :name, presence: true
 

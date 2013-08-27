@@ -153,6 +153,86 @@ namespace :app do
       end
     end
 
+    task students_and_groups_from_tsv: :environment do
+      title = true
+      data = []
+
+      CSV.foreach(ENV["file"], col_sep: "\t") do |row|
+        # Skip first row
+        if title
+          title = false
+          next
+        end
+
+        attributes = {
+          school:      row[0].strip,
+          grade:       row[1].strip,
+          personal_id: row[2].strip,
+          first_name:  row[3].strip,
+          last_name:   row[4].strip,
+          gender:      parse_gender(row[5].strip)
+        }
+
+        data << {
+          original_row: row,
+          attributes:   attributes
+        }
+      end
+
+      valid   = []
+      invalid = []
+
+      data.each do |d|
+        attributes = d[:attributes]
+
+        student = Student.where(personal_id: attributes[:personal_id]).first_or_initialize()
+
+        student.first_name = attributes[:first_name]
+        student.last_name  = attributes[:last_name]
+        student.gender     = attributes[:gender]
+
+        if student.valid?
+          valid << d.merge(model: student)
+        else
+          invalid << d.merge(model: student)
+        end
+      end
+
+      if !invalid.blank?
+        puts "Invalid rows:\n"
+        invalid.each { |d| puts d[:original_row].to_json + "\n" + d[:model].errors.to_json + "\n\n" }
+      end
+
+      puts "\nEnter 'yes' to import #{valid.length} valid rows, or 'no' to abort:"
+      
+      if get_input()
+        puts "\nImporting..."
+
+        valid.each do |d|
+          school  = Group.where(name: d[:attributes][:school]).first_or_create!(imported: true)
+          grade   = school.children.where(name: d[:attributes][:grade]).first_or_create!(imported: true)
+          student = d[:model]
+
+          student.save!
+
+          grade.add_students(student)
+        end
+      else
+        puts "\nAborting..."
+      end
+    end
+
+    def parse_gender(str)
+      case str.to_i
+      when "flicka"
+        :female
+      when "pojke"
+        :male
+      else
+        nil
+      end
+    end
+
     def get_input
       STDOUT.flush
       input = STDIN.gets.chomp
