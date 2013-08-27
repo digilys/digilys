@@ -46,10 +46,22 @@ namespace :deploy do
 end
 
 before "deploy:finalize_update", "deploy:symlink_db"
+before "deploy:finalize_update", "deploy:symlink_relative_public"
 
 namespace :deploy do
   desc "Symlinks the database.yml"
-  task :symlink_db, :roles => :app do
+  task :symlink_db, roles: :app do
     run "ln -nfs #{deploy_to}/shared/config/database.yml #{release_path}/config/database.yml"
+  end
+
+  desc "Symlinks the relative public directory, if any"
+  task :symlink_relative_public, roles: :app do
+    root_url = capture("echo -n $RAILS_RELATIVE_URL_ROOT")
+
+    if root_url && !root_url.empty?
+      root_dir = root_url.split("/")[0..-2].join("/")
+      run "mkdir -p #{latest_release}/public#{root_dir}" if root_dir && !root_dir.empty?
+      run "ln -nsf #{latest_release}/public #{latest_release}/public#{root_url}"
+    end
   end
 end
