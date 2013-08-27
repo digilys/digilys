@@ -95,7 +95,9 @@ module ApplicationHelper
       tinyMCE.on("AddEditor", function(e) {
         if (e.editor.id == '#{id}') {
           e.editor.on("init", function(ev) {
-            tinyMCE.execCommand("mceFocus", false, ev.target.id);
+            try {
+              tinyMCE.execCommand("mceFocus", false, ev.target.id);
+            catch(err) { }
           });
         }
       });
