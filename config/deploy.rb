@@ -45,13 +45,14 @@ namespace :deploy do
   end
 end
 
-before "deploy:finalize_update", "deploy:symlink_db"
+before "deploy:finalize_update", "deploy:symlink_external_files"
 before "deploy:finalize_update", "deploy:symlink_relative_public"
 
 namespace :deploy do
-  desc "Symlinks the database.yml"
-  task :symlink_db, roles: :app do
+  desc "Symlinks external files required for the app"
+  task :symlink_external_files, roles: :app do
     run "ln -nfs #{deploy_to}/shared/config/database.yml #{release_path}/config/database.yml"
+    run "ln -nfs #{deploy_to}/shared/config/app_config.private.yml #{release_path}/config/app/base.private.yml"
   end
 
   desc "Symlinks the relative public directory, if any"
