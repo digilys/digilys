@@ -5,7 +5,6 @@ namespace :app do
   task :bootstrap do
     %w(
     create_roles
-    create_admin_account
     ).each do |task|
       Rake::Task["app:bootstrap:#{task}"].invoke
     end
