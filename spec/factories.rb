@@ -4,6 +4,7 @@ FactoryGirl.define do
     sequence(:email)      { |i| "user%09d@example.com" % i }
     password              "password"
     password_confirmation { password }
+    registered_yubikey    "abcdefghijkl"
 
     factory :admin do
       after(:create) { |user| user.add_role :admin }
