@@ -13,6 +13,10 @@ gem "ransack",             "~> 0.7.2"
 gem "acts-as-taggable-on", "~> 2.4.1"
 gem "enumerize",           "~> 0.6.1"
 
+gem "yubikey_database_authenticatable",
+  git: "https://github.com/mort666/yubikey_database_authenticatable",
+  ref: "a8d2ff86928fc342a99dc4974e7f3cbee390f01b"
+
 # Servers
 gem "passenger", "~> 3.0.19", require: false
 
