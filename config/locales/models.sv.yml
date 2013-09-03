@@ -141,6 +141,8 @@ sv:
         current_sign_in_ip: Nuvarande IP-adress
         last_sign_in_ip: Senaste IP-adress
         name: Namn
+        yubiotp: Yubikey-lösenord
+        registered_yubikey: Yubikey-lösenord
       instruction:
         title: Titel
         film: HTML-kod för film
