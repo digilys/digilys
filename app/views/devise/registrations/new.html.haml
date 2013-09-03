@@ -7,6 +7,7 @@
     = f.input :email
     = f.input :password
     = f.input :password_confirmation, :required => true
+    = f.input :registered_yubikey if Conf.yubikey
   
   = f.actions do
     = f.action :submit, :label => t("devise.registrations.sign_up"), :button_html => { :disable_with => t(:wait) }
