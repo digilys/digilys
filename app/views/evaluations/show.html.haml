@@ -74,7 +74,7 @@
               - @evaluation.users.each do |user|
                 %li= user.name
 
-      - unless @evaluation.results.blank?
+      - unless @evaluation.evaluation_participants.blank?
         %tr.participants
           %th= t(:".participants")
           %td
