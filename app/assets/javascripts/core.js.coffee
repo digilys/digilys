@@ -40,6 +40,8 @@ $ ->
     $("[autofocus]:not(:focus)").eq(0).focus()
     $(":input[placeholder]").placeholder()
 
+    $("#eula-modal").modal("show")
+
     $("input.datepicker").datepicker(
         language:  "sv"
         format:    "yyyy-mm-dd"

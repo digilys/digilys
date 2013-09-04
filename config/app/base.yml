@@ -1,8 +1,13 @@
 secret_token: overrideme
 feedback: false
+
 yubikey: false
 # yubikey:
 #   api_id: Your API ID
 #   api_key: Your API key
 #   url: Custom URL to a Yubikey validation server
 #   hint: An optional hint text for the yubikey form fields
+
+# eula:
+#   header: Optional popup for an agreement that the user
+#   body: needs to confirm on each login. The body supports <b>html</b>

@@ -113,6 +113,15 @@
 
           .content.span9
             = content_for?(:content) ? yield(:content) : yield
+
+    - if Conf.eula && show_eula?
+      #eula-modal.modal.hide.fade(role="dialog" aria-hidden="true" aria-labelledby="feedback-eula-header" data-backdrop="static")
+        .modal-header
+          %h3#eula-modal-header= Conf.eula.header
+        .modal-body= Conf.eula.body.html_safe
+        .modal-footer
+          %a.btn.btn-primary(href="#" data-dismiss="modal")= t(:".eula_confirmation")
+
     
     /
       Javascripts

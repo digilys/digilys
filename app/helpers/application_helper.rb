@@ -33,6 +33,16 @@ module ApplicationHelper
     condition ? "active" : ""
   end
 
+  # Display the eula
+  def show_eula?
+    if user_signed_in? && !user_session[:has_shown_eula]
+      user_session[:has_shown_eula] = true
+      return true
+    else
+      return false
+    end
+  end
+
   # Checks if all the keys and values in any of +parameters+
   # match the current params
   def params?(*parameters)
