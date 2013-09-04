@@ -5,3 +5,4 @@ yubikey: false
 #   api_id: Your API ID
 #   api_key: Your API key
 #   url: Custom URL to a Yubikey validation server
+#   hint: An optional hint text for the yubikey form fields
