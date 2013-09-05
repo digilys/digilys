@@ -47,10 +47,9 @@
     - @suite.students.each do |student|
       %tr
         %th.student
-          %a.student{href:"#", 
-          data: { toggle: "popover",
-          title: student.name,
-          content: render(partial: "students/details_table", locals: { student: student })} }= student.name
+          %a.student{href:"#", data: { toggle: "popover", title: student.name } }
+            = student.name
+          = render partial: "students/details_table", locals: { student: student }
 
         - @suite.student_data.each do |key|
           %td.result

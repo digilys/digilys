@@ -66,7 +66,14 @@ $ ->
 
     $(".suite-results a.student").each ->
         $trigger = $(this)
-        $trigger.popover(html: true)
+        $trigger.popover(
+            html: true
+            content: ->
+                # popover requires the content as a string, so we convert the
+                # table from the sibling markup to text
+                # http://stackoverflow.com/a/8127137
+                return $(this).siblings(".student-details-popover-table").clone().show().wrap("<div/>").parent().html()
+        )
         $trigger.click (e) ->
             e.preventDefault()
             $(".suite-results a.student").not(this).popover("hide")
