@@ -21,4 +21,21 @@ namespace :app do
       puts "Done!"
     end
   end
+
+  desc "Creates an admin user"
+  task create_admin: :environment do
+    puts "Creating admin user"
+
+    admin = User.new do |u|
+      u.name                  = "Admin"
+      u.email                 = "admin@example.com"
+      u.password              = "adminadmin"
+      u.password_confirmation = "adminadmin"
+    end
+
+    admin.save!
+    admin.add_role :admin
+
+    puts "Admin user created: #{admin.email}, password 'adminadmin'"
+  end
 end
