@@ -11,3 +11,5 @@ yubikey: false
 # eula:
 #   header: Optional popup for an agreement that the user
 #   body: needs to confirm on each login. The body supports <b>html</b>
+
+# login_logo: logos/custom_login_logo.png
