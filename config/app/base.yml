@@ -13,3 +13,10 @@ yubikey: false
 #   body: needs to confirm on each login. The body supports <b>html</b>
 
 # login_logo: logos/custom_login_logo.png
+
+
+# Different autofocus choices
+autofocus:
+  evaluations:
+    # Focus the template selector rather than the name field
+    template: false

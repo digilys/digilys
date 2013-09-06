@@ -3,7 +3,11 @@
     = t(:".for_suite",     suite_name:    evaluation.suite.name)    if evaluation.type.suite?
     = t(:".from_template", template_name: evaluation.template.name) if evaluation.template && evaluation.new_record?
 
+- autofocus_template = false
+
 - if evaluation.new_record? && !evaluation.template && !evaluation.type.generic?
+  - autofocus_template = Conf.autofocus.evaluations.template
+
   = form_for evaluation,
     url: new_from_template_evaluations_path(),
     html: { class: "select-evaluation-template-form" } do |f|
@@ -16,7 +20,8 @@
       .controls
         = f.hidden_field :template_id,
           class: "evaluation-template-autocomplete-field",
-          data: { url: search_template_evaluations_path(), 
+          data: { url: search_template_evaluations_path(),
+            autofocus: autofocus_template,
             placeholder: t(:".template_placeholder")}
         = f.submit t(:".use_template_action"), class: "btn btn-primary", data: { "loading-text" => t(:wait) }
 
@@ -31,7 +36,7 @@
 
     .row-fluid
       .span6
-        = f.input :name, required: true, input_html: { required: true, autofocus: true }
+        = f.input :name, required: true, input_html: { required: true, autofocus: !autofocus_template }
         = f.input :description, as: :text, input_html: { class: "input-xlarge", rows: 3 }
         - if evaluation.has_regular_suite?
           = f.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }
