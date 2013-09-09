@@ -7,7 +7,7 @@
   = f.inputs do
     = f.input :email,    :required => false, :input_html => {:required => true, :autofocus => true}
     = f.input :password, :required => false, :input_html => {:required => true}
-    = f.input :yubiotp,  :required => false, :input_html => {:required => true}, hint: Conf.yubikey.hint if Conf.yubikey
+    = f.input :yubiotp,  :required => false, :input_html => {:required => true}, as: :password, hint: Conf.yubikey.hint if Conf.yubikey
     = f.input :remember_me, :as => :boolean if devise_mapping.rememberable?
   
   = f.actions do
