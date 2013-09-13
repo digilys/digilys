@@ -209,9 +209,11 @@ namespace :app do
         puts "\nImporting..."
 
         valid.each do |d|
-          school  = Group.where(name: d[:attributes][:school]).first_or_create!(imported: true)
-          grade   = school.children.where(name: d[:attributes][:grade]).first_or_create!(imported: true)
-          student = d[:model]
+          school_name = d[:attributes][:school]
+          grade_name  = d[:attributes][:grade]
+          school      = Group.where([ "name ilike ?", school_name ]).first_or_create!(imported: true, name: school_name)
+          grade       = school.children.where([ "name ilike ?", grade_name ]).first_or_create!(imported: true, name: grade_name)
+          student     = d[:model]
 
           student.save!
 
