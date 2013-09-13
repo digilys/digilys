@@ -15,6 +15,7 @@ describe Result do
     it { should validate_presence_of(:evaluation) }
     it { should validate_presence_of(:student) }
     it { should validate_numericality_of(:value).only_integer }
+    it { should validate_uniqueness_of(:student_id).scoped_to(:evaluation_id) }
 
     it { should_not allow_value(nil).for(:value) }
 

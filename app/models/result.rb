@@ -14,7 +14,8 @@ class Result < ActiveRecord::Base
     },
     presence: { unless: :absent }
   )
-  validates :evaluation, :student, presence: true
+  validates :evaluation, :student, presence:   true
+  validates :student_id,           uniqueness: { scope: :evaluation_id }
 
   before_validation :ensure_nil_value_on_absent
   before_save       :update_color_and_stanine
@@ -46,8 +47,10 @@ class Result < ActiveRecord::Base
   private
 
   def update_color_and_stanine
-    self.color   = self.evaluation.color_for(self.value)
-    self.stanine = self.evaluation.stanine_for(self.value)
+    if self.evaluation
+      self.color   = self.evaluation.color_for(self.value)
+      self.stanine = self.evaluation.stanine_for(self.value)
+    end
   end
 
   def update_evaluation_status!

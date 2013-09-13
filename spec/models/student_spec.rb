@@ -236,8 +236,16 @@ describe Student do
 
   context ".generic_results" do
     subject(:student) { create(:student) }
-    let!(:suite_results)   { create_list(:result, 3, student: student, evaluation: create(:suite_evaluation)) }
-    let!(:generic_results) { create_list(:result, 3, student: student, evaluation: create(:generic_evaluation)) }
+    let!(:suite_results)   { [
+      create(:result, student: student, evaluation: create(:suite_evaluation)),
+      create(:result, student: student, evaluation: create(:suite_evaluation)),
+      create(:result, student: student, evaluation: create(:suite_evaluation))
+    ] }
+    let!(:generic_results) { [
+      create(:result, student: student, evaluation: create(:generic_evaluation)),
+      create(:result, student: student, evaluation: create(:generic_evaluation)),
+      create(:result, student: student, evaluation: create(:generic_evaluation))
+    ] }
 
     its(:results)         { should match_array(generic_results + suite_results) }
     its(:generic_results) { should match_array(generic_results) }
