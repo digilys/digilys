@@ -33,12 +33,18 @@ module EvaluationsHelper
     bars = []
 
     if !result_distribution.blank?
-      bars << content_tag(:div, "", class:"bar bar-success",  style: "width: #{result_distribution[:green].round(1)}%")
-      bars << content_tag(:div, "", class:"bar bar-yellow",   style: "width: #{result_distribution[:yellow].round(1)}%")
-      bars << content_tag(:div, "", class:"bar bar-danger",   style: "width: #{result_distribution[:red].round(1)}%")
-      bars << content_tag(:div, "", class:"bar bar-disabled", style: "width: #{result_distribution[:absent].round(1)}%")
+      bars << content_tag(:div, "", class:"bar bar-success",  style: "width: #{round_down(result_distribution[:green])}%")
+      bars << content_tag(:div, "", class:"bar bar-yellow",   style: "width: #{round_down(result_distribution[:yellow])}%")
+      bars << content_tag(:div, "", class:"bar bar-danger",   style: "width: #{round_down(result_distribution[:red])}%")
+      bars << content_tag(:div, "", class:"bar bar-disabled", style: "width: #{round_down(result_distribution[:absent])}%")
     end
 
     bar_container = content_tag(:div, bars.join("").html_safe, class: "progress evaluation-status-progress")
+  end
+
+  private
+
+  def round_down(value)
+    (value * 10.0).floor / 10.0
   end
 end

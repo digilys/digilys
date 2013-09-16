@@ -137,5 +137,25 @@ describe EvaluationsHelper do
       it { should have_selector(".progress .bar-danger[style=\"width: 20.0%\"]") }
       it { should have_selector(".progress .bar-disabled[style=\"width: 20.0%\"]") }
     end
+
+    context "with percentages rounded down" do
+      let(:participants) { create_list(:participant, 7, suite: suite) }
+      before(:each) do
+        create(:result, student: participants[0].student, evaluation: evaluation, value: 1) # red
+        create(:result, student: participants[1].student, evaluation: evaluation, value: 1) # red
+        create(:result, student: participants[2].student, evaluation: evaluation, value: 6) # yellow
+        create(:result, student: participants[3].student, evaluation: evaluation, value: 6) # yellow
+        create(:result, student: participants[4].student, evaluation: evaluation, value: 6) # yellow
+        create(:result, student: participants[5].student, evaluation: evaluation, value: 6) # yellow
+        create(:result, student: participants[6].student, evaluation: evaluation, value: 6) # yellow
+      end
+
+      it { should have_selector(".progress.evaluation-status-progress") }
+      it { should have_selector(".progress .bar", count: 4) }
+      it { should have_selector(".progress .bar-success[style=\"width: 0.0%\"]") }
+      it { should have_selector(".progress .bar-yellow[style=\"width: 71.4%\"]") } # 5.0/7.0 = 0.71428...
+      it { should have_selector(".progress .bar-danger[style=\"width: 28.5%\"]") } # 2.0/7.0 = 0.28571...
+      it { should have_selector(".progress .bar-disabled[style=\"width: 0.0%\"]") }
+    end
   end
 end
