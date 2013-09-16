@@ -615,6 +615,23 @@ describe Evaluation do
     end
   end
 
+  describe ".participants_without_result" do
+    let(:suite)                { create(:suite) }
+    let!(:male_participants)   { create_list(:male_participant,   2, suite: suite) }
+    let!(:female_participants) { create_list(:female_participant, 2, suite: suite) }
+    let(:participants)         { male_participants + female_participants }
+    let(:evaluation)           { create(:suite_evaluation, suite: suite, max_result: 10, _yellow: 4..7) }
+
+    before(:each) do
+      create(:result, student: male_participants.first.student,   evaluation: evaluation, value: 1)
+      create(:result, student: female_participants.first.student, evaluation: evaluation, value: 1)
+    end
+
+    subject { evaluation.participants_without_result }
+
+    it      { should match_array([ male_participants.second, female_participants.second ])}
+  end
+
   describe ".students_and_groups_select2_data" do
     let(:suite)        { create(:suite) }
     let(:participants) { create_list(:participant, 3, suite: suite) }
@@ -723,6 +740,29 @@ describe Evaluation do
       it { should include(yellow:       40.0) }
       it { should include(green:        20.0) }
       it { should include(absent:       20.0) }
+    end
+
+    context "with results from non participants" do
+      before(:each) do
+        create(:result, student: participants[0].student, evaluation: evaluation, value: 1) # red
+        create(:result, student: participants[1].student, evaluation: evaluation, value: 5) # yellow
+        create(:result, student: participants[2].student, evaluation: evaluation, value: 8) # green
+        create(:result, student: participants[3].student, evaluation: evaluation, value: nil, absent: true) # absent
+        # participants[4].student is not reported
+        create(:result,                                   evaluation: evaluation, value: 1) # non-participant, red
+        create(:result,                                   evaluation: evaluation, value: 1) # non-participant, red
+        create(:result,                                   evaluation: evaluation, value: 1) # non-participant, red
+        create(:result,                                   evaluation: evaluation, value: 5) # non-participant, yellow
+        create(:result,                                   evaluation: evaluation, value: 8) # non-participant, green
+      end
+
+      subject { evaluation.result_distribution }
+
+      it { should include(not_reported: 10.0) }
+      it { should include(red:          40.0) }
+      it { should include(yellow:       20.0) }
+      it { should include(green:        20.0) }
+      it { should include(absent:       10.0) }
     end
   end
 

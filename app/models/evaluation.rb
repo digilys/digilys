@@ -258,6 +258,10 @@ class Evaluation < ActiveRecord::Base
     self.participants(force_reload).size.to_f
   end
 
+  def participants_without_result(force_reload = true)
+    self.participants(force_reload).where([ "student_id not in (select student_id from results where evaluation_id = ?)", self.id ])
+  end
+
   # Virtual attribute for a comma separated list of student ids and group ids.
   # The ids should have the prefix s-#{id} and g-#{id} for students and groups,
   # respectively
@@ -286,9 +290,10 @@ class Evaluation < ActiveRecord::Base
 
     result_distribution = {}
 
-    num_participants = self.participant_count
+    num_missing = self.participants_without_result.size.to_f
+    total       = self.results.size.to_f + num_missing
 
-    result_distribution[:not_reported] = ((num_participants - self.results.length.to_f) / num_participants) * 100.0
+    result_distribution[:not_reported] = (num_missing / total) * 100.0
 
     colors = { red: 0, yellow: 0, green: 0, absent: 0 }
     self.results.each do |result|
@@ -296,7 +301,7 @@ class Evaluation < ActiveRecord::Base
     end
     
     colors.each_pair do |color, num|
-      result_distribution[color] = (num.to_f / num_participants) * 100.0
+      result_distribution[color] = (num.to_f / total) * 100.0
     end
 
     return result_distribution
