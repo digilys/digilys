@@ -40,6 +40,21 @@ class SuitesController < ApplicationController
       included: evaluations.first,
       missing:  evaluations.last
     }
+
+    @user_settings = current_user.settings.for(@suite).first.data
+  end
+
+  def save_local_color_table_state
+    datatable_state = JSON.parse(params[:state])
+
+    setting = current_user.settings.for(@suite).first
+    setting ||= current_user.settings.build(customizable: @suite, data: {})
+
+    setting.data["datatable_state"] = datatable_state
+
+    setting.save!
+
+    render json: { result: "OK" }
   end
 
   def new

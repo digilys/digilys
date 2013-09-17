@@ -11,6 +11,8 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :activities
   has_and_belongs_to_many :evaluations
 
+  has_many :settings, as: :customizer, dependent: :destroy
+
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email,
     :password,

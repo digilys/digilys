@@ -37,6 +37,11 @@ $ ->
                 sType:    "sort-key"
             }
         ]
+        fnStateLoad: (settings) ->
+            this.data("table-state")
+        fnStateSave: (settings, state) ->
+            url = this.data("save-local-state-path")
+            $.post(url, { _method: "PUT", state: JSON.stringify(state) })
     )
 
     $(".suite-results .filter input").on "keyup", ->
