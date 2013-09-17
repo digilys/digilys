@@ -218,4 +218,11 @@ FactoryGirl.define do
       title nil
     end
   end
+
+  factory :setting do
+    association :customizer,   factory: :user
+    association :customizable, factory: :suite
+
+    data nil
+  end
 end
