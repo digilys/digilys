@@ -70,7 +70,12 @@ $ ->
     )
 
 window.jQuery.fn.dataTableExt.oSort["sort-key-pre"] = (a) ->
-    return $(a).data("sort-key")
+    key = $(a).data("sort-key")
+
+    if key == "-"
+        return ""
+    else
+        return key
 
 window.jQuery.fn.dataTableExt.oSort["sort-key-asc"] = window.jQuery.fn.dataTableExt.oSort["string-asc"]
 window.jQuery.fn.dataTableExt.oSort["sort-key-desc"] = window.jQuery.fn.dataTableExt.oSort["string-desc"]
