@@ -13,7 +13,7 @@
   %button.btn.active(data-value="value") Resultat
   %button.btn(data-value="stanine") Stanine
 
-- table_state = "foo"
+- table_state = nil
 - table_state = @user_settings["datatable_state"] if @user_settings
 
 %table.table.table-bordered.table-hover.suite-results.suite-show-value.results-table.results-fixed-table{data: { "save-local-state-path" => save_local_color_table_state_suite_path(@suite), "table-state" => JSON.dump(table_state) }}
