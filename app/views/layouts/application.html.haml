@@ -15,6 +15,8 @@
   %body
     - working_with_templates = working_with_evaluation_template?(@evaluation) || working_with_suite_template?(@suite)
     .navbar.navbar-fluid-top
+      - if Conf.instance_banner
+        .instance-banner.alert= Conf.instance_banner.html_safe
       .navbar-inner
         .container-fluid
           %a.brand{href: root_url()}
