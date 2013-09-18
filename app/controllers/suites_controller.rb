@@ -41,7 +41,7 @@ class SuitesController < ApplicationController
       missing:  evaluations.last
     }
 
-    @user_settings = current_user.settings.for(@suite).first.data
+    @user_settings = current_user.settings.for(@suite).first.try(:data)
   end
 
   def save_local_color_table_state
