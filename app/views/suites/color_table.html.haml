@@ -47,17 +47,18 @@
     - @suite.students.each do |student|
       %tr
         %th.student
-          %a.student{href:"#", data: { toggle: "popover", title: student.name } }
+          %a.student{href:"#", data: { toggle: "popover", title: student.name, "sort-key" => student.name} }
             = student.name
           = render partial: "students/details_table", locals: { student: student }
 
         - @suite.student_data.each do |key|
           %td.result
-            %div= student.data_humanized[key] || "-"
+            - d = student.data_humanized[key] || "-"
+            %div{"data-sort-key" => d}= d
         - evaluations.each do |evaluation|
           - result = evaluation.result_for(student)
           %td.result{class: result_color_class(result)}
-            %div
+            %div{"data-sort-key" => result.try(:display_value) || "-"}
               - if result && result.stanine
                 %ul
                   %li.value=   result.display_value

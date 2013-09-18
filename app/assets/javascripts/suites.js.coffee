@@ -33,11 +33,8 @@ $ ->
         bStateSave:    true
         aoColumnDefs:  [
             {
-                aTargets: [ 0 ]
-                sType:    "html"
-            }, {
                 aTargets: [ "_all" ],
-                sType:    "result-value"
+                sType:    "sort-key"
             }
         ]
     )
