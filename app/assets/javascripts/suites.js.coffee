@@ -41,7 +41,7 @@ $ ->
             this.data("table-state")
         fnStateSave: (settings, state) ->
             url = this.data("save-local-state-path")
-            $.post(url, { _method: "PUT", state: JSON.stringify(state) })
+            window.Digilys.dataTable.saveState(state, url)
     )
 
     $(".suite-results .filter input").on "keyup", ->
