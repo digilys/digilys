@@ -1,0 +1,15 @@
+%h1= Instance.model_name.human(count: 2)
+
+= render partial: "navigation", locals: { active: :index }
+
+%table.table.table-striped.instances-table
+  %thead
+    %tr
+      %th.name=   Instance.human_attribute_name(:name)
+
+  %tbody
+    - @instances.each do |instance|
+      %tr
+        %td.name= link_to(instance.name, instance)
+
+= paginate(@instances)

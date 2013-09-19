@@ -1,0 +1,13 @@
+%h1
+  = @instance.name
+  %small= Instance.model_name.human
+
+= render partial: "navigation", locals: { instance: @instance, active: :show }
+
+.row-fluid
+  .span6
+    %table.table.table-bordered.details-table.instance-details-table
+      %tbody
+        %tr.name
+          %th= Instance.human_attribute_name(:name)
+          %td= @instance.name

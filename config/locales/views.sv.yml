@@ -348,6 +348,12 @@ sv:
     select:
       success: Använder utseendet "%{name}"
 
+  instances:
+    create:
+      success: Instansen skapades
+    update:
+      success: Instansen uppdaterades
+
 
   template:
     suites:

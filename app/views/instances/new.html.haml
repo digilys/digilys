@@ -1,0 +1,5 @@
+%h1= Instance.model_name.human(count: 2)
+
+= render partial: "navigation", locals: { active: :new }
+
+= render partial: "form", object: @instance, as: :instance

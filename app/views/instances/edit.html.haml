@@ -1,0 +1,7 @@
+%h1
+  = @instance.name_was
+  %small= Instance.model_name.human
+
+= render partial: "navigation", locals: { active: :edit, instance: @instance }
+
+= render partial: "form", object: @instance, as: :instance
