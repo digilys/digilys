@@ -240,4 +240,12 @@ FactoryGirl.define do
       name nil
     end
   end
+
+  factory :instance do
+    sequence(:name)       { |i| "Instance %09d" % i }
+
+    factory :invalid_instance do
+      name nil
+    end
+  end
 end

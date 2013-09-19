@@ -104,6 +104,12 @@ ActiveRecord::Schema.define(:version => 20130927075152) do
 
   add_index "groups_users", ["group_id", "user_id"], :name => "index_groups_users_on_group_id_and_user_id"
 
+  create_table "instances", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
   create_table "instructions", :force => true do |t|
     t.string   "title"
     t.string   "for_page"

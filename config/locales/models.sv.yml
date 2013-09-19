@@ -37,6 +37,9 @@ sv:
       table_state:
         one: Tabellutseende
         other: Tabellutseenden
+      instance:
+        one: Instans
+        other: Instanser
     attributes:
       evaluation:
         template: Mall
@@ -154,6 +157,8 @@ sv:
         name: Namn
         owner: Tillhör
         owner_id: Tillhör
+      instance:
+        name: Namn
 
     errors:
       models:
