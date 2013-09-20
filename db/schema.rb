@@ -247,6 +247,7 @@ ActiveRecord::Schema.define(:version => 20130927075152) do
     t.string   "name"
     t.boolean  "use_yubikey",            :default => true
     t.string   "registered_yubikey"
+    t.integer  "active_instance_id"
     t.boolean  "invisible",              :default => false
   end
 

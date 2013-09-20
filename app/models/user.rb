@@ -13,13 +13,16 @@ class User < ActiveRecord::Base
 
   has_many :settings, as: :customizer, dependent: :destroy
 
+  belongs_to :active_instance, class_name: "Instance"
+
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email,
     :password,
     :password_confirmation,
     :remember_me,
     :role_ids,
-    :name
+    :name,
+    :active_instance_id
 
   validates :name, presence: true
 
