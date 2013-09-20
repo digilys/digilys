@@ -34,6 +34,9 @@ sv:
       instruction:
         one: Instruktionsfilm
         other: Instruktionsfilmer
+      table_state:
+        one: Tabellutseende
+        other: Tabellutseenden
     attributes:
       evaluation:
         template: Mall
@@ -147,6 +150,10 @@ sv:
         title: Titel
         film: HTML-kod för film
         description: Hjälptext
+      table_state:
+        name: Namn
+        owner: Tillhör
+        owner_id: Tillhör
 
     errors:
       models:

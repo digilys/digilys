@@ -225,4 +225,15 @@ FactoryGirl.define do
 
     data nil
   end
+
+  factory :table_state do
+    association :base, factory: :suite
+
+    sequence(:name) { |i| "Table state %09d" % i }
+    data            nil
+
+    factory :invalid_table_state do
+      name nil
+    end
+  end
 end
