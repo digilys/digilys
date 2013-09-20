@@ -85,6 +85,11 @@ class ApplicationController < ActionController::Base
 
   private
 
+  # Overwriting the sign_out redirect path method
+  def after_sign_out_path_for(resource_or_scope)
+    new_user_session_url()
+  end
+
   # This picks up any layout set in the inheriting controller
   def record_not_found
     render template: "shared/404", status: 404
