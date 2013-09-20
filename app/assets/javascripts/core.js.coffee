@@ -47,7 +47,7 @@ window.Digilys.dataTable.saveState = (state, url) ->
     callback = ->
         $.post(url, { _method: "PUT", state: JSON.stringify(state) })
 
-    window.Digilys.dataTable.stateTimeoutId = window.setTimeout(callback, 2000)
+    window.Digilys.dataTable.stateTimeoutId = window.setTimeout(callback, 1000)
 
 $ ->
     $("[autofocus]:not(:focus)").eq(0).focus()
