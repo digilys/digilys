@@ -28,6 +28,10 @@ module ApplicationHelper
     flash_messages.join("\n").html_safe
   end
 
+  def instance_indicator
+    render partial: "shared/instance_indicator"
+  end
+
   # Bootstrap "active" class generator
   def active_if(condition)
     condition ? "active" : ""

@@ -23,6 +23,9 @@
             DigiLys
 
           %ul.nav
+            - if Conf.multiple_instances && user_signed_in?
+              = instance_indicator
+              %li.divider-vertical
             %li{class: active_if(working_with_templates)}
               - if can? :create, Suite
                 %a{href: template_suites_path()}= t(:".templates")

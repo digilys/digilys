@@ -1,3 +1,5 @@
-# Place all the behaviors and hooks related to the matching controller here.
-# All this logic will automatically be available in application.js.
-# You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
+$ ->
+    $("#instance-selector-toggler").one "click", ->
+        $toggler = $(this)
+        $.get $toggler.attr("href"), (html, textStatus, xhr) ->
+            $toggler.siblings(".dropdown-menu").find(".load-indicator").replaceWith(html)

@@ -5,7 +5,19 @@ class InstancesController < ApplicationController
 
   def index
     @instances = @instances.order(:name)
-    @instances = @instances.page(params[:page])
+
+    if request.xhr?
+      render partial: "list", layout: false if request.xhr?
+    else
+      @instances = @instances.page(params[:page])
+    end
+  end
+
+  def select
+    current_user.active_instance = @instance
+    current_user.save!
+
+    redirect_to root_url()
   end
 
   def show

@@ -10,6 +10,11 @@ class ApplicationController < ActionController::Base
 
   protected
 
+  def current_instance
+    current_user.active_instance
+  end
+  helper_method :current_instance
+
   def has_search_param?(allow_blank = false)
     if params[:q] && !allow_blank
       params[:q] = params[:q].reject { |_, v| v.blank? }

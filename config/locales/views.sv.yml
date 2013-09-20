@@ -349,6 +349,11 @@ sv:
       success: Använder utseendet "%{name}"
 
   instances:
+    handle: Hantera instanser
+    choose: Välj instans
+    select:
+      title: Byt aktiv instans
+      description: "Byt till en annan instans genom att välja en instans nedan:"
     create:
       success: Instansen skapades
     update:

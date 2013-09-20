@@ -130,7 +130,11 @@ Digilys::Application.routes.draw do
     end
   end
 
-  resources :instances, except: [ :destroy ]
+  resources :instances, except: [ :destroy ] do
+    member do
+      post :select
+    end
+  end
 
   namespace :template do
     resources :suites, only: [ :index, :new ] do

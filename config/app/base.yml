@@ -1,6 +1,9 @@
 secret_token: overrideme
 feedback: false
 
+# Set to false if only one instance is used
+multiple_instances: true
+
 yubikey: false
 # yubikey:
 #   api_id: Your API ID

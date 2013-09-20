@@ -2,6 +2,22 @@ require 'spec_helper'
 
 # https://www.relishapp.com/rspec/rspec-rails/v/2-4/docs/controller-specs/anonymous-controller
 describe ApplicationController do
+  describe "#current_instance" do
+    let!(:instances)      { create_list(:instance, 3) }
+    let(:active_instance) { instances.second }
+    let(:user)            { create(:user, active_instance: active_instance) }
+    before(:each)         { controller.stub(:current_user).and_return(user) }
+    subject               { controller.send(:current_instance) }
+
+    it { should == instances.second }
+
+    context "without an active instance" do
+      let(:active_instance) { nil }
+
+      it { should be_nil }
+    end
+  end
+
   describe "#has_search_param?" do
     let(:allow_blank) { false }
     let(:params)      { {} }

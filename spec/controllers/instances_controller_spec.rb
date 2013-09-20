@@ -13,6 +13,22 @@ describe InstancesController do
       response.should be_successful
       assigns(:instances).should match_array(instances)
     end
+
+    it "lists instances via xhr" do
+      xhr :get, :index
+      response.should be_successful
+      response.should render_template("_list")
+    end
+  end
+
+  describe "POST #select" do
+    it "sets the current user's active instance" do
+      logged_in_user.active_instance.should be_nil
+      post :select, id: instance.id
+
+      response.should redirect_to(root_url())
+      logged_in_user.reload.active_instance.should == instance
+    end
   end
 
   describe "GET #show" do

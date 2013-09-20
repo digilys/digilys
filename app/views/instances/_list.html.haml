@@ -1,0 +1,3 @@
+- @instances.each do |instance|
+  %li
+    = link_to instance.name, select_instance_path(instance), method: :post

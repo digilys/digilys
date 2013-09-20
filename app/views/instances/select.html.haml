@@ -1,0 +1,7 @@
+%h1
+  = t(:".title")
+
+.alert.alert-block.alert-info= t(:".description").html_safe
+
+%ul
+  = render partial: "instance_list"
