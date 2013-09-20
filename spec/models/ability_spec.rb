@@ -22,6 +22,8 @@ describe Ability do
 
     it               { should     be_able_to(:index,  Suite) }
 
+    it               { should     be_able_to(:index,  Instance) }
+
     context "Suite contributor" do
       let(:contributed) { create(:suite, is_template: false) }
       let(:none)        { create(:suite, is_template: false) }
@@ -35,6 +37,18 @@ describe Ability do
 
       it { should_not be_able_to(:view,          none) }
       it { should_not be_able_to(:contribute_to, none) }
+    end
+
+    context "Instance member" do
+      let(:member_of)     { create(:instance) }
+      let(:not_member_of) { create(:instance) }
+
+      before(:each) do
+        user.add_role :member, member_of
+      end
+
+      it { should_not be_able_to(:select, not_member_of) }
+      it { should     be_able_to(:select, member_of) }
     end
   end
 

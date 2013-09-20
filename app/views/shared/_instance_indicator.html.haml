@@ -1,11 +1,11 @@
-- if current_instance || can?(:manage, Instance)
-  %li.dropdown
-    %a#instance-selector-toggler.dropdown-toggle{data: { toggle: "dropdown" }, href: instances_path() }
-      %small= current_instance.try(:name) || t(:"instances.choose")
-      %span.caret
-    %ul.dropdown-menu
-      %li.load-indicator.disabled
-        %a(href="#")= t(:wait)
+%li.dropdown
+  %a#instance-selector-toggler.dropdown-toggle{data: { toggle: "dropdown" }, href: instances_path() }
+    %small= current_instance.try(:name) || t(:"instances.choose")
+    %span.caret
+  %ul.dropdown-menu
+    %li.load-indicator.disabled
+      %a(href="#")= t(:wait)
+    - if can?(:manage, Instance)
       %li.divider
       %li
         = link_to t(:"instances.handle"), instances_path()

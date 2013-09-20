@@ -52,6 +52,11 @@ class Ability
     can :search, [ User, Student, Group, Evaluation ]
     can :view,   [ Student, Group ]
 
+    can :list,   Instance
+    can :select, Instance do |instance|
+      user.has_role?(:member, instance)
+    end
+
     # Updating the user's details
     can :update, User, id: user.id
   end

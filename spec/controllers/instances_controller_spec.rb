@@ -19,6 +19,16 @@ describe InstancesController do
       response.should be_successful
       response.should render_template("_list")
     end
+
+    context "with a regular user" do
+      login_user
+      
+      it "limits the instances to those the user can access" do
+        get :index
+        response.should            be_successful
+        assigns(:instances).should be_blank
+      end
+    end
   end
 
   describe "POST #select" do

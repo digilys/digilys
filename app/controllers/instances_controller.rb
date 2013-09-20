@@ -4,6 +4,7 @@ class InstancesController < ApplicationController
   load_and_authorize_resource
 
   def index
+    @instances = @instances.with_role(:member, current_user) unless can?(:manage, Instance)
     @instances = @instances.order(:name)
 
     if request.xhr?
