@@ -4,13 +4,13 @@ require "bundler/capistrano"
 # can either be supplied as an environment variable +digilys_instance+
 # when executing cap:
 #
-#   > digilys_instance=digilys-production-alternative cap deploy
+#   > digilys_instance=digilys-production cap deploy
 #
-# or it defaults to the server +digilys_instance+.
+# or it defaults to the server +digilys+.
 #
 # A good idea is to have an +~/.ssh/config+ which includes server details
 # fo
-set :digilys_server,   ENV["digilys_instance"] || "digilys-production"
+set :digilys_server,   ENV["digilys_instance"] || "digilys"
 
 set :application,      "digilys"
 set :scm,              :git
