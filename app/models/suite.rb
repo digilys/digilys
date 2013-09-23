@@ -15,6 +15,7 @@ class Suite < ActiveRecord::Base
   has_many :results,      through: :evaluations
   has_many :meetings,     inverse_of: :suite,     dependent: :destroy
   has_many :activities,   inverse_of: :suite,     order: "start_date asc nulls last, end_date asc nulls last, name asc",   dependent: :destroy
+  has_many :table_states,  as: :base,             dependent: :destroy
 
   accepts_nested_attributes_for :evaluations,
     :meetings,

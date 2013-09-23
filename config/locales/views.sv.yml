@@ -135,7 +135,10 @@ sv:
         open_title: Pågående
         closed_title: Avslutade
     color_table:
-      add_generic_evaluation_action: Lägg till
+      add_generic_evaluation_action: Lägg till elevdata
+      save_current_state: Spara nuvarande utseende
+      change_state: Byt utseende
+      toggle_tools: Verktyg
     connected_users:
       remove_user_action: Ta bort från planeringen
     new:
@@ -330,6 +333,10 @@ sv:
       confirmation: Är du säker på att du vill radera instruktionsfilmen?
     destroy:
       success: Instruktionsfilmen raderades
+
+  table_states:
+    select:
+      success: Använder utseendet "%{name}"
 
 
   template:

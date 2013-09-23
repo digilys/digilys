@@ -9,9 +9,29 @@
 - stanines = {}
 - evaluations = @generic_evaluations[:included] + @suite.evaluations
 
-.btn-group.result-toggles
-  %button.btn.active(data-value="value") Resultat
-  %button.btn(data-value="stanine") Stanine
+.row-fluid
+  .span2
+    .btn-group.result-toggles
+      %button.btn.active(data-value="value") Resultat
+      %button.btn(data-value="stanine") Stanine
+  .span3.form-inline
+    %select#table-state-selector{data: { url: select_suite_table_state_path(@suite, ":id") }}
+      = options_for_select([[t(:".change_state"), ""]]) + options_from_collection_for_select(@suite.table_states, "id", "name")
+
+  .span7
+    .row-fluid
+      %a#color-table-tools-trigger(href="#")
+        %i.icon-wrench
+        = t(:".toggle_tools")
+    .row-fluid(style="display:none")
+      = semantic_form_for @suite,
+        url: add_generic_evaluations_suite_path(@suite),
+        html: { class: "form-inline add-generic-evaluations-form" } do |f|
+        = f.select :generic_evaluations, options_from_collection_for_select(@generic_evaluations[:missing], :id, :name)
+        = f.action :submit, label: t(:".add_generic_evaluation_action")
+    .row-fluid.form-inline(style="display:none")
+      = text_field_tag "table-state-name", nil, placeholder: TableState.human_attribute_name(:name)
+      %button#save-table-state.btn{data: { datatable: ".suite-results", url: suite_table_states_path(@suite) }}= t(:".save_current_state")
 
 - table_state = nil
 - table_state = @user_settings["datatable_state"] if @user_settings
@@ -105,10 +125,3 @@
             - else
               = average_value
             = result_color_image(average_value, evaluation)
-
-= semantic_form_for @suite,
-  url: add_generic_evaluations_suite_path(@suite),
-  html: { class: "form-inline add-generic-evaluations-form" } do |f|
-  = f.select :generic_evaluations, options_from_collection_for_select(@generic_evaluations[:missing], :id, :name)
-  = f.action :submit, label: t(:".add_generic_evaluation_action")
-

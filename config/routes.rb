@@ -68,6 +68,11 @@ Digilys::Application.routes.draw do
     resources :participants, only: :new
     resources :meetings,     only: :new
     resources :students,     only: :show
+    resources :table_states, only: [:show, :create, :update, :destroy] do
+      member do
+        get :select
+      end
+    end
 
     resource :visualization, only: [] do
       member do
