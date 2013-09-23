@@ -105,7 +105,7 @@ $.extend($.fn.dataTableExt.oPagination, {
 });
 
 $.extend($.fn.dataTable.defaults, {
-    "sDom": "R<'row'<'span8'l><'span8'f>r>t<'row'<'span8'i><'span8'p>>",
+    "sDom": "R<'row'<'span6'f><'span6'l>r>t<'row'<'span6'i><'span6'p>>",
     "sPaginationType": "bootstrap",
     "oLanguage": {
         "sEmptyTable": "Tabellen innehåller ingen data",
