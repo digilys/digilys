@@ -30,4 +30,25 @@ describe User do
   context "validation" do
     it { should validate_presence_of(:name) }
   end
+
+  context ".save_setting!" do
+    let(:user)  { create(:user) }
+    let(:suite) { create(:suite) }
+
+    it "creates a new setting for the user if none exists" do
+      user.settings.should be_blank
+      user.save_setting!(suite, foo: "bar")
+
+      user.settings(true).should      have(1).items
+      user.settings.first.data.should == { "foo" => "bar" }
+    end
+    it "overrides existing settings, leaving existing keys untouched" do
+      user.settings.create(customizable: suite, data: { "foo" => "baz", "zomg" => "lol" })
+      user.save_setting!(suite, foo: "bar")
+
+      user.settings(true).should      have(1).items
+      user.settings.first.data.should include("foo"  => "bar")
+      user.settings.first.data.should include("zomg" => "lol")
+    end
+  end
 end

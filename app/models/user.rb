@@ -35,4 +35,14 @@ class User < ActiveRecord::Base
       write_attribute(:registered_yubikey, yubiotp[0..11])
     end
   end
+
+
+  def save_setting!(customizable, data)
+    setting   = self.settings.for(customizable).first
+    setting ||= self.settings.build(customizable: customizable, data: {})
+
+    setting.data.merge!(data)
+
+    setting.save!
+  end
 end

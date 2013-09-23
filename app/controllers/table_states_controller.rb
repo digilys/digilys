@@ -8,13 +8,7 @@ class TableStatesController < ApplicationController
   end
 
   def select
-    setting = current_user.settings.for(@suite).first
-    setting ||= current_user.settings.build(customizable: @suite, data: {})
-
-    setting.data["datatable_state"] = @table_state.data
-
-    setting.save!
-
+    current_user.save_setting!(@suite, "datatable_state" => @table_state.data)
     flash[:success] = t(:"table_states.select.success", name: @table_state.name)
     redirect_to color_table_suite_url(@suite)
   end
