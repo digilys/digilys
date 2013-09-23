@@ -15,8 +15,9 @@
       %button.btn.active(data-value="value") Resultat
       %button.btn(data-value="stanine") Stanine
   .span3.form-inline
-    %select#table-state-selector{data: { url: select_suite_table_state_path(@suite, ":id") }}
-      = options_for_select([[t(:".change_state"), ""]]) + options_from_collection_for_select(@suite.table_states, "id", "name")
+    %select#table-state-selector{data: { url: select_suite_table_state_path(@suite, ":id"),
+      "clear-url" => clear_color_table_state_suite_path(@suite) }}
+      = options_for_select([[t(:".change_state"), ""], [t(:".clear_state"), "0"]]) + options_from_collection_for_select(@suite.table_states, "id", "name")
 
   .span7
     .row-fluid
@@ -36,7 +37,7 @@
 - table_state = nil
 - table_state = @user_settings["datatable_state"] if @user_settings
 
-%table.table.table-bordered.table-hover.suite-results.suite-show-value.results-table.results-fixed-table{data: { "save-local-state-path" => save_local_color_table_state_suite_path(@suite), "table-state" => JSON.dump(table_state) }}
+%table.table.table-bordered.table-hover.suite-results.suite-show-value.results-table.results-fixed-table{data: { "save-local-state-path" => save_color_table_state_suite_path(@suite), "table-state" => JSON.dump(table_state) }}
 
   %thead
     %tr

@@ -53,7 +53,8 @@ Digilys::Application.routes.draw do
     member do
       get    :search_participants
       get    :color_table
-      put    :save_local_color_table_state
+      put    :save_color_table_state
+      delete :clear_color_table_state
       get    :confirm_destroy
       get    :select_users
       put    :add_users

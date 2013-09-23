@@ -79,6 +79,43 @@ describe SuitesController do
     end
   end
 
+  describe "PUT #save_color_table_state" do
+    it "sets the requested table state as the current user's setting for the suite" do
+      put :save_color_table_state, id: suite.id, state: '{"foo": "bar"}'
+      response.should be_success
+
+      logged_in_user.settings.for(suite).first.data["datatable_state"].should == { "foo" => "bar" }
+    end
+
+    context "with existing data" do
+      before(:each) do
+        logged_in_user.settings.create(customizable: suite, data: { "datatable_state" => { "bar" => "baz" }, "zomg" => "lol" })
+      end
+      it "overrides the datatable state, and leaves the other data alone" do
+        put :save_color_table_state, id: suite.id, state: '{"foo": "bar"}'
+        response.should be_success
+
+        data = logged_in_user.settings.for(suite).first.data
+        data["datatable_state"].should == { "foo" => "bar" }
+        data["zomg"].should            == "lol"
+      end
+    end
+  end
+
+  describe "GET #clear_color_table_state" do
+    before(:each) do
+      logged_in_user.settings.create(customizable: suite, data: { "datatable_state" => { "bar" => "baz" }, "zomg" => "lol" })
+    end
+    it "removes the datatable setting" do
+      get :clear_color_table_state, id: suite.id, state: '{"foo": "bar"}'
+      response.should redirect_to(color_table_suite_url(suite))
+
+      data = logged_in_user.settings.for(suite).first.data
+      data["datatable_state"].should be_nil
+      data["zomg"].should            == "lol"
+    end
+  end
+
   describe "GET #new" do
     it "builds a suite" do
       get :new

@@ -44,9 +44,14 @@ class SuitesController < ApplicationController
     @user_settings = current_user.settings.for(@suite).first.try(:data)
   end
 
-  def save_local_color_table_state
+  def save_color_table_state
     current_user.save_setting!(@suite, "datatable_state" => JSON.parse(params[:state]))
     render json: { result: "OK" }
+  end
+  def clear_color_table_state
+    flash[:notice] = t(:"suites.clear_color_table_state.success")
+    current_user.save_setting!(@suite, "datatable_state" => nil)
+    redirect_to color_table_suite_url(@suite)
   end
 
   def new

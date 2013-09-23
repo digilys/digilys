@@ -138,7 +138,10 @@ sv:
       add_generic_evaluation_action: Lägg till elevdata
       save_current_state: Spara nuvarande utseende
       change_state: Byt utseende
+      clear_state: Kronologisk ordning
       toggle_tools: Verktyg
+    clear_color_table_state:
+      success: Använder utseendet "Kronologisk ordning"
     connected_users:
       remove_user_action: Ta bort från planeringen
     new:

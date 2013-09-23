@@ -1,6 +1,5 @@
 $ ->
     $tableStateSelector = $("#table-state-selector")
-    urlTemplate = $tableStateSelector.data("url")
 
     $tableStateSelector.on "change", (event) ->
         event.preventDefault()
@@ -11,8 +10,17 @@ $ ->
             stateId = 0
 
         if stateId > 0
+            urlTemplate = $tableStateSelector.data("url")
             $tableStateSelector.attr("disabled", "disabled")
             window.location.href = urlTemplate.replace(":id", stateId)
+        else if stateId == 0
+            url = $tableStateSelector.data("clear-url")
+
+            $dummyLink = $("a").attr("href", url)
+            $dummyLink.data("method", "delete")
+            $.rails.handleMethod($dummyLink)
+
+            $tableStateSelector.attr("disabled", "disabled")
 
     $("#save-table-state").on "click", (event) ->
         event.preventDefault()
