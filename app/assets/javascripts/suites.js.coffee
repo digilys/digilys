@@ -41,6 +41,7 @@ $ ->
             this.data("table-state")
         fnStateSave: (settings, state) ->
             url = this.data("save-local-state-path")
+            this.data("current-state", state)
             window.Digilys.dataTable.saveState(state, url)
     )
 
