@@ -225,7 +225,7 @@ GEM
     select2-rails (3.4.2)
       sass-rails
       thor (~> 0.14)
-    shoulda-matchers (2.0.0)
+    shoulda-matchers (2.4.0)
       activesupport (>= 3.0.0)
     slop (3.4.4)
     sprockets (2.2.2)
@@ -288,7 +288,7 @@ DEPENDENCIES
   rspec-rails (~> 2.0)
   sass-rails (~> 3.2.3)
   select2-rails (~> 3.4.2)
-  shoulda-matchers (~> 2.0.0)
+  shoulda-matchers (~> 2.4.0)
   therubyracer (~> 0.11.4)
   tinymce-rails (~> 4.0.2)
   tinymce-rails-langs (~> 4.20130625)
