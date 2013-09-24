@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe MeetingsController do
-  login_admin
+  login_user(:admin)
 
   let(:meeting) { create(:meeting) }
 

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe GroupsController do
-  login_admin
+  login_user(:admin)
 
   let(:group) { create(:group) }
 

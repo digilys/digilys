@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe VisualizationsController do
-  login_admin
+  login_user(:admin)
 
   let(:suite) { create(:suite) }
 

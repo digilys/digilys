@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe StudentsController do
-  login_admin
+  login_user(:admin)
 
   let(:student) { create(:student) }
 

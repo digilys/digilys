@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Template::EvaluationsController do
-  login_admin
+  login_user(:admin)
 
   describe "GET #index" do
     let!(:templates) { create_list(:evaluation_template, 2) }

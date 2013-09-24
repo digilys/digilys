@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Template::SuitesController do
-  login_admin
+  login_user(:admin)
 
   describe "GET #index" do
     let!(:templates) { create_list(:suite, 2, is_template: true) }

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe ActivitiesController do
-  login_admin
+  login_user(:admin)
 
   let(:activity) { create(:activity) }
 

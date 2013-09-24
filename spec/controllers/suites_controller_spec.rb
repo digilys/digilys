@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe SuitesController do
-  login_admin
+  login_user(:admin)
 
   let(:suite) { create(:suite) }
 
@@ -21,13 +21,10 @@ describe SuitesController do
     end
 
     context "with a regular user" do
-      let(:user) { create(:user) }
+      login_user(:user)
 
       before(:each) do
-        user.grant :suite_contributor, regular_suites.first
-
-        @request.env["devise.mapping"] = Devise.mappings[:user]
-        sign_in user
+        logged_in_user.grant :suite_contributor, regular_suites.first
       end
 
       it "lists regular suites accessible by the user" do

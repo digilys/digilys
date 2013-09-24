@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe UsersController do
-  login_admin
+  login_user(:admin)
 
   let(:user) { create(:user) }
 

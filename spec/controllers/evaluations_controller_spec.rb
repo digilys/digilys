@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe EvaluationsController do
-  login_admin
+  login_user(:admin)
 
   let(:evaluation) { create(:suite_evaluation) }
 

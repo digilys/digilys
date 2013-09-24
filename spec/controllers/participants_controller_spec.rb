@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe ParticipantsController do
-  login_admin
+  login_user(:admin)
 
   let(:participant) { create(:participant) }
 

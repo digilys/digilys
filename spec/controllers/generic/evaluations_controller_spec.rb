@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Generic::EvaluationsController do
-  login_admin
+  login_user(:admin)
 
   describe "GET #index" do
     let!(:generics) { create_list(:generic_evaluation,  2) }

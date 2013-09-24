@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe InstructionsController do
-  login_admin
+  login_user(:admin)
 
   let(:instruction) { create(:instruction) }
 
