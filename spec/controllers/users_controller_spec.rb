@@ -72,6 +72,47 @@ describe UsersController do
       user.has_role?(:superuser).should be_false
       user.has_role?(:admin).should     be_true
     end
+
+    context "instances" do
+      let(:instances) { create_list(:instance, 2) }
+      let(:user) { create(:user, active_instance: instances.first) }
+
+      it "changes instances for the user" do
+        put :update, id: user.id, user: { instances: [instances.second.id] }
+        user.should have_role(:member, instances.second)
+        user.should_not have_role(:member, instances.first)
+      end
+      it "changes the active instance if the active instance is removed" do
+        put :update, id: user.id, user: { instances: [instances.second.id] }
+        user.reload.active_instance.should == instances.second
+      end
+      it "removes the active instance if all instances are removed" do
+        put :update, id: user.id, user: { instances: [] }
+        user.reload.active_instance.should be_nil
+      end
+
+      context "without previous" do
+        before(:each) do
+          Instance.with_role(:member, user).each do |i|
+            user.remove_role(:member, i)
+          end
+          user.active_instance = nil
+          user.save
+        end
+        it "changes instances for the user" do
+          put :update, id: user.id, user: { instances: [instances.second.id] }
+          user.should have_role(:member, instances.second)
+        end
+        it "changes the active instance if the active instance is removed" do
+          put :update, id: user.id, user: { instances: [instances.second.id] }
+          user.reload.active_instance.should == instances.second
+        end
+        it "removes the active instance if all instances are removed" do
+          put :update, id: user.id, user: { instances: [] }
+          user.reload.active_instance.should be_nil
+        end
+      end
+    end
   end
 
   describe "GET #confirm_destroy" do

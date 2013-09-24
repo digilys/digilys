@@ -57,6 +57,10 @@ class User < ActiveRecord::Base
     setting.save!
   end
 
+  def instances
+    @instances ||= Instance.with_role(:member, self)
+  end
+
 
   private
 

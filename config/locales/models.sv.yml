@@ -149,6 +149,7 @@ sv:
         name: Namn
         yubiotp: YubiKey-lösenord
         registered_yubikey: YubiKey-lösenord
+        instances: Instanser
         active_instance: Instans
       instruction:
         title: Titel

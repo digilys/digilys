@@ -310,6 +310,7 @@ sv:
       current_password_hint: Ange ditt nuvarande lösenord för att ändra lösenordet.
       password_hint: Lämna lösenordet tomt om du inte vill byta ditt nuvarande lösenord.
       password_for_other_hint: Lämna lösenordet tomt om du inte vill ändra användarens nuvarande lösenord.
+      instances_title: Instanser
       roles_title: Rättigheter
       roles_explanation_html: |
         <p>Kortfattad information om roller:</p>

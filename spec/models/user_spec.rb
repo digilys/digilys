@@ -81,4 +81,18 @@ describe User do
       user.settings.first.data.should include("zomg" => "lol")
     end
   end
+
+  context ".instances" do
+    let(:member_of)      { create_list(:instance, 2) }
+    let!(:not_member_of) { create_list(:instance, 2) }
+    subject(:user)       { create(:user) }
+
+    before(:each) do
+      member_of.each do |i|
+        user.add_role :member, i
+      end
+    end
+
+    its(:instances) { should match_array(member_of + [ user.active_instance ])}
+  end
 end

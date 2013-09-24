@@ -21,6 +21,12 @@
       = f.input :password_confirmation
 
   - if can? :manage, User
+    - if Conf.multiple_instances
+      = f.inputs t(:".instances_title") do
+        = f.input :instances,
+          as: :check_boxes,
+          collection: Instance.order(:name).all
+
     = f.inputs t(:".roles_title") do
       .row-fluid
         .span6

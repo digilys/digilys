@@ -34,16 +34,13 @@ class UsersController < ApplicationController
     end
 
     role_ids = params[:user].delete(:role_ids)
-
+    instance_ids = params[:user].delete(:instances)
 
     if @user.send(update_method, params[:user])
 
-      if !role_ids.nil? && can?(:manage, User)
-        @user.roles.clear
-
-        if !(role_id = role_ids.try(:first)).blank?
-          @user.add_role Role.find(role_id).name
-        end
+      if can?(:manage, User)
+        assign_role(     @user, role_ids)     if role_ids
+        assign_instances(@user, instance_ids) if instance_ids
       end
 
       sign_in @user, bypass: true if is_self_update
@@ -62,5 +59,36 @@ class UsersController < ApplicationController
     @user.destroy
     flash[:success] = t(:"users.destroy.success")
     redirect_to users_url()
+  end
+
+
+  private
+
+  def assign_role(user, role_ids)
+    user.roles.clear
+
+    if !(role_id = role_ids.try(:first)).blank?
+      user.add_role Role.find(role_id).name
+    end
+  end
+
+  def assign_instances(user, instance_ids)
+    incoming = Instance.where(id: instance_ids).all
+    previous = Instance.with_role(:member, user).all
+
+    added   = incoming - previous
+    removed = previous - incoming
+
+    added.each do |i|
+      user.add_role(:member, i)
+    end
+    removed.each do |i|
+      user.remove_role(:member, i)
+    end
+
+    if user.active_instance.nil? || removed.include?(user.active_instance)
+      user.active_instance = Instance.with_role(:member, user).first
+      user.save
+    end
   end
 end
