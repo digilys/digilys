@@ -31,6 +31,7 @@ namespace :app do
       u.email                 = "admin@example.com"
       u.password              = "adminadmin"
       u.password_confirmation = "adminadmin"
+      u.active_instance       = Instance.order("id asc").first
     end
 
     admin.save!

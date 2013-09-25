@@ -3,6 +3,10 @@
 = semantic_form_for resource, :url => registration_path(resource_name) do |f|
   =# devise_error_messages!
   = f.inputs do
+    - if Conf.multiple_instances
+      = f.input :active_instance, as: :select, collection: Instance.order(:name).all
+    - else
+      = f.input :active_instance_id, as: :hidden, value: Instance.order(:id).first.id
     = f.input :name, :input_html => {:autofocus => true}
     = f.input :email
     = f.input :password

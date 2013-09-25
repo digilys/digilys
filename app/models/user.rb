@@ -25,6 +25,9 @@ class User < ActiveRecord::Base
     :active_instance_id
 
   validates :name, presence: true
+  validates :active_instance, presence: true, on: :create
+
+  after_create :grant_membership_to_active_instance
 
   # Yubikey specific functionality
   if Conf.yubikey
@@ -52,5 +55,12 @@ class User < ActiveRecord::Base
     setting.data.merge!(data)
 
     setting.save!
+  end
+
+
+  private
+
+  def grant_membership_to_active_instance
+    self.add_role :member, self.active_instance
   end
 end

@@ -35,6 +35,23 @@ describe User do
   end
   context "validation" do
     it { should validate_presence_of(:name) }
+    it { should validate_presence_of(:active_instance).on(:create) }
+  end
+
+  context ".grant_membership_to_active_instance" do
+    subject(:user) { create(:user) }
+    it             { should have_role(:member, user.active_instance) }
+
+    context "on update" do
+      subject(:user) { create(:user) }
+
+      before(:each) do
+        user.active_instance = create(:instance)
+        user.save
+      end
+
+      it { should_not have_role(:member, user.active_instance) }
+    end
   end
 
   context "#visible" do

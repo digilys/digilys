@@ -11,7 +11,7 @@ describe InstancesController do
     it "lists instances" do
       get :index
       response.should be_successful
-      assigns(:instances).should match_array(instances)
+      assigns(:instances).should match_array(instances + [ logged_in_user.active_instance ])
     end
 
     it "lists instances via xhr" do
@@ -26,14 +26,14 @@ describe InstancesController do
       it "limits the instances to those the user can access" do
         get :index
         response.should            be_successful
-        assigns(:instances).should be_blank
+        assigns(:instances).should match_array([ logged_in_user.active_instance ])
       end
     end
   end
 
   describe "POST #select" do
     it "sets the current user's active instance" do
-      logged_in_user.active_instance.should be_nil
+      logged_in_user.active_instance.should_not == instance
       post :select, id: instance.id
 
       response.should redirect_to(root_url())

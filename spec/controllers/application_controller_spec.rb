@@ -8,14 +8,7 @@ describe ApplicationController do
     let(:user)            { create(:user, active_instance: active_instance) }
     before(:each)         { controller.stub(:current_user).and_return(user) }
     subject               { controller.send(:current_instance) }
-
-    it { should == instances.second }
-
-    context "without an active instance" do
-      let(:active_instance) { nil }
-
-      it { should be_nil }
-    end
+    it                    { should == instances.second }
   end
 
   describe "#has_search_param?" do
