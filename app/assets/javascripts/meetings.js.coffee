@@ -15,11 +15,11 @@ $ ->
             $fields.find(".select2-container").remove()
 
             $fields.find(".activity-students-autocomplete-field").each ->
-                $(this).data("data", null)
+                $(this).data("data", null).val("")
                 window.Digilys.Autocomplete.activityStudentsGroups(this)
 
             $fields.find(".user-autocomplete-field").each ->
-                $(this).data("data", null)
+                $(this).data("data", null).val("")
                 window.Digilys.autocomplete(
                     this,
                     data: (term, page) ->
