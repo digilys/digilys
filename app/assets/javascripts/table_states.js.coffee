@@ -45,7 +45,8 @@ $ ->
                         data: JSON.stringify(tableState)
                 success: (data, status, xhr) ->
                     $nameContainer.val("")
-                    $tableStateSelector.append($("<option value=\"#{data.id}\">#{data.name}</option>"))
+                    if $tableStateSelector.find("option[value=#{data.id}]").length <= 0
+                        $tableStateSelector.append($("<option value=\"#{data.id}\">#{data.name}</option>"))
                 complete: ->
                     $trigger.button("reset")
             )

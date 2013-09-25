@@ -51,6 +51,8 @@ describe TableStatesController do
 
       json["id"].should   == state.id
       json["name"].should == state.name
+
+      state.base_id.should == suite.id
     end
     it "is returns an error when invalid" do
       post :create, suite_id: suite.id, table_state: invalid_parameters_for(:table_state)
@@ -59,6 +61,12 @@ describe TableStatesController do
 
       json                      = JSON.parse(response.body)
       json["errors"].should_not be_blank
+    end
+    it "updates an existing state if the name and base already exists" do
+      post :create, suite_id: suite.id, table_state: { name: table_state.name, data: '{"zomg":"lol"}' }
+      response.should be_success
+
+      table_state.reload.data.should == { "zomg" => "lol" }
     end
   end
 

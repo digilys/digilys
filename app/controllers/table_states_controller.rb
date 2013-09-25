@@ -14,6 +14,18 @@ class TableStatesController < ApplicationController
   end
 
   def create
+    duplicate = TableState.where(
+      base_id: @table_state.base_id,
+      base_type: @table_state.base_type
+    ).where([
+      'name ilike ?', @table_state.name
+    ]).first
+
+    if duplicate
+      @table_state = duplicate
+      @table_state.data = params[:table_state][:data]
+    end
+
     if @table_state.save
       render json: { id: @table_state.id, name: @table_state.name }
     else
