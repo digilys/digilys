@@ -168,8 +168,8 @@ namespace :app do
           school:      row[0].strip,
           grade:       row[1].strip,
           personal_id: row[2].strip,
-          first_name:  row[3].strip,
-          last_name:   row[4].strip,
+          last_name:   row[3].strip,
+          first_name:  row[4].strip,
           gender:      parse_gender(row[5].strip)
         }
 
