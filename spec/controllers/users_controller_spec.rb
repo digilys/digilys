@@ -9,7 +9,7 @@ describe UsersController do
     let!(:users)           { create_list(:user,           2) }
     let!(:invisible_users) { create_list(:invisible_user, 2) }
 
-    it "lists users" do
+    it "lists users in the current instance" do
       get :index
       response.should be_successful
       assigns(:users).should match_array(users + [ logged_in_user ])
@@ -22,8 +22,9 @@ describe UsersController do
   end
 
   describe "GET #search" do
-    let!(:users)           { create_list(:user,           2) }
-    let!(:invisible_users) { create_list(:invisible_user, 2) }
+    let!(:users)              { create_list(:user,           2, active_instance: logged_in_user.active_instance) }
+    let!(:invisible_users)    { create_list(:invisible_user, 2, active_instance: logged_in_user.active_instance) }
+    let!(:non_instance_users) { create_list(:user,           2) }
 
     it "lists users" do
       get :search, q: {}
@@ -31,7 +32,7 @@ describe UsersController do
       response.should be_success
       json = JSON.parse(response.body)
 
-      json["results"].should have(3).items
+      json["results"].should have(users.length + 1).items
     end
     it "returns the result as json" do
       get :search, q: { name_cont: users.first.name }

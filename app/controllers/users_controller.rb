@@ -3,6 +3,8 @@ class UsersController < ApplicationController
 
   load_and_authorize_resource
 
+  before_filter :instance_filter, only: [ :search ]
+
   def index
     @users = @users.visible.order(:name)
     @users = @users.search(params[:q]).result if has_search_param?
@@ -90,5 +92,10 @@ class UsersController < ApplicationController
       user.active_instance = Instance.with_role(:member, user).first
       user.save
     end
+  end
+
+
+  def instance_filter
+    @users = @users.with_role(:member, current_instance)
   end
 end
