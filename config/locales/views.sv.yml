@@ -311,6 +311,13 @@ sv:
       password_hint: Lämna lösenordet tomt om du inte vill byta ditt nuvarande lösenord.
       password_for_other_hint: Lämna lösenordet tomt om du inte vill ändra användarens nuvarande lösenord.
       roles_title: Rättigheter
+      roles_explanation_html: |
+        <p>Kortfattad information om roller:</p>
+        <ul>
+          <li><strong>Administratörer</strong> har fulla rättigheter i DigiLys, t.ex. kan de ändra andra användare</li>
+          <li><strong>Planerare</strong> kan skapa planeringar</li>
+          <li><strong>Användare</strong> kan arbeta i de planeringar de är deltagare i</li>
+        </ul>
     update:
       success: Användardetaljerna uppdaterades
     confirm_destroy:

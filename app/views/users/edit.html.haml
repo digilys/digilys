@@ -22,11 +22,16 @@
 
   - if can? :manage, User
     = f.inputs t(:".roles_title") do
-      = f.input :roles,
-        as: :select,
-        include_blank: true,
-        collection: Role.where(name: %w(admin superuser)).collect { |r| [ t(:"roles.#{r.name}"), r.id ] },
-        input_html: { multiple: false }
+      .row-fluid
+        .span6
+          = f.input :roles,
+            as: :select,
+            include_blank: User.model_name.human,
+            collection: Role.where(name: %w(admin superuser)).collect { |r| [ t(:"roles.#{r.name}"), r.id ] },
+            input_html: { multiple: false }
+        .span6
+          .alert.alert-box.alert-info
+            = t(:".roles_explanation_html")
 
   = f.actions do
     = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary" }
