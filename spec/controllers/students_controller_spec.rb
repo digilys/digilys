@@ -3,12 +3,15 @@ require 'spec_helper'
 describe StudentsController do
   login_user(:admin)
 
-  let(:student) { create(:student) }
+  let(:instance)      { create(:instance) }
+  let(:student)       { create(:student) }
+  let(:other_student) { create(:student, instance: instance) }
 
   describe "GET #index" do
-    let!(:students) { create_list(:student, 2) }
+    let!(:students)             { create_list(:student, 2) }
+    let!(:non_instance_student) { create(:student, instance: instance) }
 
-    it "lists students" do
+    it "lists students in the current instance" do
       get :index
       response.should be_successful
       assigns(:students).should match_array(students)
@@ -21,6 +24,8 @@ describe StudentsController do
   end
 
   describe "GET #search" do
+    let!(:non_instance_student) { create(:student, first_name: student.first_name, last_name: student.last_name, instance: instance) }
+
     it "returns the result as json" do
       get :search, q: { name_cont: student.name }
 
@@ -40,6 +45,10 @@ describe StudentsController do
       get :show, id: student.id
       response.should be_success
     end
+    it "gives a 404 if the instance does not match" do
+      get :show, id: other_student.id
+      response.status.should == 404
+    end
   end
 
   describe "GET #new" do
@@ -57,12 +66,22 @@ describe StudentsController do
       post :create, student: invalid_parameters_for(:student)
       response.should render_template("new")
     end
+    it "sets the instance from the current user's active instance" do
+      post :create, student: valid_parameters_for(:student).merge(instance_id: instance.id)
+
+      assigns(:student).instance.should_not == instance
+      assigns(:student).instance.should     == logged_in_user.active_instance
+    end
   end
 
   describe "GET #edit" do
     it "is successful" do
       get :edit, id: student.id
       response.should be_success
+    end
+    it "gives a 404 if the instance does not match" do
+      get :show, id: other_student.id
+      response.status.should == 404
     end
   end
   describe "PUT #update" do
@@ -76,12 +95,24 @@ describe StudentsController do
       put :update, id: student.id, student: invalid_parameters_for(:student)
       response.should render_template("edit")
     end
+    it "gives a 404 if the instance does not match" do
+      put :update, id: other_student.id, student: {}
+      response.status.should == 404
+    end
+    it "prevents changing the instance" do
+      put :update, id: student.id, student: { instance_id: instance.id }
+      student.reload.instance.should_not == instance
+    end
   end
 
   describe "GET #confirm_destroy" do
     it "is successful" do
       get :confirm_destroy, id: student.id
       response.should be_success
+    end
+    it "gives a 404 if the instance does not match" do
+      get :confirm_destroy, id: other_student.id
+      response.status.should == 404
     end
   end
   describe "DELETE #destroy" do
@@ -90,12 +121,20 @@ describe StudentsController do
       response.should redirect_to(students_url())
       Student.exists?(student.id).should be_false
     end
+    it "gives a 404 if the instance does not match" do
+      delete :destroy, id: other_student.id
+      response.status.should == 404
+    end
   end
 
   describe "GET #select_groups" do
     it "is successful" do
       get :select_groups, id: student.id
       response.should be_success
+    end
+    it "gives a 404 if the instance does not match" do
+      get :select_groups, id: other_student.id
+      response.status.should == 404
     end
   end
   describe "PUT #add_groups" do
@@ -107,6 +146,10 @@ describe StudentsController do
       response.should redirect_to(student)
       student.groups(true).should match_array(groups)
     end
+    it "gives a 404 if the instance does not match" do
+      put :add_groups, id: other_student.id, student: { groups: groups.collect(&:id).join(",") }
+      response.status.should == 404
+    end
   end
   describe "DELETE #remove_groups" do
     let(:groups) { create_list(:group, 2) }
@@ -116,6 +159,10 @@ describe StudentsController do
       delete :remove_groups, id: student.id, group_ids: groups.collect(&:id)
       response.should redirect_to(student)
       student.groups(true).should be_blank
+    end
+    it "gives a 404 if the instance does not match" do
+      delete :remove_groups, id: other_student.id, group_ids: groups.collect(&:id)
+      response.status.should == 404
     end
   end
 end

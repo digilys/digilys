@@ -1,6 +1,8 @@
 class StudentsController < ApplicationController
   load_and_authorize_resource
 
+  before_filter :instance_filter
+
   def index
     @students = @students.order(:first_name, :last_name)
     @students = @students.search(params[:q]).result      if has_search_param?
@@ -24,6 +26,8 @@ class StudentsController < ApplicationController
   end
 
   def create
+    @student.instance = current_instance
+
     if @student.save
       flash[:success] = t(:"students.create.success")
       redirect_to @student
@@ -38,6 +42,9 @@ class StudentsController < ApplicationController
   end
 
   def update
+    params[:student].delete(:instance)
+    params[:student].delete(:instance_id)
+
     if @student.update_attributes(params[:student])
       flash[:success] = t(:"students.update.success")
       redirect_to @student
@@ -71,5 +78,16 @@ class StudentsController < ApplicationController
 
     flash[:success] = t(:"students.remove_groups.success")
     redirect_to @student
+  end
+
+
+  private
+
+  def instance_filter
+    if @students
+      @students = @students.where(instance_id: current_instance_id)
+    elsif @student && !@student.new_record?
+      raise ActiveRecord::RecordNotFound unless @student.instance_id == current_instance_id
+    end
   end
 end

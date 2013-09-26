@@ -10,6 +10,10 @@ class ApplicationController < ActionController::Base
 
   protected
 
+  def current_instance_id
+    current_user.active_instance_id
+  end
+  helper_method :current_instance_id
   def current_instance
     current_user.active_instance
   end
