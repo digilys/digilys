@@ -1,6 +1,8 @@
 class Student < ActiveRecord::Base
   extend Enumerize
 
+  belongs_to :instance
+
   has_many :participants, dependent: :destroy
   has_many :suites,       through: :participants
   has_many :results,      dependent: :destroy
@@ -37,11 +39,14 @@ class Student < ActiveRecord::Base
     :data,
     :data_text,
     :student_ids,
-    :generic_results_attributes
+    :generic_results_attributes,
+    :instance,
+    :instance_id
 
   validates :personal_id, presence: true, uniqueness: true
   validates :first_name,  presence: true
   validates :last_name,   presence: true
+  validates :instance,    presence: true
 
   enumerize :gender, in: [ :male, :female ]
 

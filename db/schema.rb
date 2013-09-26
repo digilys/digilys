@@ -193,6 +193,7 @@ ActiveRecord::Schema.define(:version => 20130927075152) do
     t.string   "last_name"
     t.string   "gender"
     t.text     "data"
+    t.integer  "instance_id"
   end
 
   create_table "suites", :force => true do |t|

@@ -17,12 +17,15 @@ namespace :app do
           gender = :male
         end
 
+        instance = Instance.order(:id).first
+
         student = FactoryGirl.create(
           :student,
           first_name:  first_name,
           last_name:   LAST_NAMES.sample,
           gender:      gender,
-          personal_id: "#{(rand(10.years).ago - 6.years).strftime("%Y%m%d")}#{"%04d" % rand(9999)}"
+          personal_id: "#{(rand(10.years).ago - 6.years).strftime("%Y%m%d")}#{"%04d" % rand(9999)}",
+          instance:    instance
         )
 
         puts "New student: #{student.name}"

@@ -16,12 +16,15 @@ describe Student do
     it { should allow_mass_assignment_of(:last_name) }
     it { should allow_mass_assignment_of(:gender) }
     it { should allow_mass_assignment_of(:data) }
+    it { should allow_mass_assignment_of(:instance) }
+    it { should allow_mass_assignment_of(:instance_id) }
   end
   context "validation" do
     it { should validate_presence_of(:personal_id) }
     it { should validate_uniqueness_of(:personal_id) }
     it { should validate_presence_of(:first_name) }
     it { should validate_presence_of(:last_name) }
+    it { should validate_presence_of(:instance) }
     it { should ensure_inclusion_of(:gender).in_array(%w(male female)) }
   end
   context ".validate_data_text" do
