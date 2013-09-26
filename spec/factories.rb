@@ -39,6 +39,8 @@ FactoryGirl.define do
   end
 
   factory :group do
+    instance { Instance.order(:id).first || create(:instance) }
+
     sequence(:name) { |i| "Group %09d" % i }
     parent          nil
 

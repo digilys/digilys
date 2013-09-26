@@ -13,9 +13,12 @@ describe Group do
   context "accessible attributes" do
     it { should allow_mass_assignment_of(:name) }
     it { should allow_mass_assignment_of(:parent_id) }
+    it { should allow_mass_assignment_of(:instance) }
+    it { should allow_mass_assignment_of(:instance_id) }
   end
   context "validation" do
     it { should validate_presence_of(:name) }
+    it { should validate_presence_of(:instance) }
   end
 
   context "#with_parents" do

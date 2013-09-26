@@ -1,5 +1,7 @@
 class Group < ActiveRecord::Base
+  belongs_to :instance
   belongs_to :parent,   class_name: "Group"
+
   has_many   :children,
     class_name:  "Group",
     foreign_key: "parent_id",
@@ -12,9 +14,14 @@ class Group < ActiveRecord::Base
 
   has_many :participants, dependent: :nullify
 
-  attr_accessible :name, :parent_id, :imported
+  attr_accessible :name,
+    :parent_id,
+    :imported,
+    :instance,
+    :instance_id
 
-  validates :name, presence: true
+  validates :name,     presence: true
+  validates :instance, presence: true
 
 
   # Adds students to this group and all the parents

@@ -85,9 +85,10 @@ ActiveRecord::Schema.define(:version => 20130927075152) do
   create_table "groups", :force => true do |t|
     t.string   "name"
     t.integer  "parent_id"
-    t.datetime "created_at",                    :null => false
-    t.datetime "updated_at",                    :null => false
-    t.boolean  "imported",   :default => false
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
+    t.boolean  "imported",    :default => false
+    t.integer  "instance_id"
   end
 
   create_table "groups_students", :id => false, :force => true do |t|
