@@ -5,7 +5,7 @@ module FactoryUtils
   # a model.
   def valid_parameters_for(model)
     accessible_attrs = model.to_s.classify.constantize.accessible_attributes
-    attributes_for(model).keep_if { |k, _| accessible_attrs.include?(k.to_s) }
+    return filter_parameters(model, accessible_attrs)
   end
 
   # Generates parameters for a model that will result
@@ -18,6 +18,27 @@ module FactoryUtils
   # model.
   def invalid_parameters_for(model)
     accessible_attrs = model.to_s.classify.constantize.accessible_attributes
-    attributes_for(:"invalid_#{model}").keep_if { |k, _| accessible_attrs.include?(k.to_s) }
+    return filter_parameters(:"invalid_#{model}", accessible_attrs)
   end
+
+  private
+
+  def filter_parameters(model, accessible_attrs)
+    parameters = attributes_for(model)
+
+    # Remove attributes that are not accessible and
+    # convert active record values to ids
+    parameters = parameters.inject({}) do |h, (k,v)|
+      if accessible_attrs.include?(k.to_s)
+        if v.is_a?(ActiveRecord::Base)
+          h[:"#{k}_id"] = v.id
+        else
+          h[k] = v
+        end
+      end
+
+      h
+    end
+  end
+
 end
