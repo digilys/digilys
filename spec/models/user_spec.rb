@@ -10,7 +10,7 @@ describe User do
       subject { build(:admin) }
       it { should be_valid }
     end
-    context "admin" do
+    context "superuser" do
       subject { build(:superuser) }
       it { should be_valid }
     end
@@ -18,14 +18,19 @@ describe User do
       subject { build(:invalid_user) }
       it { should_not be_valid }
     end
+    context "invisible_user" do
+      subject { build(:invisible_user) }
+      it { should be_valid }
+    end
   end
   context "accessible attributes" do
-    it { should allow_mass_assignment_of(:email) }
-    it { should allow_mass_assignment_of(:password) }
-    it { should allow_mass_assignment_of(:password_confirmation) }
-    it { should allow_mass_assignment_of(:remember_me) }
-    it { should allow_mass_assignment_of(:role_ids) }
-    it { should allow_mass_assignment_of(:name) }
+    it { should     allow_mass_assignment_of(:email) }
+    it { should     allow_mass_assignment_of(:password) }
+    it { should     allow_mass_assignment_of(:password_confirmation) }
+    it { should     allow_mass_assignment_of(:remember_me) }
+    it { should     allow_mass_assignment_of(:role_ids) }
+    it { should     allow_mass_assignment_of(:name) }
+    it { should_not allow_mass_assignment_of(:invisible) }
   end
   context "validation" do
     it { should validate_presence_of(:name) }

@@ -5,6 +5,7 @@ FactoryGirl.define do
     password              "password"
     password_confirmation { password }
     registered_yubikey    "abcdefghijkl"
+    invisible             false
 
     factory :admin do
       after(:create) { |user| user.add_role :admin }
@@ -14,6 +15,9 @@ FactoryGirl.define do
     end
     factory(:invalid_user) do
       name nil
+    end
+    factory(:invisible_user) do
+      invisible true
     end
   end
 
