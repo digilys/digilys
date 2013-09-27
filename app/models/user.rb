@@ -37,6 +37,11 @@ class User < ActiveRecord::Base
   end
 
 
+  def self.visible
+    where(invisible: false)
+  end
+
+
   def save_setting!(customizable, data)
     setting   = self.settings.for(customizable).first
     setting ||= self.settings.build(customizable: customizable, data: {})

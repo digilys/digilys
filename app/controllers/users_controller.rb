@@ -4,13 +4,13 @@ class UsersController < ApplicationController
   load_and_authorize_resource
 
   def index
-    @users = @users.order(:name)
+    @users = @users.visible.order(:name)
     @users = @users.search(params[:q]).result if has_search_param?
     @users = @users.page(params[:page])
   end
 
   def search
-    @users         = @users.order(:name).search(params[:q]).result.page(params[:page])
+    @users         = @users.visible.order(:name).search(params[:q]).result.page(params[:page])
     json           = {}
     json[:results] = @users.collect { |u| { id: u.id, text: "#{u.name}, #{u.email}" } }
     json[:more]    = !@users.last_page?

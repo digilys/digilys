@@ -6,12 +6,13 @@ describe UsersController do
   let(:user) { create(:user) }
 
   describe "GET #index" do
-    let!(:users) { create_list(:user, 2) }
+    let!(:users)           { create_list(:user,           2) }
+    let!(:invisible_users) { create_list(:invisible_user, 2) }
 
     it "lists users" do
       get :index
       response.should be_successful
-      assigns(:users).should match_array(User.all)
+      assigns(:users).should match_array(users + [ logged_in_user ])
     end
     it "is filterable" do
       get :index, q: { name_cont: users.first.name }
@@ -21,12 +22,20 @@ describe UsersController do
   end
 
   describe "GET #search" do
-    let!(:users) { create_list(:user, 2) }
+    let!(:users)           { create_list(:user,           2) }
+    let!(:invisible_users) { create_list(:invisible_user, 2) }
 
+    it "lists users" do
+      get :search, q: {}
+
+      response.should be_success
+      json = JSON.parse(response.body)
+
+      json["results"].should have(3).items
+    end
     it "returns the result as json" do
       get :search, q: { name_cont: users.first.name }
 
-      response.should be_success
       json = JSON.parse(response.body)
 
       json["more"].should be_false

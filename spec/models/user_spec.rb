@@ -36,6 +36,13 @@ describe User do
     it { should validate_presence_of(:name) }
   end
 
+  context "#visible" do
+    let!(:users)           { create_list(:user,           2) }
+    let!(:invisible_users) { create_list(:invisible_user, 2) }
+    subject                { User.visible.all }
+    it                     { should match_array(users) }
+  end
+
   context ".save_setting!" do
     let(:user)  { create(:user) }
     let(:suite) { create(:suite) }
