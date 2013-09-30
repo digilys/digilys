@@ -3,8 +3,11 @@ require 'spec_helper'
 describe TableStatesController do
   login_user(:admin)
 
-  let(:suite)       { create(:suite) }
-  let(:table_state) { create(:table_state, base: suite, data: { foo: "bar" }) }
+  let(:suite)             { create(:suite) }
+  let(:table_state)       { create(:table_state, base: suite, data: { foo: "bar" }) }
+  let(:instance)          { create(:instance) }
+  let(:other_suite)       { create(:suite, instance: instance) }
+  let(:other_table_state) { create(:table_state, base: other_suite, data: { foo: "bar" }) }
 
   describe "GET #show" do
     it "is successful" do
@@ -15,6 +18,10 @@ describe TableStatesController do
       json               = JSON.parse(response.body)
       json["foo"].should == "bar"
     end
+    it "gives a 404 if the suite's instance does not match" do
+      get :show, id: other_table_state.id, suite_id: other_suite.id
+      response.status.should == 404
+    end
   end
 
   describe "GET #select" do
@@ -23,6 +30,10 @@ describe TableStatesController do
       response.should redirect_to(color_table_suite_url(suite))
 
       logged_in_user.settings.for(suite).first.data["datatable_state"].should == { "foo" => "bar" }
+    end
+    it "gives a 404 if the suite's instance does not match" do
+      get :select, id: other_table_state.id, suite_id: other_suite.id
+      response.status.should == 404
     end
 
     context "with existing data" do
@@ -68,6 +79,10 @@ describe TableStatesController do
 
       table_state.reload.data.should == { "zomg" => "lol" }
     end
+    it "gives a 404 if the suite's instance does not match" do
+      post :create, suite_id: other_suite.id, table_state: valid_parameters_for(:table_state)
+      response.status.should == 404
+    end
   end
 
   describe "PUT #update" do
@@ -90,6 +105,10 @@ describe TableStatesController do
       json                      = JSON.parse(response.body)
       json["errors"].should_not be_blank
     end
+    it "gives a 404 if the suite's instance does not match" do
+      put :update, id: other_table_state.id, suite_id: other_suite.id, table_state: {}
+      response.status.should == 404
+    end
   end
 
   describe "DELETE #destroy" do
@@ -97,6 +116,10 @@ describe TableStatesController do
       delete :destroy, id: table_state.id, suite_id: suite.id
       response.should be_success
       TableState.where(id: table_state.id).first.should be_nil
+    end
+    it "gives a 404 if the suite's instance does not match" do
+      delete :destroy, id: other_table_state.id, suite_id: other_suite.id
+      response.status.should == 404
     end
   end
 end

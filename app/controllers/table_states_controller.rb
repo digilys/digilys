@@ -1,6 +1,8 @@
 class TableStatesController < ApplicationController
   load_resource :suite
   load_resource :table_state, through: :suite, shallow: true
+
+  before_filter :instance_filter
   before_filter :authorize_table_state!
 
   def show
@@ -50,12 +52,17 @@ class TableStatesController < ApplicationController
   def authorize_table_state!
     if @suite
       authorize! :view, @suite
-    elsif @table_state.try(:owner)
-      authorize! :view, @table_state.owner
+    elsif @table_state.try(:base)
+      authorize! :view, @table_state.base
     elsif @table_state
       authorize! params[:action].to_sym, @table_state
     else
       authorize! params[:action].to_sym, TableState
     end
+  end
+
+  def instance_filter
+    base = @table_state.try(:base) || @suite
+    raise ActiveRecord::RecordNotFound if base && base.respond_to?(:instance_id) && base.instance_id != current_instance_id
   end
 end
