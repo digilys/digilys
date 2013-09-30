@@ -60,54 +60,49 @@ describe VisualizationsController do
 
     subject(:table) { controller.send(:results_to_datatable, evaluations) }
 
-    it { should have(3).items }
+    it "generates the correct format" do
+      table.should have(3).items
 
-    context "title row" do
-      subject { table.first }
-      it { should have(3).items }
-      its(:first)  { should == Evaluation.model_name.human(count: 2) }
-      its(:second) { should == students.first.name }
-      its(:third)  { should == students.second.name }
+      # Title row
+      table.first.should have(3).items
+      table.first[0].should == Evaluation.model_name.human(count: 2)
+      table.first[1].should == students.first.name
+      table.first[2].should == students.second.name
+
+      # Row for evaluation 1
+      table.second.should have(3).items
+      table.second[0].should == evaluations.first.name
+      table.second[1].should == result_s1_e1.value.to_f / 10.0
+      table.second[2].should == result_s2_e1.value.to_f / 10.0
+
+      # Row for evaluation 2
+      table.third.should have(3).items
+      table.third[0].should == evaluations.second.name
+      table.third[1].should == result_s1_e2.value.to_f / 10.0
+      table.third[2].should be_nil
     end
 
-    context "row for evaluation 1" do
-      subject { table.second }
-      it { should have(3).items }
-      its(:first)  { should == evaluations.first.name }
-      its(:second) { should == result_s1_e1.value.to_f / 10.0 }
-      its(:third)  { should == result_s2_e1.value.to_f / 10.0 }
-    end
-
-    context "row for evaluation 2" do
-      subject { table.third }
-      it { should have(3).items }
-      its(:first)  { should == evaluations.second.name }
-      its(:second) { should == result_s1_e2.value.to_f / 10.0 }
-      its(:third)  { should be_nil }
-    end
 
     context "limited by student" do
       let(:table) { controller.send(:results_to_datatable, evaluations, students.first) }
 
-      context "title row" do
-        subject { table.first }
-        it { should have(2).items }
-        its(:first)  { should == Evaluation.model_name.human(count: 2) }
-        its(:second) { should == students.first.name }
-      end
+      it "generates the correct format" do
+        table.should have(3).items
 
-      context "row for evaluation 1" do
-        subject { table.second }
-        it { should have(2).items }
-        its(:first)  { should == evaluations.first.name }
-        its(:second) { should == result_s1_e1.value.to_f / 10.0 }
-      end
+        # Title row
+        table.first.should have(2).items
+        table.first[0].should == Evaluation.model_name.human(count: 2)
+        table.first[1].should == students.first.name
 
-      context "row for evaluation 2" do
-        subject { table.third }
-        it { should have(2).items }
-        its(:first)  { should == evaluations.second.name }
-        its(:second) { should == result_s1_e2.value.to_f / 10.0 }
+        # Row for evaluation 1
+        table.second.should have(2).items
+        table.second[0].should == evaluations.first.name
+        table.second[1].should == result_s1_e1.value.to_f / 10.0
+
+        # Row for evaluation 2
+        table.third.should have(2).items
+        table.third[0].should == evaluations.second.name
+        table.third[1].should == result_s1_e2.value.to_f / 10.0
       end
     end
   end
@@ -123,40 +118,36 @@ describe VisualizationsController do
 
     subject(:table) { controller.send(:result_colors_to_datatable, evaluations) }
 
-    it { should have(4).items }
+    it "generates the correct format" do
+      table.should have(4).items
 
-    context "title row" do
-      subject      { table.first }
-      it           { should have(4).items }
-      its(:first)  { should == Evaluation.model_name.human(count: 2) }
-      its(:second) { should == I18n.t(:red) }
-      its(:third)  { should == I18n.t(:yellow) }
-      its(:fourth) { should == I18n.t(:green) }
-    end
+      # Title row
+      table.first.should have(4).items
+      table.first[0].should == Evaluation.model_name.human(count: 2)
+      table.first[1].should == I18n.t(:red)
+      table.first[2].should == I18n.t(:yellow)
+      table.first[3].should == I18n.t(:green)
 
-    context "row for evaluation 1" do
-      subject      { table.second }
-      it           { should have(4).items }
-      its(:first)  { should == evaluations.first.name }
-      its(:second) { should == evaluations.first.result_distribution[:red] }
-      its(:third)  { should == evaluations.first.result_distribution[:yellow] }
-      its(:fourth) { should == evaluations.first.result_distribution[:green] }
-    end
-    context "row for evaluation 2" do
-      subject      { table.third }
-      it           { should have(4).items }
-      its(:first)  { should == evaluations.second.name }
-      its(:second) { should == evaluations.second.result_distribution[:red] }
-      its(:third)  { should == evaluations.second.result_distribution[:yellow] }
-      its(:fourth) { should == evaluations.second.result_distribution[:green] }
-    end
-    context "row for evaluation 3" do
-      subject      { table.fourth }
-      it           { should have(4).items }
-      its(:first)  { should == evaluations.third.name }
-      its(:second) { should == 0 }
-      its(:third)  { should == 0 }
-      its(:fourth) { should == 0 }
+      # Row for evaluation 1
+      table.second.should have(4).items
+      table.second[0].should == evaluations.first.name
+      table.second[1].should == evaluations.first.result_distribution[:red]
+      table.second[2].should == evaluations.first.result_distribution[:yellow]
+      table.second[3].should == evaluations.first.result_distribution[:green]
+
+      # Row for evaluation 2
+      table.third.should have(4).items
+      table.third[0].should == evaluations.second.name
+      table.third[1].should == evaluations.second.result_distribution[:red]
+      table.third[2].should == evaluations.second.result_distribution[:yellow]
+      table.third[3].should == evaluations.second.result_distribution[:green]
+
+      # Row for evaluation 3
+      table.fourth.should have(4).items
+      table.fourth[0].should == evaluations.third.name
+      table.fourth[1].should == 0
+      table.fourth[2].should == 0
+      table.fourth[3].should == 0
     end
   end
 
@@ -181,37 +172,36 @@ describe VisualizationsController do
 
     subject(:table) { controller.send(:result_stanines_to_datatable, evaluations) }
 
-    it { should have(10).items }
+    it "generates the correct format" do
+      table.should have(10).items
 
-    context "title row" do
-      subject      { table.first }
-      it           { should have(4).items }
-      its(:first)  { should == I18n.t(:stanine) }
-      its(:second) { should == I18n.t(:normal_distribution) }
-      its(:third)  { should == evaluations.first.name }
-      its(:fourth) { should == evaluations.second.name }
-    end
+      # Title row
+      table.first.should have(4).items
+      table.first[0].should == I18n.t(:stanine)
+      table.first[1].should == I18n.t(:normal_distribution)
+      table.first[2].should == evaluations.first.name
+      table.first[3].should == evaluations.second.name
 
-    [
-      [1, 0.04 * 3.0, 0, 0],
-      [2, 0.07 * 3.0, 0, 0],
-      [3, 0.12 * 3.0, 0, 0],
-      [4, 0.17 * 3.0, 2, 0],
-      [5, 0.20 * 3.0, 0, 2],
-      [6, 0.17 * 3.0, 1, 1],
-      [7, 0.12 * 3.0, 0, 0],
-      [8, 0.07 * 3.0, 0, 0],
-      [9, 0.04 * 3.0, 0, 0],
-    ].each do |row, expected_second, expected_third, expected_fourth|
-      context "row #{row}" do
-        subject      { table[row] }
-        it           { should have(4).items }
-        its(:first)  { should == row.to_s }
-        its(:second) { should == expected_second }
-        its(:third)  { should == expected_third }
-        its(:fourth) { should == expected_fourth }
+      # Stanine rows
+      [
+        [1, 0.04 * 3.0, 0, 0],
+        [2, 0.07 * 3.0, 0, 0],
+        [3, 0.12 * 3.0, 0, 0],
+        [4, 0.17 * 3.0, 2, 0],
+        [5, 0.20 * 3.0, 0, 2],
+        [6, 0.17 * 3.0, 1, 1],
+        [7, 0.12 * 3.0, 0, 0],
+        [8, 0.07 * 3.0, 0, 0],
+        [9, 0.04 * 3.0, 0, 0],
+      ].each do |row, expected_second, expected_third, expected_fourth|
+        table[row].should have(4).items
+        table[row][0].should == row.to_s
+        table[row][1].should == expected_second
+        table[row][2].should == expected_third
+        table[row][3].should == expected_fourth
       end
     end
+
   end
 
   describe "#result_stanines_by_color_to_datatable" do
@@ -233,36 +223,35 @@ describe VisualizationsController do
 
     subject(:table) { controller.send(:result_stanines_by_color_to_datatable, evaluation) }
 
-    it { should have(10).items }
+    it "generates the correct format" do
+      table.should have(10).items
 
-    context "title row" do
-      subject      { table.first }
-      it           { should have(5).items }
-      its(:first)  { should == I18n.t(:stanine) }
-      its(:second) { should == I18n.t(:normal_distribution) }
-      its(:third)  { should == I18n.t(:red) }
-      its(:fourth) { should == I18n.t(:yellow) }
-      its(:fifth)  { should == I18n.t(:green) }
-    end
-    [
-      [1, 0.04 * 3.0, 0, 0, 0],
-      [2, 0.07 * 3.0, 1, 0, 0],
-      [3, 0.12 * 3.0, 0, 0, 0],
-      [4, 0.17 * 3.0, 0, 0, 0],
-      [5, 0.20 * 3.0, 0, 1, 0],
-      [6, 0.17 * 3.0, 0, 0, 0],
-      [7, 0.12 * 3.0, 0, 0, 0],
-      [8, 0.07 * 3.0, 0, 0, 1],
-      [9, 0.04 * 3.0, 0, 0, 0],
-    ].each do |row, expected_second, expected_third, expected_fourth, expected_fifth|
-      context "row #{row}" do
-        subject      { table[row] }
-        it           { should have(5).items }
-        its(:first)  { should == row.to_s }
-        its(:second) { should == expected_second }
-        its(:third)  { should == expected_third }
-        its(:fourth) { should == expected_fourth }
-        its(:fifth)  { should == expected_fifth }
+      # Title row
+      table.first.should have(5).items
+      table.first[0].should == I18n.t(:stanine)
+      table.first[1].should == I18n.t(:normal_distribution)
+      table.first[2].should == I18n.t(:red)
+      table.first[3].should == I18n.t(:yellow)
+      table.first[4].should == I18n.t(:green)
+
+      # Stanine rows
+      [
+        [1, 0.04 * 3.0, 0, 0, 0],
+        [2, 0.07 * 3.0, 1, 0, 0],
+        [3, 0.12 * 3.0, 0, 0, 0],
+        [4, 0.17 * 3.0, 0, 0, 0],
+        [5, 0.20 * 3.0, 0, 1, 0],
+        [6, 0.17 * 3.0, 0, 0, 0],
+        [7, 0.12 * 3.0, 0, 0, 0],
+        [8, 0.07 * 3.0, 0, 0, 1],
+        [9, 0.04 * 3.0, 0, 0, 0],
+      ].each do |row, expected_second, expected_third, expected_fourth, expected_fifth|
+        table[row].should have(5).items
+        table[row][0].should == row.to_s
+        table[row][1].should == expected_second
+        table[row][2].should == expected_third
+        table[row][3].should == expected_fourth
+        table[row][4].should == expected_fifth
       end
     end
   end
