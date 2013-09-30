@@ -1,6 +1,8 @@
 class MeetingsController < ApplicationController
   load_resource :suite
   load_resource :meeting, through: :suite, shallow: true
+
+  before_filter :instance_filter
   before_filter :authorize_meeting!
 
   def show
@@ -67,5 +69,10 @@ class MeetingsController < ApplicationController
     else
       authorize! params[:action].to_sym, Meeting
     end
+  end
+
+  def instance_filter
+    suite = @meeting.try(:suite) || @suite
+    raise ActiveRecord::RecordNotFound if suite && suite.instance_id != current_instance_id
   end
 end
