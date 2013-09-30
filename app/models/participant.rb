@@ -10,9 +10,11 @@ class Participant < ActiveRecord::Base
     :suite_id,
     :group_id
 
-  validates :student, presence:   true
-  validates :suite,   presence:   true
+  validates :student,    presence:   true
+  validates :suite,      presence:   true
   validates :student_id, uniqueness: { scope: :suite_id }
+
+  validate :student_and_suite_must_have_the_same_instance
 
   after_create  :add_group_users_to_suite
   after_create  :update_evaluation_statuses!
@@ -49,5 +51,12 @@ class Participant < ActiveRecord::Base
 
   def update_evaluation_statuses!
     self.suite.update_evaluation_statuses! if self.suite
+  end
+
+
+  def student_and_suite_must_have_the_same_instance
+    if self.student.try(:instance_id) != self.suite.try(:instance_id)
+      errors.add(:student, :invalid_instance)
+    end
   end
 end

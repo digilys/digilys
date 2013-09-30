@@ -20,6 +20,17 @@ describe Participant do
     it { should validate_presence_of(:student) }
     it { should validate_presence_of(:suite) }
     it { should validate_uniqueness_of(:student_id).scoped_to(:suite_id) }
+
+    context ".student_and_suite_must_have_the_same_instance" do
+      let(:instance) { create(:instance) }
+      let(:suite)    { create(:suite,      instance: instance) }
+      let(:same)     { create(:student,    instance: instance) }
+      let(:other)    { create(:student,    instance: create(:instance)) }
+      subject        { build(:participant, suite:    suite,            student: nil) }
+
+      it { should     allow_value(same).for(:student) }
+      it { should_not allow_value(other).for(:student) }
+    end
   end
 
   describe ".name" do

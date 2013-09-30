@@ -175,3 +175,7 @@ sv:
         evaluation:
           faulty_grade_color: Felaktig färgordning
           faulty_grade_stanine: Felaktig stanineordning
+        participant:
+          attributes:
+            student:
+              invalid_instance: Elevens instans måste vara samma som planeringens
