@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130927075152) do
+ActiveRecord::Schema.define(:version => 20130930082140) do
 
   create_table "activities", :force => true do |t|
     t.integer  "suite_id"
@@ -205,6 +205,7 @@ ActiveRecord::Schema.define(:version => 20130927075152) do
     t.integer  "template_id"
     t.string   "generic_evaluations", :limit => 1024
     t.string   "student_data",        :limit => 1024
+    t.integer  "instance_id"
   end
 
   create_table "table_states", :force => true do |t|

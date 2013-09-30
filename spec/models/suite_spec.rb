@@ -12,9 +12,16 @@ describe Suite do
   end
   context "accessible attributes" do
     it { should allow_mass_assignment_of(:name) }
+    it { should allow_mass_assignment_of(:is_template) }
+    it { should allow_mass_assignment_of(:instance) }
+    it { should allow_mass_assignment_of(:instance_id) }
+    it { should allow_mass_assignment_of(:evaluations_attributes) }
+    it { should allow_mass_assignment_of(:meetings_attributes) }
+    it { should allow_mass_assignment_of(:participants_attributes) }
   end
   context "validation" do
     it { should validate_presence_of(:name) }
+    it { should validate_presence_of(:instance) }
   end
 
   describe ".generic_evaluations" do

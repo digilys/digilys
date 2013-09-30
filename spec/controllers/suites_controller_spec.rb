@@ -149,6 +149,7 @@ describe SuitesController do
         suite: {
           name: "Test suite",
           is_template: "0",
+          instance_id: logged_in_user.active_instance.id,
           participants_attributes: {
             "0" => {
               :student_id => student_ids,
@@ -165,6 +166,7 @@ describe SuitesController do
         suite: {
           name: "Test suite",
           is_template: "1",
+          instance_id: logged_in_user.active_instance.id,
           participants_attributes: {
             "0" => {
               :student_id => student_ids,

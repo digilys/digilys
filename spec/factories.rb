@@ -50,6 +50,7 @@ FactoryGirl.define do
   end
 
   factory :suite do
+    instance            { Instance.order(:id).first || create(:instance) }
     template            nil
     sequence(:name)     { |i| "Suite %09d" % i }
     is_template         false

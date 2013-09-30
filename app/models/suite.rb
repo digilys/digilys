@@ -1,6 +1,7 @@
 class Suite < ActiveRecord::Base
   resourcify
 
+  belongs_to :instance
   belongs_to :template,  class_name: "Suite"
   has_many   :children,
     class_name:  "Suite",
@@ -24,11 +25,14 @@ class Suite < ActiveRecord::Base
   attr_accessible :name,
     :is_template,
     :template_id,
+    :instance,
+    :instance_id,
     :evaluations_attributes,
     :meetings_attributes,
     :participants_attributes
 
-  validates :name, presence: true
+  validates :name,     presence: true
+  validates :instance, presence: true
 
   serialize :generic_evaluations, JSON
   serialize :student_data,        JSON
