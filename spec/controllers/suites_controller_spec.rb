@@ -3,11 +3,14 @@ require 'spec_helper'
 describe SuitesController do
   login_user(:admin)
 
-  let(:suite) { create(:suite) }
+  let(:instance)    { create(:instance) }
+  let(:suite)       { create(:suite) }
+  let(:other_suite) { create(:suite, instance: instance) }
 
   describe "GET #index" do
     let!(:regular_suites)  { create_list(:suite, 2) }
     let!(:template_suites) { create_list(:suite, 2, is_template: true) }
+    let!(:other_instance)  { other_suite }
 
     it "lists regular suites" do
       get :index
@@ -25,6 +28,7 @@ describe SuitesController do
 
       before(:each) do
         logged_in_user.grant :suite_contributor, regular_suites.first
+        logged_in_user.grant :suite_contributor, other_instance
       end
 
       it "lists regular suites accessible by the user" do
@@ -54,12 +58,23 @@ describe SuitesController do
       json["results"].second.should include("id"   => "g-#{group.id}")
       json["results"].second.should include("text" => group.name)
     end
+    it "gives a 404 if the instance does not match" do
+      suite.instance = instance
+      suite.save!
+
+      get :search_participants, id: suite.id, gq: { name_cont: group.name }, sq: { last_name_cont: student.last_name }
+      response.status.should == 404
+    end
   end
 
   describe "GET #show" do
     it "is successful" do
       get :show, id: suite.id
       response.should be_success
+    end
+    it "gives a 404 if the instance does not match" do
+      get :show, id: other_suite.id
+      response.status.should == 404
     end
   end
 
@@ -77,6 +92,10 @@ describe SuitesController do
       assigns(:generic_evaluations)[:included].should == [generic_evaluations.first]
       assigns(:generic_evaluations)[:missing].should  == [generic_evaluations.last]
     end
+    it "gives a 404 if the instance does not match" do
+      get :color_table, id: other_suite.id
+      response.status.should == 404
+    end
   end
 
   describe "PUT #save_color_table_state" do
@@ -85,6 +104,10 @@ describe SuitesController do
       response.should be_success
 
       logged_in_user.settings.for(suite).first.data["datatable_state"].should == { "foo" => "bar" }
+    end
+    it "gives a 404 if the instance does not match" do
+      put :save_color_table_state, id: other_suite.id, state: '{"foo": "bar"}'
+      response.status.should == 404
     end
 
     context "with existing data" do
@@ -107,12 +130,16 @@ describe SuitesController do
       logged_in_user.settings.create(customizable: suite, data: { "datatable_state" => { "bar" => "baz" }, "zomg" => "lol" })
     end
     it "removes the datatable setting" do
-      get :clear_color_table_state, id: suite.id, state: '{"foo": "bar"}'
+      get :clear_color_table_state, id: suite.id
       response.should redirect_to(color_table_suite_url(suite))
 
       data = logged_in_user.settings.for(suite).first.data
       data["datatable_state"].should be_nil
       data["zomg"].should            == "lol"
+    end
+    it "gives a 404 if the instance does not match" do
+      get :clear_color_table_state, id: other_suite.id
+      response.status.should == 404
     end
   end
 
@@ -130,6 +157,11 @@ describe SuitesController do
       response.should be_success
       assigns(:suite).template_id.should == template.id
       assigns(:suite).participants.should have(1).item
+    end
+    it "gives a 404 if the instance does not match" do
+      template = create(:suite, is_template: true, instance: instance)
+      post :new_from_template, suite: { template_id: template.id }
+      response.status.should == 404
     end
   end
   describe "POST #create" do
@@ -182,12 +214,21 @@ describe SuitesController do
       post :create, suite: invalid_parameters_for(:suite)
       response.should render_template("new")
     end
+    it "sets the instance from the current user's active instance" do
+      post :create, suite: valid_parameters_for(:suite).merge(instance_id: instance.id)
+      assigns(:suite).instance.should_not == instance
+      assigns(:suite).instance.should     == logged_in_user.active_instance
+    end
   end
 
   describe "GET #edit" do
     it "is successful" do
       get :edit, id: suite.id
       response.should be_success
+    end
+    it "gives a 404 if the instance does not match" do
+      get :edit, id: other_suite.id
+      response.status.should == 404
     end
   end
   describe "PUT #update" do
@@ -201,12 +242,24 @@ describe SuitesController do
       put :update, id: suite.id, suite: invalid_parameters_for(:suite)
       response.should render_template("edit")
     end
+    it "gives a 404 if the instance does not match" do
+      put :update, id: other_suite.id, suite: {}
+      response.status.should == 404
+    end
+    it "prevents changing the instance" do
+      put :update, id: suite.id, suite: { instance_id: instance.id }
+      suite.reload.instance.should_not == instance
+    end
   end
 
   describe "GET #confirm_destroy" do
     it "is successful" do
       get :confirm_destroy, id: suite.id
       response.should be_success
+    end
+    it "gives a 404 if the instance does not match" do
+      get :confirm_destroy, id: other_suite.id
+      response.status.should == 404
     end
   end
   describe "DELETE #destroy" do
@@ -223,12 +276,20 @@ describe SuitesController do
       response.should redirect_to(template_suites_url())
       Suite.exists?(suite.id).should be_false
     end
+    it "gives a 404 if the instance does not match" do
+      delete :destroy, id: other_suite.id
+      response.status.should == 404
+    end
   end
 
   describe "GET #select_users" do
     it "is successful" do
       get :select_users, id: suite.id
       response.should be_success
+    end
+    it "gives a 404 if the instance does not match" do
+      get :select_users, id: other_suite.id
+      response.status.should == 404
     end
   end
   describe "PUT #add_users" do
@@ -243,6 +304,10 @@ describe SuitesController do
 
       users.first.has_role?(:suite_contributor, suite).should be_true
       users.second.has_role?(:suite_contributor, suite).should be_true
+    end
+    it "gives a 404 if the instance does not match" do
+      put :add_users, id: other_suite.id, suite: { user_id: users.collect(&:id).join(",") }
+      response.status.should == 404
     end
   end
   describe "DELETE #remove_users" do
@@ -260,6 +325,10 @@ describe SuitesController do
       users.first.has_role?(:suite_contributor, suite).should be_false
       users.second.has_role?(:suite_contributor, suite).should be_false
     end
+    it "gives a 404 if the instance does not match" do
+      delete :remove_users, id: other_suite.id, suite: { user_id: users.collect(&:id).join(",") }
+      response.status.should == 404
+    end
   end
 
   describe "PUT #add_generic_evaluations" do
@@ -268,6 +337,10 @@ describe SuitesController do
       put :add_generic_evaluations, id: suite.id, suite: { generic_evaluations: evaluation.id }
       response.should redirect_to(color_table_suite_url(suite))
       suite.reload.generic_evaluations.should include(evaluation.id)
+    end
+    it "gives a 404 if the instance does not match" do
+      put :add_generic_evaluations, id: other_suite.id, suite: { generic_evaluations: evaluation.id }
+      response.status.should == 404
     end
   end
   describe "DELETE #remove_generic_evaluations" do
@@ -280,6 +353,10 @@ describe SuitesController do
       response.should redirect_to(color_table_suite_url(suite))
       suite.reload.generic_evaluations.should_not include(evaluation.id)
     end
+    it "gives a 404 if the instance does not match" do
+      delete :remove_generic_evaluations, id: other_suite.id, evaluation_id: evaluation.id
+      response.status.should == 404
+    end
   end
 
   describe "PUT #add_student_data" do
@@ -290,15 +367,23 @@ describe SuitesController do
       response.should redirect_to(color_table_suite_url(suite))
       suite.reload.student_data.should include("foo")
     end
+    it "gives a 404 if the instance does not match" do
+      put :add_student_data, id: other_suite.id, key: "foo"
+      response.status.should == 404
+    end
   end
   describe "PUT #add_student_data" do
-    it "fremoves a student data key from the suite" do
+    it "removes a student data key from the suite" do
       suite.student_data << "foo"
       suite.save
 
       delete :remove_student_data, id: suite.id, key: "foo"
       response.should redirect_to(color_table_suite_url(suite))
       suite.reload.student_data.should_not include("foo")
+    end
+    it "gives a 404 if the instance does not match" do
+      delete :remove_student_data, id: other_suite.id, key: "foo"
+      response.status.should == 404
     end
   end
 end

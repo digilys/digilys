@@ -5,6 +5,9 @@ class SuitesController < ApplicationController
 
   load_and_authorize_resource
 
+  before_filter :instance_filter
+
+
   def index
     if !current_user.has_role?(:admin)
       @suites = @suites.with_role([:suite_manager, :suite_contributor], current_user)
@@ -64,6 +67,8 @@ class SuitesController < ApplicationController
   end
 
   def create
+    @suite.instance = current_instance
+
     if @suite.save
       current_user.add_role :suite_manager, @suite
       flash[:success] = t(:"suites.create.success.#{@suite.is_template? ? "template" : "regular"}")
@@ -79,6 +84,9 @@ class SuitesController < ApplicationController
   end
 
   def update
+    params[:suite].delete(:instance)
+    params[:suite].delete(:instance_id)
+
     if @suite.update_attributes(params[:suite])
       flash[:success] = t(:"suites.update.success.#{@suite.is_template? ? "template" : "regular"}")
       redirect_to @suite
@@ -155,7 +163,7 @@ class SuitesController < ApplicationController
   def load_from_template
     params[:suite][:name] = "" # Force a name change
 
-    template = Suite.find(params[:suite][:template_id])
+    template = Suite.where(instance_id: current_instance_id).find(params[:suite][:template_id])
     @suite   = Suite.new_from_template(template, params[:suite])
   end
 
@@ -175,6 +183,14 @@ class SuitesController < ApplicationController
       ).each_with_index do |participant_data, i|
         params[:suite][:participants_attributes][i.to_s] = participant_data
       end
+    end
+  end
+
+  def instance_filter
+    if @suites
+      @suites = @suites.where(instance_id: current_instance_id)
+    elsif @suite && !@suite.new_record?
+      raise ActiveRecord::RecordNotFound unless @suite.instance_id == current_instance_id
     end
   end
 end
