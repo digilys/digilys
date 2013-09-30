@@ -3,13 +3,20 @@ require 'spec_helper'
 describe ParticipantsController do
   login_user(:admin)
 
-  let(:participant) { create(:participant) }
+  let(:participant)       { create(:participant) }
+  let(:instance)          { create(:instance) }
+  let(:other_suite)       { create(:suite, instance: instance) }
+  let(:other_participant) { create(:participant, suite: other_suite, student: create(:student, instance: instance)) }
 
   describe "GET #new" do
     it "assigns the participant's suite" do
       get "new", suite_id: participant.suite_id
       response.should be_success
       assigns(:participant).suite.should == participant.suite
+    end
+    it "gives a 404 if the suite instance does not match" do
+      get "new", suite_id: other_suite.id
+      response.status.should == 404
     end
   end
   describe "POST #create" do
@@ -65,6 +72,15 @@ describe ParticipantsController do
       response.should redirect_to(suite)
       suite.participants(true).map(&:student).should match_array(students)
     end
+    it "gives a 404 if the suite instance does not match" do
+      post :create,
+        participant: {
+          suite_id:   other_suite.id,
+          student_id: student_ids,
+          group_id:   group_ids
+        }
+      response.status.should == 404
+    end
   end
 
   describe "GET #confirm_destroy" do
@@ -72,12 +88,20 @@ describe ParticipantsController do
       get :confirm_destroy, id: participant.id
       response.should be_success
     end
+    it "gives a 404 if the suite instance does not match" do
+      get :confirm_destroy, id: other_participant.id
+      response.status.should == 404
+    end
   end
   describe "DELETE #destroy" do
     it "redirects to the participant list page" do
       delete :destroy, id: participant.id
       response.should redirect_to(participant.suite)
       Participant.exists?(participant.id).should be_false
+    end
+    it "gives a 404 if the suite instance does not match" do
+      delete :destroy, id: other_participant.id
+      response.status.should == 404
     end
   end
 end

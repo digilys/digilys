@@ -1,6 +1,8 @@
 class ParticipantsController < ApplicationController
   load_resource :suite
   load_resource :participant
+
+  before_filter :instance_filter
   before_filter :authorize_suite!
 
   def new
@@ -43,5 +45,10 @@ class ParticipantsController < ApplicationController
 
   def authorize_suite!
     authorize!(:contribute_to, @suite || @participant.suite)
+  end
+
+  def instance_filter
+    suite = @participant.try(:suite) || @suite
+    raise ActiveRecord::RecordNotFound if suite && suite.instance_id != current_instance_id
   end
 end
