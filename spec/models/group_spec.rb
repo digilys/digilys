@@ -111,6 +111,10 @@ describe Group do
       group.students(true).should   match_array(students)
       parent1.students(true).should match_array(students)
     end
+    it "does not add students from other instances" do
+      group.add_students(create_list(:student, 2, instance: create(:instance)))
+      group.students(true).should be_empty
+    end
   end
 
   context ".remove_students" do

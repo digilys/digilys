@@ -202,6 +202,10 @@ describe Student do
       student.add_to_groups([parent1, parent2])
       student.groups(true).should match_array(groups + [parent1, parent2])
     end
+    it "does not add groups from other instances" do
+      student.add_to_groups(create_list(:group, 2, instance: create(:instance)))
+      student.groups(true).should be_empty
+    end
   end
   context ".remove_from_groups" do
     let(:parent1) { create(:group) }

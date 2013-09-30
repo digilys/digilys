@@ -83,7 +83,7 @@ class Student < ActiveRecord::Base
     groups = Group.find(groups.split(/\s*,\s*/)) if groups.is_a? String
 
     [*groups].each do |group|
-      group.add_students(self)
+      group.add_students(self) unless group.instance_id != self.instance_id
     end
   end
 

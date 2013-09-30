@@ -32,10 +32,14 @@ class Group < ActiveRecord::Base
 
     students = Student.find(students.split(/\s*,\s*/)) if students.is_a? String
 
+    students = [*students].reject { |s| s.instance_id != self.instance_id }
+
+    return if students.blank?
+
     group = self
 
     until group.nil?
-      [*students].each do |student|
+      students.each do |student|
         group.students << student unless group.students.include?(student)
       end
       group = group.parent
