@@ -51,10 +51,10 @@ class VisualizationsController < ApplicationController
 
   def load_target
     if params[:suite_id]
-      @suite = Suite.find(params[:suite_id])
+      @suite = Suite.where(instance_id: current_instance_id).find(params[:suite_id])
       authorize! :view, @suite
     elsif params[:student_id]
-      @student = Student.find(params[:student_id])
+      @student = Student.where(instance_id: current_instance_id).find(params[:student_id])
       authorize! :show, @student
     end
   end

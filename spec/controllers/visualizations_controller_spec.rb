@@ -3,12 +3,18 @@ require 'spec_helper'
 describe VisualizationsController do
   login_user(:admin)
 
-  let(:suite) { create(:suite) }
+  let(:suite)       { create(:suite) }
+  let(:instance)    { create(:instance) }
+  let(:other_suite) { create(:suite, instance: instance) }
 
   describe "GET #color_area_chart" do
     it "is successful" do
       get :color_area_chart, suite_id: suite.id
       response.should be_success
+    end
+    it "gives a 404 if the suite's instance does not match" do
+      get :color_area_chart, suite_id: other_suite.id
+      response.status.should == 404
     end
   end
   describe "GET #stanine_column_chart" do
@@ -16,11 +22,19 @@ describe VisualizationsController do
       get :stanine_column_chart, suite_id: suite.id
       response.should be_success
     end
+    it "gives a 404 if the suite's instance does not match" do
+      get :stanine_column_chart, suite_id: other_suite.id
+      response.status.should == 404
+    end
   end
   describe "GET #result_line_chart" do
     it "is successful" do
       get :result_line_chart, suite_id: suite.id
       response.should be_success
+    end
+    it "gives a 404 if the suite's instance does not match" do
+      get :result_line_chart, suite_id: other_suite.id
+      response.status.should == 404
     end
   end
 
