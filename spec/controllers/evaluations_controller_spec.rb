@@ -3,12 +3,25 @@ require 'spec_helper'
 describe EvaluationsController do
   login_user(:admin)
 
-  let(:evaluation) { create(:suite_evaluation) }
+  let(:evaluation)       { create(:suite_evaluation) }
+  let(:instance)         { create(:instance) }
+  let(:other_suite)      { create(:suite, instance: instance) }
+  let(:other_evaluation) { create(:suite_evaluation, suite: other_suite) }
+
+  describe "#instance_filter" do
+    it "handles non-instance suites" do
+      get :show, id: create(:evaluation_template).id
+      response.should be_success
+    end
+  end
 
   describe "GET #show" do
     it "is successful" do
       get :show, id: evaluation.id
       response.should be_success
+    end
+    it "generates a 404 if the suite instance does not match" do
+      get :show, id: other_evaluation.id
     end
   end
 
@@ -20,13 +33,23 @@ describe EvaluationsController do
       assigns(:evaluation).type.to_sym.should == :suite
       assigns(:suite).should                  == evaluation.suite
     end
+    it "generates a 404 if the suite instance does not match" do
+      get :new, suite_id: other_suite.id
+      response.status.should == 404
+    end
   end
   describe "POST #new_from_template" do
     let(:template) { create(:evaluation_template) }
+    let(:suite)    { create(:suite) }
     it "builds an evaluation from a template" do
-      post :new_from_template, evaluation: { template_id: template.id }
+      post :new_from_template, evaluation: { template_id: template.id, suite_id: suite.id }
       response.should be_success
       assigns(:evaluation).template_id.should == template.id
+      assigns(:evaluation).suite_id.should    == suite.id
+    end
+    it "generates a 404 if the suite instance does not match" do
+      post :new_from_template, evaluation: { template_id: template.id, suite_id: other_suite.id }
+      response.status.should == 404
     end
   end
   describe "POST #create" do
@@ -38,12 +61,20 @@ describe EvaluationsController do
       post :create, evaluation: invalid_parameters_for(:evaluation)
       response.should render_template("new")
     end
+    it "generates a 404 if the suite instance does not match" do
+      post :create, evaluation: valid_parameters_for(:evaluation).merge(suite_id: other_suite.id)
+      response.status.should == 404
+    end
   end
 
   describe "GET #edit" do
     it "is successful" do
       get :edit, id: evaluation.id
       response.should be_success
+    end
+    it "generates a 404 if the suite instance does not match" do
+      get :edit, id: other_evaluation.id
+      response.status.should == 404
     end
   end
   describe "PUT #update" do
@@ -57,12 +88,20 @@ describe EvaluationsController do
       put :update, id: evaluation.id, evaluation: invalid_parameters_for(:evaluation)
       response.should render_template("edit")
     end
+    it "generates a 404 if the suite instance does not match" do
+      put :update, id: other_evaluation.id, evaluation: {}
+      response.status.should == 404
+    end
   end
 
   describe "GET #confirm_destroy" do
     it "is successful" do
       get :confirm_destroy, id: evaluation.id
       response.should be_success
+    end
+    it "generates a 404 if the suite instance does not match" do
+      get :confirm_destroy, id: other_evaluation.id
+      response.status.should == 404
     end
   end
   describe "DELETE #destroy" do
@@ -78,6 +117,10 @@ describe EvaluationsController do
     it "redirects to the generic evaluations controller for generic evaluations" do
       delete :destroy, id: create(:generic_evaluation).id
       response.should redirect_to(generic_evaluations_url())
+    end
+    it "generates a 404 if the suite instance does not match" do
+      delete :destroy, id: other_evaluation.id
+      response.status.should == 404
     end
   end
 
@@ -104,6 +147,10 @@ describe EvaluationsController do
       get :report, id: evaluation.id
       assigns(:evaluation).results.collect(&:student).should match_array(female_participants.collect(&:student))
     end
+    it "generates a 404 if the suite instance does not match" do
+      get :report, id: other_evaluation.id
+      response.status.should == 404
+    end
   end
   describe "PUT #submit_report" do
     it "redirects to the evaluation's suite when successful" do
@@ -116,11 +163,19 @@ describe EvaluationsController do
       put :submit_report, id: evaluation.id, evaluation: invalid_parameters_for(:evaluation)
       response.should render_template("report")
     end
+    it "generates a 404 if the suite instance does not match" do
+      put :submit_report, id: other_evaluation.id, evaluation: {}
+      response.status.should == 404
+    end
   end
   describe "DELETE #destroy_report" do
     it "redirects to the evaluation's report action when successful" do
       delete :destroy_report, id: evaluation.id
       response.should redirect_to(report_evaluation_url(evaluation))
+    end
+    it "generates a 404 if the suite instance does not match" do
+      delete :destroy_report, id: other_evaluation.id
+      response.status.should == 404
     end
   end
 end
