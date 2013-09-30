@@ -5,7 +5,7 @@ class Evaluation < ActiveRecord::Base
   self.inheritance_column = :disable_inheritance
 
   belongs_to :template,  class_name: "Evaluation"
-  has_many   :instances,
+  has_many   :children,
     class_name:  "Evaluation",
     foreign_key: "template_id",
     order:       "date asc",

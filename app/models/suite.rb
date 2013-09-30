@@ -2,7 +2,7 @@ class Suite < ActiveRecord::Base
   resourcify
 
   belongs_to :template,  class_name: "Suite"
-  has_many   :instances,
+  has_many   :children,
     class_name:  "Suite",
     foreign_key: "template_id",
     dependent:   :nullify
