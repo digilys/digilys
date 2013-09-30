@@ -3,11 +3,15 @@ require 'spec_helper'
 describe GroupsController do
   login_user(:admin)
 
-  let(:group) { create(:group) }
+  let(:instance)    { create(:instance) }
+  let(:group)       { create(:group) }
+  let(:other_group) { create(:group, instance: instance) }
 
   describe "GET #index" do
     let!(:top_level) { create_list(:group, 2) }
     let!(:children)  { create_list(:group, 2, parent: top_level.first) }
+
+    let!(:non_instance_group) { other_group }
 
     it "lists top level groups" do
       get :index
@@ -26,12 +30,18 @@ describe GroupsController do
       get :show, id: group.id
       response.should be_success
     end
+    it "gives a 404 if the instance does not match" do
+      get :show, id: other_group.id
+      response.status.should == 404
+    end
   end
 
   describe "GET #search" do
     let(:grandparent) { create(:group) }
     let(:parent)      { create(:group, parent: grandparent) }
     let(:group)       { create(:group, parent: parent) }
+
+    let!(:non_instance_group) { create(:group, name: group.name, instance: instance) }
 
     it "returns the result as json" do
       get :search, q: { name_cont: group.name }
@@ -62,12 +72,22 @@ describe GroupsController do
       post :create, group: invalid_parameters_for(:group)
       response.should render_template("new")
     end
+    it "sets the instance from the current user's active instance" do
+      post :create, group: valid_parameters_for(:group).merge(instance_id: instance.id)
+
+      assigns(:group).instance.should_not == instance
+      assigns(:group).instance.should     == logged_in_user.active_instance
+    end
   end
 
   describe "GET #edit" do
     it "is successful" do
       get :edit, id: group.id
       response.should be_success
+    end
+    it "gives a 404 if the instance does not match" do
+      get :edit, id: other_group.id
+      response.status.should == 404
     end
   end
   describe "PUT #update" do
@@ -81,6 +101,14 @@ describe GroupsController do
       put :update, id: group.id, group: invalid_parameters_for(:group)
       response.should render_template("edit")
     end
+    it "gives a 404 if the instance does not match" do
+      put :update, id: other_group.id, group: {}
+      response.status.should == 404
+    end
+    it "prevents changing the instance" do
+      put :update, id: group.id, group: { instance_id: instance.id }
+      group.reload.instance.should_not == instance
+    end
   end
 
   describe "GET #confirm_destroy" do
@@ -88,12 +116,20 @@ describe GroupsController do
       get :confirm_destroy, id: group.id
       response.should be_success
     end
+    it "gives a 404 if the instance does not match" do
+      get :confirm_destroy, id: other_group.id
+      response.status.should == 404
+    end
   end
   describe "DELETE #destroy" do
     it "redirects to the group list page" do
       delete :destroy, id: group.id
       response.should redirect_to(groups_url())
       Group.exists?(group.id).should be_false
+    end
+    it "gives a 404 if the instance does not match" do
+      delete :destroy, id: other_group.id
+      response.status.should == 404
     end
   end
 
@@ -120,18 +156,18 @@ describe GroupsController do
     end
   end
   describe "PUT #move_students" do
-    let(:other_group)    { create(:group) }
+    let(:destination)    { create(:group) }
     let(:students)       { create_list(:student, 2) }
     let(:students_moved) { create_list(:student, 2) }
 
     before(:each) { group.students = students + students_moved }
 
     it "moves students from a group to another" do
-      put :move_students, id: group.id, group: { group: other_group.id }, student_ids: students_moved.collect(&:id)
+      put :move_students, id: group.id, group: { group: destination.id }, student_ids: students_moved.collect(&:id)
       response.should redirect_to(group)
 
       group.students(true).should       match_array(students)
-      other_group.students(true).should match_array(students_moved)
+      destination.students(true).should match_array(students_moved)
     end
 
     it "produces an error when no group has been selected" do
@@ -139,6 +175,15 @@ describe GroupsController do
       response.should redirect_to(action: "move_students")
 
       group.students(true).should match_array(students + students_moved)
+    end
+
+    it "gives a 404 if the instance does not match" do
+      put :move_students, id: other_group.id, group: { group: destination.id }, student_ids: students_moved.collect(&:id)
+      response.status.should == 404
+    end
+    it "gives a 404 if the destination's instance does not match" do
+      put :move_students, id: group.id, group: { group: other_group.id }, student_ids: students_moved.collect(&:id)
+      response.status.should == 404
     end
   end
   describe "DELETE #remove_students" do
@@ -150,12 +195,20 @@ describe GroupsController do
       response.should redirect_to(group)
       group.students(true).should be_blank
     end
+    it "gives a 404 if the instance does not match" do
+      delete :remove_students, id: other_group.id, student_ids: students.collect(&:id)
+      response.status.should == 404
+    end
   end
 
   describe "GET #select_users" do
     it "is successful" do
       get :select_users, id: group.id
       response.should be_success
+    end
+    it "gives a 404 if the instance does not match" do
+      get :select_users, id: other_group.id
+      response.status.should == 404
     end
   end
   describe "PUT #add_users" do
@@ -167,6 +220,10 @@ describe GroupsController do
       response.should redirect_to(group)
       group.users(true).should match_array(users)
     end
+    it "gives a 404 if the instance does not match" do
+      put :add_users, id: other_group.id, group: { users: users.collect(&:id).join(",") }
+      response.status.should == 404
+    end
   end
   describe "DELETE #remove_users" do
     let(:users) { create_list(:user, 2) }
@@ -176,6 +233,10 @@ describe GroupsController do
       delete :remove_users, id: group.id, user_ids: users.collect(&:id)
       response.should redirect_to(group)
       group.users(true).should be_blank
+    end
+    it "gives a 404 if the instance does not match" do
+      delete :remove_users, id: other_group.id, user_ids: users.collect(&:id)
+      response.status.should == 404
     end
   end
 end

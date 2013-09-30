@@ -1,6 +1,8 @@
 class GroupsController < ApplicationController
   load_and_authorize_resource
 
+  before_filter :instance_filter
+
   def index
     @groups = @groups.order(:name)
 
@@ -32,6 +34,8 @@ class GroupsController < ApplicationController
   end
 
   def create
+    @group.instance = current_instance
+
     if @group.save
       flash[:success] = t(:"groups.create.success")
       redirect_to @group
@@ -44,6 +48,9 @@ class GroupsController < ApplicationController
   end
 
   def update
+    params[:group].delete(:instance)
+    params[:group].delete(:instance_id)
+
     if @group.update_attributes(params[:group])
       flash[:success] = t(:"groups.update.success")
       redirect_to @group
@@ -78,7 +85,7 @@ class GroupsController < ApplicationController
       flash[:warning] = t(:"groups.move_students.group_missing")
       redirect_to action: "move_students"
     else
-      destination_group = Group.find(params[:group][:group])
+      destination_group = Group.where(instance_id: current_instance_id).find(params[:group][:group])
       destination_group.add_students(params[:student_ids].join(","))
 
       @group.remove_students(params[:student_ids])
@@ -108,5 +115,16 @@ class GroupsController < ApplicationController
     @group.remove_users(params[:user_ids])
     flash[:success] = t(:"groups.remove_users.success")
     redirect_to @group
+  end
+
+
+  private
+
+  def instance_filter
+    if @groups
+      @groups = @groups.where(instance_id: current_instance_id)
+    elsif @group && !@group.new_record?
+      raise ActiveRecord::RecordNotFound unless @group.instance_id == current_instance_id
+    end
   end
 end
