@@ -23,6 +23,8 @@ class Group < ActiveRecord::Base
   validates :name,     presence: true
   validates :instance, presence: true
 
+  validate :must_belong_to_parent_instance
+
 
   # Adds students to this group and all the parents
   def add_students(students)
@@ -105,6 +107,13 @@ class Group < ActiveRecord::Base
     groups.each do |group|
       group.students.delete(students)
       remove_students_from_all(students, group.children)
+    end
+  end
+
+
+  def must_belong_to_parent_instance
+    if self.parent && self.parent.instance_id != self.instance_id
+      errors.add(:instance, :invalid_instance)
     end
   end
 end

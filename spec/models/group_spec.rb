@@ -19,6 +19,19 @@ describe Group do
   context "validation" do
     it { should validate_presence_of(:name) }
     it { should validate_presence_of(:instance) }
+
+    context ".must_belong_to_parent_instance" do
+      let(:parent) { create(:group, instance: create(:instance)) }
+      subject      { build(:group,  parent: parent) }
+
+      it           { should     allow_value(parent.instance).for(:instance) }
+      it           { should_not allow_value(create(:instance)).for(:instance) }
+
+      context "without parent" do
+        let(:parent) { nil }
+        it { should allow_value(create(:instance)).for(:instance) }
+      end
+    end
   end
 
   context "#with_parents" do

@@ -168,6 +168,10 @@ sv:
           attributes:
             data_text:
               faulty_lines: Texten innehåller fel på rad %{lines}
+        group:
+          attributes:
+            instance:
+              invalid_instance: Instansen kan inte användas
         evaluation:
           faulty_grade_color: Felaktig färgordning
           faulty_grade_stanine: Felaktig stanineordning
