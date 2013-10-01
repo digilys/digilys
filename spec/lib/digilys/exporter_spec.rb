@@ -64,4 +64,40 @@ describe Digilys::Exporter do
       it              { should have(2).items }
     end
   end
+
+  describe ".export_groups" do
+    let(:method) { :export_groups }
+
+    context "format" do
+      let!(:group) { create(:group, parent_id: 0) }
+      it           { should include("_id" => "export-#{group.id}") }
+      it           { should include("_parent_id" => "export-0") }
+      it           { should include(group.attributes.reject { |k,v| k =~ /^(id|.*_id|created_at|updated_at)$/ }) }
+      it           { should include("_students") }
+      it           { should include("_users") }
+
+      context "with students" do
+        let(:students) { create_list(:student, 2) }
+        before(:each) do
+          group.students = students
+        end
+
+        subject { result["_students"] }
+        it      { should match_array(students.collect { |s| "export-#{s.id}" }) }
+      end
+      context "with users" do
+        let(:users) { create_list(:user, 2) }
+        before(:each) do
+          group.users = users
+        end
+
+        subject { result["_users"] }
+        it      { should match_array(users.collect { |s| "export-#{s.id}" }) }
+      end
+    end
+    context "multiple" do
+      let!(:groups) { create_list(:group, 2) }
+      it            { should have(2).items }
+    end
+  end
 end

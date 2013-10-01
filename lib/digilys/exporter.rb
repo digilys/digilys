@@ -27,16 +27,30 @@ class Digilys::Exporter
     end
   end
 
+  def export_groups(io)
+    Group.order(:id).find_each do |group|
+      attributes              = id_filter(group.attributes)
+      attributes["_students"] = group.student_ids.collect { |i| prefix_id(i) }
+      attributes["_users"]    = group.user_ids.collect    { |i| prefix_id(i) }
+
+      @encoder.encode(attributes, io)
+    end
+  end
+
   private
 
   def id_filter(hash)
     hash.inject({}) do |h, (k,v)|
       if k =~ /^(id|.+_id)$/
-        h["_#{k}"] = "#{@id_prefix}-#{v}"
+        h["_#{k}"] = v.nil? ? nil : prefix_id(v)
       else
         h[k] = v
       end
       h
     end
+  end
+
+  def prefix_id(i)
+    "#{@id_prefix}-#{i}"
   end
 end
