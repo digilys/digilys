@@ -12,6 +12,12 @@ class Digilys::Exporter
     end
   end
 
+  def export_users(io)
+    User.order(:id).find_each do |user|
+      @encoder.encode(id_filter(user.attributes), io)
+    end
+  end
+
   private
 
   def id_filter(hash)

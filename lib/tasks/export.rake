@@ -15,12 +15,19 @@ namespace :app do
     desc "Export all data"
     task all: :setup do
       Rake::Task["app:export:instances"].invoke
+      Rake::Task["app:export:users"].invoke
     end
 
     desc "Export instances"
     task instances: :setup do
       puts "Exporting instances"
       @exporter.export_instances(File.open(File.join(ENV["output_dir"], "instances.json"), "w:ASCII-8BIT"))
+    end
+
+    desc "Export users"
+    task users: :setup do
+      puts "Exporting users"
+      @exporter.export_users(File.open(File.join(ENV["output_dir"], "users.json"), "w:ASCII-8BIT"))
     end
   end
 end
