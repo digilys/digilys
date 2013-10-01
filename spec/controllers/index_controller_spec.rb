@@ -2,36 +2,42 @@ require 'spec_helper'
 
 describe IndexController do
   describe "GET #index" do
-    let(:user)       { create(:user) }
+    login_user
+
+    let(:user)       { logged_in_user }
     let(:other_user) { create(:user) }
+
+    let(:instance)   { create(:instance) }
 
     let!(:suite)              { create(:suite) }
     let!(:inaccessible_suite) { create(:suite) }
+    let!(:instance_suite)     { create(:suite, instance: instance)}
 
-    let!(:overdue_evaluation)                { create(:suite_evaluation, suite: suite, date: Date.today - 2.days) }
-    let!(:upcoming_evaluation)               { create(:suite_evaluation, suite: suite, date: Date.today + 1.day) }
-    let!(:overdue_evaluation_for_user)       { create(:suite_evaluation, suite: suite, date: Date.today - 2.days) }
-    let!(:overdue_evaluation_for_other_user) { create(:suite_evaluation, suite: suite, date: Date.today - 2.days) }
-    let!(:inaccessible_overdue_evaluations)  { create(:suite_evaluation,               date: Date.today - 2.days) }
-    let!(:inaccessible_upcoming_evaluations) { create(:suite_evaluation,               date: Date.today - 2.days) }
+    let!(:overdue_evaluation)                { create(:suite_evaluation, suite: suite,          date: Date.today - 2.days) }
+    let!(:upcoming_evaluation)               { create(:suite_evaluation, suite: suite,          date: Date.today + 1.day) }
+    let!(:overdue_evaluation_for_user)       { create(:suite_evaluation, suite: suite,          date: Date.today - 2.days) }
+    let!(:overdue_evaluation_for_other_user) { create(:suite_evaluation, suite: suite,          date: Date.today - 2.days) }
+    let!(:inaccessible_overdue_evaluations)  { create(:suite_evaluation,                        date: Date.today - 2.days) }
+    let!(:inaccessible_upcoming_evaluations) { create(:suite_evaluation,                        date: Date.today - 2.days) }
+    let!(:instance_evaluation)               { create(:suite_evaluation, suite: instance_suite, date: Date.today - 2.days) }
 
-    let!(:upcoming_meeting)              { create(:meeting, suite: suite, date: Date.today + 1.day) }
-    let!(:overdue_meeting)               { create(:meeting, suite: suite, date: Date.today - 1.day) }
-    let!(:inaccessible_upcoming_meeting) { create(:meeting,               date: Date.today + 1.day) }
-    let!(:inaccessible_overdue_meeting)  { create(:meeting,               date: Date.today - 1.day) }
+    let!(:upcoming_meeting)              { create(:meeting, suite: suite,          date: Date.today + 1.day) }
+    let!(:overdue_meeting)               { create(:meeting, suite: suite,          date: Date.today - 1.day) }
+    let!(:inaccessible_upcoming_meeting) { create(:meeting,                        date: Date.today + 1.day) }
+    let!(:inaccessible_overdue_meeting)  { create(:meeting,                        date: Date.today - 1.day) }
+    let!(:instance_meeting)              { create(:meeting, suite: instance_suite, date: Date.today + 1.day) }
 
-    let!(:open_activity)   { create(:activity, users: [user], status: :open) }
-    let!(:closed_activity) { create(:activity, users: [user], status: :closed) }
+    let!(:open_activity)     { create(:activity, users: [user], status: :open) }
+    let!(:closed_activity)   { create(:activity, users: [user], status: :closed) }
+    let!(:instance_activity) { create(:activity, users: [user], status: :open,  suite: instance_suite) }
 
     before(:each) do
       user.grant       :suite_contributor, suite
+      user.grant       :suite_contributor, instance_suite
       other_user.grant :suite_contributor, suite
 
       overdue_evaluation_for_user.users       << user
       overdue_evaluation_for_other_user.users << other_user
-
-      @request.env["devise.mapping"] = Devise.mappings[:user]
-      sign_in user
     end
 
     it "is successful" do

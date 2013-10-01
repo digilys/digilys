@@ -61,6 +61,16 @@ describe Meeting do
     end
   end
 
+  describe "#in_instance" do
+    let(:suite1)    { create(:suite) }
+    let(:suite2)    { create(:suite,   instance: create(:instance)) }
+    let!(:meeting1) { create(:meeting, suite:    suite1) }
+    let!(:meeting2) { create(:meeting, suite:    suite2) }
+
+    subject { Meeting.in_instance(suite1.instance_id).all }
+    it      { should match_array([ meeting1 ])}
+  end
+
   describe "#upcoming" do
     let!(:passed)   { create_list(:meeting, 3, date: Date.yesterday) }
     let!(:upcoming) { create_list(:meeting, 3, date: Date.today) }

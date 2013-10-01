@@ -862,6 +862,15 @@ describe Evaluation do
     end
   end
 
+  describe "#in_instance" do
+    let(:suite1)       { create(:suite) }
+    let(:suite2)       { create(:suite, instance: create(:instance)) }
+    let!(:evaluation1) { create(:suite_evaluation, suite: suite1) }
+    let!(:evaluation2) { create(:suite_evaluation, suite: suite2) }
+
+    subject { Evaluation.in_instance(suite1.instance_id).all }
+    it      { should match_array([ evaluation1 ])}
+  end
   describe "#overdue" do
     let(:suite)                  { create(:suite) }
     let!(:participants)          { create_list(:participant, 2, suite: suite) }

@@ -26,6 +26,11 @@ class Meeting < ActiveRecord::Base
     !self.completed? && self.date < Date.today
   end
 
+
+  def self.in_instance(instance_id)
+    self.joins(:suite).where("suites.instance_id" => instance_id)
+  end
+
   def self.upcoming
     where([ "date >= ?", Date.today ])
   end

@@ -450,6 +450,11 @@ class Evaluation < ActiveRecord::Base
     end
   end
 
+
+  def self.in_instance(instance_id)
+    self.joins(:suite).where("suites.instance_id" => instance_id)
+  end
+
   def self.overdue
     with_status(:empty, :partial).where([ "date < ?", Date.today ])
   end
@@ -482,7 +487,7 @@ class Evaluation < ActiveRecord::Base
   end
 
   def self.without_explicit_users
-    where("id not in (select evaluation_id from evaluations_users)")
+    where("evaluations.id not in (select evaluation_id from evaluations_users)")
   end
 
 

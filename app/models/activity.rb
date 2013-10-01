@@ -64,6 +64,10 @@ class Activity < ActiveRecord::Base
   end
 
 
+  def self.in_instance(instance_id)
+    self.joins(:suite).where("suites.instance_id" => instance_id)
+  end
+
   def self.where_suite_contributor(user)
     query = <<-SQL
       suite_id in (

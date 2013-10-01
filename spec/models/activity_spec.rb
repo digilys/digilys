@@ -155,6 +155,17 @@ describe Activity do
     its(:users_select2_data) { should include(id: users.second.id, text: "#{users.second.name}, #{users.second.email}") }
   end
 
+
+  describe "#in_instance" do
+    let(:suite1)     { create(:suite) }
+    let(:suite2)     { create(:suite,    instance: create(:instance)) }
+    let!(:activity1) { create(:activity, suite:    suite1) }
+    let!(:activity2) { create(:activity, suite:    suite2) }
+
+    subject { Activity.in_instance(suite1.instance_id).all }
+    it      { should match_array([ activity1 ])}
+  end
+
   describe "#where_suite_contributor" do
     let(:user)                    { create(:superuser) }
     let(:contributed_suite)       { create(:suite) }
