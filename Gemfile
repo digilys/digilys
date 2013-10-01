@@ -39,6 +39,8 @@ gem "tinymce-rails",              "~> 4.0.2"
 gem "tinymce-rails-langs",        "~> 4.20130625"
 gem "jquery-datatables-rails",    "~> 1.11.2"
 
+gem "yajl-ruby", "~> 1.1.0", require: false
+
 group :development do
   gem "capistrano", "~> 2.14.2"
 end
