@@ -18,6 +18,15 @@ class Digilys::Exporter
     end
   end
 
+  def export_students(io)
+    Student.order(:id).find_each do |student|
+      attributes                = id_filter(student.attributes)
+      attributes["personal_id"] = attributes.delete("_personal_id")
+
+      @encoder.encode(attributes, io)
+    end
+  end
+
   private
 
   def id_filter(hash)

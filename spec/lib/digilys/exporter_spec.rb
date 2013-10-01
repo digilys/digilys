@@ -44,4 +44,24 @@ describe Digilys::Exporter do
       it          { should have(2).items }
     end
   end
+
+  describe ".export_students" do
+    let(:method) { :export_students }
+
+    context "format" do
+      let!(:student) { create(:student, data: {foo: "bar"}) }
+      it             { should include("_id" => "export-#{student.id}") }
+      it             { should include("_instance_id" => "export-#{student.instance_id}") }
+      it             { should include("personal_id" => "export-#{student.personal_id}") }
+      it             { should include(student.attributes.reject { |k,v| k =~ /^(id|.*_id|created_at|updated_at)$/ }) }
+
+      it "deserializes serialized fields" do
+        result["data"].should be_instance_of(Hash)
+      end
+    end
+    context "multiple" do
+      let!(:students) { create_list(:student, 2) }
+      it              { should have(2).items }
+    end
+  end
 end
