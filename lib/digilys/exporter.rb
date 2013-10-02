@@ -61,6 +61,17 @@ class Digilys::Exporter
     end
   end
 
+  def export_activities(io)
+    Activity.order(:id).find_each do |activity|
+      attributes = id_filter(activity.attributes)
+      attributes["_groups"]   = activity.group_ids.collect   { |i| prefix_id(i) }
+      attributes["_students"] = activity.student_ids.collect { |i| prefix_id(i) }
+      attributes["_users"]    = activity.user_ids.collect    { |i| prefix_id(i) }
+
+      @encoder.encode(attributes, io)
+    end
+  end
+
   private
 
   def id_filter(hash)

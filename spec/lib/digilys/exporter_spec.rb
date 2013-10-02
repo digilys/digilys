@@ -149,4 +149,52 @@ describe Digilys::Exporter do
       it              { should have(2).items }
     end
   end
+
+  describe ".export_activities" do
+    let(:method) { :export_activities }
+
+    context "format" do
+      let!(:activity) { create(:activity, meeting: create(:meeting), start_date: Date.yesterday, end_date: Date.tomorrow) }
+      it              { should include("_id" => "export-#{activity.id}") }
+      it              { should include("_suite_id" => "export-#{activity.suite_id}") }
+      it              { should include("_meeting_id" => "export-#{activity.meeting_id}") }
+      it              { should include(activity.attributes.reject { |k,v| k =~ /^(id|.*_id|created_at|updated_at|.*_date)$/ }) }
+      it "should have the correct dates" do
+        result["start_date"].should == activity.start_date.to_s
+        result["end_date"].should   == activity.end_date.to_s
+      end
+
+      context "with groups" do
+        let(:groups) { create_list(:group, 2) }
+        before(:each) do
+          activity.groups = groups
+        end
+
+        subject { result["_groups"] }
+        it      { should match_array(groups.collect { |g| "export-#{g.id}"}) }
+      end
+      context "with students" do
+        let(:students) { create_list(:student, 2) }
+        before(:each) do
+          activity.students = students
+        end
+
+        subject { result["_students"] }
+        it      { should match_array(students.collect { |g| "export-#{g.id}"}) }
+      end
+      context "with users" do
+        let(:users) { create_list(:user, 2) }
+        before(:each) do
+          activity.users = users
+        end
+
+        subject { result["_users"] }
+        it      { should match_array(users.collect { |g| "export-#{g.id}"}) }
+      end
+    end
+    context "multiple" do
+      let!(:activities) { create_list(:activity, 2) }
+      it                { should have(2).items }
+    end
+  end
 end

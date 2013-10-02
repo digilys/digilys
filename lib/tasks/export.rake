@@ -21,6 +21,7 @@ namespace :app do
       Rake::Task["app:export:instructions"].invoke
       Rake::Task["app:export:suites"].invoke
       Rake::Task["app:export:meetings"].invoke
+      Rake::Task["app:export:activities"].invoke
     end
 
     desc "Export instances"
@@ -63,6 +64,12 @@ namespace :app do
     task meetings: :setup do
       puts "Exporting meetings"
       @exporter.export_meetings(File.open(File.join(ENV["output_dir"], "meetings.json"), "w:ASCII-8BIT"))
+    end
+
+    desc "Export activities"
+    task activities: :setup do
+      puts "Exporting activities"
+      @exporter.export_activities(File.open(File.join(ENV["output_dir"], "activities.json"), "w:ASCII-8BIT"))
     end
   end
 end
