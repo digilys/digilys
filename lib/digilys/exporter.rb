@@ -87,6 +87,15 @@ class Digilys::Exporter
     end
   end
 
+  def export_evaluation_templates(io)
+    Evaluation.with_type(:template).order(:id).find_each do |evaluation_template|
+      attributes = id_filter(evaluation_template.attributes)
+      attributes["category_list"] = evaluation_template.category_list
+
+      @encoder.encode(attributes, io)
+    end
+  end
+
   private
 
   def id_filter(hash)

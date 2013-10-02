@@ -234,4 +234,25 @@ describe Digilys::Exporter do
       it                         { should have(2).items }
     end
   end
+
+  describe ".export_evaluation_templates" do
+    let(:method) { :export_evaluation_templates }
+
+    context "format" do
+      let!(:evaluation_template) { create(:evaluation_template, template_id: 0, category_list: "foo,bar,baz") }
+      it                         { should include("_id" => "export-#{evaluation_template.id}") }
+      it                         { should include("_instance_id" => "export-#{evaluation_template.instance_id}") }
+      it                         { should include("_suite_id" => nil) }
+      it                         { should include("_template_id" => "export-0") }
+      it                         { should include("date" => nil) }
+      it                         { should include(evaluation_template.attributes.reject { |k,v| k =~ /^(id|.*_id|created_at|updated_at|date)$/ }) }
+      it "should include the categories" do
+        result["category_list"].should match_array(%w(foo bar baz))
+      end
+    end
+    context "multiple" do
+      let!(:evaluation_templates) { create_list(:evaluation_template, 2) }
+      it                          { should have(2).items }
+    end
+  end
 end
