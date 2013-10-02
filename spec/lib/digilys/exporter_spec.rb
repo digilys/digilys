@@ -114,4 +114,21 @@ describe Digilys::Exporter do
       it                  { should have(2).items }
     end
   end
+
+  describe ".export_suites" do
+    let(:method) { :export_suites }
+
+    context "format" do
+      let!(:suite) { create(:suite, template_id: 0, generic_evaluations: [ 1,2,3 ]) }
+      it           { should include("_id" => "export-#{suite.id}") }
+      it           { should include("_template_id" => "export-#{suite.template_id}") }
+      it           { should include("_instance_id" => "export-#{suite.instance_id}") }
+      it           { should include("generic_evaluations" => %w(export-1 export-2 export-3)) }
+      it           { should include(suite.attributes.reject { |k,v| k =~ /^(id|.*_id|created_at|updated_at|generic_evaluations)$/ }) }
+    end
+    context "multiple" do
+      let!(:suites) { create_list(:suite, 2) }
+      it            { should have(2).items }
+    end
+  end
 end

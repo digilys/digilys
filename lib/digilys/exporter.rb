@@ -43,6 +43,18 @@ class Digilys::Exporter
     end
   end
 
+  def export_suites(io)
+    Suite.order(:id).find_each do |suite|
+      attributes = id_filter(suite.attributes)
+
+      if attributes["generic_evaluations"]
+        attributes["generic_evaluations"] = attributes["generic_evaluations"].collect { |i| prefix_id(i) }
+      end
+
+      @encoder.encode(attributes, io)
+    end
+  end
+
   private
 
   def id_filter(hash)
