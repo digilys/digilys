@@ -132,6 +132,22 @@ describe Digilys::Exporter do
     end
   end
 
+  describe ".export_participants" do
+    let(:method) { :export_participants }
+
+    context "format" do
+      let!(:participant) { create(:participant, group: create(:group)) }
+      it                 { should include("_id" => "export-#{participant.id}") }
+      it                 { should include("_suite_id" => "export-#{participant.suite_id}") }
+      it                 { should include("_student_id" => "export-#{participant.student_id}") }
+      it                 { should include("_group_id" => "export-#{participant.group_id}") }
+    end
+    context "multiple" do
+      let!(:participants) { create_list(:participant, 2) }
+      it                  { should have(2).items }
+    end
+  end
+
   describe ".export_meetings" do
     let(:method) { :export_meetings }
 

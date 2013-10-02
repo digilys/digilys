@@ -20,6 +20,7 @@ namespace :app do
       Rake::Task["app:export:groups"].invoke
       Rake::Task["app:export:instructions"].invoke
       Rake::Task["app:export:suites"].invoke
+      Rake::Task["app:export:participants"].invoke
       Rake::Task["app:export:meetings"].invoke
       Rake::Task["app:export:activities"].invoke
     end
@@ -58,6 +59,12 @@ namespace :app do
     task suites: :setup do
       puts "Exporting suites"
       @exporter.export_suites(File.open(File.join(ENV["output_dir"], "suites.json"), "w:ASCII-8BIT"))
+    end
+
+    desc "Export participants"
+    task participants: :setup do
+      puts "Exporting participants"
+      @exporter.export_participants(File.open(File.join(ENV["output_dir"], "participants.json"), "w:ASCII-8BIT"))
     end
 
     desc "Export meetings"
