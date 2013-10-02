@@ -78,6 +78,15 @@ class Digilys::Exporter
     end
   end
 
+  def export_generic_evaluations(io)
+    Evaluation.with_type(:generic).order(:id).find_each do |generic_evaluation|
+      attributes = id_filter(generic_evaluation.attributes)
+      attributes["category_list"] = generic_evaluation.category_list
+
+      @encoder.encode(attributes, io)
+    end
+  end
+
   private
 
   def id_filter(hash)
