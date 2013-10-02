@@ -55,6 +55,12 @@ class Digilys::Exporter
     end
   end
 
+  def export_meetings(io)
+    Meeting.order(:id).find_each do |meeting|
+      @encoder.encode(id_filter(meeting.attributes), io)
+    end
+  end
+
   private
 
   def id_filter(hash)

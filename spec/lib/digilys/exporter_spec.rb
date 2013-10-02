@@ -131,4 +131,22 @@ describe Digilys::Exporter do
       it            { should have(2).items }
     end
   end
+
+  describe ".export_meetings" do
+    let(:method) { :export_meetings }
+
+    context "format" do
+      let!(:meeting) { create(:meeting) }
+      it             { should include("_id" => "export-#{meeting.id}") }
+      it             { should include("_suite_id" => "export-#{meeting.suite_id}") }
+      it             { should include(meeting.attributes.reject { |k,v| k =~ /^(id|.*_id|created_at|updated_at|date)$/ }) }
+      it "should have the correct date" do
+        result["date"].should == meeting.date.to_s
+      end
+    end
+    context "multiple" do
+      let!(:meetings) { create_list(:meeting, 2) }
+      it              { should have(2).items }
+    end
+  end
 end
