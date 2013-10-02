@@ -37,6 +37,12 @@ class Digilys::Exporter
     end
   end
 
+  def export_instructions(io)
+    Instruction.order(:id).find_each do |instruction|
+      @encoder.encode(id_filter(instruction.attributes), io)
+    end
+  end
+
   private
 
   def id_filter(hash)

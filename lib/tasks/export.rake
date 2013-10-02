@@ -18,6 +18,7 @@ namespace :app do
       Rake::Task["app:export:users"].invoke
       Rake::Task["app:export:students"].invoke
       Rake::Task["app:export:groups"].invoke
+      Rake::Task["app:export:instructions"].invoke
     end
 
     desc "Export instances"
@@ -42,6 +43,12 @@ namespace :app do
     task groups: :setup do
       puts "Exporting groups"
       @exporter.export_groups(File.open(File.join(ENV["output_dir"], "groups.json"), "w:ASCII-8BIT"))
+    end
+
+    desc "Export instructions"
+    task instructions: :setup do
+      puts "Exporting instructions"
+      @exporter.export_instructions(File.open(File.join(ENV["output_dir"], "instructions.json"), "w:ASCII-8BIT"))
     end
   end
 end

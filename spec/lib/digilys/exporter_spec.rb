@@ -100,4 +100,18 @@ describe Digilys::Exporter do
       it            { should have(2).items }
     end
   end
+
+  describe ".export_instructions" do
+    let(:method) { :export_instructions }
+
+    context "format" do
+      let!(:instruction) { create(:instruction) }
+      it                 { should include("_id" => "export-#{instruction.id}") }
+      it                 { should include(instruction.attributes.reject { |k,v| k =~ /^(id|created_at|updated_at)$/ }) }
+    end
+    context "multiple" do
+      let!(:instructions) { create_list(:instruction, 2) }
+      it                  { should have(2).items }
+    end
+  end
 end
