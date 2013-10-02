@@ -79,7 +79,8 @@ describe SuitesController do
   end
 
   describe "GET #color_table" do
-    let(:generic_evaluations) { create_list(:generic_evaluation, 2) }
+    let(:generic_evaluations)       { create_list(:generic_evaluation, 2) }
+    let!(:other_generic_evaluation) { create(     :generic_evaluation, instance: instance) }
     before(:each) do
       suite.generic_evaluations << generic_evaluations.first.id
       suite.save
@@ -332,7 +333,9 @@ describe SuitesController do
   end
 
   describe "PUT #add_generic_evaluations" do
-    let(:evaluation) { create(:generic_evaluation) }
+    let(:evaluation)       { create(:generic_evaluation) }
+    let(:other_evaluation) { create(:generic_evaluation, instance: instance) }
+
     it "adds the generic evaluations to the suite" do
       put :add_generic_evaluations, id: suite.id, suite: { generic_evaluations: evaluation.id }
       response.should redirect_to(color_table_suite_url(suite))
@@ -342,9 +345,15 @@ describe SuitesController do
       put :add_generic_evaluations, id: other_suite.id, suite: { generic_evaluations: evaluation.id }
       response.status.should == 404
     end
+    it "gives a 404 if the evaluation's instance does not match" do
+      put :add_generic_evaluations, id: suite.id, suite: { generic_evaluations: other_evaluation.id }
+      response.status.should == 404
+    end
   end
   describe "DELETE #remove_generic_evaluations" do
-    let(:evaluation) { create(:generic_evaluation) }
+    let(:evaluation)       { create(:generic_evaluation) }
+    let(:other_evaluation) { create(:generic_evaluation, instance: instance) }
+
     it "removes the generic evaluations from the suite" do
       suite.generic_evaluations << evaluation.id
       suite.save
@@ -355,6 +364,10 @@ describe SuitesController do
     end
     it "gives a 404 if the instance does not match" do
       delete :remove_generic_evaluations, id: other_suite.id, evaluation_id: evaluation.id
+      response.status.should == 404
+    end
+    it "gives a 404 if the evaluation's instance does not match" do
+      delete :remove_generic_evaluations, id: suite.id, evaluation_id: other_evaluation.id
       response.status.should == 404
     end
   end

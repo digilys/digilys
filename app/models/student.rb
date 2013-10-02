@@ -103,7 +103,7 @@ class Student < ActiveRecord::Base
   def populate_generic_results
     existing = self.generic_results.collect(&:evaluation_id)
 
-    Evaluation.with_type(:generic).order("name asc").each do |evaluation|
+    Evaluation.with_type(:generic).where(instance_id: self.instance_id).order("name asc").each do |evaluation|
       self.generic_results.build(evaluation_id: evaluation.id) unless existing.include?(evaluation.id)
     end
   end

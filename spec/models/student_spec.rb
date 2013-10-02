@@ -259,11 +259,12 @@ describe Student do
   end
 
   context ".populate_generic_results" do
-    let(:student)              { create(:student) }
-    let!(:generic_evaluations) { create_list(:generic_evaluation, 3) }
-    let!(:existing)            { nil }
-    before(:each)              { student.populate_generic_results }
-    subject(:results)          { student.generic_results }
+    let(:student)                   { create(:student) }
+    let!(:generic_evaluations)      { create_list(:generic_evaluation, 3) }
+    let!(:other_generic_evaluation) { create(     :generic_evaluation, instance: create(:instance)) }
+    let!(:existing)                 { nil }
+    before(:each)                   { student.populate_generic_results }
+    subject(:results)               { student.generic_results }
 
     it { should have(3).items }
 

@@ -3,13 +3,15 @@ require 'spec_helper'
 describe EvaluationsController do
   login_user(:admin)
 
-  let(:evaluation)       { create(:suite_evaluation) }
-  let(:instance)         { create(:instance) }
-  let(:other_suite)      { create(:suite, instance: instance) }
-  let(:other_evaluation) { create(:suite_evaluation, suite: other_suite) }
+  let(:evaluation)               { create(:suite_evaluation) }
+  let(:generic_evaluation)       { create(:generic_evaluation) }
+  let(:instance)                 { create(:instance) }
+  let(:other_suite)              { create(:suite,              instance: instance) }
+  let(:other_evaluation)         { create(:suite_evaluation,   suite:    other_suite) }
+  let(:other_generic_evaluation) { create(:generic_evaluation, instance: instance) }
 
   describe "#instance_filter" do
-    it "handles non-instance suites" do
+    it "allows all evaluation templates" do
       get :show, id: create(:evaluation_template).id
       response.should be_success
     end
@@ -22,6 +24,9 @@ describe EvaluationsController do
     end
     it "generates a 404 if the suite instance does not match" do
       get :show, id: other_evaluation.id
+    end
+    it "generates a 404 if the instance does not match" do
+      get :show, id: other_generic_evaluation.id
     end
   end
 
@@ -54,7 +59,7 @@ describe EvaluationsController do
   end
   describe "POST #create" do
     it "redirects to the newly created evaluation on success" do
-      post :create, evaluation: valid_parameters_for(:evaluation).merge(instance_id: instance.id)
+      post :create, evaluation: valid_parameters_for(:evaluation)
       response.should redirect_to(assigns(:evaluation))
     end
     it "renders the new action on invalid parameters" do
@@ -62,8 +67,16 @@ describe EvaluationsController do
       response.should render_template("new")
     end
     it "generates a 404 if the suite instance does not match" do
-      post :create, evaluation: valid_parameters_for(:evaluation).merge(suite_id: other_suite.id)
+      post :create, evaluation: valid_parameters_for(:evaluation).merge(type: :suite, suite_id: other_suite.id)
       response.status.should == 404
+    end
+    it "generates a 404 if the instance does not match" do
+      post :create, evaluation: valid_parameters_for(:evaluation).merge(type: :generic, instance_id: instance.id)
+      response.status.should == 404
+    end
+    it "sets the instance from the current user's active instance" do
+      post :create, evaluation: valid_parameters_for(:evaluation)
+      assigns(:evaluation).instance.should == logged_in_user.active_instance
     end
   end
 
@@ -74,6 +87,10 @@ describe EvaluationsController do
     end
     it "generates a 404 if the suite instance does not match" do
       get :edit, id: other_evaluation.id
+      response.status.should == 404
+    end
+    it "generates a 404 if the instance does not match" do
+      get :edit, id: other_generic_evaluation.id
       response.status.should == 404
     end
   end
@@ -92,6 +109,14 @@ describe EvaluationsController do
       put :update, id: other_evaluation.id, evaluation: {}
       response.status.should == 404
     end
+    it "generates a 404 if the instance does not match" do
+      put :update, id: other_generic_evaluation.id, evaluation: {}
+      response.status.should == 404
+    end
+    it "prevents changing the instance" do
+      put :update, id: generic_evaluation.id, evaluation: { instance_id: instance.id }
+      generic_evaluation.reload.instance.should_not == instance
+    end
   end
 
   describe "GET #confirm_destroy" do
@@ -101,6 +126,10 @@ describe EvaluationsController do
     end
     it "generates a 404 if the suite instance does not match" do
       get :confirm_destroy, id: other_evaluation.id
+      response.status.should == 404
+    end
+    it "generates a 404 if the instance does not match" do
+      get :confirm_destroy, id: other_generic_evaluation.id
       response.status.should == 404
     end
   end
@@ -120,6 +149,10 @@ describe EvaluationsController do
     end
     it "generates a 404 if the suite instance does not match" do
       delete :destroy, id: other_evaluation.id
+      response.status.should == 404
+    end
+    it "generates a 404 if the instance does not match" do
+      delete :destroy, id: other_generic_evaluation.id
       response.status.should == 404
     end
   end

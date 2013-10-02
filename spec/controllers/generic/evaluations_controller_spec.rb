@@ -3,9 +3,12 @@ require 'spec_helper'
 describe Generic::EvaluationsController do
   login_user(:admin)
 
+  let(:instance) { create(:instance) }
+
   describe "GET #index" do
-    let!(:generics) { create_list(:generic_evaluation,  2) }
-    let!(:others)   { create_list(:evaluation_template, 2) }
+    let!(:generics)       { create_list(:generic_evaluation,  2) }
+    let!(:others)         { create_list(:evaluation_template, 2) }
+    let!(:other_instance) { create(     :generic_evaluation,  instance: instance)}
 
     it "gives a list of generic evaluations" do
       get :index

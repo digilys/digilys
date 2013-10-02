@@ -38,7 +38,12 @@ class SuitesController < ApplicationController
 
   layout "fullpage", only: :color_table
   def color_table
-    evaluations = Evaluation.with_type(:generic).order("name asc").partition { |e| @suite.generic_evaluations.include?(e.id) }
+    evaluations = Evaluation.
+      with_type(:generic).
+      where(instance_id: current_instance_id).
+      order("name asc").
+      partition { |e| @suite.generic_evaluations.include?(e.id) }
+
     @generic_evaluations = {
       included: evaluations.first,
       missing:  evaluations.last
@@ -134,17 +139,28 @@ class SuitesController < ApplicationController
   end
 
   def add_generic_evaluations
-    evaluation = Evaluation.with_type(:generic).find(params[:suite][:generic_evaluations])
+    evaluation = Evaluation.
+      with_type(:generic).
+      where(instance_id: current_instance_id).
+      find(params[:suite][:generic_evaluations])
+
     @suite.generic_evaluations << evaluation.id
     @suite.save
+
     redirect_to color_table_suite_url(@suite)
   end
   def remove_generic_evaluations
-    evaluation = Evaluation.with_type(:generic).find(params[:evaluation_id])
+    evaluation = Evaluation.
+      with_type(:generic).
+      where(instance_id: current_instance_id).
+      find(params[:evaluation_id])
+
     @suite.generic_evaluations.delete(evaluation.id)
     @suite.save
+
     redirect_to color_table_suite_url(@suite)
   end
+
   def add_student_data
     @suite.student_data << params[:key]
     @suite.save
