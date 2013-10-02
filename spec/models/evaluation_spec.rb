@@ -37,6 +37,8 @@ describe Evaluation do
   end
   context "accessible attributes" do
     it { should allow_mass_assignment_of(:type) }
+    it { should allow_mass_assignment_of(:instance) }
+    it { should allow_mass_assignment_of(:instance_id) }
     it { should allow_mass_assignment_of(:suite_id) }
     it { should allow_mass_assignment_of(:name) }
     it { should allow_mass_assignment_of(:description) }
@@ -136,6 +138,7 @@ describe Evaluation do
         it { should     validate_presence_of(:date) }
         it { should     allow_value("2013-04-29").for(:date) }
         it { should_not allow_value("201304-29").for(:date) }
+        it { should_not validate_presence_of(:instance) }
 
         context "and with suite template" do
           subject { build(:suite_evaluation, suite: create(:suite, is_template: true)) }
@@ -150,6 +153,7 @@ describe Evaluation do
         it { should_not allow_value(create(:suite)).for(:suite) }
         it { should_not validate_presence_of(:suite) }
         it { should_not allow_value("2013-04-29").for(:date) }
+        it { should_not validate_presence_of(:instance) }
       end
       context "generic" do
         subject { build(:generic_evaluation) }
@@ -157,6 +161,7 @@ describe Evaluation do
         it { should_not allow_value(create(:suite)).for(:suite) }
         it { should_not validate_presence_of(:suite) }
         it { should_not allow_value("2013-04-29").for(:date) }
+        it { should     validate_presence_of(:instance) }
       end
     end
   end

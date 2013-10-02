@@ -4,6 +4,8 @@ class Evaluation < ActiveRecord::Base
   # Column name "type" is not used for inheritance
   self.inheritance_column = :disable_inheritance
 
+  belongs_to :instance
+
   belongs_to :template,  class_name: "Evaluation"
   has_many   :children,
     class_name:  "Evaluation",
@@ -32,6 +34,8 @@ class Evaluation < ActiveRecord::Base
     allow_destroy: true
 
   attr_accessible :type,
+    :instance,
+    :instance_id,
     :template_id,
     :suite_id,
     :max_result,
@@ -90,6 +94,7 @@ class Evaluation < ActiveRecord::Base
   serialize :stanines,      JSON
 
 
+  validate  :validate_instance
   validate  :validate_suite
   validate  :validate_date
 
@@ -536,6 +541,14 @@ class Evaluation < ActiveRecord::Base
     self.results(true).map(&:save) if self.colors_changed? || self.stanines_changed?
   end
 
+
+  def validate_instance
+    if self.type.try(:generic?)
+      errors.add_on_blank(:instance)
+    else
+      errors.add(:instance, :not_nil) if !self.instance.blank?
+    end
+  end
 
   def validate_suite
     if self.type.try(:suite?)

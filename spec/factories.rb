@@ -74,6 +74,7 @@ FactoryGirl.define do
   end
 
   factory :evaluation do
+    instance        { Instance.order(:id).first || create(:instance) }
     template        nil
     suite           nil
     type            :generic
@@ -122,12 +123,14 @@ FactoryGirl.define do
     stanine9_max { _stanines ? _stanines[8].try(:max) : nil }
 
     factory :suite_evaluation do
+      instance nil
       suite
-      type  :suite
-      date  { suite.is_template ? nil : Date.today }
+      type     :suite
+      date     { suite.is_template ? nil : Date.today }
     end
     factory :evaluation_template do
-      type :template
+      instance nil
+      type     :template
     end
     factory :generic_evaluation do
     end

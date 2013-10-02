@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130930082140) do
+ActiveRecord::Schema.define(:version => 20131002062258) do
 
   create_table "activities", :force => true do |t|
     t.integer  "suite_id"
@@ -64,6 +64,7 @@ ActiveRecord::Schema.define(:version => 20130930082140) do
     t.text     "colors"
     t.text     "stanines"
     t.string   "status",                        :default => "empty"
+    t.integer  "instance_id"
   end
 
   add_index "evaluations", ["status"], :name => "index_evaluations_on_status"

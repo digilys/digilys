@@ -54,7 +54,7 @@ describe EvaluationsController do
   end
   describe "POST #create" do
     it "redirects to the newly created evaluation on success" do
-      post :create, evaluation: valid_parameters_for(:evaluation)
+      post :create, evaluation: valid_parameters_for(:evaluation).merge(instance_id: instance.id)
       response.should redirect_to(assigns(:evaluation))
     end
     it "renders the new action on invalid parameters" do
