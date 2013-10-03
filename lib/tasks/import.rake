@@ -1,4 +1,6 @@
 # Tasks for importing data
+require "digilys/importer"
+
 namespace :app do
   namespace :import do
 
@@ -261,5 +263,20 @@ namespace :app do
         return get_input
       end
     end 
+
+
+    desc "Import setup"
+    task setup: :environment do
+      raise "Environment variable export_dir is required" if !ENV.has_key?("export_dir") || !File.directory?(ENV["export_dir"])
+
+      puts "Importing data from: #{ENV["export_dir"]}\n"
+
+      @importer = Digilys::Importer.new(ENV["id_prefix"] || "export")
+    end
+
+    desc "Import all data"
+    task all: :setup do
+      puts "Import all"
+    end
   end
 end
