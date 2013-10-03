@@ -343,4 +343,51 @@ describe Digilys::Exporter do
       it                  { should have(2).items }
     end
   end
+
+  describe ".export_roles" do
+    let(:method) { :export_roles }
+
+    let(:user) { create(:user) }
+
+    context "format" do
+      context "for global" do
+        before(:each) do
+          user.add_role    :admin
+          user.remove_role :member, user.active_instance
+        end
+        it { should include("name"          => "admin") }
+        it { should include("resource_type" => nil) }
+        it { should include("_resource_id"  => nil) }
+        it { should include("_users"        => ["export-#{user.id}"]) }
+      end
+      context "for model" do
+        before(:each) do
+          Role.delete_all()
+          user.add_role    :manager, Suite
+          user.remove_role :member,  user.active_instance
+        end
+        it { should include("name"          => "manager") }
+        it { should include("resource_type" => "Suite") }
+        it { should include("_resource_id"  => nil) }
+        it { should include("_users"        => ["export-#{user.id}"]) }
+      end
+      context "for object" do
+        before(:each) do
+          Role.delete_all()
+          user
+        end
+        it { should include("name"          => "member") }
+        it { should include("resource_type" => "Instance") }
+        it { should include("_resource_id"  => "export-#{user.active_instance_id}") }
+        it { should include("_users"        => ["export-#{user.id}"]) }
+      end
+    end
+    context "multiple" do
+      before(:each) do
+        user.add_role :admin
+        # One role from the active instance membership
+      end
+      it { should have(2).items }
+    end
+  end
 end

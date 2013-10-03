@@ -125,12 +125,24 @@ class Digilys::Exporter
     end
   end
 
+  def export_roles(io)
+    Role.order(:id).find_each do |role|
+      data = {
+        name:          role.name,
+        resource_type: role.resource_type,
+        _resource_id:  prefix_id(role.resource_id),
+        _users:        role.user_ids.collect { |i| prefix_id(i) }
+      }
+      @encoder.encode(data, io)
+    end
+  end
+
   private
 
   def id_filter(hash)
     hash.inject({}) do |h, (k,v)|
       if k =~ /^(id|.+_id)$/
-        h["_#{k}"] = v.nil? ? nil : prefix_id(v)
+        h["_#{k}"] = prefix_id(v)
       else
         h[k] = v
       end
@@ -139,6 +151,6 @@ class Digilys::Exporter
   end
 
   def prefix_id(i)
-    "#{@id_prefix}-#{i}"
+    i.nil? ? nil : "#{@id_prefix}-#{i}"
   end
 end
