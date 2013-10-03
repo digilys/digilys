@@ -26,6 +26,7 @@ namespace :app do
       Rake::Task["app:export:generic_evaluations"].invoke
       Rake::Task["app:export:evaluation_templates"].invoke
       Rake::Task["app:export:suite_evaluations"].invoke
+      Rake::Task["app:export:results"].invoke
     end
 
     desc "Export instances"
@@ -98,6 +99,12 @@ namespace :app do
     task suite_evaluations: :setup do
       puts "Exporting suite_evaluations"
       @exporter.export_suite_evaluations(File.open(File.join(ENV["output_dir"], "suite_evaluations.json"), "w:ASCII-8BIT"))
+    end
+
+    desc "Export results"
+    task results: :setup do
+      puts "Exporting results"
+      @exporter.export_results(File.open(File.join(ENV["output_dir"], "results.json"), "w:ASCII-8BIT"))
     end
   end
 end

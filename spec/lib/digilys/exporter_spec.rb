@@ -295,4 +295,21 @@ describe Digilys::Exporter do
       it                       { should have(2).items }
     end
   end
+
+  describe ".export_results" do
+    let(:method) { :export_results }
+
+    context "format" do
+      let!(:res) { create(:result) }
+      it         { should include("_id" => "export-#{res.id}") }
+      it         { should include("_evaluation_id" => "export-#{res.evaluation_id}") }
+      it         { should include("_student_id" => "export-#{res.student_id}") }
+      it         { should include("color" => res.color.to_s) }
+      it         { should include(res.attributes.reject { |k,v| k =~ /^(id|.*_id|created_at|updated_at|color)$/ }) }
+    end
+    context "multiple" do
+      let!(:results) { create_list(:result, 2) }
+      it             { should have(2).items }
+    end
+  end
 end
