@@ -113,6 +113,12 @@ class Digilys::Exporter
     end
   end
 
+  def export_settings(io)
+    Setting.order(:id).find_each do |setting|
+      @encoder.encode(id_filter(setting.attributes), io)
+    end
+  end
+
   private
 
   def id_filter(hash)

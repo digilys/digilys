@@ -312,4 +312,20 @@ describe Digilys::Exporter do
       it             { should have(2).items }
     end
   end
+
+  describe ".export_settings" do
+    let(:method) { :export_settings }
+
+    context "format" do
+      let!(:setting) { create(:setting) }
+      it             { should include("_id" => "export-#{setting.id}") }
+      it             { should include("_customizer_id" => "export-#{setting.customizer_id}") }
+      it             { should include("_customizable_id" => "export-#{setting.customizable_id}") }
+      it             { should include(setting.attributes.reject { |k,v| k =~ /^(id|.*_id|created_at|updated_at)$/ }) }
+    end
+    context "multiple" do
+      let!(:settings) { create_list(:setting, 2) }
+      it              { should have(2).items }
+    end
+  end
 end
