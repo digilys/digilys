@@ -14,8 +14,10 @@ describe Digilys::Importer do
 
   context "importers" do
     let(:input_io) { StringIO.new(input) }
+    let(:mappings) { {} }
 
     before(:each) do
+      mappings.each { |k,v| importer.mappings[k] = v }
       importer.send(method, input_io)
     end
 
@@ -35,14 +37,47 @@ describe Digilys::Importer do
         its(:values) { should match_array(instances.collect(&:id)) }
       end
     end
+
+    describe ".import_users" do
+      let(:method) { :import_users }
+
+      let(:instance)    { create(:instance) }
+      let(:instance_id) { "export-1" }
+      let(:mappings)    { {
+        "instances" => { instance_id => instance.id }
+      } }
+
+      let(:input)  {
+        Yajl.dump(
+          attributes_for(:user).
+          except(:password, :password_confirmation).
+          merge(_active_instance_id: instance_id, _roles: []).merge(_id: "export-123")
+        ) +
+        Yajl.dump(
+          attributes_for(:user).
+          except(:password, :password_confirmation).
+          merge(_active_instance_id: instance_id, _roles: []).merge(_id: "export-124")
+        )
+      }
+
+      subject(:users) { User.all }
+      it              { should have(2).items }
+
+      context "mappings" do
+        subject      { importer.mappings["users"] }
+        its(:keys)   { should match_array(%w(export-123 export-124)) }
+        its(:values) { should match_array(users.collect(&:id)) }
+      end
+    end
   end
 
   context "handlers" do
+    let(:exclude) { [] }
     let(:attributes) {
       attributes_for(model).merge(
         created_at: Time.zone.now - 2.hours,
         updated_at: Time.zone.now - 1.hour
-      )
+      ).except(*exclude)
     }
     let(:object) {
       attributes.merge(meta)
@@ -66,6 +101,47 @@ describe Digilys::Importer do
         it "does not create a new object" do
           result.should be_nil
           Instance.count(:all).should == 1
+        end
+      end
+    end
+
+    describe ".handle_user_object" do
+      let(:model)       { :user }
+      let(:exclude)     { [ :password, :password_confirmation ] }
+
+      let(:instance)    { create(:instance) }
+      let(:instance_id) { "export-1" }
+
+      let(:meta)        { { _id: "export-123", _active_instance_id: instance_id } }
+      let(:method)      { :handle_user_object }
+
+      before(:each) do
+        importer.mappings["instances"] = { instance_id => instance.id }
+      end
+
+      subject(:result)      { importer.handle_user_object(object) }
+
+      it                    { should_not be_new_record }
+      its(:attributes)      { should include(attributes.stringify_keys) }
+      its(:active_instance) { should == instance }
+
+      context "with existing mapping" do
+        before(:each) do
+          user = create(:user)
+          importer.mappings["users"]["export-123"] = user.id
+        end
+        it "does not create a new object" do
+          result.should be_nil
+          User.count(:all).should == 1
+        end
+      end
+      context "with existing user email" do
+        let!(:user) { create(:user, email: object[:email]) }
+        it          { should == user }
+
+        context "in mapping" do
+          subject { result; importer.mappings["users"] }
+          it      { should include("export-123" => user.id) }
         end
       end
     end
