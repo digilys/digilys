@@ -328,4 +328,19 @@ describe Digilys::Exporter do
       it              { should have(2).items }
     end
   end
+
+  describe ".export_table_states" do
+    let(:method) { :export_table_states }
+
+    context "format" do
+      let!(:table_state) { create(:table_state) }
+      it                 { should include("_id" => "export-#{table_state.id}") }
+      it                 { should include("_base_id" => "export-#{table_state.base_id}") }
+      it                 { should include(table_state.attributes.reject { |k,v| k =~ /^(id|.*_id|created_at|updated_at)$/ }) }
+    end
+    context "multiple" do
+      let!(:table_states) { create_list(:table_state, 2) }
+      it                  { should have(2).items }
+    end
+  end
 end

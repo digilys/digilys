@@ -119,6 +119,12 @@ class Digilys::Exporter
     end
   end
 
+  def export_table_states(io)
+    TableState.order(:id).find_each do |table_state|
+      @encoder.encode(id_filter(table_state.attributes), io)
+    end
+  end
+
   private
 
   def id_filter(hash)

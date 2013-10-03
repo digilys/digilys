@@ -28,6 +28,7 @@ namespace :app do
       Rake::Task["app:export:suite_evaluations"].invoke
       Rake::Task["app:export:results"].invoke
       Rake::Task["app:export:settings"].invoke
+      Rake::Task["app:export:table_states"].invoke
     end
 
     desc "Export instances"
@@ -112,6 +113,12 @@ namespace :app do
     task settings: :setup do
       puts "Exporting settings"
       @exporter.export_settings(File.open(File.join(ENV["output_dir"], "settings.json"), "w:ASCII-8BIT"))
+    end
+
+    desc "Export table_states"
+    task table_states: :setup do
+      puts "Exporting table_states"
+      @exporter.export_table_states(File.open(File.join(ENV["output_dir"], "table_states.json"), "w:ASCII-8BIT"))
     end
   end
 end
