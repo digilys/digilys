@@ -272,11 +272,43 @@ namespace :app do
       puts "Importing data from: #{ENV["export_dir"]}\n"
 
       @importer = Digilys::Importer.new(ENV["id_prefix"] || "export")
+
+      # Load any existing mappings
+      @mappings_file = File.join(ENV["export_dir"], "import-mappings.json")
+
+      if File.file?(@mappings_file)
+        parser = Yajl::Parser.new(symbolize_keys: false)
+        @importer.mappings = parser.parse(File.open(@mappings_file, "r"))
+      end
+
+      # Add the mapping persistence after all running tasks
+      # (simulating something like after_tasks()
+      # http://stackoverflow.com/questions/1689504/how-do-i-make-a-rake-task-run-after-all-other-tasks-i-e-a-rake-afterbuild-tas#comment23711800_1767205
+      Rake.application.top_level_tasks << "app:import:persist_mappings"
+    end
+
+    task persist_mappings: :setup do
+      puts "Persisting mappings to #{@mappings_file}"
+
+      encoder = Yajl::Encoder.new(pretty: true)
+      encoder.encode(@importer.mappings, File.open(@mappings_file, "w"))
     end
 
     desc "Import all data"
     task all: :setup do
-      puts "Import all"
+      Rake::Task["app:import:instances"].invoke
+    end
+
+    desc "Import instances"
+    task instances: :setup do
+      file = File.join(ENV["export_dir"], "instances.json")
+
+      if File.file?(file)
+        puts "Importing instances from #{file}"
+        @importer.import_instances(File.open(file, "r"))
+      else
+        puts "Export file not found: instances.json"
+      end
     end
   end
 end
