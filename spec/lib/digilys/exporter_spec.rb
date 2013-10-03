@@ -255,4 +255,44 @@ describe Digilys::Exporter do
       it                          { should have(2).items }
     end
   end
+
+  describe ".export_suite_evaluations" do
+    let(:method) { :export_suite_evaluations }
+
+    context "format" do
+      let!(:suite_evaluation) { create(:suite_evaluation, template_id: 0, category_list: "foo,bar,baz") }
+      it                      { should include("_id" => "export-#{suite_evaluation.id}") }
+      it                      { should include("_instance_id" => nil) }
+      it                      { should include("_suite_id" => "export-#{suite_evaluation.suite_id}") }
+      it                      { should include("_template_id" => "export-0") }
+      it                      { should include("date" => suite_evaluation.date.to_s) }
+      it                      { should include(suite_evaluation.attributes.reject { |k,v| k =~ /^(id|.*_id|created_at|updated_at|date)$/ }) }
+      it "should include the categories" do
+        result["category_list"].should match_array(%w(foo bar baz))
+      end
+
+      context "with participants" do
+        let(:participants) { create_list(:participant, 2, suite: suite_evaluation.suite) }
+        before(:each) do
+          suite_evaluation.evaluation_participants = participants
+        end
+
+        subject { result["_participants"] }
+        it      { should match_array(participants.collect { |s| "export-#{s.id}" }) }
+      end
+      context "with users" do
+        let(:users) { create_list(:user, 2) }
+        before(:each) do
+          suite_evaluation.users = users
+        end
+
+        subject { result["_users"] }
+        it      { should match_array(users.collect { |s| "export-#{s.id}" }) }
+      end
+    end
+    context "multiple" do
+      let!(:suite_evaluations) { create_list(:suite_evaluation, 2) }
+      it                       { should have(2).items }
+    end
+  end
 end

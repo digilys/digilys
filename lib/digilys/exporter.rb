@@ -96,6 +96,17 @@ class Digilys::Exporter
     end
   end
 
+  def export_suite_evaluations(io)
+    Evaluation.with_type(:suite).order(:id).find_each do |suite_evaluation|
+      attributes = id_filter(suite_evaluation.attributes)
+      attributes["category_list"] = suite_evaluation.category_list
+      attributes["_participants"] = suite_evaluation.evaluation_participant_ids.collect { |i| prefix_id(i) }
+      attributes["_users"]        = suite_evaluation.user_ids.collect                   { |i| prefix_id(i) }
+
+      @encoder.encode(attributes, io)
+    end
+  end
+
   private
 
   def id_filter(hash)
