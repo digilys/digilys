@@ -57,6 +57,10 @@ class Digilys::Importer
     @parser.on_parse_complete = method(:handle_meeting_object)
     @parser.parse(io)
   end
+  def import_activities(io)
+    @parser.on_parse_complete = method(:handle_activity_object)
+    @parser.parse(io)
+  end
 
 
   def handle_instance_object(obj)
@@ -269,6 +273,29 @@ class Digilys::Importer
     mappings["meetings"][_id] = meeting.id
 
     return meeting
+  end
+
+  def handle_activity_object(obj)
+    attributes, meta = partition_object(obj)
+    _id              = meta["_id"]
+    suite_id         = mappings["suites"][meta["_suite_id"]]
+    meeting_id       = mappings["meetings"][meta["_meeting_id"]]
+
+    return if mappings["activities"].has_key?(_id) &&
+      Activity.exists?(mappings["activities"][_id]) ||
+      !Suite.exists?(suite_id) ||
+      meeting_id && !Meeting.exists?(meeting_id)
+
+    activity = Activity.new do |a|
+      attributes.each { |k, v| a[k] = v }
+      a.suite   = Suite.find(suite_id)
+      a.meeting = Meeting.find(meeting_id) if meeting_id
+    end
+    activity.save!
+
+    mappings["activities"][_id] = activity.id
+
+    return activity
   end
 
 
