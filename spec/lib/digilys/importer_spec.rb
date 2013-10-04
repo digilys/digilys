@@ -143,6 +143,28 @@ describe Digilys::Importer do
         its(:values) { should match_array(groups.collect(&:id)) }
       end
     end
+
+    describe ".import_instructions" do
+      let(:method) { :import_instructions }
+
+      let(:input)  {
+        Yajl.dump(
+          attributes_for(:instruction).merge(_id: "export-123", for_page: "/foo/bar")
+        ) +
+        Yajl.dump(
+          attributes_for(:instruction).merge(_id: "export-124", for_page: "/bar/baz")
+        )
+      }
+
+      subject(:instructions) { Instruction.all }
+      it                     { should have(2).items }
+
+      context "mappings" do
+        subject      { importer.mappings["instructions"] }
+        its(:keys)   { should match_array(%w(export-123 export-124)) }
+        its(:values) { should match_array(instructions.collect(&:id)) }
+      end
+    end
   end
 
   context "handlers" do
@@ -349,6 +371,36 @@ describe Digilys::Importer do
         let(:group)  { create(:group, parent: create(:group)) }
         it           { should == group }
         its(:parent) { should_not == parent}
+      end
+    end
+
+    describe ".handle_instruction_object" do
+      let(:model)       { :instruction }
+
+      let(:meta)        { { _id: "export-123" } }
+      let(:method)      { :handle_instruction_object }
+
+      subject(:result) { importer.handle_instruction_object(object) }
+
+      it               { should_not be_new_record }
+      its(:attributes) { should include(attributes.stringify_keys) }
+
+      context "with existing mapping" do
+        before(:each) do
+          instruction = create(:instruction)
+          importer.mappings["instructions"]["export-123"] = instruction.id
+        end
+        it "does not create a new object" do
+          result.should be_nil
+          Instruction.count(:all).should == 1
+        end
+      end
+      context "with existing instruction for a page" do
+        let!(:instruction) { create(:instruction, for_page: object[:for_page]) }
+        it "does not create a new object" do
+          result.should                  == instruction
+          Instruction.count(:all).should == 1
+        end
       end
     end
   end

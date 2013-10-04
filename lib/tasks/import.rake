@@ -300,6 +300,7 @@ namespace :app do
       Rake::Task["app:import:users"].invoke
       Rake::Task["app:import:students"].invoke
       Rake::Task["app:import:groups"].invoke
+      Rake::Task["app:import:instructions"].invoke
     end
 
     desc "Import instances"
@@ -347,6 +348,18 @@ namespace :app do
         @importer.import_groups(File.open(file, "r"))
       else
         puts "Export file not found: groups.json"
+      end
+    end
+
+    desc "Import instructions"
+    task instructions: :setup do
+      file = File.join(ENV["export_dir"], "instructions.json")
+
+      if File.file?(file)
+        puts "Importing instructions from #{file}"
+        @importer.import_instructions(File.open(file, "r"))
+      else
+        puts "Export file not found: instructions.json"
       end
     end
   end

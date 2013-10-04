@@ -36,6 +36,10 @@ class Digilys::Importer
     @parser.on_parse_complete = method(:handle_group_object_for_hierarchy)
     @parser.parse(io)
   end
+  def import_instructions(io)
+    @parser.on_parse_complete = method(:handle_instruction_object)
+    @parser.parse(io)
+  end
 
 
   def handle_instance_object(obj)
@@ -140,6 +144,26 @@ class Digilys::Importer
     end
 
     return group
+  end
+
+  def handle_instruction_object(obj)
+    attributes, meta = partition_object(obj)
+    _id              = meta["_id"]
+
+    return if mappings["instructions"].has_key?(_id) && Instruction.exists?(mappings["instructions"][_id])
+
+    instruction = Instruction.where(for_page: attributes["for_page"]).first
+
+    unless instruction
+      instruction = Instruction.new do |i|
+        attributes.each { |k, v| i[k] = v }
+      end
+      instruction.save!
+    end
+
+    mappings["instructions"][_id] = instruction.id
+
+    return instruction
   end
 
   private
