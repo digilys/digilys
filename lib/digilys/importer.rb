@@ -27,6 +27,15 @@ class Digilys::Importer
     @parser.on_parse_complete = method(:handle_student_object)
     @parser.parse(io)
   end
+  def import_groups(io)
+    @parser.on_parse_complete = method(:handle_group_object)
+    @parser.parse(io)
+
+    io.rewind
+
+    @parser.on_parse_complete = method(:handle_group_object_for_hierarchy)
+    @parser.parse(io)
+  end
 
 
   def handle_instance_object(obj)
@@ -87,6 +96,52 @@ class Digilys::Importer
     return student
   end
 
+  def handle_group_object(obj)
+    attributes, meta = partition_object(obj)
+    _id              = meta["_id"]
+
+    return if mappings["groups"].has_key?(_id) && Group.exists?(mappings["groups"][_id])
+
+    group = Group.new do |g|
+      attributes.each { |k, v| g[k] = v }
+      g.instance = Instance.find(mappings["instances"][meta["_instance_id"]])
+    end
+    group.save!
+
+    collect_mapped_objects(meta["_users"], mappings["users"], User) do |user|
+      group.users << user
+    end
+
+    collect_mapped_objects(meta["_students"], mappings["students"], Student) do |student|
+      group.students << student
+    end
+
+    mappings["groups"][_id] = group.id
+
+    return group
+  end
+
+  def handle_group_object_for_hierarchy(obj)
+    _, meta    = partition_object(obj)
+    _id        = meta["_id"]
+    _parent_id = meta["_parent_id"]
+
+    group_id   = mappings["groups"][_id]
+    parent_id  = mappings["groups"][_parent_id]
+
+    return if group_id.blank? || parent_id.blank?
+
+    group  = Group.where(id: group_id).first
+    parent = Group.where(id: parent_id).first
+
+    if group && parent && group.parent.nil?
+      group.parent = parent
+      group.save!
+    end
+
+    return group
+  end
+
   private
 
   # Splits an object hash into two, one with
@@ -96,5 +151,16 @@ class Digilys::Importer
   # special ones in the export format
   def partition_object(obj)
     obj.stringify_keys.partition { |k,v| k !~ /^_/ }.collect { |h| Hash[h] }
+  end
+
+  # Given a list of prefixed export id:s, yield each real
+  # object to the block, if it exists
+  def collect_mapped_objects(_ids, mapping, klass)
+    if _ids
+      _ids.each do |_id|
+        obj = klass.where(id: mapping[_id]).first
+        yield obj if obj
+      end
+    end
   end
 end

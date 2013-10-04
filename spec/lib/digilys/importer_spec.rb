@@ -101,6 +101,48 @@ describe Digilys::Importer do
         its(:values) { should match_array(students.collect(&:id)) }
       end
     end
+
+    describe ".import_groups" do
+      let(:method) { :import_groups }
+
+      let(:instance)    { create(:instance) }
+      let(:instance_id) { "export-1" }
+      let(:mappings)    { {
+        "instances" => { instance_id => instance.id }
+      } }
+
+      let(:input)  {
+        Yajl.dump(
+          attributes_for(:group).
+          except(:instance, :parent).
+          merge(_instance_id: instance_id, _parent_id: nil).merge(_id: "export-123")
+        ) +
+        Yajl.dump(
+          attributes_for(:group).
+          except(:instance, :parent).
+          merge(_instance_id: instance_id, _parent_id: "export-123").merge(_id: "export-124")
+        )
+      }
+
+      subject(:groups) { Group.all }
+      it               { should have(2).items }
+
+      it "should set the group hierarchy" do
+        group1, group2 = groups
+
+        child  = group1.parent ? group1 : group2
+        parent = group1.parent ? group2 : group1
+
+        parent.parent.should be_nil
+        child.parent.should  == parent
+      end
+
+      context "mappings" do
+        subject      { importer.mappings["groups"] }
+        its(:keys)   { should match_array(%w(export-123 export-124)) }
+        its(:values) { should match_array(groups.collect(&:id)) }
+      end
+    end
   end
 
   context "handlers" do
@@ -217,6 +259,96 @@ describe Digilys::Importer do
           subject { result; importer.mappings["students"] }
           it      { should include("export-123" => student.id) }
         end
+      end
+    end
+
+    describe ".handle_group_object" do
+      let(:model)       { :group }
+      let(:exclude)     { [ :instance, :parent ] }
+
+      let(:instance)    { create(:instance) }
+      let(:instance_id) { "export-1" }
+
+      let(:_students)   { [] }
+      let(:_users )     { [] }
+      let(:meta)        { { _id: "export-123", _instance_id: instance_id, _parent_id: nil, _students: _students, _users: _users } }
+      let(:method)      { :handle_group_object }
+
+      before(:each) do
+        importer.mappings["instances"] = { instance_id => instance.id }
+      end
+
+      subject(:result) { importer.handle_group_object(object) }
+
+      it               { should_not be_new_record }
+      its(:attributes) { should include(attributes.except(:data).stringify_keys) }
+      its(:instance)   { should == instance }
+
+      context "with existing mapping" do
+        before(:each) do
+          group = create(:group)
+          importer.mappings["groups"]["export-123"] = group.id
+        end
+        it "does not create a new object" do
+          result.should be_nil
+          Group.count(:all).should == 1
+        end
+      end
+      context "with users" do
+        let(:users)  { create_list(:user, 2) }
+        let(:_users) { %w(export-12 export-13) }
+
+        before(:each) do
+          importer.mappings["users"] = {
+            "export-12" => users.first,
+            "export-13" => users.second
+          }
+        end
+
+        its(:users)  { should match_array(users)}
+      end
+      context "with students" do
+        let(:students)  { create_list(:student, 2) }
+        let(:_students) { %w(export-12 export-13) }
+
+        before(:each) do
+          importer.mappings["students"] = {
+            "export-12" => students.first,
+            "export-13" => students.second
+          }
+        end
+
+        its(:students)  { should match_array(students)}
+      end
+    end
+
+    describe ".handle_group_object_for_hierarchy" do
+      let(:group)      { create(:group) }
+      let(:parent)     { create(:group) }
+      let(:_id)        { "export-13" }
+      let(:_parent_id) { "export-12" }
+      let(:object)     { { _id: _id, _parent_id: _parent_id } }
+
+      before(:each) do
+        importer.mappings["groups"] = {
+          "export-12" => parent,
+          "export-13" => group
+        }
+      end
+
+      subject      { importer.handle_group_object_for_hierarchy(object) }
+
+      it           { should == group }
+      its(:parent) { should == parent }
+
+      context "with no parent id" do
+        let(:_parent_id) { nil }
+        it               { should be_nil }
+      end
+      context "with existing parent" do
+        let(:group)  { create(:group, parent: create(:group)) }
+        it           { should == group }
+        its(:parent) { should_not == parent}
       end
     end
   end
