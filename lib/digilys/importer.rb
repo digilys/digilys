@@ -61,6 +61,17 @@ class Digilys::Importer
     @parser.on_parse_complete = method(:handle_activity_object)
     @parser.parse(io)
   end
+  def import_generic_evaluations(io)
+    @parser.on_parse_complete = method(:handle_generic_evaluation_object)
+    @parser.parse(io)
+
+    Suite.find_each do |suite|
+      if suite.generic_evaluations.any? { |i| i =~ /^#{@id_prefix}/ }
+        suite.generic_evaluations = suite.generic_evaluations.collect { |id| mappings["generic_evaluations"][id] || id }
+        suite.save
+      end
+    end
+  end
 
 
   def handle_instance_object(obj)
@@ -296,6 +307,23 @@ class Digilys::Importer
     mappings["activities"][_id] = activity.id
 
     return activity
+  end
+
+  def handle_generic_evaluation_object(obj)
+    attributes, meta = partition_object(obj)
+    _id              = meta["_id"]
+
+    return if mappings["generic_evaluations"].has_key?(_id) && Evaluation.exists?(mappings["generic_evaluations"][_id])
+
+    generic_evaluation = Evaluation.new do |e|
+      attributes.each { |k, v| e[k] = v }
+      e.instance = Instance.find(mappings["instances"][meta["_instance_id"]])
+    end
+    generic_evaluation.save!
+
+    mappings["generic_evaluations"][_id] = generic_evaluation.id
+
+    return generic_evaluation
   end
 
 

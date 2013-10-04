@@ -15,8 +15,10 @@ describe Digilys::Importer do
   context "importers" do
     let(:input_io) { StringIO.new(input) }
     let(:mappings) { {} }
+    let(:setup)    { nil }
 
     before(:each) do
+      setup
       mappings.each { |k,v| importer.mappings[k] = v }
       importer.send(method, input_io)
     end
@@ -308,6 +310,73 @@ describe Digilys::Importer do
         subject      { importer.mappings["activities"] }
         its(:keys)   { should match_array(%w(export-123 export-124)) }
         its(:values) { should match_array(activities.collect(&:id)) }
+      end
+    end
+
+    describe ".import_generic_evaluations" do
+      let(:method)      { :import_generic_evaluations }
+
+      let(:instance)    { create(:instance) }
+      let(:instance_id) { "export-1" }
+      let(:mappings)    { {
+        "instances" => { instance_id => instance.id }
+      } }
+
+      let(:exclude)     { [
+        :instance,
+        :template,
+        :suite,
+        :red_min,
+        :red_max,
+        :yellow_min,
+        :yellow_max,
+        :green_min,
+        :green_max,
+        :stanine1_min,
+        :stanine1_max,
+        :stanine2_min,
+        :stanine2_max,
+        :stanine3_min,
+        :stanine3_max,
+        :stanine4_min,
+        :stanine4_max,
+        :stanine5_min,
+        :stanine5_max,
+        :stanine6_min,
+        :stanine6_max,
+        :stanine7_min,
+        :stanine7_max,
+        :stanine8_min,
+        :stanine8_max,
+        :stanine9_min,
+        :stanine9_max,
+      ] }
+      let(:input)  {
+        Yajl.dump(
+          attributes_for(:generic_evaluation).
+          except(*exclude).
+          merge(_instance_id: instance_id).merge(_id: "export-123")
+        ) +
+        Yajl.dump(
+          attributes_for(:generic_evaluation).
+          except(*exclude).
+          merge(_instance_id: instance_id).merge(_id: "export-124")
+        )
+      }
+
+      subject(:generic_evaluations) { Evaluation.all }
+      it                            { should have(2).items }
+
+      context "mappings" do
+        subject      { importer.mappings["generic_evaluations"] }
+        its(:keys)   { should match_array(%w(export-123 export-124)) }
+        its(:values) { should match_array(generic_evaluations.collect(&:id)) }
+      end
+      context "suite references" do
+        let(:suite) { create(:suite, generic_evaluations: %w(export-123 export-124) << 0) }
+        let(:setup) { suite }
+        subject     { suite.reload.generic_evaluations }
+        it          { should match_array(Evaluation.all.collect(&:id) << 0) }
       end
     end
   end
@@ -796,6 +865,66 @@ describe Digilys::Importer do
         it "does not create a new object" do
           result.should be_nil
           Activity.count(:all).should == 1
+        end
+      end
+    end
+
+    describe ".handle_generic_evaluation_object" do
+      let(:model)       { :generic_evaluation }
+      let(:exclude)     { [
+        :instance,
+        :template,
+        :suite,
+        :red_min,
+        :red_max,
+        :yellow_min,
+        :yellow_max,
+        :green_min,
+        :green_max,
+        :stanine1_min,
+        :stanine1_max,
+        :stanine2_min,
+        :stanine2_max,
+        :stanine3_min,
+        :stanine3_max,
+        :stanine4_min,
+        :stanine4_max,
+        :stanine5_min,
+        :stanine5_max,
+        :stanine6_min,
+        :stanine6_max,
+        :stanine7_min,
+        :stanine7_max,
+        :stanine8_min,
+        :stanine8_max,
+        :stanine9_min,
+        :stanine9_max,
+      ] }
+
+      let(:instance)    { create(:instance) }
+      let(:instance_id) { "export-1" }
+
+      let(:meta)        { { _id: "export-123", _instance_id: instance_id } }
+      let(:method)      { :handle_generic_evaluation_object }
+
+      before(:each) do
+        importer.mappings["instances"] = { instance_id => instance.id }
+      end
+
+      subject(:result) { importer.handle_generic_evaluation_object(object) }
+
+      it               { should_not be_new_record }
+      its(:attributes) { should include(attributes.stringify_keys) }
+      its(:instance)   { should == instance }
+
+      context "with existing mapping" do
+        before(:each) do
+          generic_evaluation = create(:generic_evaluation)
+          importer.mappings["generic_evaluations"]["export-123"] = generic_evaluation.id
+        end
+        it "does not create a new object" do
+          result.should be_nil
+          Evaluation.count(:all).should == 1
         end
       end
     end
