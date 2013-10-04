@@ -207,6 +207,44 @@ describe Digilys::Importer do
         its(:values) { should match_array(suites.collect(&:id)) }
       end
     end
+
+    describe ".import_participants" do
+      let(:method)      { :import_participants }
+
+      let(:suite)       { create(:suite) }
+      let(:suite_id)    { "export-1" }
+      let(:student1)    { create(:student) }
+      let(:student1_id) { "export-2" }
+      let(:student2)    { create(:student) }
+      let(:student2_id) { "export-3" }
+      let(:group)       { create(:group) }
+      let(:group_id)    { "export-4" }
+      let(:mappings)    { {
+        "suites"   => { suite_id    => suite.id },
+        "students" => { student1_id => student1.id, student2_id => student2.id },
+        "groups"   => { group_id    => group.id }
+      } }
+
+      let(:input)  {
+        Yajl.dump(
+          attributes_for(:participant).
+          merge(_suite_id: suite_id, _student_id: student1_id).merge(_id: "export-123")
+        ) +
+        Yajl.dump(
+          attributes_for(:participant).
+          merge(_suite_id: suite_id, _student_id: student2_id, _group_id: group_id).merge(_id: "export-124")
+        )
+      }
+
+      subject(:participants) { Participant.all }
+      it                     { should have(2).items }
+
+      context "mappings" do
+        subject      { importer.mappings["participants"] }
+        its(:keys)   { should match_array(%w(export-123 export-124)) }
+        its(:values) { should match_array(participants.collect(&:id)) }
+      end
+    end
   end
 
   context "handlers" do
@@ -515,6 +553,83 @@ describe Digilys::Importer do
         let(:suite)    { create(:suite, template: create(:suite, is_template: true)) }
         it             { should == suite }
         its(:template) { should_not == template}
+      end
+    end
+
+    describe ".handle_participant_object" do
+      let(:model)      { :participant }
+
+      let(:suite)      { create(:suite) }
+      let(:suite_id)   { "export-1" }
+      let(:student)    { create(:student) }
+      let(:student_id) { "export-2" }
+      let(:group)      { create(:group) }
+      let(:group_id)   { "export-3" }
+
+      let(:meta)       {
+        {
+          _id:         "export-123",
+          _suite_id:   suite_id,
+          _student_id: student_id,
+          _group_id:   group_id,
+        }
+      }
+
+      let(:method)     { :handle_participant_object }
+
+      before(:each) do
+        importer.mappings["suites"]   = { suite_id   => suite.try(:id)   || 0 }
+        importer.mappings["students"] = { student_id => student.try(:id) || 0 }
+        importer.mappings["groups"]   = { group_id   => group.try(:id)   || 0 }
+      end
+
+      subject(:result) { importer.handle_participant_object(object) }
+
+      it               { should_not be_new_record }
+      its(:attributes) { should include(attributes.stringify_keys) }
+      its(:suite)      { should == suite }
+      its(:group)      { should == group }
+      its(:student)    { should == student }
+
+      context "without a group id" do
+        let(:meta) {
+          {
+            _id:         "export-123",
+            _suite_id:   suite_id,
+            _student_id: student_id,
+            _group_id:   nil,
+          }
+        }
+        its(:group) { should be_nil }
+      end
+      context "without a suite" do
+        let(:suite) { nil }
+        it          { should be_nil }
+      end
+      context "without a student" do
+        let(:student) { nil }
+        it            { should be_nil }
+      end
+      context "without a group" do
+        let(:group) { nil }
+        it          { should be_nil }
+      end
+      context "with existing mapping" do
+        before(:each) do
+          participant = create(:participant, suite: suite, student: student, group: group)
+          importer.mappings["participants"]["export-123"] = participant.id
+        end
+        it "does not create a new object" do
+          result.should be_nil
+          Participant.count(:all).should == 1
+        end
+      end
+      context "with existing participant" do
+        let!(:participant) { create(:participant, suite: suite, student: student) }
+        it "does not create a new object" do
+          result.should == participant
+          Participant.count(:all).should == 1
+        end
       end
     end
   end

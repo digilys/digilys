@@ -302,6 +302,7 @@ namespace :app do
       Rake::Task["app:import:groups"].invoke
       Rake::Task["app:import:instructions"].invoke
       Rake::Task["app:import:suites"].invoke
+      Rake::Task["app:import:participants"].invoke
     end
 
     desc "Import instances"
@@ -373,6 +374,18 @@ namespace :app do
         @importer.import_suites(File.open(file, "r"))
       else
         puts "Export file not found: suites.json"
+      end
+    end
+
+    desc "Import participants"
+    task participants: :setup do
+      file = File.join(ENV["export_dir"], "participants.json")
+
+      if File.file?(file)
+        puts "Importing participants from #{file}"
+        @importer.import_participants(File.open(file, "r"))
+      else
+        puts "Export file not found: participants.json"
       end
     end
   end

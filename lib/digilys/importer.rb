@@ -49,6 +49,10 @@ class Digilys::Importer
     @parser.on_parse_complete = method(:handle_suite_object_for_hierarchy)
     @parser.parse(io)
   end
+  def import_participants(io)
+    @parser.on_parse_complete = method(:handle_participant_object)
+    @parser.parse(io)
+  end
 
 
   def handle_instance_object(obj)
@@ -211,6 +215,36 @@ class Digilys::Importer
     end
 
     return suite
+  end
+
+  def handle_participant_object(obj)
+    attributes, meta = partition_object(obj)
+    _id              = meta["_id"]
+    suite_id         = mappings["suites"][meta["_suite_id"]]
+    student_id       = mappings["students"][meta["_student_id"]]
+    group_id         = mappings["groups"][meta["_group_id"]]
+
+    return if mappings["participants"].has_key?(_id) &&
+      Participant.exists?(mappings["participants"][_id]) ||
+      !Suite.exists?(suite_id) ||
+      !Student.exists?(student_id) ||
+      group_id && !Group.exists?(group_id)
+
+    participant = Participant.where(suite_id: suite_id, student_id: student_id).first
+
+    unless participant
+      participant = Participant.new do |p|
+        attributes.each { |k, v| p[k] = v }
+        p.suite   = Suite.find(suite_id)
+        p.student = Student.find(student_id)
+        p.group   = Group.find(group_id)     if !group_id.blank?
+      end
+      participant.save!
+    end
+
+    mappings["participants"][_id] = participant.id
+
+    return participant
   end
 
 
