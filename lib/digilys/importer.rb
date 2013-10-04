@@ -53,6 +53,10 @@ class Digilys::Importer
     @parser.on_parse_complete = method(:handle_participant_object)
     @parser.parse(io)
   end
+  def import_meetings(io)
+    @parser.on_parse_complete = method(:handle_meeting_object)
+    @parser.parse(io)
+  end
 
 
   def handle_instance_object(obj)
@@ -245,6 +249,26 @@ class Digilys::Importer
     mappings["participants"][_id] = participant.id
 
     return participant
+  end
+
+  def handle_meeting_object(obj)
+    attributes, meta = partition_object(obj)
+    _id              = meta["_id"]
+    suite_id         = mappings["suites"][meta["_suite_id"]]
+
+    return if mappings["meetings"].has_key?(_id) &&
+      Meeting.exists?(mappings["meetings"][_id]) ||
+      !Suite.exists?(suite_id)
+
+    meeting = Meeting.new do |m|
+      attributes.each { |k, v| m[k] = v }
+      m.suite = Suite.find(suite_id)
+    end
+    meeting.save!
+
+    mappings["meetings"][_id] = meeting.id
+
+    return meeting
   end
 
 

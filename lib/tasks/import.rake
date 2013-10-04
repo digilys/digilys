@@ -303,6 +303,7 @@ namespace :app do
       Rake::Task["app:import:instructions"].invoke
       Rake::Task["app:import:suites"].invoke
       Rake::Task["app:import:participants"].invoke
+      Rake::Task["app:import:meetings"].invoke
     end
 
     desc "Import instances"
@@ -386,6 +387,18 @@ namespace :app do
         @importer.import_participants(File.open(file, "r"))
       else
         puts "Export file not found: participants.json"
+      end
+    end
+
+    desc "Import meetings"
+    task meetings: :setup do
+      file = File.join(ENV["export_dir"], "meetings.json")
+
+      if File.file?(file)
+        puts "Importing meetings from #{file}"
+        @importer.import_meetings(File.open(file, "r"))
+      else
+        puts "Export file not found: meetings.json"
       end
     end
   end

@@ -245,6 +245,36 @@ describe Digilys::Importer do
         its(:values) { should match_array(participants.collect(&:id)) }
       end
     end
+
+    describe ".import_meetings" do
+      let(:method)   { :import_meetings }
+
+      let(:suite)    { create(:suite) }
+      let(:suite_id) { "export-1" }
+      let(:mappings) { {
+        "suites"   => { suite_id    => suite.id },
+      } }
+
+      let(:input) {
+        Yajl.dump(
+          attributes_for(:meeting).
+          merge(_suite_id: suite_id).merge(_id: "export-123")
+        ) +
+        Yajl.dump(
+          attributes_for(:meeting).
+          merge(_suite_id: suite_id).merge(_id: "export-124")
+        )
+      }
+
+      subject(:meetings) { Meeting.all }
+      it                 { should have(2).items }
+
+      context "mappings" do
+        subject      { importer.mappings["meetings"] }
+        its(:keys)   { should match_array(%w(export-123 export-124)) }
+        its(:values) { should match_array(meetings.collect(&:id)) }
+      end
+    end
   end
 
   context "handlers" do
@@ -629,6 +659,47 @@ describe Digilys::Importer do
         it "does not create a new object" do
           result.should == participant
           Participant.count(:all).should == 1
+        end
+      end
+    end
+
+    describe ".handle_meeting_object" do
+      let(:model)    { :meeting }
+
+      let(:suite)    { create(:suite) }
+      let(:suite_id) { "export-1" }
+
+      let(:meta)     {
+        {
+          _id:         "export-123",
+          _suite_id:   suite_id
+        }
+      }
+
+      let(:method)   { :handle_meeting_object }
+
+      before(:each) do
+        importer.mappings["suites"] = { suite_id => suite.try(:id) || 0 }
+      end
+
+      subject(:result) { importer.handle_meeting_object(object) }
+
+      it               { should_not be_new_record }
+      its(:attributes) { should include(attributes.stringify_keys) }
+      its(:suite)      { should == suite }
+
+      context "without a suite" do
+        let(:suite) { nil }
+        it          { should be_nil }
+      end
+      context "with existing mapping" do
+        before(:each) do
+          meeting = create(:meeting, suite: suite)
+          importer.mappings["meetings"]["export-123"] = meeting.id
+        end
+        it "does not create a new object" do
+          result.should be_nil
+          Meeting.count(:all).should == 1
         end
       end
     end
