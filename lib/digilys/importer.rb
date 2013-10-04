@@ -40,6 +40,15 @@ class Digilys::Importer
     @parser.on_parse_complete = method(:handle_instruction_object)
     @parser.parse(io)
   end
+  def import_suites(io)
+    @parser.on_parse_complete = method(:handle_suite_object)
+    @parser.parse(io)
+
+    io.rewind
+
+    @parser.on_parse_complete = method(:handle_suite_object_for_hierarchy)
+    @parser.parse(io)
+  end
 
 
   def handle_instance_object(obj)
@@ -165,6 +174,45 @@ class Digilys::Importer
 
     return instruction
   end
+
+  def handle_suite_object(obj)
+    attributes, meta = partition_object(obj)
+    _id              = meta["_id"]
+
+    return if mappings["suites"].has_key?(_id) && Suite.exists?(mappings["suites"][_id])
+
+    suite = Suite.new do |s|
+      attributes.each { |k, v| s[k] = v }
+      s.instance = Instance.find(mappings["instances"][meta["_instance_id"]])
+    end
+    suite.save!
+
+    mappings["suites"][_id] = suite.id
+
+    return suite
+  end
+
+  def handle_suite_object_for_hierarchy(obj)
+    _, meta      = partition_object(obj)
+    _id          = meta["_id"]
+    _template_id = meta["_template_id"]
+
+    suite_id     = mappings["suites"][_id]
+    template_id  = mappings["suites"][_template_id]
+
+    return if suite_id.blank? || template_id.blank?
+
+    suite    = Suite.where(id: suite_id).first
+    template = Suite.where(id: template_id).first
+
+    if suite && template && suite.template.nil?
+      suite.template = template
+      suite.save!
+    end
+
+    return suite
+  end
+
 
   private
 

@@ -165,6 +165,48 @@ describe Digilys::Importer do
         its(:values) { should match_array(instructions.collect(&:id)) }
       end
     end
+
+    describe ".import_suites" do
+      let(:method) { :import_suites }
+
+      let(:instance)    { create(:instance) }
+      let(:instance_id) { "export-1" }
+      let(:mappings)    { {
+        "instances" => { instance_id => instance.id }
+      } }
+
+      let(:input)  {
+        Yajl.dump(
+          attributes_for(:suite).
+          except(:instance, :template).
+          merge(_instance_id: instance_id, _template_id: nil, is_template: true).merge(_id: "export-123")
+        ) +
+        Yajl.dump(
+          attributes_for(:suite).
+          except(:instance, :template).
+          merge(_instance_id: instance_id, _template_id: "export-123").merge(_id: "export-124")
+        )
+      }
+
+      subject(:suites) { Suite.all }
+      it               { should have(2).items }
+
+      it "should set the suite hierarchy" do
+        suite1, suite2 = suites
+
+        child          = suite1.template ? suite1 : suite2
+        template       = suite1.template ? suite2 : suite1
+
+        template.template.should be_nil
+        child.template.should  == template
+      end
+
+      context "mappings" do
+        subject      { importer.mappings["suites"] }
+        its(:keys)   { should match_array(%w(export-123 export-124)) }
+        its(:values) { should match_array(suites.collect(&:id)) }
+      end
+    end
   end
 
   context "handlers" do
@@ -401,6 +443,78 @@ describe Digilys::Importer do
           result.should                  == instruction
           Instruction.count(:all).should == 1
         end
+      end
+    end
+
+    describe ".handle_suite_object" do
+      let(:model)       { :suite }
+      let(:exclude)     { [ :instance, :template ] }
+
+      let(:instance)    { create(:instance) }
+      let(:instance_id) { "export-1" }
+
+      let(:meta)        {
+        {
+          _id: "export-123",
+          _instance_id: instance_id,
+          _template_id: 0,
+          generic_evaluations: %w(export-10 export-11)
+        }
+      }
+
+      let(:method)      { :handle_suite_object }
+
+      before(:each) do
+        importer.mappings["instances"] = { instance_id => instance.id }
+      end
+
+      subject(:result)          { importer.handle_suite_object(object) }
+
+      it                        { should_not be_new_record }
+      its(:attributes)          { should include(attributes.except(:generic_evaluations).stringify_keys) }
+      its(:instance)            { should == instance }
+
+      its(:generic_evaluations) { should match_array(%w(export-10 export-11)) }
+
+      context "with existing mapping" do
+        before(:each) do
+          suite = create(:suite)
+          importer.mappings["suites"]["export-123"] = suite.id
+        end
+        it "does not create a new object" do
+          result.should be_nil
+          Suite.count(:all).should == 1
+        end
+      end
+    end
+
+    describe ".handle_suite_object_for_hierarchy" do
+      let(:suite)        { create(:suite) }
+      let(:template)     { create(:suite, is_template: true) }
+      let(:_id)          { "export-13" }
+      let(:_template_id) { "export-12" }
+      let(:object)       { { _id: _id, _template_id: _template_id } }
+
+      before(:each) do
+        importer.mappings["suites"] = {
+          "export-12" => template,
+          "export-13" => suite
+        }
+      end
+
+      subject        { importer.handle_suite_object_for_hierarchy(object) }
+
+      it             { should == suite }
+      its(:template) { should == template }
+
+      context "with no template id" do
+        let(:_template_id) { nil }
+        it               { should be_nil }
+      end
+      context "with existing template" do
+        let(:suite)    { create(:suite, template: create(:suite, is_template: true)) }
+        it             { should == suite }
+        its(:template) { should_not == template}
       end
     end
   end
