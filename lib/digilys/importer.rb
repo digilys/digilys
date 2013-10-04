@@ -14,6 +14,7 @@ class Digilys::Importer
     @mappings         = hash
   end
 
+
   def import_instances(io)
     @parser.on_parse_complete = method(:handle_instance_object)
     @parser.parse(io)
@@ -22,6 +23,11 @@ class Digilys::Importer
     @parser.on_parse_complete = method(:handle_user_object)
     @parser.parse(io)
   end
+  def import_students(io)
+    @parser.on_parse_complete = method(:handle_student_object)
+    @parser.parse(io)
+  end
+
 
   def handle_instance_object(obj)
     attributes, meta = partition_object(obj)
@@ -60,6 +66,26 @@ class Digilys::Importer
     return user
   end
 
+  def handle_student_object(obj)
+    attributes, meta = partition_object(obj)
+    _id              = meta["_id"]
+
+    return if mappings["students"].has_key?(_id) && Student.exists?(mappings["students"][_id])
+
+    student = Student.where(personal_id: attributes["personal_id"]).first
+
+    unless student
+      student = Student.new do |s|
+        attributes.each { |k, v| s[k] = v }
+        s.instance = Instance.find(mappings["instances"][meta["_instance_id"]])
+      end
+      student.save!
+    end
+
+    mappings["students"][_id] = student.id
+
+    return student
+  end
 
   private
 

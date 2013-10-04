@@ -69,6 +69,38 @@ describe Digilys::Importer do
         its(:values) { should match_array(users.collect(&:id)) }
       end
     end
+
+    describe ".import_students" do
+      let(:method) { :import_students }
+
+      let(:instance)    { create(:instance) }
+      let(:instance_id) { "export-1" }
+      let(:mappings)    { {
+        "instances" => { instance_id => instance.id }
+      } }
+
+      let(:input)  {
+        Yajl.dump(
+          attributes_for(:student).
+          except(:instance).
+          merge(_instance_id: instance_id).merge(_id: "export-123")
+        ) +
+        Yajl.dump(
+          attributes_for(:student).
+          except(:instance).
+          merge(_instance_id: instance_id).merge(_id: "export-124")
+        )
+      }
+
+      subject(:students) { Student.all }
+      it                 { should have(2).items }
+
+      context "mappings" do
+        subject      { importer.mappings["students"] }
+        its(:keys)   { should match_array(%w(export-123 export-124)) }
+        its(:values) { should match_array(students.collect(&:id)) }
+      end
+    end
   end
 
   context "handlers" do
@@ -142,6 +174,48 @@ describe Digilys::Importer do
         context "in mapping" do
           subject { result; importer.mappings["users"] }
           it      { should include("export-123" => user.id) }
+        end
+      end
+    end
+
+    describe ".handle_student_object" do
+      let(:model)       { :student }
+      let(:exclude)     { [ :instance ] }
+
+      let(:instance)    { create(:instance) }
+      let(:instance_id) { "export-1" }
+
+      let(:meta)        { { _id: "export-123", _instance_id: instance_id } }
+      let(:method)      { :handle_student_object }
+
+      before(:each) do
+        importer.mappings["instances"] = { instance_id => instance.id }
+      end
+
+      subject(:result) { importer.handle_student_object(object) }
+
+      it               { should_not be_new_record }
+      its(:attributes) { should include(attributes.except(:data).stringify_keys) }
+      its(:attributes) { should include("data" => {}) }
+      its(:instance)   { should == instance }
+
+      context "with existing mapping" do
+        before(:each) do
+          student = create(:student)
+          importer.mappings["students"]["export-123"] = student.id
+        end
+        it "does not create a new object" do
+          result.should be_nil
+          Student.count(:all).should == 1
+        end
+      end
+      context "with existing student personal id" do
+        let!(:student) { create(:student, personal_id: object[:personal_id]) }
+        it             { should == student }
+
+        context "in mapping" do
+          subject { result; importer.mappings["students"] }
+          it      { should include("export-123" => student.id) }
         end
       end
     end

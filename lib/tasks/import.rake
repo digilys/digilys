@@ -298,6 +298,7 @@ namespace :app do
     task all: :setup do
       Rake::Task["app:import:instances"].invoke
       Rake::Task["app:import:users"].invoke
+      Rake::Task["app:import:students"].invoke
     end
 
     desc "Import instances"
@@ -321,6 +322,18 @@ namespace :app do
         @importer.import_users(File.open(file, "r"))
       else
         puts "Export file not found: users.json"
+      end
+    end
+
+    desc "Import students"
+    task students: :setup do
+      file = File.join(ENV["export_dir"], "students.json")
+
+      if File.file?(file)
+        puts "Importing students from #{file}"
+        @importer.import_students(File.open(file, "r"))
+      else
+        puts "Export file not found: students.json"
       end
     end
   end
