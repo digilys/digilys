@@ -85,6 +85,10 @@ class Digilys::Importer
     @parser.on_parse_complete = method(:handle_suite_evaluation_object)
     @parser.parse(io)
   end
+  def import_results(io)
+    @parser.on_parse_complete = method(:handle_result_object)
+    @parser.parse(io)
+  end
 
 
   def handle_instance_object(obj)
@@ -370,6 +374,43 @@ class Digilys::Importer
 
     return evaluation
   end
+
+  def handle_result_object(obj)
+    attributes, meta = partition_object(obj)
+    _id              = meta["_id"]
+    evaluation_id    = mappings["suite_evaluations"][meta["_evaluation_id"]]
+    student_id       = mappings["students"][meta["_student_id"]]
+
+    return if mappings["results"].has_key?(_id) && Result.exists?(mappings["results"][_id]) ||
+      !Evaluation.exists?(evaluation_id) ||
+      !Student.exists?(student_id)
+
+    result = Result.where(evaluation_id: evaluation_id, student_id: student_id).first
+
+    if result
+      # Ensure proper date parsing
+      temp = Result.new
+      temp.created_at = attributes["created_at"]
+
+      if result.created_at < temp.created_at
+        result.value = attributes["value"]
+        result.save!
+      end
+    else
+      result = Result.new do |r|
+        attributes.each { |k, v| r[k] = v }
+        r.evaluation = Evaluation.find(evaluation_id)
+        r.student    = Student.find(student_id)
+      end
+      result.save!
+    end
+
+    mappings["results"][_id] = result.id
+
+
+    return result
+  end
+
 
   private
 

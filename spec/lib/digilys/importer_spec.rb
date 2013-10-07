@@ -511,6 +511,44 @@ describe Digilys::Importer do
         its(:values) { should match_array(suite_evaluations.collect(&:id)) }
       end
     end
+
+    describe ".import_result" do
+      let(:method)        { :import_results }
+
+      let(:evaluation)    { create(:suite_evaluation) }
+      let(:evaluation_id) { "export-1" }
+      let(:student1)      { create(:student) }
+      let(:student1_id)   { "export-2" }
+      let(:student2)      { create(:student) }
+      let(:student2_id)   { "export-3" }
+      let(:mappings)      { {
+        "suite_evaluations" => { evaluation_id => evaluation.id },
+        "students"          => { student1_id    => student1.id, student2_id => student2.id }
+      } }
+
+      let(:exclude)     { [ ] }
+      let(:input)  {
+        Yajl.dump(
+          attributes_for(:result).
+          except(*exclude).
+          merge(_evaluation_id: evaluation_id, _student_id: student1_id, _id: "export-123")
+        ) +
+        Yajl.dump(
+          attributes_for(:result).
+          except(*exclude).
+          merge(_evaluation_id: evaluation_id, _student_id: student2_id, _id: "export-124")
+        )
+      }
+
+      subject(:results) { Result.all }
+      it                { should have(2).items }
+
+      context "mappings" do
+        subject      { importer.mappings["results"] }
+        its(:keys)   { should match_array(%w(export-123 export-124)) }
+        its(:values) { should match_array(results.collect(&:id)) }
+      end
+    end
   end
 
   context "handlers" do
@@ -1221,6 +1259,84 @@ describe Digilys::Importer do
         it "does not create a new object" do
           result.should be_nil
           Evaluation.with_type(:suite).count(:all).should == 1
+        end
+      end
+    end
+
+    describe ".handle_result_object" do
+      let(:model)         { :result }
+      let(:exclude)       { [ ] }
+
+      let(:evaluation)    { create(:suite_evaluation) }
+      let(:evaluation_id) { "export-1" }
+      let(:student)       { create(:student) }
+      let(:student_id)    { "export-2" }
+
+      let(:meta)          { { _id: "export-123", _evaluation_id: evaluation_id, _student_id: student_id, color: :yellow } }
+      let(:method)        { :handle_result_object }
+
+      before(:each) do
+        importer.mappings["suite_evaluations"] = { evaluation_id => evaluation.id } if evaluation_id
+        importer.mappings["students"]          = { student_id    => student.id }    if student_id
+      end
+
+      subject(:result) { importer.handle_result_object(object) }
+
+      it               { should_not be_new_record }
+      its(:attributes) { should include(attributes.except(:color).stringify_keys) }
+      its(:color)      { should == :yellow }
+      its(:student)    { should == student }
+      its(:evaluation) { should == evaluation }
+
+      context "without evaluation" do
+        before(:each) do
+          importer.mappings["suite_evaluations"] = { }
+        end
+        it { should be_nil }
+      end
+      context "without student" do
+        before(:each) do
+          importer.mappings["students"] = { }
+        end
+        it { should be_nil }
+      end
+      context "with existing result" do
+        let(:meta)       { {
+          _id:            "export-123",
+          _evaluation_id: evaluation_id,
+          _student_id:    student_id,
+          value:          0,
+          color:          :red,
+          created_at:     created_at
+        } }
+        let!(:existing_result) {
+          create(:result,
+            evaluation: evaluation,
+            student:    student,
+            value:      1,
+            created_at: "2013-06-06T10:11:26+02:00"
+          )
+        }
+
+        context "created before" do
+          let(:created_at) { "2013-06-05T10:11:26+02:00" }
+          it               { should == existing_result }
+          its(:value)      { should == 1}
+        end
+        context "created after" do
+          let(:created_at) { "2013-06-07T10:11:26+02:00" }
+          it               { should == existing_result }
+          its(:value)      { should == 0 }
+        end
+      end
+      context "with existing mapping" do
+        before(:each) do
+          result = create(:result)
+          importer.mappings["results"]["export-123"] = result.id
+        end
+        it "does not create a new object" do
+          result.should be_nil
+          Result.count(:all).should == 1
         end
       end
     end
