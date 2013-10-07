@@ -543,10 +543,10 @@ class Evaluation < ActiveRecord::Base
 
 
   def validate_instance
-    if self.type.try(:generic?)
-      errors.add_on_blank(:instance)
-    else
+    if self.type.try(:suite?)
       errors.add(:instance, :not_nil) if !self.instance.blank?
+    else
+      errors.add_on_blank(:instance)
     end
   end
 

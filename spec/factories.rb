@@ -129,7 +129,6 @@ FactoryGirl.define do
       date     { suite.is_template ? nil : Date.today }
     end
     factory :evaluation_template do
-      instance nil
       type     :template
     end
     factory :generic_evaluation do

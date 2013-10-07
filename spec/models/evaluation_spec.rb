@@ -153,7 +153,7 @@ describe Evaluation do
         it { should_not allow_value(create(:suite)).for(:suite) }
         it { should_not validate_presence_of(:suite) }
         it { should_not allow_value("2013-04-29").for(:date) }
-        it { should_not validate_presence_of(:instance) }
+        it { should     validate_presence_of(:instance) }
       end
       context "generic" do
         subject { build(:generic_evaluation) }

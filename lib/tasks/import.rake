@@ -84,6 +84,8 @@ namespace :app do
         evaluation.stanine9_min  = attributes[:stanine9].try(:min)
         evaluation.stanine9_max  = attributes[:stanine9].try(:max)
 
+        evaluation.instance_id   = ENV["instance_id"]
+
         if evaluation.valid?
           valid << evaluation
         else
