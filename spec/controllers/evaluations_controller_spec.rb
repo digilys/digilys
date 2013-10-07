@@ -11,9 +11,9 @@ describe EvaluationsController do
   let(:other_generic_evaluation) { create(:generic_evaluation, instance: instance) }
 
   describe "#instance_filter" do
-    it "allows all evaluation templates" do
-      get :show, id: create(:evaluation_template).id
-      response.should be_success
+    it "disallows evaluation templates" do
+      get :show, id: create(:evaluation_template, instance: instance).id
+      response.status.should == 404
     end
   end
 
@@ -24,9 +24,11 @@ describe EvaluationsController do
     end
     it "generates a 404 if the suite instance does not match" do
       get :show, id: other_evaluation.id
+      response.status.should == 404
     end
     it "generates a 404 if the instance does not match" do
       get :show, id: other_generic_evaluation.id
+      response.status.should == 404
     end
   end
 
@@ -68,10 +70,6 @@ describe EvaluationsController do
     end
     it "generates a 404 if the suite instance does not match" do
       post :create, evaluation: valid_parameters_for(:evaluation).merge(type: :suite, suite_id: other_suite.id)
-      response.status.should == 404
-    end
-    it "generates a 404 if the instance does not match" do
-      post :create, evaluation: valid_parameters_for(:evaluation).merge(type: :generic, instance_id: instance.id)
       response.status.should == 404
     end
     it "sets the instance from the current user's active instance" do

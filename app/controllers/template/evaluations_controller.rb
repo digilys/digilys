@@ -1,6 +1,8 @@
 class Template::EvaluationsController < ApplicationController
   load_and_authorize_resource
 
+  before_filter :instance_filter
+
   def index
     @evaluations = @evaluations.with_type(:template)
     @evaluations = @evaluations.search(params[:q]).result        if has_search_param?
@@ -18,5 +20,12 @@ class Template::EvaluationsController < ApplicationController
 
   def new
     @evaluation.type = :template
+  end
+
+
+  private
+
+  def instance_filter
+    @evaluations = @evaluations.where(instance_id: current_instance_id) if @evaluations
   end
 end

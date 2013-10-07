@@ -20,7 +20,7 @@ class EvaluationsController < ApplicationController
   end
 
   def create
-    @evaluation.instance = current_instance if @evaluation.type.try(:generic?)
+    @evaluation.instance = current_instance unless @evaluation.type.try(:suite?)
 
     if @evaluation.save
       flash[:success] = t(:"evaluations.create.success.#{@evaluation.type}")
@@ -116,11 +116,10 @@ class EvaluationsController < ApplicationController
   end
 
   def instance_filter
-    if @evaluation.type.try(:generic?)
+    if suite = @evaluation.try(:suite) || @suite
+      raise ActiveRecord::RecordNotFound if suite.instance_id != current_instance_id
+    elsif @evaluation && !@evaluation.new_record?
       raise ActiveRecord::RecordNotFound if @evaluation.instance_id != current_instance_id
-    else
-      suite = @evaluation.try(:suite) || @suite
-      raise ActiveRecord::RecordNotFound if suite && suite.instance_id != current_instance_id
     end
   end
 end

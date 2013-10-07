@@ -3,9 +3,12 @@ require 'spec_helper'
 describe Template::EvaluationsController do
   login_user(:admin)
 
+  let(:instance) { create(:instance) }
+
   describe "GET #index" do
-    let!(:templates) { create_list(:evaluation_template, 2) }
-    let!(:others)    { create_list(:generic_evaluation,  2) }
+    let!(:templates)      { create_list(:evaluation_template, 2) }
+    let!(:others)         { create_list(:generic_evaluation,  2) }
+    let!(:other_instance) { create(     :evaluation_template, instance: instance) }
 
     it "gives a list of generic evaluations" do
       get :index
@@ -21,7 +24,11 @@ describe Template::EvaluationsController do
 
   describe "GET #search" do
     let(:template) { create(:evaluation_template) }
-    let!(:other)   { [ create(:evaluation_template), create(:generic_evaluation, name: template.name) ] }
+    let!(:other)   { [
+        create(:evaluation_template),
+        create(:generic_evaluation,  name: template.name),
+        create(:evaluation_template, name: template.name, instance: instance)
+    ] }
 
     it "returns matching template evaluations as json" do
       get :search, q: { name_cont: template.name }
