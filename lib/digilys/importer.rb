@@ -81,6 +81,10 @@ class Digilys::Importer
     @parser.on_parse_complete = method(:handle_evaluation_template_object_for_hierarchy)
     @parser.parse(io)
   end
+  def import_suite_evaluations(io)
+    @parser.on_parse_complete = method(:handle_suite_evaluation_object)
+    @parser.parse(io)
+  end
 
 
   def handle_instance_object(obj)
@@ -347,6 +351,25 @@ class Digilys::Importer
     return evaluation
   end
 
+  def handle_suite_evaluation_object(obj)
+    attributes, meta = partition_object(obj)
+    _id              = meta["_id"]
+    _template_id     = meta["_template_id"]
+    template_id      = mappings["evaluation_templates"][_template_id]
+
+    return if mappings["suite_evaluations"].has_key?(_id) && Evaluation.exists?(mappings["suite_evaluations"][_id])
+
+    evaluation = Evaluation.new do |e|
+      attributes.each { |k, v| e[k] = v }
+      e.suite    = Suite.find(mappings["suites"][meta["_suite_id"]])
+      e.template = Evaluation.find(template_id) if !template_id.blank? && Evaluation.exists?(template_id)
+    end
+    evaluation.save!
+
+    mappings["suite_evaluations"][_id] = evaluation.id
+
+    return evaluation
+  end
 
   private
 

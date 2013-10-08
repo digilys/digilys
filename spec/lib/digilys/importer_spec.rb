@@ -450,6 +450,67 @@ describe Digilys::Importer do
         its(:values) { should match_array(evaluation_templates.collect(&:id)) }
       end
     end
+
+    describe ".import_suite_evaluations" do
+      let(:method)   { :import_suite_evaluations }
+
+      let(:suite)    { create(:suite) }
+      let(:suite_id) { "export-1" }
+      let(:mappings) { {
+        "suites" => { suite_id => suite.id }
+      } }
+
+      let(:exclude)     { [
+        :instance,
+        :template,
+        :suite,
+        :red_min,
+        :red_max,
+        :yellow_min,
+        :yellow_max,
+        :green_min,
+        :green_max,
+        :stanine1_min,
+        :stanine1_max,
+        :stanine2_min,
+        :stanine2_max,
+        :stanine3_min,
+        :stanine3_max,
+        :stanine4_min,
+        :stanine4_max,
+        :stanine5_min,
+        :stanine5_max,
+        :stanine6_min,
+        :stanine6_max,
+        :stanine7_min,
+        :stanine7_max,
+        :stanine8_min,
+        :stanine8_max,
+        :stanine9_min,
+        :stanine9_max,
+      ] }
+      let(:input)  {
+        Yajl.dump(
+          attributes_for(:suite_evaluation).
+          except(*exclude).
+          merge(_suite_id: suite_id, _id: "export-123")
+        ) +
+        Yajl.dump(
+          attributes_for(:suite_evaluation).
+          except(*exclude).
+          merge(_suite_id: suite_id, _id: "export-124")
+        )
+      }
+
+      subject(:suite_evaluations) { Evaluation.all }
+      it                          { should have(2).items }
+
+      context "mappings" do
+        subject      { importer.mappings["suite_evaluations"] }
+        its(:keys)   { should match_array(%w(export-123 export-124)) }
+        its(:values) { should match_array(suite_evaluations.collect(&:id)) }
+      end
+    end
   end
 
   context "handlers" do
@@ -1087,6 +1148,80 @@ describe Digilys::Importer do
         let(:evaluation) { create(:evaluation_template, template: create(:evaluation_template)) }
         it               { should     == evaluation }
         its(:template)   { should_not == template}
+      end
+    end
+
+    describe ".handle_suite_evaluation_object" do
+      let(:model)       { :suite_evaluation }
+      let(:exclude)     { [
+        :instance,
+        :template,
+        :suite,
+        :red_min,
+        :red_max,
+        :yellow_min,
+        :yellow_max,
+        :green_min,
+        :green_max,
+        :stanine1_min,
+        :stanine1_max,
+        :stanine2_min,
+        :stanine2_max,
+        :stanine3_min,
+        :stanine3_max,
+        :stanine4_min,
+        :stanine4_max,
+        :stanine5_min,
+        :stanine5_max,
+        :stanine6_min,
+        :stanine6_max,
+        :stanine7_min,
+        :stanine7_max,
+        :stanine8_min,
+        :stanine8_max,
+        :stanine9_min,
+        :stanine9_max,
+      ] }
+
+      let(:suite)       { create(:suite) }
+      let(:suite_id)    { "export-2" }
+      let(:template)    { create(:evaluation_template) }
+      let(:template_id) { "export-3" }
+
+      let(:meta)        { { _id: "export-123", _suite_id: suite_id, _template_id: template_id } }
+      let(:method)      { :handle_suite_evaluation_object }
+
+      before(:each) do
+        importer.mappings["suites"]               = { suite_id    => suite.id }    if suite_id
+        importer.mappings["evaluation_templates"] = { template_id => template.id } if template_id
+      end
+
+      subject(:result) { importer.handle_suite_evaluation_object(object) }
+
+      it               { should_not be_new_record }
+      its(:attributes) { should include(attributes.stringify_keys) }
+      its(:suite)      { should == suite }
+      its(:template)   { should == template }
+
+      context "without template id" do
+        let(:template_id) { nil }
+        its(:template)    { should be_nil }
+      end
+      context "without template" do
+        before(:each) do
+          importer.mappings["evaluation_templates"] = { }
+        end
+        its(:template)    { should be_nil }
+      end
+      context "with existing mapping" do
+        before(:each) do
+          suite_evaluation = create(:suite_evaluation)
+          importer.mappings["suite_evaluations"]["export-123"] = suite_evaluation.id
+        end
+        it "does not create a new object" do
+          result.should be_nil
+          Evaluation.with_type(:suite).count(:all).should == 1
+        end
       end
     end
   end
