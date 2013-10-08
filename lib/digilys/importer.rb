@@ -97,6 +97,10 @@ class Digilys::Importer
     @parser.on_parse_complete = method(:handle_table_state_object)
     @parser.parse(io)
   end
+  def import_roles(io)
+    @parser.on_parse_complete = method(:handle_role_object)
+    @parser.parse(io)
+  end
 
 
   def handle_instance_object(obj)
@@ -465,6 +469,45 @@ class Digilys::Importer
 
     return table_state
   end
+
+  def handle_role_object(obj)
+    attributes, meta = partition_object(obj)
+    name             = attributes["name"]
+    resource_type    = attributes["resource_type"]
+
+    if resource_type
+      resource_class = resource_type.constantize
+      resource_id    = mappings[resource_type.tableize][meta["_resource_id"]]
+
+      return if resource_id && !resource_class.exists?(resource_id)
+    else
+      resource_id    = nil
+      resource_class = nil
+    end
+
+    _users = meta["_users"]
+    users  = []
+
+    _users.each do |_u|
+      user_id = mappings["users"][_u]
+      next if !user_id || !User.exists?(user_id)
+
+      user = User.find(user_id)
+
+      if resource_id
+        user.add_role name, resource_class.find(resource_id)
+      elsif resource_class
+        user.add_role name, resource_class
+      else
+        user.add_role name
+      end
+
+      users << user
+    end
+
+    return users
+  end
+
 
   private
 

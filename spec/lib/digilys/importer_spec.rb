@@ -618,6 +618,42 @@ describe Digilys::Importer do
         its(:values) { should match_array(table_states.collect(&:id)) }
       end
     end
+
+    describe ".import_roles" do
+      let(:method)   { :import_roles }
+
+      let(:users)    { create_list(:user, 2) }
+      let(:_users)   { [ "export-1", "export-2" ]}
+
+      let(:mappings) { {
+        "suites" => { "export-12" => create(:suite).id },
+        "users"  => { "export-1"  => users.first.id,   "export-2" => users.second.id }
+      } }
+
+      let(:input) {
+        Yajl.dump({
+          name:          "admin",
+          resource_type: nil,
+          _resource_id:  nil,
+          _users:        _users
+        }) +
+        Yajl.dump({
+          name:          "manager",
+          resource_type: "Suite",
+          _resource_id:  nil,
+          _users:        _users
+        }) +
+        Yajl.dump({
+          name:          "member",
+          resource_type: "Suite",
+          _resource_id:  "export-12",
+          _users:        _users
+        })
+      }
+
+      subject { User.all }
+      it      { should have(2).items }
+    end
   end
 
   context "handlers" do
@@ -1513,6 +1549,72 @@ describe Digilys::Importer do
           table_state.should be_nil
           TableState.count(:all).should == 1
         end
+      end
+    end
+
+    describe ".handle_role_object" do
+      let(:users)         { create_list(:user, 2) }
+      let(:user_ids)      { [ "export-1", "export-2" ] }
+      let(:suite)         { create(:suite) }
+      let(:suite_id)      { "export-3" }
+
+      let(:name)          { "admin" }
+      let(:resource_type) { nil }
+      let(:_resource_id)  { nil }
+      let(:_users)        { user_ids }
+
+      let(:object)        { {
+        name:             name,
+        resource_type:    resource_type,
+        _resource_id:     _resource_id,
+        _users:           _users
+      } }
+
+      before(:each) do
+        importer.mappings["users"]  = {}
+        importer.mappings["suites"] = { suite_id => suite.id }
+
+        users.each_with_index do |u, i|
+          importer.mappings["users"][user_ids[i]] = u.id
+          u.should_not have_role(:admin)
+        end
+      end
+
+      subject(:result) { importer.handle_role_object(object) }
+
+      context "with a global role" do
+        it               { should have(2).items }
+        its(:first)      { should have_role(:admin) }
+        its(:second)     { should have_role(:admin) }
+      end
+      context "with resource class" do
+        let(:resource_type) { "Suite" }
+        let(:name)          { "manager" }
+
+        before(:each) do
+          users.each { |u| u.should_not have_role(:manager, Suite) }
+        end
+
+        its(:first)  { should     have_role(:manager, Suite) }
+        its(:second) { should     have_role(:manager, Suite) }
+        its(:first)  { should_not have_role(:manager) }
+        its(:second) { should_not have_role(:manager) }
+      end
+      context "with resource instance" do
+        let(:resource_type) { "Suite" }
+        let(:_resource_id)  { suite_id }
+        let(:name)          { "member" }
+
+        before(:each) do
+          users.each { |u| u.should_not have_role(:member, suite) }
+        end
+
+        its(:first)  { should     have_role(:member, suite) }
+        its(:second) { should     have_role(:member, suite) }
+        its(:first)  { should_not have_role(:member, Suite) }
+        its(:second) { should_not have_role(:member, Suite) }
+        its(:first)  { should_not have_role(:member) }
+        its(:second) { should_not have_role(:member) }
       end
     end
   end

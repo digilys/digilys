@@ -311,6 +311,7 @@ namespace :app do
       Rake::Task["app:import:results"].invoke
       Rake::Task["app:import:settings"].invoke
       Rake::Task["app:import:table_states"].invoke
+      Rake::Task["app:import:roles"].invoke
     end
 
     desc "Import instances"
@@ -490,6 +491,18 @@ namespace :app do
         @importer.import_table_states(File.open(file, "r"))
       else
         puts "Export file not found: table_states.json"
+      end
+    end
+
+    desc "Import roles"
+    task roles: :setup do
+      file = File.join(ENV["export_dir"], "roles.json")
+
+      if File.file?(file)
+        puts "Importing roles from #{file}"
+        @importer.import_roles(File.open(file, "r"))
+      else
+        puts "Export file not found: roles.json"
       end
     end
   end
