@@ -126,7 +126,7 @@ FactoryGirl.define do
       instance nil
       suite
       type     :suite
-      date     { suite.is_template ? nil : Date.today }
+      date     { suite.try(:is_template) ? nil : Date.today }
     end
     factory :evaluation_template do
       type     :template

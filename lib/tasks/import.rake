@@ -306,6 +306,7 @@ namespace :app do
       Rake::Task["app:import:meetings"].invoke
       Rake::Task["app:import:activities"].invoke
       Rake::Task["app:import:generic_evaluations"].invoke
+      Rake::Task["app:import:evaluation_templates"].invoke
     end
 
     desc "Import instances"
@@ -425,6 +426,18 @@ namespace :app do
         @importer.import_generic_evaluations(File.open(file, "r"))
       else
         puts "Export file not found: generic_evaluations.json"
+      end
+    end
+
+    desc "Import evaluation_templates"
+    task evaluation_templates: :setup do
+      file = File.join(ENV["export_dir"], "evaluation_templates.json")
+
+      if File.file?(file)
+        puts "Importing evaluation_templates from #{file}"
+        @importer.import_evaluation_templates(File.open(file, "r"))
+      else
+        puts "Export file not found: evaluation_templates.json"
       end
     end
   end

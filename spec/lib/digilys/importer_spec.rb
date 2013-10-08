@@ -379,6 +379,77 @@ describe Digilys::Importer do
         it          { should match_array(Evaluation.all.collect(&:id) << 0) }
       end
     end
+
+    describe ".import_evaluation_templates" do
+      let(:method)      { :import_evaluation_templates }
+
+      let(:instance)    { create(:instance) }
+      let(:instance_id) { "export-1" }
+      let(:mappings)    { {
+        "instances" => { instance_id => instance.id }
+      } }
+
+      let(:exclude)     { [
+        :instance,
+        :template,
+        :suite,
+        :red_min,
+        :red_max,
+        :yellow_min,
+        :yellow_max,
+        :green_min,
+        :green_max,
+        :stanine1_min,
+        :stanine1_max,
+        :stanine2_min,
+        :stanine2_max,
+        :stanine3_min,
+        :stanine3_max,
+        :stanine4_min,
+        :stanine4_max,
+        :stanine5_min,
+        :stanine5_max,
+        :stanine6_min,
+        :stanine6_max,
+        :stanine7_min,
+        :stanine7_max,
+        :stanine8_min,
+        :stanine8_max,
+        :stanine9_min,
+        :stanine9_max,
+      ] }
+      let(:input)  {
+        Yajl.dump(
+          attributes_for(:evaluation_template).
+          except(*exclude).
+          merge(_instance_id: instance_id, _template_id: nil, _id: "export-123")
+        ) +
+        Yajl.dump(
+          attributes_for(:evaluation_template).
+          except(*exclude).
+          merge(_instance_id: instance_id, _template_id: "export-123", _id: "export-124")
+        )
+      }
+
+      subject(:evaluation_templates) { Evaluation.all }
+      it                             { should have(2).items }
+
+      it "should set the template hierarchy" do
+        evaluation1, evaluation2 = evaluation_templates
+
+        child          = evaluation1.template ? evaluation1 : evaluation2
+        template       = evaluation1.template ? evaluation2 : evaluation1
+
+        template.template.should be_nil
+        child.template.should  == template
+      end
+
+      context "mappings" do
+        subject      { importer.mappings["evaluation_templates"] }
+        its(:keys)   { should match_array(%w(export-123 export-124)) }
+        its(:values) { should match_array(evaluation_templates.collect(&:id)) }
+      end
+    end
   end
 
   context "handlers" do
@@ -926,6 +997,96 @@ describe Digilys::Importer do
           result.should be_nil
           Evaluation.count(:all).should == 1
         end
+      end
+    end
+
+    describe ".handle_evaluation_template_object" do
+      let(:model)       { :evaluation_template }
+      let(:exclude)     { [
+        :instance,
+        :template,
+        :suite,
+        :red_min,
+        :red_max,
+        :yellow_min,
+        :yellow_max,
+        :green_min,
+        :green_max,
+        :stanine1_min,
+        :stanine1_max,
+        :stanine2_min,
+        :stanine2_max,
+        :stanine3_min,
+        :stanine3_max,
+        :stanine4_min,
+        :stanine4_max,
+        :stanine5_min,
+        :stanine5_max,
+        :stanine6_min,
+        :stanine6_max,
+        :stanine7_min,
+        :stanine7_max,
+        :stanine8_min,
+        :stanine8_max,
+        :stanine9_min,
+        :stanine9_max,
+      ] }
+
+      let(:instance)    { create(:instance) }
+      let(:instance_id) { "export-1" }
+
+      let(:meta)        { { _id: "export-123", _instance_id: instance_id } }
+      let(:method)      { :handle_evaluation_template_object }
+
+      before(:each) do
+        importer.mappings["instances"] = { instance_id => instance.id }
+      end
+
+      subject(:result) { importer.handle_evaluation_template_object(object) }
+
+      it               { should_not be_new_record }
+      its(:attributes) { should include(attributes.stringify_keys) }
+      its(:instance)   { should == instance }
+
+      context "with existing mapping" do
+        before(:each) do
+          evaluation_template = create(:evaluation_template)
+          importer.mappings["evaluation_templates"]["export-123"] = evaluation_template.id
+        end
+        it "does not create a new object" do
+          result.should be_nil
+          Evaluation.count(:all).should == 1
+        end
+      end
+    end
+
+    describe ".handle_evaluation_template_object_for_hierarchy" do
+      let(:evaluation)   { create(:evaluation_template) }
+      let(:template)     { create(:evaluation_template) }
+      let(:_id)          { "export-13" }
+      let(:_template_id) { "export-12" }
+      let(:object)       { { _id: _id, _template_id: _template_id } }
+
+      before(:each) do
+        importer.mappings["evaluation_templates"] = {
+          "export-12" => template,
+          "export-13" => evaluation
+        }
+      end
+
+      subject        { importer.handle_evaluation_template_object_for_hierarchy(object) }
+
+      it             { should == evaluation }
+      its(:template) { should == template }
+
+      context "with no template id" do
+        let(:_template_id) { nil }
+        it               { should be_nil }
+      end
+      context "with existing template" do
+        let(:evaluation) { create(:evaluation_template, template: create(:evaluation_template)) }
+        it               { should     == evaluation }
+        its(:template)   { should_not == template}
       end
     end
   end

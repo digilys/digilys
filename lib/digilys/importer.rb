@@ -72,6 +72,15 @@ class Digilys::Importer
       end
     end
   end
+  def import_evaluation_templates(io)
+    @parser.on_parse_complete = method(:handle_evaluation_template_object)
+    @parser.parse(io)
+
+    io.rewind
+
+    @parser.on_parse_complete = method(:handle_evaluation_template_object_for_hierarchy)
+    @parser.parse(io)
+  end
 
 
   def handle_instance_object(obj)
@@ -310,24 +319,54 @@ class Digilys::Importer
   end
 
   def handle_generic_evaluation_object(obj)
-    attributes, meta = partition_object(obj)
-    _id              = meta["_id"]
+    return handle_common_evaluation_object(obj, "generic_evaluations")
+  end
 
-    return if mappings["generic_evaluations"].has_key?(_id) && Evaluation.exists?(mappings["generic_evaluations"][_id])
+  def handle_evaluation_template_object(obj)
+    return handle_common_evaluation_object(obj, "evaluation_templates")
+  end
 
-    generic_evaluation = Evaluation.new do |e|
-      attributes.each { |k, v| e[k] = v }
-      e.instance = Instance.find(mappings["instances"][meta["_instance_id"]])
+  def handle_evaluation_template_object_for_hierarchy(obj)
+    _, meta       = partition_object(obj)
+    _id           = meta["_id"]
+    _template_id  = meta["_template_id"]
+
+    evaluation_id = mappings["evaluation_templates"][_id]
+    template_id   = mappings["evaluation_templates"][_template_id]
+
+    return if evaluation_id.blank? || template_id.blank?
+
+    evaluation = Evaluation.where(id: evaluation_id).first
+    template   = Evaluation.where(id: template_id).first
+
+    if evaluation && template && evaluation.template.nil?
+      evaluation.template = template
+      evaluation.save!
     end
-    generic_evaluation.save!
 
-    mappings["generic_evaluations"][_id] = generic_evaluation.id
-
-    return generic_evaluation
+    return evaluation
   end
 
 
   private
+
+  def handle_common_evaluation_object(obj, mapping_key)
+    attributes, meta = partition_object(obj)
+    _id              = meta["_id"]
+
+    return if mappings[mapping_key].has_key?(_id) && Evaluation.exists?(mappings[mapping_key][_id])
+
+    evaluation = Evaluation.new do |e|
+      attributes.each { |k, v| e[k] = v }
+      e.instance = Instance.find(mappings["instances"][meta["_instance_id"]])
+    end
+    evaluation.save!
+
+    mappings[mapping_key][_id] = evaluation.id
+
+    return evaluation
+  end
+
 
   # Splits an object hash into two, one with
   # keys starting with "_", the other with keys without
