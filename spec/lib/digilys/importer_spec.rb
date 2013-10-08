@@ -549,6 +549,44 @@ describe Digilys::Importer do
         its(:values) { should match_array(results.collect(&:id)) }
       end
     end
+
+    describe ".import_setting" do
+      let(:method)        { :import_settings }
+
+      let(:customizable)    { create(:suite) }
+      let(:customizable_id) { "export-1" }
+      let(:customizer1)      { create(:user) }
+      let(:customizer1_id)   { "export-2" }
+      let(:customizer2)      { create(:user) }
+      let(:customizer2_id)   { "export-3" }
+      let(:mappings)      { {
+        "suites" => { customizable_id => customizable.id },
+        "users"  => { customizer1_id  => customizer1.id, customizer2_id => customizer2.id }
+      } }
+
+      let(:exclude)     { [ :customizer, :customizable ] }
+      let(:input)  {
+        Yajl.dump(
+          attributes_for(:setting).
+          except(*exclude).
+          merge(_customizable_id: customizable_id, customizable_type: "Suite", _customizer_id: customizer1_id, customizer_type: "User", _id: "export-123")
+        ) +
+        Yajl.dump(
+          attributes_for(:setting).
+          except(*exclude).
+          merge(_customizable_id: customizable_id, customizable_type: "Suite", _customizer_id: customizer2_id, customizer_type: "User", _id: "export-124")
+        )
+      }
+
+      subject(:settings) { Setting.all }
+      it                 { should have(2).items }
+
+      context "mappings" do
+        subject      { importer.mappings["settings"] }
+        its(:keys)   { should match_array(%w(export-123 export-124)) }
+        its(:values) { should match_array(settings.collect(&:id)) }
+      end
+    end
   end
 
   context "handlers" do
@@ -1337,6 +1375,67 @@ describe Digilys::Importer do
         it "does not create a new object" do
           result.should be_nil
           Result.count(:all).should == 1
+        end
+      end
+    end
+
+    describe ".handle_setting_object" do
+      let(:model)    { :setting }
+      let(:exclude)  { [ :customizer, :customizable ] }
+
+      let(:suite)    { create(:suite) }
+      let(:suite_id) { "export-1" }
+      let(:user)     { create(:user) }
+      let(:user_id)  { "export-2" }
+
+      let(:meta)     { {
+        _id:               "export-123",
+        _customizer_id:    user_id,
+        customizer_type:   "User",
+        _customizable_id:  suite_id,
+        customizable_type: "Suite"
+      } }
+      let(:method)   { :handle_setting_object }
+
+      before(:each) do
+        importer.mappings["suites"] = { suite_id => suite.id } if suite_id
+        importer.mappings["users"]  = { user_id  => user.id }  if user_id
+      end
+
+      subject(:setting)  { importer.handle_setting_object(object) }
+
+      it                 { should_not be_new_record }
+      its(:attributes)   { should include(attributes.stringify_keys) }
+      its(:customizer)   { should == user }
+      its(:customizable) { should == suite }
+
+      context "without a customizer id" do
+        let(:suite_id) { nil }
+        it             { should be_nil }
+      end
+      context "without a customizable id" do
+        let(:user_id) { nil }
+        it            { should be_nil }
+      end
+      context "without a customizer" do
+        before(:each) do
+          importer.mappings["users"] = {}
+        end
+        it { should be_nil }
+      end
+      context "without a customizable" do
+        before(:each) do
+          importer.mappings["suites"] = {}
+        end
+        it { should be_nil }
+      end
+      context "with existing mapping" do
+        before(:each) do
+          importer.mappings["settings"]["export-123"] = create(:setting).id
+        end
+        it "does not create a new object" do
+          setting.should be_nil
+          Setting.count(:all).should == 1
         end
       end
     end

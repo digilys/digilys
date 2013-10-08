@@ -309,6 +309,7 @@ namespace :app do
       Rake::Task["app:import:evaluation_templates"].invoke
       Rake::Task["app:import:suite_evaluations"].invoke
       Rake::Task["app:import:results"].invoke
+      Rake::Task["app:import:settings"].invoke
     end
 
     desc "Import instances"
@@ -464,6 +465,18 @@ namespace :app do
         @importer.import_results(File.open(file, "r"))
       else
         puts "Export file not found: results.json"
+      end
+    end
+
+    desc "Import settings"
+    task settings: :setup do
+      file = File.join(ENV["export_dir"], "settings.json")
+
+      if File.file?(file)
+        puts "Importing settings from #{file}"
+        @importer.import_settings(File.open(file, "r"))
+      else
+        puts "Export file not found: settings.json"
       end
     end
   end

@@ -89,6 +89,10 @@ class Digilys::Importer
     @parser.on_parse_complete = method(:handle_result_object)
     @parser.parse(io)
   end
+  def import_settings(io)
+    @parser.on_parse_complete = method(:handle_setting_object)
+    @parser.parse(io)
+  end
 
 
   def handle_instance_object(obj)
@@ -409,6 +413,32 @@ class Digilys::Importer
 
 
     return result
+  end
+
+  def handle_setting_object(obj)
+    attributes, meta     = partition_object(obj)
+    _id                  = meta["_id"]
+    customizer_mapping   = attributes["customizer_type"].tableize
+    customizer_class     = attributes["customizer_type"].constantize
+    customizer_id        = mappings[customizer_mapping][meta["_customizer_id"]]
+    customizable_mapping = attributes["customizable_type"].tableize
+    customizable_class   = attributes["customizable_type"].constantize
+    customizable_id      = mappings[customizable_mapping][meta["_customizable_id"]]
+
+    return if mappings["settings"].has_key?(_id) && Setting.exists?(mappings["settings"][_id]) ||
+      !customizer_class.exists?(customizer_id) ||
+      !customizable_class.exists?(customizable_id)
+
+    setting = Setting.new do |s|
+      attributes.each { |k, v| s[k] = v }
+      s.customizer   = customizer_class.find(customizer_id)
+      s.customizable = customizable_class.find(customizable_id)
+    end
+    setting.save!
+
+    mappings["settings"][_id] = setting.id
+
+    return setting
   end
 
 
