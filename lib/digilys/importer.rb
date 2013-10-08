@@ -93,6 +93,10 @@ class Digilys::Importer
     @parser.on_parse_complete = method(:handle_setting_object)
     @parser.parse(io)
   end
+  def import_table_states(io)
+    @parser.on_parse_complete = method(:handle_table_state_object)
+    @parser.parse(io)
+  end
 
 
   def handle_instance_object(obj)
@@ -441,6 +445,26 @@ class Digilys::Importer
     return setting
   end
 
+  def handle_table_state_object(obj)
+    attributes, meta = partition_object(obj)
+    _id              = meta["_id"]
+    base_mapping     = attributes["base_type"].tableize
+    base_class       = attributes["base_type"].constantize
+    base_id          = mappings[base_mapping][meta["_base_id"]]
+
+    return if mappings["table_states"].has_key?(_id) && TableState.exists?(mappings["table_states"][_id]) ||
+      !base_class.exists?(base_id)
+
+    table_state = TableState.new do |t|
+      attributes.each { |k, v| t[k] = v }
+      t.base = base_class.find(base_id)
+    end
+    table_state.save!
+
+    mappings["table_states"][_id] = table_state.id
+
+    return table_state
+  end
 
   private
 

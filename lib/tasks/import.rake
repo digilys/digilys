@@ -310,6 +310,7 @@ namespace :app do
       Rake::Task["app:import:suite_evaluations"].invoke
       Rake::Task["app:import:results"].invoke
       Rake::Task["app:import:settings"].invoke
+      Rake::Task["app:import:table_states"].invoke
     end
 
     desc "Import instances"
@@ -477,6 +478,18 @@ namespace :app do
         @importer.import_settings(File.open(file, "r"))
       else
         puts "Export file not found: settings.json"
+      end
+    end
+
+    desc "Import table_states"
+    task table_states: :setup do
+      file = File.join(ENV["export_dir"], "table_states.json")
+
+      if File.file?(file)
+        puts "Importing table_states from #{file}"
+        @importer.import_table_states(File.open(file, "r"))
+      else
+        puts "Export file not found: table_states.json"
       end
     end
   end

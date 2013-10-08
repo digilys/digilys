@@ -587,6 +587,37 @@ describe Digilys::Importer do
         its(:values) { should match_array(settings.collect(&:id)) }
       end
     end
+
+    describe ".import_table_state" do
+      let(:method)   { :import_table_states }
+
+      let(:base)     { create(:suite) }
+      let(:base_id)  { "export-1" }
+      let(:mappings) { { "suites" => { base_id => base.id } } }
+
+      let(:exclude)     { [ :base ] }
+      let(:input)  {
+        Yajl.dump(
+          attributes_for(:table_state).
+          except(*exclude).
+          merge(_base_id: base_id, base_type: "Suite", _id: "export-123")
+        ) +
+        Yajl.dump(
+          attributes_for(:table_state).
+          except(*exclude).
+          merge(_base_id: base_id, base_type: "Suite", _id: "export-124")
+        )
+      }
+
+      subject(:table_states) { TableState.all }
+      it                     { should have(2).items }
+
+      context "mappings" do
+        subject      { importer.mappings["table_states"] }
+        its(:keys)   { should match_array(%w(export-123 export-124)) }
+        its(:values) { should match_array(table_states.collect(&:id)) }
+      end
+    end
   end
 
   context "handlers" do
@@ -1436,6 +1467,51 @@ describe Digilys::Importer do
         it "does not create a new object" do
           setting.should be_nil
           Setting.count(:all).should == 1
+        end
+      end
+    end
+
+    describe ".handle_table_state_object" do
+      let(:model)    { :table_state }
+      let(:exclude)  { [ :base ] }
+
+      let(:suite)    { create(:suite) }
+      let(:suite_id) { "export-1" }
+
+      let(:meta)     { {
+        _id:       "export-123",
+        _base_id:  suite_id,
+        base_type: "Suite"
+      } }
+      let(:method)   { :handle_table_state_object }
+
+      before(:each) do
+        importer.mappings["suites"] = { suite_id => suite.id } if suite_id
+      end
+
+      subject(:table_state)  { importer.handle_table_state_object(object) }
+
+      it               { should_not be_new_record }
+      its(:attributes) { should include(attributes.stringify_keys) }
+      its(:base)       { should == suite }
+
+      context "without a base id" do
+        let(:suite_id) { nil }
+        it             { should be_nil }
+      end
+      context "without a customizer" do
+        before(:each) do
+          importer.mappings["suites"] = {}
+        end
+        it { should be_nil }
+      end
+      context "with existing mapping" do
+        before(:each) do
+          importer.mappings["table_states"]["export-123"] = create(:table_state).id
+        end
+        it "does not create a new object" do
+          table_state.should be_nil
+          TableState.count(:all).should == 1
         end
       end
     end
