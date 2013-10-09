@@ -29,7 +29,14 @@ class TableStatesController < ApplicationController
     end
 
     if @table_state.save
-      render json: { id: @table_state.id, name: @table_state.name }
+      render json: {
+        id:   @table_state.id,
+        name: @table_state.name,
+        urls: {
+          default: suite_table_state_path(       @suite, @table_state),
+          select:  select_suite_table_state_path(@suite, @table_state)
+        }
+      }
     else
       render json: { errors: @table_state.errors.full_messages }, status: 400
     end
@@ -44,7 +51,7 @@ class TableStatesController < ApplicationController
 
   def destroy
     @table_state.destroy
-    render json: {}
+    render json: { id: @table_state.id }
   end
 
   private

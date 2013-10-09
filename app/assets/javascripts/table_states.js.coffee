@@ -1,4 +1,5 @@
 $ ->
+    $tableStateList     = $("#table-states")
     $tableStateSelector = $("#table-state-selector")
 
     $tableStateSelector.on "change", (event) ->
@@ -43,10 +44,46 @@ $ ->
                     table_state:
                         name: name,
                         data: JSON.stringify(tableState)
+
                 success: (data, status, xhr) ->
                     $nameContainer.val("")
+
+                    # Add the the new state to the selector dropdown
                     if $tableStateSelector.find("option[value=#{data.id}]").length <= 0
                         $tableStateSelector.append($("<option value=\"#{data.id}\">#{data.name}</option>"))
+
+                    # Add the new state to the list of states
+                    if $tableStateList.find("tr[data-id=#{data.id}]").length <= 0
+                        $row = $("<tr/>")
+                        $row.attr("data-id", data.id)
+
+                        # First cell contains the link for selecting the state
+                        $("<td/>").append(
+                            $("<a/>")
+                                .attr("href", data.urls.select)
+                                .text(data.name)
+                        ).appendTo($row)
+
+                        # Second cell contains the link for destroying the state
+                        $("<td/>").append(
+                            $("<a/>")
+                                .attr("href", data.urls.default)
+                                .addClass("btn btn-small btn-danger")
+                                .attr("data-method", "delete")
+                                .attr("data-remote", "true")
+                                .attr("rel", "nofollow")
+                                .text($tableStateList.data("delete-action-name"))
+                        ).appendTo($row)
+
+                        $tableStateList.find("tbody").prepend($row)
+
                 complete: ->
                     $trigger.button("reset")
             )
+
+    # Removes the table state info after it has been deleted by a remote call
+    $tableStateList.on "ajax:success", (event, data) ->
+        # Row in listing
+        $(event.target).closest("tr").remove()
+        # Option in selector
+        $tableStateSelector.find("option[value=#{data.id}]").remove()

@@ -60,8 +60,10 @@ describe TableStatesController do
       json  = JSON.parse(response.body)
       state = TableState.find(TableState.maximum("id"))
 
-      json["id"].should   == state.id
-      json["name"].should == state.name
+      json["id"].should              == state.id
+      json["name"].should            == state.name
+      json["urls"]["default"].should == suite_table_state_path(       suite, assigns(:table_state))
+      json["urls"]["select"].should  == select_suite_table_state_path(suite, assigns(:table_state))
 
       state.base_id.should == suite.id
     end

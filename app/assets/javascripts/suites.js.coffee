@@ -64,13 +64,6 @@ $ ->
         # Store the state globally
         window.Digilys.currentResult = $button.data("value")
 
-    # Show the tools
-    $("#color-table-tools-trigger").one "click", (event) ->
-        event.preventDefault()
-        $parent = $(this).parent()
-        $parent.siblings(":hidden").show()
-        $parent.remove()
-
     # Display a popover of student data
     addedCloseHandler = false
 

@@ -139,7 +139,8 @@ sv:
       save_current_state: Spara nuvarande utseende
       change_state: Byt utseende
       clear_state: Kronologisk ordning
-      toggle_tools: Verktyg
+      tools: Verktyg
+      edit_table_state_notice: Om du skriver samma namn som ett befintligt utseende uppdateras det utseendet
     clear_color_table_state:
       success: Använder utseendet "Kronologisk ordning"
     connected_users:
