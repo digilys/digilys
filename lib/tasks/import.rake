@@ -189,9 +189,11 @@ namespace :app do
 
         student = Student.where(personal_id: attributes[:personal_id]).first_or_initialize()
 
-        student.first_name = attributes[:first_name]
-        student.last_name  = attributes[:last_name]
-        student.gender     = attributes[:gender]
+        student.first_name  = attributes[:first_name]
+        student.last_name   = attributes[:last_name]
+        student.gender      = attributes[:gender]
+
+        student.instance_id = ENV["instance_id"]
 
         if student.valid?
           valid << d.merge(model: student)
@@ -213,9 +215,18 @@ namespace :app do
         valid.each do |d|
           school_name = d[:attributes][:school]
           grade_name  = d[:attributes][:grade]
-          school      = Group.where([ "name ilike ?", school_name ]).first_or_create!(imported: true, name: school_name)
-          grade       = school.children.where([ "name ilike ?", grade_name ]).first_or_create!(imported: true, name: grade_name)
           student     = d[:model]
+
+          school = Group.where([ "name ilike ?", school_name ]).first_or_create!(
+            imported: true,
+            name: school_name,
+            instance_id: ENV["instance_id"]
+          )
+          grade = school.children.where([ "name ilike ?", grade_name ]).first_or_create!(
+            imported: true,
+            name: grade_name,
+            instance_id: ENV["instance_id"]
+          )
 
           student.save!
 

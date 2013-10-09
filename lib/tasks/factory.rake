@@ -36,12 +36,14 @@ namespace :app do
       num = (ENV["evaluations"] || 2).to_i
       results = ENV["results"]
 
-      suite = FactoryGirl.create(:suite, name: "Planering #{DateTime.now.strftime("%Y%m%d%H%M")}")
+      instance = Instance.order(:id).first
+
+      suite = FactoryGirl.create(:suite, name: "Planering #{DateTime.now.strftime("%Y%m%d%H%M")}", instance: instance)
 
       puts "New suite: #{suite.name}"
 
       1.upto(num) do |i|
-        evaluation = FactoryGirl.create(:evaluation, name: "Test ##{i}", suite: suite)
+        evaluation = FactoryGirl.create(:suite_evaluation, name: "Test ##{i}", suite: suite)
         puts "New evaluation: #{evaluation.name}"
       end
 
@@ -65,12 +67,14 @@ namespace :app do
       num_schools = (ENV["schools"] || 2).to_i
       num_classes = (ENV["classes"] || 3).to_i
 
+      instance = Instance.order(:id).first
+
       1.upto(num_schools) do |i|
-        school = FactoryGirl.create(:group, name: "Skola #{i}")
+        school = FactoryGirl.create(:group, name: "Skola #{i}", instance: instance)
         puts "New school: #{school.name}"
 
         1.upto(num_classes) do |j|
-          cls = FactoryGirl.create(:group, name: "Klass #{j}", parent: school)
+          cls = FactoryGirl.create(:group, name: "Klass #{j}", parent: school, instance: instance)
           puts "\tNew class: #{cls.name}"
         end
       end
