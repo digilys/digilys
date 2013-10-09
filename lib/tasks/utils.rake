@@ -39,4 +39,11 @@ namespace :app do
 
     puts "Admin user created: #{admin.email}, password 'adminadmin'"
   end
+
+  desc "Lists instances along with their ids"
+  task list_instances: :environment do
+    Instance.order(:id).all.each do |instance|
+      puts "#{instance.id}\t#{instance.name}"
+    end
+  end
 end
