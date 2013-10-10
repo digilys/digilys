@@ -10,9 +10,9 @@ class TableStatesController < ApplicationController
   end
 
   def select
-    current_user.save_setting!(@suite, "datatable_state" => @table_state.data)
+    current_user.save_setting!(@base, "datatable_state" => @table_state.data)
     flash[:success] = t(:"table_states.select.success", name: @table_state.name)
-    redirect_to color_table_suite_url(@suite)
+    redirect_to url_for([ :color_table, @base ])
   end
 
   def create
@@ -33,8 +33,8 @@ class TableStatesController < ApplicationController
         id:   @table_state.id,
         name: @table_state.name,
         urls: {
-          default: suite_table_state_path(       @suite, @table_state),
-          select:  select_suite_table_state_path(@suite, @table_state)
+          default: table_state_path(@table_state),
+          select:  select_table_state_path(@table_state)
         }
       }
     else
@@ -57,8 +57,8 @@ class TableStatesController < ApplicationController
   private
 
   def authorize_table_state!
-    if @suite
-      authorize! :view, @suite
+    if @base
+      authorize! :view, @base
     elsif @table_state.try(:base)
       authorize! :view, @table_state.base
     elsif @table_state
@@ -69,7 +69,7 @@ class TableStatesController < ApplicationController
   end
 
   def instance_filter
-    base = @table_state.try(:base) || @suite
-    raise ActiveRecord::RecordNotFound if base && base.respond_to?(:instance_id) && base.instance_id != current_instance_id
+    @base = @table_state.try(:base) || @suite
+    raise ActiveRecord::RecordNotFound if @base && @base.respond_to?(:instance_id) && @base.instance_id != current_instance_id
   end
 end

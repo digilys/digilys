@@ -15,7 +15,7 @@
       %button.btn.active(data-value="value") Resultat
       %button.btn(data-value="stanine") Stanine
   .span3.form-inline
-    %select#table-state-selector{data: { url: select_suite_table_state_path(@suite, ":id"),
+    %select#table-state-selector{data: { url: select_table_state_path(":id"),
       "clear-url" => clear_color_table_state_suite_path(@suite) }}
       = options_for_select([[t(:".change_state"), ""], [t(:".clear_state"), "0"]]) + options_from_collection_for_select(@suite.table_states, "id", "name")
   .span7
@@ -125,11 +125,16 @@
       = semantic_form_for @suite,
         url: add_generic_evaluations_suite_path(@suite),
         html: { class: "form-inline add-generic-evaluations-form" } do |f|
-        = f.select :generic_evaluations, options_from_collection_for_select(@generic_evaluations[:missing], :id, :name)
-        = f.action :submit, label: t(:".add_generic_evaluation_action")
+        = f.select :generic_evaluations,
+          options_from_collection_for_select(@generic_evaluations[:missing], :id, :name)
+        = f.action :submit,
+          label: t(:".add_generic_evaluation_action")
     .form-inline
-      = text_field_tag "table-state-name", nil, placeholder: TableState.human_attribute_name(:name)
-      %button#save-table-state.btn{data: { datatable: ".suite-results", url: suite_table_states_path(@suite) }}= t(:".save_current_state")
+      = text_field_tag "table-state-name",
+        nil,
+        placeholder: TableState.human_attribute_name(:name)
+      %button#save-table-state.btn{data: { datatable: ".suite-results", url: suite_table_states_path(@suite) }}
+        = t(:".save_current_state")
       %small.help-block= t(:".edit_table_state_notice")
     %table#table-states.table.table-striped.table-hover{"data-delete-action-name" => t(:".destroy_action")}
       %thead
@@ -140,9 +145,9 @@
         - @suite.table_states.each do |table_state|
           %tr{data: { id: table_state.id }}
             %td= link_to table_state.name,
-              select_suite_table_state_path(@suite, table_state)
+              select_table_state_path(table_state)
             %td= link_to t(:".destroy_action"),
-              suite_table_state_path(@suite, table_state),
+              table_state_path(table_state),
               method: :delete,
               remote: true,
               class:  "btn btn-small btn-danger"

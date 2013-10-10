@@ -69,11 +69,7 @@ Digilys::Application.routes.draw do
     resources :participants, only: :new
     resources :meetings,     only: :new
     resources :students,     only: :show
-    resources :table_states, only: [:show, :create, :update, :destroy] do
-      member do
-        get :select
-      end
-    end
+    resources :table_states, only: :create
 
     resource :visualization, only: [] do
       member do
@@ -133,6 +129,12 @@ Digilys::Application.routes.draw do
   resources :instances, except: [ :destroy ] do
     member do
       post :select
+    end
+  end
+
+  resources :table_states, only: [:show, :update, :destroy] do
+    member do
+      get :select
     end
   end
 
