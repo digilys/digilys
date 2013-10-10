@@ -45,6 +45,31 @@ $ ->
             window.Digilys.dataTable.saveState(state, url)
     )
 
+    # Filter the table by groups
+    $groupSelector = $("#suite-group-selector")
+
+    if $groupSelector.length > 0
+
+        # A change just refreshes the table
+        $groupSelector.select2().on "change", ->
+            resultTable.fnDraw()
+
+        # Filter rows depending on the groups
+        window.jQuery.fn.dataTableExt.afnFiltering.push (settings, columns, columnIdx) ->
+            filter = (parseInt(i) for i in $groupSelector.val() || [])
+
+            if filter.length < 1
+                return true
+
+            # The row's groups is contain in the data-groups attribute of the link
+            # in the first column
+            groups = $(columns[0]).data("groups")
+
+            for i in filter
+                return true if groups.indexOf(i) >= 0
+
+            return false
+
     $(".suite-results .filter input").on "keyup", ->
         $input = $(this)
         resultTable.fnFilter($input.val(), $input.closest("tr").find("input").index(this))

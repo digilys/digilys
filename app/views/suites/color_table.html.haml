@@ -14,11 +14,14 @@
     .btn-group.result-toggles
       %button.btn.active(data-value="value") Resultat
       %button.btn(data-value="stanine") Stanine
+  .span3
+    %select#suite-group-selector{multiple: true, data: { placeholder: "Visar alla grupper" }}
+      = options_for_select(@suite.group_hierarchy.collect { |g| [[g.name, g.parent.try(:name)].compact.join(", "), g.id]})
   .span3.form-inline
     %select#table-state-selector{data: { url: select_table_state_path(":id"),
       "clear-url" => clear_color_table_state_suite_path(@suite) }}
       = options_for_select([[t(:".change_state"), ""], [t(:".clear_state"), "0"]]) + options_from_collection_for_select(@suite.table_states, "id", "name")
-  .span7
+  .span2
     %a.btn{href:"#tools-modal", data: { toggle: "modal" }}
       %i.icon-wrench
       = t(:".tools")
@@ -60,7 +63,11 @@
     - @suite.students.each do |student|
       %tr
         %th.student
-          %a.student{href:"#", data: { toggle: "popover", title: student.name, "sort-key" => student.name} }
+          %a.student{href:"#",
+            data: { toggle: "popover",
+              title: student.name,
+              "sort-key" => student.name,
+              groups: student.group_ids.to_json } }
             = student.name
           = render partial: "students/details_table", locals: { student: student }
 

@@ -43,6 +43,41 @@ describe Suite do
     end
   end
 
+  describe ".group_hierarchy" do
+    let!(:l1_group1) { create(:group) }
+    let!(:l1_group2) { create(:group) }
+    let!(:l2_group1) { create(:group, parent: l1_group1) }
+    let!(:l2_group2) { create(:group, parent: l1_group1) }
+    let!(:l3_group1) { create(:group, parent: l2_group1) }
+    let!(:l3_group2) { create(:group, parent: l2_group1) }
+    let!(:l3_group3) { create(:group, parent: l2_group2) }
+
+    let!(:student1)  { create(:student) }
+    let!(:student2)  { create(:student) }
+
+    let(:suite)      { create(:suite) }
+
+    before(:each) do
+      student1.add_to_groups(l3_group1)
+      student2.add_to_groups(l3_group3)
+
+      create(:participant, suite: suite, student: student1)
+      create(:participant, suite: suite, student: student2)
+    end
+
+    subject(:groups) { suite.group_hierarchy }
+
+    it "orders the suite's associated groups by its hierarchy" do
+      groups.should == [
+        l1_group1,
+          l2_group1,
+            l3_group1,
+          l2_group2,
+            l3_group3
+      ]
+    end
+  end
+
   describe "#new_from_template" do
     let(:template)     { create(:suite, is_template: true) }
     let!(:evaluations) { create_list(:suite_evaluation, 3, suite: template) }
