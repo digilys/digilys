@@ -314,9 +314,9 @@ sv:
       roles_explanation_html: |
         <p>Kortfattad information om roller:</p>
         <ul>
-          <li><strong>Administratörer</strong> har fulla rättigheter i DigiLys, t.ex. kan de ändra andra användare</li>
-          <li><strong>Planerare</strong> kan skapa planeringar</li>
-          <li><strong>Användare</strong> kan arbeta i de planeringar de är deltagare i</li>
+          <li><strong>Administratörer</strong> har fulla rättigheter i DigiLys</li>
+          <li><strong>Planerare</strong> kan skapa planeringar och lägga till Deltagare</li>
+          <li><strong>Användare</strong> kan arbeta i de planeringar de är Deltagare</li>
         </ul>
     update:
       success: Användardetaljerna uppdaterades
