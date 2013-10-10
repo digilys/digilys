@@ -117,7 +117,7 @@ $.extend($.fn.dataTable.defaults, {
         "sLengthMenu": "Visa _MENU_ rader",
         "sLoadingRecords": "Laddar...",
         "sProcessing": "Bearbetar...",
-        "sSearch": "Sök:",
+        "sSearch": "Sök i alla kolumner:",
         "sUrl": "",
         "sZeroRecords": "Hittade inga matchande resultat",
         "oPaginate": {
