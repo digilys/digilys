@@ -7,12 +7,12 @@
 = semantic_form_for @group, url: move_students_group_path(@group), html: { id: "group-form", class: "form-horizontal" } do |f|
 
   = f.inputs do
-    - @group.students.each do |student|
+    - @group.students.order(current_name_order).each do |student|
       .boolean.input.optional.control-group
         .controls
           %label.checkbox(for="student_ids_#{student.id}")
             = check_box_tag "student_ids[]", student.id, false, id: "student_ids_#{student.id}"
-            = student.name
+            = student_name(student)
 
     = f.input :group,
       value: nil,

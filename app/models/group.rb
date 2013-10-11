@@ -8,7 +8,7 @@ class Group < ActiveRecord::Base
     order:       "name asc",
     dependent:   :nullify
 
-  has_and_belongs_to_many :students, order: "students.first_name asc, students.last_name asc"
+  has_and_belongs_to_many :students
   has_and_belongs_to_many :activities
   has_and_belongs_to_many :users,    order: "users.name asc"
 

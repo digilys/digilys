@@ -39,13 +39,13 @@
             %th.name= Student.human_attribute_name(:name)
             %th.actions &nbsp;
         %tbody
-          - @group.students.each do |student|
+          - @group.students.order(current_name_order).each do |student|
             %tr
               - if can? :update, @group
                 %td.select
                   = check_box_tag "student_ids[]", student.id, false, id: "student_ids_#{student.id}"
               %td.name
-                %label(for="student_ids_#{student.id}")= student.name
+                %label(for="student_ids_#{student.id}")= student_name(student)
               %td.actions
                 %a.btn.btn-mini{href:url_for(student)}= t(:".show_action")
 
