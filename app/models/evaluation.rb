@@ -13,14 +13,13 @@ class Evaluation < ActiveRecord::Base
     order:       "date asc",
     dependent:   :nullify
 
-  has_and_belongs_to_many :evaluation_participants,
-    class_name: "Participant"
+  has_and_belongs_to_many :evaluation_participants, class_name: "Participant", include: :student
   has_and_belongs_to_many :users
 
   belongs_to :suite,              inverse_of: :evaluations
   has_many   :suite_participants, through:    :suite,       source: :participants
-  has_many   :results,            include:    :student,     order: "students.first_name, students.last_name", dependent: :destroy
-  has_many   :students,           through:    :results,     order: "students.first_name, students.last_name"
+  has_many   :results,            include:    :student,     dependent: :destroy
+  has_many   :students,           through:    :results
 
   acts_as_taggable_on :categories
 

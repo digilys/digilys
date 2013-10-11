@@ -74,13 +74,14 @@
               - @evaluation.users.each do |user|
                 %li= user.name
 
-      - unless @evaluation.evaluation_participants.blank?
+      - unless @evaluation.evaluation_participants.order(current_name_order).blank?
         %tr.participants
           %th= t(:".participants")
           %td
             %ul.unstyled
               - @evaluation.participants.each do |participant|
-                %li= link_to(participant.name, suite_student_path(participant.suite, participant.student))
+                %li
+                  = link_to(student_name(participant.student), suite_student_path(participant.suite, participant.student))
 
 - if @evaluation.type.suite? && !@evaluation.results.blank?
   %table.table.table-bordered.table-hover.evaluation-results.results-table
@@ -91,9 +92,9 @@
         - if @evaluation.stanines?
           %th.evaluation= t(:".stanines")
     %tbody
-      - @evaluation.results.each do |result|
+      - @evaluation.results.order(current_name_order(:students)).each do |result|
         %tr
-          %th.student= link_to result.student.name, result.student
+          %th.student= link_to student_name(result.student), result.student
           %td.result{class: result_color_class(result)}= result.display_value
           - if @evaluation.stanines?
             %td.result{class: result_color_class(result)}= result.stanine

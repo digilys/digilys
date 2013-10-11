@@ -17,7 +17,7 @@
     .row
       .span6
         = rf.input :value,
-          label: rf.object.student.name,
+          label: student_name(rf.object.student),
           input_html: { autofocus: first,
             tabindex: 1,
             disabled: rf.object.absent,

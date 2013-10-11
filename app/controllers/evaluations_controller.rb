@@ -72,7 +72,9 @@ class EvaluationsController < ApplicationController
       end
     end
 
-    @evaluation.results.sort_by! { |r| r.student.name }
+    first, second = current_name_order.split(/\s*,\s*/)
+
+    @evaluation.results.sort_by! { |r| r.student.send(first) + r.student.send(second) }
   end
 
   def submit_report
