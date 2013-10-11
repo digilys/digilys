@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131002062258) do
+ActiveRecord::Schema.define(:version => 20131011125715) do
 
   create_table "activities", :force => true do |t|
     t.integer  "suite_id"
@@ -253,6 +253,7 @@ ActiveRecord::Schema.define(:version => 20131002062258) do
     t.string   "registered_yubikey"
     t.integer  "active_instance_id"
     t.boolean  "invisible",              :default => false
+    t.text     "preferences",            :default => "{}"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

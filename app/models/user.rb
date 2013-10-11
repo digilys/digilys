@@ -27,6 +27,8 @@ class User < ActiveRecord::Base
   validates :name, presence: true
   validates :active_instance, presence: true, on: :create
 
+  serialize :preferences, JSON
+
   after_create :grant_membership_to_active_instance
 
   # Yubikey specific functionality

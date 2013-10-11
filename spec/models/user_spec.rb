@@ -32,6 +32,7 @@ describe User do
     it { should     allow_mass_assignment_of(:name) }
     it { should_not allow_mass_assignment_of(:invisible) }
     it { should     allow_mass_assignment_of(:active_instance_id) }
+    it { should_not allow_mass_assignment_of(:preferences) }
   end
   context "validation" do
     it { should validate_presence_of(:name) }

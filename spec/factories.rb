@@ -6,6 +6,7 @@ FactoryGirl.define do
     password_confirmation { password }
     registered_yubikey    "abcdefghijkl"
     invisible             false
+    preferences           {}
 
     association :active_instance, factory: :instance
 
