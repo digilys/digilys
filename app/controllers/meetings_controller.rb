@@ -1,9 +1,8 @@
 class MeetingsController < ApplicationController
-  load_resource :suite
-  load_resource :meeting, through: :suite, shallow: true
+  load_and_authorize_resource :suite
+  load_and_authorize_resource through: :suite, shallow: true
 
   before_filter :instance_filter
-  before_filter :authorize_meeting!
 
   def show
   end
@@ -58,18 +57,6 @@ class MeetingsController < ApplicationController
 
 
   private
-
-  def authorize_meeting!
-    if @suite
-      authorize! :change, @suite
-    elsif @meeting.try(:suite)
-      authorize! :change, @meeting.suite
-    elsif @meeting
-      authorize! params[:action].to_sym, @meeting
-    else
-      authorize! params[:action].to_sym, Meeting
-    end
-  end
 
   def instance_filter
     suite = @meeting.try(:suite) || @suite

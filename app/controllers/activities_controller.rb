@@ -1,7 +1,6 @@
 class ActivitiesController < ApplicationController
-  load_resource :suite
-  load_resource :activity, through: :suite, shallow: true
-  before_filter :authorize_activity!
+  load_and_authorize_resource :suite
+  load_and_authorize_resource through: :suite, shallow: true
 
   
   def show
@@ -40,19 +39,5 @@ class ActivitiesController < ApplicationController
 
     flash[:success] = t(:"activities.destroy.success.#{@activity.type}")
     redirect_to suite
-  end
-
-  private
-
-  def authorize_activity!
-    if @suite
-      authorize! :change, @suite
-    elsif @activity.try(:suite)
-      authorize! :change, @activity.suite
-    elsif @activity
-      authorize! params[:action].to_sym, @activity
-    else
-      authorize! params[:action].to_sym, Activity
-    end
   end
 end

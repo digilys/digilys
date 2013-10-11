@@ -1,11 +1,10 @@
 class EvaluationsController < ApplicationController
   before_filter :load_from_template, only: :new_from_template
 
-  load_resource :suite
-  load_resource :evaluation, through: :suite, shallow: true
+  load_and_authorize_resource :suite
+  load_and_authorize_resource through: :suite, shallow: true
 
   before_filter :instance_filter
-  before_filter :authorize_evaluation!
 
 
   def show
@@ -103,18 +102,6 @@ class EvaluationsController < ApplicationController
   def load_from_template
     template    = Evaluation.find(params[:evaluation][:template_id])
     @evaluation = Evaluation.new_from_template(template, params[:evaluation])
-  end
-
-  def authorize_evaluation!
-    if @suite
-      authorize! :change, @suite
-    elsif @evaluation.try(:suite)
-      authorize! :change, @evaluation.suite
-    elsif @evaluation
-      authorize! params[:action].to_sym, @evaluation
-    else
-      authorize! params[:action].to_sym, Evaluation
-    end
   end
 
   def instance_filter

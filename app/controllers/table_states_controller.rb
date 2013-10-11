@@ -1,9 +1,8 @@
 class TableStatesController < ApplicationController
-  load_resource :suite
-  load_resource :table_state, through: :suite, shallow: true
+  load_and_authorize_resource :suite
+  load_and_authorize_resource through: :suite, shallow: true
 
   before_filter :instance_filter
-  before_filter :authorize_table_state!
 
   def show
     render json: @table_state.data
@@ -55,18 +54,6 @@ class TableStatesController < ApplicationController
   end
 
   private
-
-  def authorize_table_state!
-    if @base
-      authorize! :view, @base
-    elsif @table_state.try(:base)
-      authorize! :view, @table_state.base
-    elsif @table_state
-      authorize! params[:action].to_sym, @table_state
-    else
-      authorize! params[:action].to_sym, TableState
-    end
-  end
 
   def instance_filter
     @base = @table_state.try(:base) || @suite

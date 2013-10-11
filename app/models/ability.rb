@@ -4,53 +4,107 @@ class Ability
   def initialize(user)
     return unless user
 
-    alias_action :index, :search,     to: :list
-    alias_action :new_from_template,  to: :create
-    alias_action :confirm_destroy,    to: :destroy
+    alias_action :index, :search,    to: :list
+    alias_action :new_from_template, to: :create
+    alias_action :confirm_destroy,   to: :destroy
+
+    alias_action :submit_report,
+                 :destroy_report,
+      to: :report
+
+    alias_action :add_users,
+                 :remove_users,
+                 :select_users,
+      to: :associate_users
+
+    alias_action :add_generic_evaluations,
+                 :remove_generic_evaluations,
+      to: :associate_generic_evaluations
+
+    alias_action :add_student_data,
+                 :remove_student_data,
+      to: :associate_student_data
+
+    alias_action :save_color_table_state,
+                 :clear_color_table_state,
+      to: :associate_table_state
 
     alias_action :show,
+                 :select,
                  :color_table,
                  :search_participants,
+                 :associate_generic_evaluations,
+                 :associate_student_data,
+                 :associate_table_state,
       to: :view
 
     alias_action :update,
-                 :select_users,
-                 :add_users,
-                 :remove_users,
-                 :add_generic_evaluations,
-                 :remove_generic_evaluations,
+                 :report,
+                 :associate_users,
       to: :change
 
     if user.has_role?(:admin)
       can :manage, :all
     elsif user.has_role?(:superuser)
-      can :manage, :all
+      # Students
+      can    :manage, Student
+      cannot :destroy, Student
 
-      # Instances
-      cannot :manage, Instance
-
-      # Users
-      cannot :manage, User
+      # Groups
+      can    :manage, Group
 
       # Suites
-      cannot :manage,         Suite
-      can [ :list, :create ], Suite
+      can :create,            Suite
       can [ :view, :change ], Suite do |suite|
-        suite.is_template? || user.has_role?(:suite_manager, suite)
-      end
-      can :destroy,           Suite do |suite|
-        !suite.is_template && user.has_role?(:suite_manager, suite)
+        suite.is_template
       end
 
-      # Students
-      cannot :destroy, Student
+      # Evaluations
+      can :manage,                         Evaluation
+      cannot [ :view, :change, :destroy ], Evaluation do |evaluation|
+        evaluation.type_suite?
+      end
     end
 
-    # Suites and associated models
-    can :list,              Suite
-    can [ :view, :change ], Suite do |suite|
-      user.has_role?(:suite_contributor, suite)
+    can :list,    Suite
+    can :view,    Suite do |suite|
+      user.has_role?(  :suite_manager,     suite) ||
+        user.has_role?(:suite_member,      suite) ||
+        user.has_role?(:suite_contributor, suite)
     end
+    can :change,  Suite do |suite|
+      user.has_role?(  :suite_manager,     suite) ||
+        user.has_role?(:suite_contributor, suite)
+    end
+    can :destroy, Suite do |suite|
+      user.has_role?(:suite_manager, suite)
+    end
+
+    readonly_associations = [
+      Participant,
+      Evaluation,
+      Meeting,
+      Activity
+    ]
+
+    can :view, readonly_associations do |e|
+      e.suite &&
+        user.has_role?(:suite_manager,     e.suite) ||
+        user.has_role?(:suite_member,      e.suite) ||
+        user.has_role?(:suite_contributor, e.suite)
+    end
+    can [ :create, :change, :destroy ], readonly_associations do |e|
+      e.suite &&
+        user.has_role?(:suite_manager,     e.suite) ||
+        user.has_role?(:suite_contributor, e.suite)
+    end
+    can [ :view, :create, :change, :destroy ], TableState do |s|
+      s.base &&
+        user.has_role?(:suite_manager,     s.base) ||
+        user.has_role?(:suite_member,      s.base) ||
+        user.has_role?(:suite_contributor, s.base)
+    end
+
     can :search, [ User, Student, Group, Evaluation ]
     can :view,   [ Student, Group ]
 

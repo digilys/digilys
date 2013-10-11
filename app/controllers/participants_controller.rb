@@ -1,9 +1,8 @@
 class ParticipantsController < ApplicationController
-  load_resource :suite
-  load_resource :participant
+  load_and_authorize_resource :suite
+  load_and_authorize_resource through: :suite, shallow: true
 
   before_filter :instance_filter
-  before_filter :authorize_suite!
 
   def new
     @participant.suite = @suite
@@ -42,10 +41,6 @@ class ParticipantsController < ApplicationController
 
 
   private
-
-  def authorize_suite!
-    authorize!(:change, @suite || @participant.suite)
-  end
 
   def instance_filter
     suite = @participant.try(:suite) || @suite
