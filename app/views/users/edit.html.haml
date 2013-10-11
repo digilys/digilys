@@ -5,40 +5,50 @@
     = @user.name_was
     %small= User.model_name.human
 
-= semantic_form_for @user, html: { class: "form-horizontal" } do |f|
+.row-fluid
+  .span6
+    = semantic_form_for @user do |f|
 
-  = f.inputs t(:".details_title") do
-    = f.input :name,  required: true, input_html: { required: true, autofocus: true }
-    = f.input :email, required: true, input_html: { required: true }
+      = f.inputs t(:".details_title") do
+        = f.input :name,  required: true, input_html: { required: true, autofocus: true }
+        = f.input :email, required: true, input_html: { required: true }
 
-  = f.inputs t(:".password_title") do
-    - if @user == current_user
-      = f.input :current_password, hint: t(:".current_password_hint")
-      = f.input :password, hint: t(:".password_hint")
-      = f.input :password_confirmation
-    - else
-      = f.input :password, hint: t(:".password_for_other_hint")
-      = f.input :password_confirmation
+      = f.inputs t(:".password_title") do
+        - if @user == current_user
+          = f.input :current_password, hint: t(:".current_password_hint")
+          = f.input :password, hint: t(:".password_hint")
+          = f.input :password_confirmation
+        - else
+          = f.input :password, hint: t(:".password_for_other_hint")
+          = f.input :password_confirmation
 
-  - if can? :manage, User
-    - if Conf.multiple_instances
-      = f.inputs t(:".instances_title") do
-        = f.input :instances,
-          as: :check_boxes,
-          collection: Instance.order(:name).all
+      - if can? :manage, User
+        - if Conf.multiple_instances
+          = f.inputs t(:".instances_title") do
+            = f.input :instances,
+              as: :check_boxes,
+              collection: Instance.order(:name).all
 
-    = f.inputs t(:".roles_title") do
-      .row-fluid
-        .span6
+        = f.inputs t(:".roles_title") do
           = f.input :roles,
             as: :select,
             include_blank: User.model_name.human,
             collection: Role.where(name: %w(admin superuser)).collect { |r| [ t(:"roles.#{r.name}"), r.id ] },
             input_html: { multiple: false }
-        .span6
           .alert.alert-box.alert-info
             = t(:".roles_explanation_html")
 
-  = f.actions do
-    = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary" }
-    %a.btn{href:users_path()}= t(:"cancel_action")
+      = f.actions do
+        = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary" }
+        %a.btn{href:users_path()}= t(:"cancel_action")
+
+  .span6
+    = semantic_form_for @user do |f|
+      = f.inputs t(:".preferences_title") do
+        = f.input :name_ordering,
+          as: :select,
+          include_blank: false,
+          collection: { t(:".first_name_order") => :first_name, t(:".last_name_order") => :last_name }
+      = f.actions do
+        = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary" }
+        %a.btn{href:users_path()}= t(:"cancel_action")

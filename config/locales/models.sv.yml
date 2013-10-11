@@ -151,6 +151,7 @@ sv:
         registered_yubikey: YubiKey-lösenord
         instances: Instanser
         active_instance: Instans
+        name_ordering: Sorteringsordning för elever
       instruction:
         title: Titel
         film: HTML-kod för film

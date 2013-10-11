@@ -33,6 +33,9 @@ describe User do
     it { should_not allow_mass_assignment_of(:invisible) }
     it { should     allow_mass_assignment_of(:active_instance_id) }
     it { should_not allow_mass_assignment_of(:preferences) }
+
+    # Virtual
+    it { should     allow_mass_assignment_of(:name_ordering) }
   end
   context "validation" do
     it { should validate_presence_of(:name) }
@@ -95,5 +98,32 @@ describe User do
     end
 
     its(:instances) { should match_array(member_of + [ user.active_instance ])}
+  end
+
+  context ".name_ordering" do
+    let(:ordering)      { :last_name }
+    subject(:user)      { build(:user, preferences: { "name_ordering" => ordering })}
+    its(:name_ordering) { should == ordering }
+
+    context "defaults to first_name" do
+      let(:ordering)      { nil }
+      its(:name_ordering) { should == :first_name }
+    end
+  end
+
+  context ".name_ordering=" do
+    let(:ordering)      { nil }
+    subject(:user)      { build(:user) }
+    before(:each)       { user.name_ordering = ordering }
+    its(:name_ordering) { should == :first_name }
+
+    context "with a string" do
+      let(:ordering)      { "last_name" }
+      its(:name_ordering) { should == :last_name }
+    end
+    context "with an unknown value" do
+      let(:foo)           { :zomg }
+      its(:name_ordering) { should == :first_name }
+    end
   end
 end

@@ -22,7 +22,8 @@ class User < ActiveRecord::Base
     :remember_me,
     :role_ids,
     :name,
-    :active_instance_id
+    :active_instance_id,
+    :name_ordering
 
   validates :name, presence: true
   validates :active_instance, presence: true, on: :create
@@ -61,6 +62,21 @@ class User < ActiveRecord::Base
 
   def instances
     @instances ||= Instance.with_role(:member, self)
+  end
+
+
+  def name_ordering
+    self.preferences ||= {}
+    self.preferences["name_ordering"].try(:to_sym) || :first_name
+  end
+  def name_ordering=(name_ordering)
+    self.preferences ||= {}
+    self.preferences["name_ordering"] = case name_ordering.try(:to_sym)
+    when :first_name then :first_name
+    when :last_name  then :last_name
+    else
+      nil
+    end
   end
 
 

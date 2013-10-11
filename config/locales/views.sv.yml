@@ -305,7 +305,7 @@ sv:
 
   users:
     edit:
-      edit_self_title: Ändra användaruppgifter
+      edit_self_title: Ändra användaruppgifter och inställningar
       details_title: Användaruppgifter
       password_title: Lösenord
       current_password_hint: Ange ditt nuvarande lösenord för att ändra lösenordet.
@@ -320,6 +320,9 @@ sv:
           <li><strong>Planerare</strong> kan skapa planeringar och lägga till Deltagare</li>
           <li><strong>Användare</strong> kan arbeta i de planeringar de är Deltagare</li>
         </ul>
+      preferences_title: Inställningar
+      first_name_order: Förnamn, efternamn
+      last_name_order: Efternamn, förnamn
     update:
       success: Användardetaljerna uppdaterades
     confirm_destroy:
