@@ -13,7 +13,7 @@
   %tbody
     - @students.each do |student|
       %tr
-        %td.name= link_to(student.name, student)
+        %td.name= link_to(student_name(student), student)
         %td.groups
           %small= student.groups.collect(&:name).join(", ")
 

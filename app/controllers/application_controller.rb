@@ -19,6 +19,17 @@ class ApplicationController < ActionController::Base
   end
   helper_method :current_instance
 
+  def current_name_order(prefix = nil)
+    prefix = "#{prefix}." if prefix
+
+    if current_user.name_ordering == :last_name
+      "#{prefix}last_name, #{prefix}first_name"
+    else
+      "#{prefix}first_name, #{prefix}last_name"
+    end
+  end
+  helper_method :current_name_order
+
   def has_search_param?(allow_blank = false)
     if params[:q] && !allow_blank
       params[:q] = params[:q].reject { |_, v| v.blank? }

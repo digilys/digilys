@@ -4,13 +4,13 @@ class StudentsController < ApplicationController
   before_filter :instance_filter
 
   def index
-    @students = @students.order(:first_name, :last_name)
+    @students = @students.order(current_name_order)
     @students = @students.search(params[:q]).result      if has_search_param?
     @students = @students.page(params[:page])
   end
 
   def search
-    @students      = @students.order(:last_name, :first_name).search(params[:q]).result.page(params[:page])
+    @students      = @students.order(current_name_order).search(params[:q]).result.page(params[:page])
     json           = {}
     json[:results] = @students.collect { |s| { id: s.id, text: s.name } }
     json[:more]    = !@students.last_page?

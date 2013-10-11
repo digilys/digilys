@@ -11,6 +11,25 @@ describe ApplicationController do
     it                    { should == instances.second }
   end
 
+  describe "#current_name_order" do
+    let(:name_ordering) { nil }
+    let(:user)          { build(:user, name_ordering: name_ordering) }
+    before(:each)       { controller.stub(:current_user).and_return(user) }
+    subject             { controller.send(:current_name_order) }
+    it                  { should == "first_name, last_name" }
+
+    context "by last_name" do
+      let(:name_ordering) { :last_name }
+      it                  { should == "last_name, first_name" }
+    end
+
+    context "with prefix" do
+      let(:name_ordering) { :last_name }
+      subject             { controller.send(:current_name_order, :students) }
+      it                  { should == "students.last_name, students.first_name" }
+    end
+  end
+
   describe "#has_search_param?" do
     let(:allow_blank) { false }
     let(:params)      { {} }

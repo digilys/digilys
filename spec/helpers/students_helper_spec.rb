@@ -1,14 +1,17 @@
 require 'spec_helper'
 
-# Specs in this file have access to a helper object that includes
-# the StudentsHelper. For example:
-#
-# describe StudentsHelper do
-#   describe "string concat" do
-#     it "concats two strings with spaces" do
-#       helper.concat_strings("this","that").should == "this that"
-#     end
-#   end
-# end
 describe StudentsHelper do
+  describe "#student_name" do
+    let(:student)    { build(:student, first_name: "zomg", last_name: "lol") }
+    let(:name_order) { :first_name }
+    before(:each)    { helper.stub(:current_user).and_return(build(:user, name_ordering: name_order)) }
+
+    subject          { helper.student_name(student) }
+    it               { should == "zomg lol" }
+
+    context "reversed" do
+      let(:name_order) { :last_name }
+      it               { should == "lol, zomg" }
+    end
+  end
 end
