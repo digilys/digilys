@@ -969,7 +969,7 @@ describe Evaluation do
     it              { should match_array(upcoming) }
   end
 
-  describe "#where_suite_contributor" do
+  describe "#where_suite_member" do
     let(:user)                     { create(:superuser) }
     let(:contributed_suite)        { create(:suite) }
     let(:managed_suite)            { create(:suite) }
@@ -978,11 +978,11 @@ describe Evaluation do
     let!(:not_allowed_evaluations) { create_list(:suite_evaluation, 3, suite: not_allowed_suite) }
 
     before(:each) do
-      user.add_role :suite_contributor, contributed_suite
-      user.add_role :suite_manager,     managed_suite
+      user.add_role :suite_member,  contributed_suite
+      user.add_role :suite_manager, managed_suite
     end
 
-    subject { Evaluation.where_suite_contributor(user).all }
+    subject { Evaluation.where_suite_member(user).all }
 
     it { should match_array(allowed_evaluations) }
   end

@@ -12,14 +12,14 @@ class IndexController < ApplicationController
     @suites = Suite.
       regular.
       where(instance_id: current_instance_id).
-      with_role([:suite_manager, :suite_contributor], current_user).
+      with_role([:suite_manager, :suite_member], current_user).
       order(:updated_at).
       limit(10)
 
     evaluations = Evaluation.
       with_type(:suite).
       in_instance(current_instance_id).
-      where_suite_contributor(current_user).
+      where_suite_member(current_user).
       order("date asc")
 
     overdue_evaluations     = evaluations.overdue.without_explicit_users + current_user.evaluations.overdue.order(:updated_at)
@@ -30,7 +30,7 @@ class IndexController < ApplicationController
 
     @meetings = Meeting.
       in_instance(current_instance_id).
-      where_suite_contributor(current_user).
+      where_suite_member(current_user).
       upcoming.
       order("date asc").
       limit(10)

@@ -177,7 +177,7 @@ describe Activity do
     it      { should match_array([ activity1 ])}
   end
 
-  describe "#where_suite_contributor" do
+  describe "#where_suite_member" do
     let(:user)                    { create(:superuser) }
     let(:contributed_suite)       { create(:suite) }
     let(:managed_suite)           { create(:suite) }
@@ -186,11 +186,11 @@ describe Activity do
     let!(:not_allowed_activities) { create_list(:activity, 3, suite: not_allowed_suite) }
 
     before(:each) do
-      user.add_role :suite_contributor, contributed_suite
-      user.add_role :suite_manager,     managed_suite
+      user.add_role :suite_member,  contributed_suite
+      user.add_role :suite_manager, managed_suite
     end
 
-    subject { Activity.where_suite_contributor(user).all }
+    subject { Activity.where_suite_member(user).all }
 
     it { should have(6).items }
     it { should match_array(allowed_activities) }

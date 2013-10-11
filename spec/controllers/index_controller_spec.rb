@@ -32,9 +32,9 @@ describe IndexController do
     let!(:instance_activity) { create(:activity, users: [user], status: :open,  suite: instance_suite) }
 
     before(:each) do
-      user.grant       :suite_contributor, suite
-      user.grant       :suite_contributor, instance_suite
-      other_user.grant :suite_contributor, suite
+      user.grant       :suite_member, suite
+      user.grant       :suite_member, instance_suite
+      other_user.grant :suite_member, suite
 
       overdue_evaluation_for_user.users       << user
       overdue_evaluation_for_other_user.users << other_user
