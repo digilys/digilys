@@ -45,7 +45,7 @@ class Participant < ActiveRecord::Base
 
   def add_group_users_to_suite
     if self.group && self.suite
-      self.group.users.each { |u| u.add_role :suite_contributor, self.suite }
+      self.group.users.each { |u| u.add_role :suite_member, self.suite }
     end
   end
 

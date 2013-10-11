@@ -10,7 +10,7 @@ class SuitesController < ApplicationController
 
   def index
     if !current_user.has_role?(:admin)
-      @suites = @suites.with_role([:suite_manager, :suite_contributor], current_user)
+      @suites = @suites.with_role([:suite_manager, :suite_member], current_user)
     end
 
     @suites = @suites.regular.order(:name)
@@ -120,7 +120,7 @@ class SuitesController < ApplicationController
     users = User.where(id: params[:suite][:user_id].split(",")).all
 
     users.each do |user|
-      user.add_role :suite_contributor, @suite
+      user.add_role :suite_member, @suite
     end
 
     @suite.touch
@@ -133,7 +133,7 @@ class SuitesController < ApplicationController
     users = User.where(id: params[:suite][:user_id].split(",")).all
 
     users.each do |user|
-      user.remove_role :suite_contributor, @suite
+      user.remove_role :suite_member, @suite
     end
 
     @suite.touch

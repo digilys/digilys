@@ -27,8 +27,8 @@ describe SuitesController do
       login_user(:user)
 
       before(:each) do
-        logged_in_user.grant :suite_contributor, regular_suites.first
-        logged_in_user.grant :suite_contributor, other_instance
+        logged_in_user.grant :suite_member, regular_suites.first
+        logged_in_user.grant :suite_member, other_instance
       end
 
       it "lists regular suites accessible by the user" do
@@ -296,15 +296,15 @@ describe SuitesController do
   describe "PUT #add_users" do
     let(:users) { create_list(:user, 2) }
 
-    it "gives the users suite_contributor privileges for the suite" do
-      users.first.has_role?(:suite_contributor, suite).should be_false
-      users.second.has_role?(:suite_contributor, suite).should be_false
+    it "gives the users suite_member privileges for the suite" do
+      users.first.has_role?(:suite_member, suite).should be_false
+      users.second.has_role?(:suite_member, suite).should be_false
 
       put :add_users, id: suite.id, suite: { user_id: users.collect(&:id).join(",") }
       response.should redirect_to(suite)
 
-      users.first.has_role?(:suite_contributor, suite).should be_true
-      users.second.has_role?(:suite_contributor, suite).should be_true
+      users.first.has_role?(:suite_member, suite).should be_true
+      users.second.has_role?(:suite_member, suite).should be_true
     end
     it "touches the suite" do
       updated_at = suite.updated_at
@@ -321,17 +321,17 @@ describe SuitesController do
   describe "DELETE #remove_users" do
     let(:users) { create_list(:user, 2) }
 
-    it "removes the users' suite_contributor privileges for the suite" do
-      users.each { |u| u.add_role :suite_contributor, suite }
+    it "removes the users' suite_member privileges for the suite" do
+      users.each { |u| u.add_role :suite_member, suite }
 
-      users.first.has_role?(:suite_contributor, suite).should be_true
-      users.second.has_role?(:suite_contributor, suite).should be_true
+      users.first.has_role?(:suite_member, suite).should be_true
+      users.second.has_role?(:suite_member, suite).should be_true
 
       delete :remove_users, id: suite.id, suite: { user_id: users.collect(&:id).join(",") }
       response.should redirect_to(suite)
 
-      users.first.has_role?(:suite_contributor, suite).should be_false
-      users.second.has_role?(:suite_contributor, suite).should be_false
+      users.first.has_role?(:suite_member, suite).should be_false
+      users.second.has_role?(:suite_member, suite).should be_false
     end
     it "touches the suite" do
       updated_at = suite.updated_at
