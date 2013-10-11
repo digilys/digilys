@@ -19,8 +19,8 @@ class Evaluation < ActiveRecord::Base
 
   belongs_to :suite,              inverse_of: :evaluations
   has_many   :suite_participants, through:    :suite,       source: :participants
-  has_many   :results,            dependent:  :destroy
-  has_many   :students,           through:    :results,     order: "students.last_name, students.first_name"
+  has_many   :results,            include:    :student,     order: "students.first_name, students.last_name", dependent: :destroy
+  has_many   :students,           through:    :results,     order: "students.first_name, students.last_name"
 
   acts_as_taggable_on :categories
 
@@ -324,7 +324,7 @@ class Evaluation < ActiveRecord::Base
   #
   # Missing stanine values are not included in the hash
   def stanine_distribution
-    @stanine_distribution ||= self.results.group(:stanine).count
+    @stanine_distribution ||= self.results.reorder('').group(:stanine).count
   end
 
 
