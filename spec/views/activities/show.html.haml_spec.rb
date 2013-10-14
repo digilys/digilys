@@ -11,6 +11,8 @@ describe "activities/show" do
     students:   []
   ) }
   before(:each) do
+    view.stub(:current_user).and_return(build(:user))
+    view.stub(:current_name_order).and_return("first_name, last_name")
     assign(:activity, activity)
     render
   end
