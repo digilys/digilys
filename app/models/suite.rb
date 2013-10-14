@@ -9,8 +9,8 @@ class Suite < ActiveRecord::Base
     dependent:   :nullify
 
   has_many :users,        through: :roles,        uniq: true,          order: "name asc, email asc"
-  has_many :participants, inverse_of: :suite,     include: :student,   order: "students.first_name asc, students.last_name asc", dependent: :destroy
-  has_many :students,     through: :participants, order: "first_name asc, last_name asc"
+  has_many :participants, inverse_of: :suite,     include: :student,   dependent: :destroy
+  has_many :students,     through: :participants
   has_many :groups,       through: :students,     order: "groups.name asc", uniq: true
   has_many :evaluations,  inverse_of: :suite,     order: "date asc",   dependent: :destroy
   has_many :results,      through: :evaluations

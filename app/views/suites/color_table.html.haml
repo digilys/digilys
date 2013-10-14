@@ -60,15 +60,16 @@
           %input{type: "text", placeholder: t(:".search_action")}
 
   %tbody
-    - @suite.students.each do |student|
+    - @suite.students.order(current_name_order).each do |student|
       %tr
         %th.student
+          - name = student_name(student)
           %a.student{href:"#",
             data: { toggle: "popover",
-              title: student.name,
-              "sort-key" => student.name,
-              groups: student.group_ids.to_json } }
-            = student.name
+            title: name,
+            "sort-key" => name,
+            groups: student.group_ids.to_json } }
+            = name
           = render partial: "students/details_table", locals: { student: student }
 
         - @suite.student_data.each do |key|

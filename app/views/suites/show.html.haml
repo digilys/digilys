@@ -43,7 +43,7 @@
       %h3= Participant.model_name.human(count: 2)
       .btn-group
         %a.btn.btn-small{href: new_suite_participant_path(@suite)}= t(:".participant.add")
-      = render partial: "participants/list", object: @suite.participants, as: :participants
+      = render partial: "participants/list", object: @suite.participants.order(current_name_order(:students)), as: :participants
     .span6
       %h3= t(:".users.title")
       .btn-group
