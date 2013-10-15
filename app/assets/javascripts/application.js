@@ -19,6 +19,6 @@
 //= require dataTables/jquery.dataTables
 //= require lib/ColReorder
 //= require lib/jquery.placeholder.js
-//= require defaults
+//= require_tree ./defaults
 //= require core
 //= require_tree .
