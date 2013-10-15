@@ -1,10 +1,5 @@
 window.Digilys ?= {}
 
-window.Digilys.loadMask = ($fields) ->
-    $fields.css("position", "relative")
-    $fields.append('<div class="load-mask"/>')
-
-
 # Common method for initializing a select2-based autocomplete
 window.Digilys.autocomplete = (selectorOrElem, options = {}) ->
 

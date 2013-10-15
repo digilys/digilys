@@ -178,7 +178,7 @@ $ ->
 
         $field.data("preventNavigationConfirmation", true)
         $field.on "change", (event) ->
-            window.Digilys.loadMask($("form"))
+            new Digilys.LoadMask($("form"))
 
             $form = $field.parents("form")
 
