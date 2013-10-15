@@ -81,25 +81,3 @@ $ ->
     ).on("submit", ->
         window.onbeforeunload = null
     )
-
-window.jQuery.fn.dataTableExt.oSort["sort-key-pre"] = (a) ->
-    key = $(a).data("sort-key")
-
-    if key == "-"
-        return ""
-    else
-        return key
-
-window.jQuery.fn.dataTableExt.oSort["sort-key-asc"] = window.jQuery.fn.dataTableExt.oSort["string-asc"]
-window.jQuery.fn.dataTableExt.oSort["sort-key-desc"] = window.jQuery.fn.dataTableExt.oSort["string-desc"]
-
-window.jQuery.fn.dataTableExt.ofnSearch["sort-key"] = (a) ->
-    $a = $(a)
-    cls = if !window.Digilys || !window.Digilys.currentResult then "value" else window.Digilys.currentResult
-
-    $value = $a.find(".#{cls}")
-
-    if $value.length > 0
-        return $.trim($value.text())
-    else
-        return $a.data("sort-key")
