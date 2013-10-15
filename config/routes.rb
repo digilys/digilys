@@ -152,7 +152,8 @@ Digilys::Application.routes.draw do
 
   devise_for :users, path: "authenticate"
 
-  mount RailsAdmin::Engine => "/radmin", as: "rails_admin"
+  mount RailsAdmin::Engine   => "/radmin", as: "rails_admin"
+  mount JasmineRails::Engine => "/specs"   if defined?(JasmineRails)
 
   # The priority is based upon order of creation:
   # first created -> highest priority.

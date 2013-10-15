@@ -51,6 +51,7 @@ group :test, :development do
   gem "factory_girl",       "~> 4.2.0"
   gem "factory_girl_rails", "~> 4.2.1"
   gem "capybara",           "~> 2.1.0"
+  gem "jasmine-rails",      "~> 0.4.6"
 end
 group :test do
   gem "shoulda-matchers", "~> 2.4.0"
