@@ -60,6 +60,7 @@ describe Ability do
   context "Superuser" do
     let(:user) { create(:superuser) }
     it         { should     be_able_to(:manage,  :all) }
+    it         { should_not be_able_to(:manage,  Instance) }
     it         { should_not be_able_to(:manage,  User) }
     it         { should_not be_able_to(:destroy, Student) }
 

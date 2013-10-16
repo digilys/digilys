@@ -27,6 +27,9 @@ class Ability
     elsif user.has_role?(:superuser)
       can :manage, :all
 
+      # Instances
+      cannot :manage, Instance
+
       # Users
       cannot :manage, User
 
