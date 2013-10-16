@@ -40,7 +40,7 @@
           = link_to "",
             remove_student_data_suite_path(@suite, key: key),
             method: :delete,
-            class: "icon-trash"
+            class: "icon-trash remove-column-action"
       - evaluations.each do |evaluation|
         %th.evaluation
           = evaluation.name
@@ -48,7 +48,7 @@
             = link_to "",
               remove_generic_evaluations_suite_path(@suite, evaluation_id: evaluation.id),
               method: :delete,
-              class: "icon-trash"
+              class: "icon-trash remove-column-action"
 
         -# Initialize the tracking variables
         - values[evaluation.id]   = []

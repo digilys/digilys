@@ -115,3 +115,11 @@ $ ->
 
             addedCloseHandler = true
 
+
+    # Handle column removal. This just hijacks any link and triggers the Rails
+    # delete action, and has to be done because there is no way to prevent dataTables
+    # from doing a sort even if the user clicks a link inside a sortable header
+    $(".suite-results .remove-column-action").on "click", (event) ->
+        event.preventDefault()
+        $.rails.handleMethod($(this))
+        return false
