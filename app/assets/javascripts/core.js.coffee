@@ -27,16 +27,7 @@ $ ->
     )
 
     $("input.tag-field").each ->
-        $field = $(this)
-
-        tags = $field.data("existing-tags") ? []
-
-        $field.select2(
-            tags: tags
-        )
-
-        if $field.data("autofocus")
-            $field.select2("open")
+        new Digilys.TagField($(this))
 
     $("form:not(.prevent-navigation-confirmation)").on("change", ":input", (event) ->
         if !$(event.target).data("preventNavigationConfirmation")
