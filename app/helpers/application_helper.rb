@@ -111,7 +111,7 @@ module ApplicationHelper
           e.editor.on("init", function(ev) {
             try {
               tinyMCE.execCommand("mceFocus", false, ev.target.id);
-            catch(err) { }
+            } catch(err) { }
           });
         }
       });
