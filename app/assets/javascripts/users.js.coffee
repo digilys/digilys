@@ -1,6 +1,3 @@
 $ ->
-    window.Digilys.autocomplete(
-        ".user-autocomplete-field",
-        data: (term, page) ->
-            { q: { name_or_email_cont: term }, page: page }
-    )
+    $(".user-autocomplete-field").each ->
+        new Digilys.Autocomplete($(this), "name_or_email_cont")

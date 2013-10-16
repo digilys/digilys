@@ -1,9 +1,6 @@
 $ ->
-    window.Digilys.autocomplete(
-        ".student-autocomplete-field",
-        data: (term, page) ->
-            { q: { first_name_or_last_name_cont: term }, page: page }
-    )
+    $(".student-autocomplete-field").each ->
+        new Digilys.Autocomplete($(this), "first_name_or_last_name_cont")
 
     # Trigger the destroy field for a generic result if the value is changed to
     # a blank value

@@ -1,12 +1,7 @@
 $ ->
     $(".suite-template-autocomplete-field").each ->
-        window.Digilys.autocomplete(
-            this,
-            data: (term, page) ->
-                { q: { name_cont: term }, page: page }
-        )
         $field = $(this)
-
+        new Digilys.Autocomplete($field)
 
         $field.data("preventNavigationConfirmation", true)
         $field.on "change", (event) ->

@@ -1,36 +1,5 @@
 window.Digilys ?= {}
 
-# Common method for initializing a select2-based autocomplete
-window.Digilys.autocomplete = (selectorOrElem, options = {}) ->
-
-    options.results ?= (data, page) ->
-        { results: data.results, more: data.more }
-
-    $(selectorOrElem).each ->
-        $field = $(this)
-
-        opts =
-            width:              "off"
-            multiple:           $field.data("multiple")
-            minimumInputLength: 0
-            placeholder:        $field.data("placeholder")
-            ajax:
-                url:            $field.data("url")
-                results:        options.results
-                data:           options.data
-
-        opts.formatResult = options.formatResult if options.formatResult
-
-        $field.select2(opts)
-
-        data = $field.data("data")
-
-        if data
-            $field.select2("data", data)
-
-        if $field.data("autofocus")
-            $field.select2("open")
-
 # Callback for saving data table state, with throttling functionality
 window.Digilys.dataTable ?= {}
 window.Digilys.dataTable.stateTimeoutId = null

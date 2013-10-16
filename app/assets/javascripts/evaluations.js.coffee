@@ -16,7 +16,7 @@ $ ->
         $form = $(this)
 
         $form.find(".evaluation-participants-autocomplete-field").each ->
-            window.Digilys.Autocomplete.activityStudentsGroups(this)
+            new window.Digilys.StudentGroupAutocomplete($(this))
 
         $maxResult     = $("#evaluation_max_result")
         $redMinText    = $("#evaluation_red_min_text")
@@ -159,22 +159,9 @@ $ ->
             $form.find("." + $(this).val() +  "-fields").show()
 
     $(".evaluation-template-autocomplete-field").each ->
-
-        window.Digilys.autocomplete(
-            this,
-            data: (term, page) ->
-                { q: { name_or_description_cont: term }, page: page }
-            formatResult: (result, container, query, escapeMarkup) ->
-                nameMarkup = []
-                window.Select2.util.markMatch(result.name || "", query.term, nameMarkup, escapeMarkup)
-
-                descriptionMarkup = []
-                window.Select2.util.markMatch(result.description || "", query.term, descriptionMarkup, escapeMarkup)
-
-                return nameMarkup.join("") + '<small>' + descriptionMarkup.join("") + "</small>"
-        )
-
         $field = $(this)
+
+        new Digilys.DescriptionAutocomplete($field)
 
         $field.data("preventNavigationConfirmation", true)
         $field.on "change", (event) ->
