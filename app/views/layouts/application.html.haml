@@ -84,10 +84,10 @@
 
       = bootstrap_flash
 
-      - if fullpage ||= false || !user_signed_in? || !current_user.has_any_role?(:admin, :superuser)
-        = content_for?(:content) ? yield(:content) : yield
-      - else
-        .row-fluid
+      .row-fluid
+        - if fullpage ||= false || !user_signed_in? || !current_user.has_any_role?(:admin, :superuser)
+          = content_for?(:content) ? yield(:content) : yield
+        - else
           .sidebar.span3
             .well
               %ul.nav.nav-list
