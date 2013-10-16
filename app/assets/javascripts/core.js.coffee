@@ -29,10 +29,5 @@ $ ->
     $("input.tag-field").each ->
         new Digilys.TagField($(this))
 
-    $("form:not(.prevent-navigation-confirmation)").on("change", ":input", (event) ->
-        if !$(event.target).data("preventNavigationConfirmation")
-            window.onbeforeunload = ->
-                return window.Digilys.navigationConfirmation
-    ).on("submit", ->
-        window.onbeforeunload = null
-    )
+    $("form:not(.prevent-navigation-confirmation)").each ->
+        new Digilys.WarnableForm($(this), Digilys.navigationConfirmation)
