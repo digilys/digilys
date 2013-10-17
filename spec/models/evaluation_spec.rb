@@ -65,6 +65,9 @@ describe Evaluation do
       it { should allow_mass_assignment_of(:"color_for_grade_#{grade}") }
       it { should allow_mass_assignment_of(:"stanine_for_grade_#{grade}") }
     end
+    it { should     allow_mass_assignment_of(:series)}
+    it { should     allow_mass_assignment_of(:series_id)}
+    it { should_not allow_mass_assignment_of(:is_series_current)}
   end
   context "validation" do
     it { should validate_presence_of(:name) }
@@ -139,6 +142,8 @@ describe Evaluation do
         it { should     allow_value("2013-04-29").for(:date) }
         it { should_not allow_value("201304-29").for(:date) }
         it { should_not validate_presence_of(:instance) }
+        it { should     allow_value(build(:series)).for(:series) }
+        it { should     allow_value(nil).for(:series) }
 
         context "and with suite template" do
           subject { build(:suite_evaluation, suite: create(:suite, is_template: true)) }
@@ -154,6 +159,7 @@ describe Evaluation do
         it { should_not validate_presence_of(:suite) }
         it { should_not allow_value("2013-04-29").for(:date) }
         it { should     validate_presence_of(:instance) }
+        it { should_not allow_value(build(:series)).for(:series) }
       end
       context "generic" do
         subject { build(:generic_evaluation) }
@@ -162,6 +168,7 @@ describe Evaluation do
         it { should_not validate_presence_of(:suite) }
         it { should_not allow_value("2013-04-29").for(:date) }
         it { should     validate_presence_of(:instance) }
+        it { should_not allow_value(build(:series)).for(:series) }
       end
     end
   end

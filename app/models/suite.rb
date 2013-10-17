@@ -13,6 +13,7 @@ class Suite < ActiveRecord::Base
   has_many :students,     through: :participants
   has_many :groups,       through: :students,     order: "groups.name asc", uniq: true
   has_many :evaluations,  inverse_of: :suite,     order: "date asc",   dependent: :destroy
+  has_many :series,                               order: "name asc",   dependent: :destroy
   has_many :results,      through: :evaluations
   has_many :meetings,     inverse_of: :suite,     dependent: :destroy
   has_many :activities,   inverse_of: :suite,     order: "start_date asc nulls last, end_date asc nulls last, name asc",   dependent: :destroy

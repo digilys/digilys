@@ -52,19 +52,21 @@ ActiveRecord::Schema.define(:version => 20131112071246) do
     t.integer  "suite_id"
     t.string   "name"
     t.integer  "max_result"
-    t.datetime "created_at",                                            :null => false
-    t.datetime "updated_at",                                            :null => false
+    t.datetime "created_at",                                                :null => false
+    t.datetime "updated_at",                                                :null => false
     t.date     "date"
     t.integer  "template_id"
-    t.string   "description",   :limit => 1024
-    t.string   "type",                          :default => "template"
-    t.string   "target",                        :default => "all"
+    t.string   "description",       :limit => 1024
+    t.string   "type",                              :default => "template"
+    t.string   "target",                            :default => "all"
     t.text     "value_aliases"
-    t.string   "value_type",                    :default => "numeric"
+    t.string   "value_type",                        :default => "numeric"
     t.text     "colors"
     t.text     "stanines"
-    t.string   "status",                        :default => "empty"
+    t.string   "status",                            :default => "empty"
     t.integer  "instance_id"
+    t.integer  "series_id"
+    t.boolean  "is_series_current",                 :default => false
   end
 
   add_index "evaluations", ["status"], :name => "index_evaluations_on_status"
@@ -176,6 +178,13 @@ ActiveRecord::Schema.define(:version => 20131112071246) do
 
   add_index "roles", ["name", "resource_type", "resource_id"], :name => "index_roles_on_name_and_resource_type_and_resource_id"
   add_index "roles", ["name"], :name => "index_roles_on_name"
+
+  create_table "series", :force => true do |t|
+    t.integer  "suite_id"
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
   create_table "settings", :force => true do |t|
     t.text     "data"

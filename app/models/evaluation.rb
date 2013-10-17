@@ -17,6 +17,7 @@ class Evaluation < ActiveRecord::Base
   has_and_belongs_to_many :users
 
   belongs_to :suite,              touch:      true,         inverse_of: :evaluations
+  belongs_to :series
   has_many   :suite_participants, through:    :suite,       source: :participants
   has_many   :results,            include:    :student,     dependent: :destroy
   has_many   :students,           through:    :results
@@ -86,7 +87,9 @@ class Evaluation < ActiveRecord::Base
     :stanine_for_grade_f,
     :results_attributes,
     :students_and_groups,
-    :user_ids
+    :user_ids,
+    :series,
+    :series_id
 
   serialize :value_aliases, JSON
   serialize :colors,        JSON
@@ -95,6 +98,7 @@ class Evaluation < ActiveRecord::Base
 
   validate  :validate_instance
   validate  :validate_suite
+  validate  :validate_series
   validate  :validate_date
 
   validates :name, presence: true
@@ -563,6 +567,10 @@ class Evaluation < ActiveRecord::Base
     else
       errors.add(:suite, :not_nil) if !self.suite.blank?
     end
+  end
+
+  def validate_series
+    errors.add(:series, :not_nil) if !self.type.try(:suite?) && !self.series.blank?
   end
 
   def validate_date
