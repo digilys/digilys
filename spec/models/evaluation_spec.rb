@@ -1029,4 +1029,25 @@ describe Evaluation do
 
     it { should match_array(without_explicit_users) }
   end
+
+  describe "#only_series_currents" do
+    it "returns all evaluations that is the current one of a series" do
+      series = create(:series)
+
+      current = create :suite_evaluation, series: series,          date: Date.today,     status: :partial
+      create           :suite_evaluation, series: series,          date: Date.yesterday, status: :complete
+      create           :suite_evaluation, series: series,          date: Date.tomorrow,  status: :empty
+      create           :suite_evaluation, series: create(:series), date: Date.today,     status: :empty
+
+      Evaluation.only_series_currents.all.should == [current]
+    end
+    it "returns all non-series evaluations" do
+      evaluations = [
+        create(:suite_evaluation,    status: :empty), # no series
+        create(:evaluation_template, status: :empty), # other types
+        create(:generic_evaluation,  status: :empty)
+      ]
+      Evaluation.only_series_currents.all.should match_array(evaluations)
+    end
+  end
 end

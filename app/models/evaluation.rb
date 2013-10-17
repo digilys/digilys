@@ -507,6 +507,13 @@ class Evaluation < ActiveRecord::Base
     where("evaluations.id not in (select evaluation_id from evaluations_users)")
   end
 
+  # For all evaluations belonging to series, remove all but
+  # the current evaluation for each series. This does not touch
+  # evaluations not belonging to a series.
+  def self.only_series_currents
+    where([ "series_id is null or is_series_current = ?", true ])
+  end
+
 
   def has_grade_stanines?
     return !@stanine_for_grade_a.blank? ||
