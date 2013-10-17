@@ -20,4 +20,63 @@ describe Series do
     it { should validate_presence_of(:name) }
     it { should validate_uniqueness_of(:name).scoped_to(:suite_id) }
   end
+
+
+  describe ".update_current!" do
+    let(:series) { create(:series) }
+
+    def create_evaluation(status, date, is_series_current = false)
+      create(
+        :suite_evaluation,
+        suite:             series.suite,
+        series:            series,
+        status:            status,
+        date:              date,
+        is_series_current: is_series_current
+      )
+    end
+
+    it "changes the series current to the latest evaluation which is not empty" do
+      previous_current = create_evaluation(:partial, Date.yesterday, true)
+      new_current      = create_evaluation(:partial, Date.today,     false)
+
+      series.update_current!
+
+      new_current.reload.is_series_current.should be_true
+      previous_current.reload.is_series_current.should be_false
+    end
+
+    it "handles when all evaluations are empty" do
+      create_evaluation(:empty, Date.today)
+      series.update_current!
+      series.evaluations(true).collect(&:is_series_current).should_not include(true)
+    end
+  end
+
+  describe ".current_evaluation" do
+    def build_evaluation(status, date)
+      create(:suite_evaluation, series: series, suite: series.suite, status: status, date: date)
+    end
+
+    let(:series) { create(:series) }
+
+    it "returns the evaluation with the latest date" do
+      expected = build_evaluation(:complete, Date.today)
+      build_evaluation(:complete, Date.yesterday)
+      series.current_evaluation.should == expected
+    end
+    it "does not return empty evaluations" do
+      expected = build_evaluation(:complete, Date.yesterday)
+      build_evaluation(:empty, Date.today)
+      series.current_evaluation.should == expected
+    end
+    it "returns partial or complete evaluations" do
+      expected = build_evaluation(:partial, Date.today)
+      build_evaluation(:complete, Date.yesterday)
+      series.current_evaluation.should == expected
+
+      expected = build_evaluation(:complete, Date.tomorrow)
+      series.current_evaluation.should == expected
+    end
+  end
 end

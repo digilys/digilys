@@ -7,4 +7,15 @@ class Series < ActiveRecord::Base
     :suite_id
 
   validates :name, presence: true, uniqueness: { scope: :suite_id }
+
+  def current_evaluation
+    self.evaluations.with_status(:partial, :complete).reorder("date desc").first
+  end
+
+  def update_current!
+    self.evaluations.update_all(is_series_current: false)
+    if current = self.current_evaluation
+      current.update_attribute(:is_series_current, true)
+    end
+  end
 end

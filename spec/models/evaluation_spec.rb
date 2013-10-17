@@ -916,6 +916,20 @@ describe Evaluation do
     end
   end
 
+  describe ".update_series_current!" do
+    let(:series)       { create(:series) }
+    let!(:evaluation1) { create(:suite_evaluation, series: series, date: Date.today,     status: :empty) }
+    let!(:evaluation2) { create(:suite_evaluation, series: series, date: Date.yesterday, status: :partial, is_series_current: true) }
+
+    it "changes the series current when the status of an evaluation changes to not empty" do
+      evaluation1.status = :partial
+      evaluation1.save
+
+      evaluation1.reload.is_series_current.should be_true
+      evaluation2.reload.is_series_current.should be_false
+    end
+  end
+
   describe "#new_from_template" do
     let(:template) { create(:evaluation_template, category_list: "foo, bar, baz", target: :male) }
     subject        { Evaluation.new_from_template(template) }

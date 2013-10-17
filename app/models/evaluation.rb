@@ -190,6 +190,7 @@ class Evaluation < ActiveRecord::Base
   after_update      :touch_results
   before_save       :set_aliases_from_value_type
   before_save       :persist_colors_and_stanines
+  after_save        :update_series_current!
 
 
   def colors_serialized
@@ -687,6 +688,12 @@ class Evaluation < ActiveRecord::Base
         self.suite_participants.with_implicit_group_ids(group_ids)
 
       self.evaluation_participant_ids = participants.collect(&:id)
+    end
+  end
+
+  def update_series_current!
+    if self.status_changed? && self.series
+      self.series.update_current!
     end
   end
 end
