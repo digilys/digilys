@@ -192,6 +192,8 @@ class Evaluation < ActiveRecord::Base
   before_save       :persist_colors_and_stanines
   before_save       :create_series_from_name
   after_save        :update_series_current!
+  after_save        :destroy_empty_series!
+  after_destroy     :destroy_empty_series!
 
 
   def colors_serialized
@@ -723,6 +725,12 @@ class Evaluation < ActiveRecord::Base
           self.create_series(name: series_name, suite_id: self.suite_id)
         end
       end
+    end
+  end
+
+  def destroy_empty_series!
+    if self.series_id_changed? && !self.series_id_was.nil? || self.destroyed?
+      Series.where(id: self.series_id_was).first.try(:destroy_on_empty!)
     end
   end
 end

@@ -951,6 +951,25 @@ describe Evaluation do
     end
   end
 
+  describe ".destroy_empty_series!" do
+    let(:series) { create(:series) }
+    let(:suite)  { series.suite }
+
+    it "destroys a series after disassociation if the series has no other evaluations" do
+      evaluation = create(:suite_evaluation, suite: suite, series: series)
+      evaluation.series = nil
+      evaluation.save!
+
+      Series.where(id: series.id).exists?.should be_false
+    end
+    it "destroys a series after evaluation destroy if the series has no other evaluations" do
+      evaluation = create(:suite_evaluation, suite: suite, series: series)
+      evaluation.destroy
+
+      Series.where(id: series.id).exists?.should be_false
+    end
+  end
+
   describe "#new_from_template" do
     let(:template) { create(:evaluation_template, category_list: "foo, bar, baz", target: :male) }
     subject        { Evaluation.new_from_template(template) }

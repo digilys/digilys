@@ -18,4 +18,8 @@ class Series < ActiveRecord::Base
       current.update_attribute(:is_series_current, true)
     end
   end
+
+  def destroy_on_empty!
+    destroy if self.evaluations.empty?
+  end
 end

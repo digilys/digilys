@@ -79,4 +79,19 @@ describe Series do
       series.current_evaluation.should == expected
     end
   end
+
+  describe ".destroy_on_empty!" do
+    let(:series) { create(:series) }
+    let(:evaluation) { create(:suite_evaluation, suite: series.suite, series: series) }
+
+    it "destroys the series if it has no evaluations" do
+      series.destroy_on_empty!
+      series.should be_destroyed
+    end
+    it "does nothing if the series has evaluations" do
+      evaluation
+      series.destroy_on_empty!
+      series.should_not be_destroyed
+    end
+  end
 end
