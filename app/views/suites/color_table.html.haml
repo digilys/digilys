@@ -7,7 +7,7 @@
 -# Track values and stanines for averages
 - values = {}
 - stanines = {}
-- evaluations = @generic_evaluations[:included] + @suite.evaluations
+- evaluations = @generic_evaluations[:included] + @suite.evaluations.only_series_currents.all
 
 .row-fluid
   .span2

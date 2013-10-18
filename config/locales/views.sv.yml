@@ -49,6 +49,7 @@ sv:
   meeting_completed: Mötet genomfört och protokollfört
   activity_students_placeholder: Sök och välj elever eller grupper
   users_placeholder: Sök och välj en eller flera användare
+  series_placeholder: Välj befintlig eller skapa
 
   students:
     select_groups_action: Lägg till i grupper
@@ -224,6 +225,7 @@ sv:
       basic_info: Grundinformation
       result_info: Resultatinformation
       category_help: Välj befintliga eller skriv in nya kategorier
+      series_help: Välj en befintlig serie, eller skriv en titel om du vill skapa en ny
       stanines: Stanine-värden <small>Lämna alla värden tomma om du inte vill använda staninevärden</small>
       assign_to_help: Tilldela specifika elever, grupper och deltagare till testet om bara en del av eleverna i planeringen ska göra testet, eller om specifika deltagare ska handha testet. Lämna fälten tomma om du vill använda de elever, grupper och deltagare som tillhör planeringen.
     numeric_fields:
