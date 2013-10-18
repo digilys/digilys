@@ -1,19 +1,7 @@
 $ ->
     $(".suite-template-autocomplete-field").each ->
-        $field = $(this)
-        new Digilys.Autocomplete($field)
-
-        $field.data("preventNavigationConfirmation", true)
-        $field.on "change", (event) ->
-            new Digilys.LoadMask($("form"))
-
-            $form = $field.parents("form")
-
-            $submitButton = $form.find(":submit")
-            $submitButton.attr("disabled", "disabled")
-            $submitButton.val($submitButton.data("loading-text"))
-
-            $form.submit()
+        autocomplete = new Digilys.Autocomplete($(this))
+        autocomplete.enableAutosubmit("form")
 
     $("#new_suite #suite_is_template").on "change", ->
         if ($(this).is(":checked"))

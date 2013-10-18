@@ -42,6 +42,21 @@ class Autocomplete
 
     formatResult: $.fn.select2.defaults.formatResult
 
+    enableAutosubmit: (@maskSelector) ->
+        @elem.on "change", => @autosubmit.apply(this, arguments)
+        @elem.data("preventNavigationConfirmation", true)
+
+    autosubmit: (event) ->
+        new Digilys.LoadMask($(@maskSelector))
+
+        form = @elem.parents("form")
+
+        submit = form.find(":submit")
+        submit.attr("disabled", "disabled")
+        submit.val(submit.data("loading-text"))
+
+        form.submit()
+
 # Export
 window.Digilys ?= {}
 window.Digilys.Autocomplete = Autocomplete

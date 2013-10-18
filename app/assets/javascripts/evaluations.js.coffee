@@ -159,18 +159,5 @@ $ ->
             $form.find("." + $(this).val() +  "-fields").show()
 
     $(".evaluation-template-autocomplete-field").each ->
-        $field = $(this)
-
-        new Digilys.DescriptionAutocomplete($field)
-
-        $field.data("preventNavigationConfirmation", true)
-        $field.on "change", (event) ->
-            new Digilys.LoadMask($("form"))
-
-            $form = $field.parents("form")
-
-            $submitButton = $form.find(":submit")
-            $submitButton.attr("disabled", "disabled")
-            $submitButton.val($submitButton.data("loading-text"))
-
-            $form.submit()
+        autocomplete = new Digilys.DescriptionAutocomplete($(this))
+        autocomplete.enableAutosubmit("form")

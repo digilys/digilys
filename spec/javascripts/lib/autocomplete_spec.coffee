@@ -143,6 +143,58 @@ describe "Digilys.Autocomplete", ->
             expect(result.page).toEqual "page"
 
 
+    describe ".enableAutosubmit()", ->
+        beforeEach ->
+            setup()
+            autocomplete.enableAutosubmit("form")
+
+        it "binds the change event of the field to autosubmit()", ->
+            spyOn(autocomplete, "autosubmit")
+            elem.trigger("change")
+            expect(autocomplete.autosubmit).toHaveBeenCalled()
+
+        it "stores the selector which should be masked", ->
+            expect(autocomplete.maskSelector).toEqual "form"
+
+        it "disables navigation confirmation on the parent form", ->
+            expect(elem).toHaveData("preventNavigationConfirmation")
+
+
+    describe ".autosubmit()", ->
+        elem   = null
+        submit = null
+        form   = null
+
+        beforeEach ->
+            elem   = $('<input type = "hidden"/>')
+            submit = $('<input type = "submit" data-loading-text="loading..."/>')
+            form   = $('<form/>')
+
+            form.append(elem).append(submit)
+
+            autocomplete = new Digilys.Autocomplete(elem)
+
+        it "submits the parent form", ->
+            spy = jasmine.createSpy()
+            form.on "submit", spy
+            autocomplete.autosubmit()
+            expect(spy).toHaveBeenCalled()
+
+        it "disables any submit button in the parent form", ->
+            autocomplete.autosubmit()
+            expect(submit).toBeDisabled()
+
+        it "switches the text of submit buttons with a loading text", ->
+            autocomplete.autosubmit()
+            expect(submit).toHaveValue("loading...")
+
+        it "masks the elements specified by the mask selector", ->
+            target = $("<div/>")
+            autocomplete.enableAutosubmit(target)
+            autocomplete.autosubmit()
+            expect(target).toContain(".load-mask")
+
+
 describe "Digilys.DescriptionAutocomplete", ->
     elem         = null
     autocomplete = null
