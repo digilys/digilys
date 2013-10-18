@@ -190,6 +190,7 @@ class Evaluation < ActiveRecord::Base
   after_update      :touch_results
   before_save       :set_aliases_from_value_type
   before_save       :persist_colors_and_stanines
+  before_save       :create_series_from_name
   after_save        :update_series_current!
 
 
@@ -701,6 +702,27 @@ class Evaluation < ActiveRecord::Base
   def update_series_current!
     if self.status_changed? && self.series
       self.series.update_current!
+    end
+  end
+
+  def create_series_from_name
+    if self.type.try(:suite?) && self.series_id == 0
+      series_name = self.attributes_before_type_cast["series_id"]
+
+      if !series_name.blank?
+        series = Series.where([
+          "suite_id = ? and name ilike ?",
+          self.suite_id,
+          series_name
+        ]).first
+
+        if series
+          self.series_id = series.id
+          self.series = series
+        else
+          self.create_series(name: series_name, suite_id: self.suite_id)
+        end
+      end
     end
   end
 end

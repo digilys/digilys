@@ -930,6 +930,27 @@ describe Evaluation do
     end
   end
 
+  describe ".create_series_from_name" do
+    it "creates a new series if series_id is a string" do
+      Series.exists?.should be_false
+      evaluation = build(:suite_evaluation, series_id: "My series")
+      evaluation.save.should         be_true
+      evaluation.series.name.should  == "My series"
+      evaluation.series.suite.should == evaluation.suite
+    end
+    it "associates the event with an existing series if a series with the name exists" do
+      series = create(:series, name: "my series")
+      evaluation = build(:suite_evaluation, suite: series.suite, series_id: "MY SERIES")
+      evaluation.save.should   be_true
+      evaluation.series.should == series
+    end
+    it "does not create a series when no name is given" do
+      evaluation = build(:suite_evaluation, series_id: "")
+      evaluation.save.should   be_true
+      evaluation.series.should be_nil
+    end
+  end
+
   describe "#new_from_template" do
     let(:template) { create(:evaluation_template, category_list: "foo, bar, baz", target: :male) }
     subject        { Evaluation.new_from_template(template) }
