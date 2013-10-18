@@ -227,9 +227,16 @@ describe Evaluation do
     let(:colors)   { nil }
     let(:stanines) { nil }
     context "for boolean value types" do
-      subject      { create(:boolean_evaluation, colors: colors, color_for_true: :red, color_for_false: :green) }
-      its(:colors) { should include("1" => "red") }
-      its(:colors) { should include("0" => "green") }
+      subject(:evaluation) { create(:boolean_evaluation,
+        colors: colors,
+        color_for_true: :red,
+        color_for_false: :green
+      ) }
+
+      it "correctly maps the colors" do
+        evaluation.colors.should include("1" => "red")
+        evaluation.colors.should include("0" => "green")
+      end
 
       context "with explicitly set colors" do
         let(:colors) { { explicit: 1 } }
@@ -237,26 +244,28 @@ describe Evaluation do
       end
     end
     context "for grade value types" do
-      subject        { create(
+      subject(:evaluation) { create(
         :grade_evaluation,
         colors:          colors,
         stanines:        stanines,
         _grade_colors:   [ 1, 1, 2, 2, 3, 3 ],
         _grade_stanines: [ 2, 3, 5, 6, 7, 9 ]
       ) }
-      its(:colors)   { should include("0" => 1) }
-      its(:colors)   { should include("1" => 1) }
-      its(:colors)   { should include("2" => 2) }
-      its(:colors)   { should include("3" => 2) }
-      its(:colors)   { should include("4" => 3) }
-      its(:colors)   { should include("5" => 3) }
+      it "correctly maps the grade colors and stanines" do
+        evaluation.colors.should   include("0" => 1)
+        evaluation.colors.should   include("1" => 1)
+        evaluation.colors.should   include("2" => 2)
+        evaluation.colors.should   include("3" => 2)
+        evaluation.colors.should   include("4" => 3)
+        evaluation.colors.should   include("5" => 3)
 
-      its(:stanines) { should include("0" => 2) }
-      its(:stanines) { should include("1" => 3) }
-      its(:stanines) { should include("2" => 5) }
-      its(:stanines) { should include("3" => 6) }
-      its(:stanines) { should include("4" => 7) }
-      its(:stanines) { should include("5" => 9) }
+        evaluation.stanines.should include("0" => 2)
+        evaluation.stanines.should include("1" => 3)
+        evaluation.stanines.should include("2" => 5)
+        evaluation.stanines.should include("3" => 6)
+        evaluation.stanines.should include("4" => 7)
+        evaluation.stanines.should include("5" => 9)
+      end
 
       context "with explicitly set colors and stanines" do
         let(:colors)   { { "explicit" => 1 } }
@@ -268,7 +277,7 @@ describe Evaluation do
     context "for numeric value types" do
       let(:_yellow) { 10..20 }
       let(:_stanines) { [ 0..3, 4..6, 7..7, 8..12, 13..15, 16..18, 19..21, 22..24, 25..30 ] }
-      subject { create(:numeric_evaluation,
+      subject(:evaluation) { create(:numeric_evaluation,
         colors:     colors,
         stanines:   stanines,
         _yellow:    _yellow,
@@ -276,36 +285,42 @@ describe Evaluation do
         _stanines:  _stanines
       ) }
 
-      its(:colors) { should include("red"    => { "min" => 0,  "max" => 9 }) }
-      its(:colors) { should include("yellow" => { "min" => 10, "max" => 20 }) }
-      its(:colors) { should include("green"  => { "min" => 21, "max" => 30 }) }
+      it "correctly maps the colors and stanines" do
+        evaluation.colors.should   include("red"    => { "min" => 0,  "max" => 9 })
+        evaluation.colors.should   include("yellow" => { "min" => 10, "max" => 20 })
+        evaluation.colors.should   include("green"  => { "min" => 21, "max" => 30 })
 
-      its(:stanines) { should include("1" => { "min" => 0,  "max" => 3 } ) }
-      its(:stanines) { should include("2" => { "min" => 4,  "max" => 6 } ) }
-      its(:stanines) { should include("3" => { "min" => 7,  "max" => 7 } ) }
-      its(:stanines) { should include("4" => { "min" => 8,  "max" => 12 } ) }
-      its(:stanines) { should include("5" => { "min" => 13, "max" => 15 } ) }
-      its(:stanines) { should include("6" => { "min" => 16, "max" => 18 } ) }
-      its(:stanines) { should include("7" => { "min" => 19, "max" => 21 } ) }
-      its(:stanines) { should include("8" => { "min" => 22, "max" => 24 } ) }
-      its(:stanines) { should include("9" => { "min" => 25, "max" => 30 } ) }
+        evaluation.stanines.should include("1"      => { "min" => 0,  "max" => 3 })
+        evaluation.stanines.should include("2"      => { "min" => 4,  "max" => 6 })
+        evaluation.stanines.should include("3"      => { "min" => 7,  "max" => 7 })
+        evaluation.stanines.should include("4"      => { "min" => 8,  "max" => 12 })
+        evaluation.stanines.should include("5"      => { "min" => 13, "max" => 15 })
+        evaluation.stanines.should include("6"      => { "min" => 16, "max" => 18 })
+        evaluation.stanines.should include("7"      => { "min" => 19, "max" => 21 })
+        evaluation.stanines.should include("8"      => { "min" => 22, "max" => 24 })
+        evaluation.stanines.should include("9"      => { "min" => 25, "max" => 30 })
+      end
 
       context "with only a yellow range" do
         let(:_yellow) { 0..30 }
-        its(:colors)  { should include("yellow" => { "min" => 0, "max" => 30 }) }
-        its(:colors)  { should_not have_key("red") }
-        its(:colors)  { should_not have_key("green") }
+        it "correctly maps the colors" do
+          evaluation.colors.should     include("yellow" => { "min" => 0, "max" => 30 })
+          evaluation.colors.should_not have_key("red")
+          evaluation.colors.should_not have_key("green")
+        end
       end
       context "with overlapping stanines" do
         let(:_stanines) { [ 0..3, 4..6, 7..9, 9..9, 9..9, 10..18, 19..21, 22..30 ] }
-        its(:stanines) { should include("1" => { "min" => 0,  "max" => 3 } ) }
-        its(:stanines) { should include("2" => { "min" => 4,  "max" => 6 } ) }
-        its(:stanines) { should include("3" => { "min" => 7,  "max" => 9 } ) }
-        its(:stanines) { should include("4" => { "min" => 9,  "max" => 9 } ) }
-        its(:stanines) { should include("5" => { "min" => 9,  "max" => 9 } ) }
-        its(:stanines) { should include("6" => { "min" => 10, "max" => 18 } ) }
-        its(:stanines) { should include("7" => { "min" => 19, "max" => 21 } ) }
-        its(:stanines) { should include("8" => { "min" => 22, "max" => 30 } ) }
+        it "correctly maps the stanines" do
+          evaluation.stanines.should include("1" => { "min" => 0,  "max" => 3 } )
+          evaluation.stanines.should include("2" => { "min" => 4,  "max" => 6 } )
+          evaluation.stanines.should include("3" => { "min" => 7,  "max" => 9 } )
+          evaluation.stanines.should include("4" => { "min" => 9,  "max" => 9 } )
+          evaluation.stanines.should include("5" => { "min" => 9,  "max" => 9 } )
+          evaluation.stanines.should include("6" => { "min" => 10, "max" => 18 } )
+          evaluation.stanines.should include("7" => { "min" => 19, "max" => 21 } )
+          evaluation.stanines.should include("8" => { "min" => 22, "max" => 30 } )
+        end
       end
 
       context "with explicitly set colors and stanines" do
@@ -646,22 +661,26 @@ describe Evaluation do
       evaluation.evaluation_participants = participants
     end
 
-    subject { evaluation.students_and_groups_select2_data }
+    subject(:objects) { evaluation.students_and_groups_select2_data }
 
-    its(:length) { should == 3 }
-
-    it { should include({ id: "s-#{participants.first.student_id}",  text: participants.first.student.name }) }
-    it { should include({ id: "s-#{participants.second.student_id}", text: participants.second.student.name }) }
-    it { should include({ id: "s-#{participants.third.student_id}",  text: participants.third.student.name }) }
+    it "returns select2 entries for all participants, with escaped ids" do
+      objects.should have(3).items
+      objects.should include({ id: "s-#{participants.first.student_id}",  text: participants.first.student.name })
+      objects.should include({ id: "s-#{participants.second.student_id}", text: participants.second.student.name })
+      objects.should include({ id: "s-#{participants.third.student_id}",  text: participants.third.student.name })
+    end
   end
 
   describe ".users_select2_data" do
-    let(:users)          { create_list(:user, 2) }
-    subject(:evaluation) { create(:suite_evaluation, users: users) }
+    let(:users)       { create_list(:user, 2) }
+    let(:evaluation)  { create(:suite_evaluation, users: users) }
+    subject(:objects) { evaluation.users_select2_data }
 
-    its(:users_select2_data) { should have(2).items }
-    its(:users_select2_data) { should include(id: users.first.id,  text: "#{users.first.name}, #{users.first.email}") }
-    its(:users_select2_data) { should include(id: users.second.id, text: "#{users.second.name}, #{users.second.email}") }
+    it "returns select2 entries for all users, with the text containing name and email" do
+      objects.should have(2).items
+      objects.should include(id: users.first.id,  text: "#{users.first.name}, #{users.first.email}")
+      objects.should include(id: users.second.id, text: "#{users.second.name}, #{users.second.email}")
+    end
   end
 
   describe ".result_distribution" do
@@ -672,38 +691,43 @@ describe Evaluation do
     let(:participants)         { male_participants + female_participants }
     let(:evaluation)           { create(:suite_evaluation, suite: suite, max_result: 10, _yellow: 4..7, target: target) }
 
-    context "with all types" do
-      before(:each) do
-        create(:result, student: participants[0].student, evaluation: evaluation, value: 1) # red
-        create(:result, student: participants[1].student, evaluation: evaluation, value: 5) # yellow
-        create(:result, student: participants[2].student, evaluation: evaluation, value: 6) # yellow
-        create(:result, student: participants[3].student, evaluation: evaluation, value: 8) # green
-      end
-
-      subject { evaluation.result_distribution }
-
-      it { should include(not_reported: 20.0) }
-      it { should include(red:          20.0) }
-      it { should include(yellow:       40.0) }
-      it { should include(green:        20.0) }
-      it { should include(absent:       0) }
+    def create_result(participant_index, value)
+      create(:result,
+        student: participants[participant_index].student,
+        evaluation: evaluation,
+        value: value,
+        absent: value.nil?
+      )
     end
 
-    context "without a color" do
-      before(:each) do
-        create(:result, student: participants[0].student, evaluation: evaluation, value: 9) # green
-        create(:result, student: participants[1].student, evaluation: evaluation, value: 5) # yellow
-        create(:result, student: participants[2].student, evaluation: evaluation, value: 6) # yellow
-        create(:result, student: participants[3].student, evaluation: evaluation, value: 8) # green
-      end
+    it "returns percentages for all types" do
+      create_result(0, 1) # red
+      create_result(1, 5) # yellow
+      create_result(2, 6) # yellow
+      create_result(3, 8) # green
 
-      subject { evaluation.result_distribution }
+      result = evaluation.result_distribution
 
-      it { should include(not_reported: 20.0) }
-      it { should include(red:          0) }
-      it { should include(yellow:       40.0) }
-      it { should include(green:        40.0) }
-      it { should include(absent:       0) }
+      result.should include(not_reported: 20.0)
+      result.should include(red:          20.0)
+      result.should include(yellow:       40.0)
+      result.should include(green:        20.0)
+      result.should include(absent:       0)
+    end
+
+    it "returns zero for missing colors" do
+      create_result(0, 9) # green
+      create_result(1, 5) # yellow
+      create_result(2, 6) # yellow
+      create_result(3, 8) # green
+
+      result = evaluation.result_distribution
+
+      result.should include(not_reported: 20.0)
+      result.should include(red:          0)
+      result.should include(yellow:       40.0)
+      result.should include(green:        40.0)
+      result.should include(absent:       0)
     end
 
     context "without results" do
@@ -714,87 +738,93 @@ describe Evaluation do
     context "limited by gender" do
       let(:target) { :female }
 
-      before(:each) do
-        create(:result, student: female_participants[0].student, evaluation: evaluation, value: 1) # red
-        create(:result, student: female_participants[1].student, evaluation: evaluation, value: 5) # yellow
-        create(:result, student: female_participants[2].student, evaluation: evaluation, value: 8) # green
-        create(:result, student: female_participants[3].student, evaluation: evaluation, value: 9) # green
+      def create_result(participant_index, value)
+        create(:result,
+          student: female_participants[participant_index].student,
+          evaluation: evaluation,
+          value: value
+        )
       end
 
-      subject { evaluation.result_distribution }
+      it "returns the correct percentages based on the gender" do
+        create_result(0, 1) # red
+        create_result(1, 5) # yellow
+        create_result(2, 8) # green
+        create_result(3, 9) # green
 
-      it { should include(not_reported: 0) }
-      it { should include(red:          25.0) }
-      it { should include(yellow:       25.0) }
-      it { should include(green:        50.0) }
-      it { should include(absent:       0) }
+        result = evaluation.result_distribution
+
+        result.should include(not_reported: 0)
+        result.should include(red:          25.0)
+        result.should include(yellow:       25.0)
+        result.should include(green:        50.0)
+        result.should include(absent:       0)
+      end
     end
 
-    context "with absent results" do
-      before(:each) do
-        create(:result, student: participants[0].student, evaluation: evaluation, value: nil, absent: true) # absent
-        create(:result, student: participants[1].student, evaluation: evaluation, value: 5) # yellow
-        create(:result, student: participants[2].student, evaluation: evaluation, value: 6) # yellow
-        create(:result, student: participants[3].student, evaluation: evaluation, value: 8) # green
-      end
+    it "handles absent results" do
+      create_result(0, nil) # absent
+      create_result(1, 5) # yellow
+      create_result(2, 6) # yellow
+      create_result(3, 8) # green
 
-      subject { evaluation.result_distribution }
+      result = evaluation.result_distribution
 
-      it { should include(not_reported: 20.0) }
-      it { should include(red:          0) }
-      it { should include(yellow:       40.0) }
-      it { should include(green:        20.0) }
-      it { should include(absent:       20.0) }
+      result.should include(not_reported: 20.0)
+      result.should include(red:          0)
+      result.should include(yellow:       40.0)
+      result.should include(green:        20.0)
+      result.should include(absent:       20.0)
     end
 
-    context "with results from non participants" do
-      before(:each) do
-        create(:result, student: participants[0].student, evaluation: evaluation, value: 1) # red
-        create(:result, student: participants[1].student, evaluation: evaluation, value: 5) # yellow
-        create(:result, student: participants[2].student, evaluation: evaluation, value: 8) # green
-        create(:result, student: participants[3].student, evaluation: evaluation, value: nil, absent: true) # absent
-        # participants[4].student is not reported
-        create(:result,                                   evaluation: evaluation, value: 1) # non-participant, red
-        create(:result,                                   evaluation: evaluation, value: 1) # non-participant, red
-        create(:result,                                   evaluation: evaluation, value: 1) # non-participant, red
-        create(:result,                                   evaluation: evaluation, value: 5) # non-participant, yellow
-        create(:result,                                   evaluation: evaluation, value: 8) # non-participant, green
-      end
+    it "handles results from students that are not participants" do
+      create_result(0, 1) # red
+      create_result(1, 5) # yellow
+      create_result(2, 8) # green
+      create_result(3, nil) # absent
+      # participants[4].student is not reported
+      create(:result, evaluation: evaluation, value: 1) # non-participant, red
+      create(:result, evaluation: evaluation, value: 1) # non-participant, red
+      create(:result, evaluation: evaluation, value: 1) # non-participant, red
+      create(:result, evaluation: evaluation, value: 5) # non-participant, yellow
+      create(:result, evaluation: evaluation, value: 8) # non-participant, green
 
-      subject { evaluation.result_distribution }
+      result = evaluation.result_distribution
 
-      it { should include(not_reported: 10.0) }
-      it { should include(red:          40.0) }
-      it { should include(yellow:       20.0) }
-      it { should include(green:        20.0) }
-      it { should include(absent:       10.0) }
+      result.should include(not_reported: 10.0)
+      result.should include(red:          40.0)
+      result.should include(yellow:       20.0)
+      result.should include(green:        20.0)
+      result.should include(absent:       10.0)
     end
   end
 
   describe ".stanine_distribution" do
-    subject(:evaluation) { create(:evaluation,
+    let(:evaluation) { create(:evaluation,
       max_result: 8,
       _yellow: 3..5,
       _stanines: [ 0..0, 1..1, 2..2, 3..3, 4..4, 5..5, 6..6, 7..7, 8..8 ]
     ) }
 
-    before(:each) do
+    it "returns a correct stanine distribution" do
       # No 5, two 4:s (stanine)
       [0, 1, 2, 3, 3, 5, 6, 7, 8].each do |value|
         create(:result, evaluation: evaluation, value: value)
       end
-    end
 
-    its(:stanine_distribution) { should have(8).items }
-    its(:stanine_distribution) { should include(1 => 1) }
-    its(:stanine_distribution) { should include(2 => 1) }
-    its(:stanine_distribution) { should include(3 => 1) }
-    its(:stanine_distribution) { should include(4 => 2) }
-    its(:stanine_distribution) { should include(6 => 1) }
-    its(:stanine_distribution) { should include(7 => 1) }
-    its(:stanine_distribution) { should include(8 => 1) }
-    its(:stanine_distribution) { should include(9 => 1) }
-    its(:stanine_distribution) { should_not have_key(5) }
+      result = evaluation.stanine_distribution
+
+      result.should have(8).items
+      result.should include(1 => 1)
+      result.should include(2 => 1)
+      result.should include(3 => 1)
+      result.should include(4 => 2)
+      result.should include(6 => 1)
+      result.should include(7 => 1)
+      result.should include(8 => 1)
+      result.should include(9 => 1)
+      result.should_not have_key(5)
+    end
   end
 
   describe ".alias_for" do
@@ -897,14 +927,12 @@ describe Evaluation do
 
     subject(:result) { Evaluation.overdue.all }
 
-    it { should have(6).items }
     it { should match_array(with_partial_results + without_results) }
   end
   describe "#upcoming" do
     let!(:passed)   { create_list(:suite_evaluation, 3, date: Date.yesterday) }
     let!(:upcoming) { create_list(:suite_evaluation, 3, date: Date.today) }
     subject         { Evaluation.upcoming.all }
-    it              { should have(3).items }
     it              { should match_array(upcoming) }
   end
 
@@ -923,7 +951,6 @@ describe Evaluation do
 
     subject { Evaluation.where_suite_contributor(user).all }
 
-    it { should have(6).items }
     it { should match_array(allowed_evaluations) }
   end
 
@@ -934,7 +961,6 @@ describe Evaluation do
 
     subject { Evaluation.with_stanines.all }
 
-    it { should have(2).items }
     it { should match_array([with_numeric_stanines, with_grade_stanines]) }
   end
 
@@ -947,7 +973,6 @@ describe Evaluation do
 
     subject { Evaluation.without_explicit_users.all }
 
-    it { should have(3).items }
     it { should match_array(without_explicit_users) }
   end
 end

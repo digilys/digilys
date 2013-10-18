@@ -156,8 +156,8 @@ describe EvaluationsController do
   end
 
   describe "GET #report" do
-    let(:male_participants)   { create_list(:male_participant,   3, suite: evaluation.suite) }
-    let(:female_participants) { create_list(:female_participant, 3, suite: evaluation.suite) }
+    let(:male_participants)   { create_list(:male_participant,   1, suite: evaluation.suite) }
+    let(:female_participants) { create_list(:female_participant, 1, suite: evaluation.suite) }
     let!(:participants)       { male_participants + female_participants }
 
     it "generates unsaved results for participants" do

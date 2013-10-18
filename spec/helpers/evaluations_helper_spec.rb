@@ -86,76 +86,79 @@ describe EvaluationsHelper do
     let(:evaluation)   { create(:suite_evaluation, suite: suite, max_result: 10, _yellow: 4..7) }
     let(:participants) { create_list(:participant, 5, suite: suite) }
 
-    subject { Capybara::Node::Simple.new(helper.evaluation_progress_bar(evaluation)) }
+    subject(:output)   { Capybara::Node::Simple.new(helper.evaluation_progress_bar(evaluation)) }
 
-    context "with no results" do
-      it { should     have_selector(".progress.evaluation-status-progress") }
-      it { should_not have_selector(".progress .bar") }
+    def create_result(participant_index, value)
+      create(:result,
+        student: participants[participant_index].student,
+        evaluation: evaluation,
+        value: value,
+        absent: value.nil?
+      )
     end
 
-    context "with all results" do
-      before(:each) do
-        create(:result, student: participants[0].student, evaluation: evaluation, value: 1) # red
-        create(:result, student: participants[1].student, evaluation: evaluation, value: 5) # yellow
-        create(:result, student: participants[2].student, evaluation: evaluation, value: 6) # yellow
-        create(:result, student: participants[3].student, evaluation: evaluation, value: 8) # green
-      end
-
-      it { should have_selector(".progress.evaluation-status-progress") }
-      it { should have_selector(".progress .bar", count: 4) }
-      it { should have_selector(".progress .bar-success[style=\"width: 20.0%\"]") }
-      it { should have_selector(".progress .bar-yellow[style=\"width: 40.0%\"]") }
-      it { should have_selector(".progress .bar-danger[style=\"width: 20.0%\"]") }
-      it { should have_selector(".progress .bar-disabled[style=\"width: 0.0%\"]") }
+    it "has no bars when there is no result" do
+      output.should     have_selector(".progress.evaluation-status-progress")
+      output.should_not have_selector(".progress .bar")
     end
-    context "with colors missing" do
-      before(:each) do
-        create(:result, student: participants[1].student, evaluation: evaluation, value: 5) # yellow
-        create(:result, student: participants[2].student, evaluation: evaluation, value: 6) # yellow
-      end
+    it "has a bar for each type of result" do
+      create_result(0, 1) # red
+      create_result(1, 5) # yellow
+      create_result(2, 6) # yellow
+      create_result(3, 8) # green
 
-      it { should have_selector(".progress.evaluation-status-progress") }
-      it { should have_selector(".progress .bar", count: 4) }
-      it { should have_selector(".progress .bar-success[style=\"width: 0.0%\"]") }
-      it { should have_selector(".progress .bar-yellow[style=\"width: 40.0%\"]") }
-      it { should have_selector(".progress .bar-danger[style=\"width: 0.0%\"]") }
-      it { should have_selector(".progress .bar-disabled[style=\"width: 0.0%\"]") }
+      output.should have_selector(".progress.evaluation-status-progress")
+      output.should have_selector(".progress .bar", count: 4)
+      output.should have_selector(".progress .bar-success[style=\"width: 20.0%\"]")
+      output.should have_selector(".progress .bar-yellow[style=\"width: 40.0%\"]")
+      output.should have_selector(".progress .bar-danger[style=\"width: 20.0%\"]")
+      output.should have_selector(".progress .bar-disabled[style=\"width: 0.0%\"]")
     end
-    context "with absent results" do
-      before(:each) do
-        create(:result, student: participants[0].student, evaluation: evaluation, value: 1) # red
-        create(:result, student: participants[1].student, evaluation: evaluation, value: 5) # yellow
-        create(:result, student: participants[2].student, evaluation: evaluation, value: 6) # yellow
-        create(:result, student: participants[3].student, evaluation: evaluation, value: 8) # green
-        create(:result, student: participants[4].student, evaluation: evaluation, value: nil, absent: true) # absent
-      end
+    it "has zero percent width bars for missing types" do
+      create_result(1, 5) # yellow
+      create_result(2, 6) # yellow
 
-      it { should have_selector(".progress.evaluation-status-progress") }
-      it { should have_selector(".progress .bar", count: 4) }
-      it { should have_selector(".progress .bar-success[style=\"width: 20.0%\"]") }
-      it { should have_selector(".progress .bar-yellow[style=\"width: 40.0%\"]") }
-      it { should have_selector(".progress .bar-danger[style=\"width: 20.0%\"]") }
-      it { should have_selector(".progress .bar-disabled[style=\"width: 20.0%\"]") }
+      output.should have_selector(".progress.evaluation-status-progress")
+      output.should have_selector(".progress .bar", count: 4)
+      output.should have_selector(".progress .bar-success[style=\"width: 0.0%\"]")
+      output.should have_selector(".progress .bar-yellow[style=\"width: 40.0%\"]")
+      output.should have_selector(".progress .bar-danger[style=\"width: 0.0%\"]")
+      output.should have_selector(".progress .bar-disabled[style=\"width: 0.0%\"]")
+    end
+    it "adds a disabled bar for absent results" do
+      create_result(0, 1) # red
+      create_result(1, 5) # yellow
+      create_result(2, 6) # yellow
+      create_result(3, 8) # green
+      create_result(4, nil) # absent
+
+      output.should have_selector(".progress.evaluation-status-progress")
+      output.should have_selector(".progress .bar", count: 4)
+      output.should have_selector(".progress .bar-success[style=\"width: 20.0%\"]")
+      output.should have_selector(".progress .bar-yellow[style=\"width: 40.0%\"]")
+      output.should have_selector(".progress .bar-danger[style=\"width: 20.0%\"]")
+      output.should have_selector(".progress .bar-disabled[style=\"width: 20.0%\"]")
     end
 
-    context "with percentages rounded down" do
+    context "rounding" do
       let(:participants) { create_list(:participant, 7, suite: suite) }
-      before(:each) do
-        create(:result, student: participants[0].student, evaluation: evaluation, value: 1) # red
-        create(:result, student: participants[1].student, evaluation: evaluation, value: 1) # red
-        create(:result, student: participants[2].student, evaluation: evaluation, value: 6) # yellow
-        create(:result, student: participants[3].student, evaluation: evaluation, value: 6) # yellow
-        create(:result, student: participants[4].student, evaluation: evaluation, value: 6) # yellow
-        create(:result, student: participants[5].student, evaluation: evaluation, value: 6) # yellow
-        create(:result, student: participants[6].student, evaluation: evaluation, value: 6) # yellow
-      end
+      
+      it "rounds percentages down" do
+        create_result(0, 1) # red
+        create_result(1, 1) # red
+        create_result(2, 6) # yellow
+        create_result(3, 6) # yellow
+        create_result(4, 6) # yellow
+        create_result(5, 6) # yellow
+        create_result(6, 6) # yellow
 
-      it { should have_selector(".progress.evaluation-status-progress") }
-      it { should have_selector(".progress .bar", count: 4) }
-      it { should have_selector(".progress .bar-success[style=\"width: 0.0%\"]") }
-      it { should have_selector(".progress .bar-yellow[style=\"width: 71.4%\"]") } # 5.0/7.0 = 0.71428...
-      it { should have_selector(".progress .bar-danger[style=\"width: 28.5%\"]") } # 2.0/7.0 = 0.28571...
-      it { should have_selector(".progress .bar-disabled[style=\"width: 0.0%\"]") }
+        output.should have_selector(".progress.evaluation-status-progress")
+        output.should have_selector(".progress .bar", count: 4)
+        output.should have_selector(".progress .bar-success[style=\"width: 0.0%\"]")
+        output.should have_selector(".progress .bar-yellow[style=\"width: 71.4%\"]") # 5.0/7.0 = 0.71428...
+        output.should have_selector(".progress .bar-danger[style=\"width: 28.5%\"]") # 2.0/7.0 = 0.28571...
+        output.should have_selector(".progress .bar-disabled[style=\"width: 0.0%\"]")
+      end
     end
   end
 end
