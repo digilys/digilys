@@ -55,5 +55,6 @@ group :test, :development do
 end
 group :test do
   gem "shoulda-matchers", "~> 2.4.0"
+  gem "timecop",          "~> 0.6.3"
 end
 
