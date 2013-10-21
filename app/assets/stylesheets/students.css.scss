@@ -3,13 +3,7 @@
     white-space: nowrap;
 }
 
-#student-form {
-    .hidden {
-        visibility: visible;
-        display: block;
-    }
-
-    .select2-container {
-        width: 30em;
-    }
+#student-form .hidden {
+    visibility: visible;
+    display: block;
 }

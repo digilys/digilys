@@ -2,12 +2,12 @@
 
   = f.inputs do
 
-    = f.input :name, required: true, input_html: { required: true, autofocus: true }
+    = f.input :name, required: true, input_html: { required: true, autofocus: true, class: "span6" }
 
     - if f.object.new_record?
       = f.input :parent_id,
         as: :hidden,
-        input_html: { class: "group-autocomplete-field",
+        input_html: { class: "group-autocomplete-field span6",
           data: { url: search_groups_path(format: :json),
             placeholder: t(:".parent_placeholder")  } }
 

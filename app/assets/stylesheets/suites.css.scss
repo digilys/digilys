@@ -8,14 +8,7 @@
     }
 }
 
-#select-users-form {
-    .hidden {
-        visibility: visible;
-        display: block;
-    }
-
-    .select2-container {
-        width: 30em;
-    }
+#select-users-form .hidden {
+    visibility: visible;
+    display: block;
 }
-

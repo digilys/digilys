@@ -19,7 +19,7 @@
 
     = f.input :students_and_groups,
       as: :hidden,
-      input_html: { class: "activity-students-autocomplete-field",
+      input_html: { class: "activity-students-autocomplete-field input-xxlarge",
         data: { url: search_participants_suite_path(@activity.suite),
           data: @activity.students_and_groups_select2_data.to_json,
           placeholder: t(:".activity_students_placeholder"),
@@ -27,7 +27,7 @@
 
     = f.input :user_ids,
       as: :hidden,
-      input_html: { class: "user-autocomplete-field",
+      input_html: { class: "user-autocomplete-field input-xxlarge",
         value: nil,
         data: { url: search_users_path(format: :json),
           data: @activity.users_select2_data.to_json,

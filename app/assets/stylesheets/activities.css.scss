@@ -1,14 +1,8 @@
 @import "variables";
 
-form.activity {
-    .hidden {
-        visibility: visible;
-        display: block;
-    }
-
-    .select2-container {
-        width: 30em;
-    }
+form.activity .hidden {
+    visibility: visible;
+    display: block;
 }
 
 .activity-list {

@@ -34,14 +34,14 @@
     = f.inputs Participant.model_name.human(count: 2), for: :participants, id: "new_participant" do |pf|
       = pf.input :student_id,
         as: :hidden,
-        input_html: { class: "student-autocomplete-field",
+        input_html: { class: "student-autocomplete-field span8",
           data: { url: search_students_path(format: :json),
             multiple: true,
             placeholder: t(:".student_placeholder") } }
 
       = pf.input :group_id,
         as: :hidden,
-        input_html: { class: "group-autocomplete-field",
+        input_html: { class: "group-autocomplete-field span8",
           data: { url: search_groups_path(format: :json),
             placeholder: t(:".group_placeholder"),
             multiple: true } }

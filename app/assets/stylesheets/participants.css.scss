@@ -1,12 +1,6 @@
-#new_participant {
-    .hidden {
-        visibility: visible;
-        display: block;
-    }
-
-    .select2-container {
-        width: 30em;
-    }
+#new_participant .hidden {
+    visibility: visible;
+    display: block;
 }
 
 .participants-table .name small {
