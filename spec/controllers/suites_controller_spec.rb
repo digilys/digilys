@@ -306,6 +306,13 @@ describe SuitesController do
       users.first.has_role?(:suite_contributor, suite).should be_true
       users.second.has_role?(:suite_contributor, suite).should be_true
     end
+    it "touches the suite" do
+      updated_at = suite.updated_at
+      Timecop.freeze(Time.now + 5.minutes) do
+        put :add_users, id: suite.id, suite: { user_id: users.collect(&:id).join(",") }
+        updated_at.should < suite.reload.updated_at
+      end
+    end
     it "gives a 404 if the instance does not match" do
       put :add_users, id: other_suite.id, suite: { user_id: users.collect(&:id).join(",") }
       response.status.should == 404
@@ -325,6 +332,13 @@ describe SuitesController do
 
       users.first.has_role?(:suite_contributor, suite).should be_false
       users.second.has_role?(:suite_contributor, suite).should be_false
+    end
+    it "touches the suite" do
+      updated_at = suite.updated_at
+      Timecop.freeze(Time.now + 5.minutes) do
+        delete :remove_users, id: suite.id, suite: { user_id: users.collect(&:id).join(",") }
+        updated_at.should < suite.reload.updated_at
+      end
     end
     it "gives a 404 if the instance does not match" do
       delete :remove_users, id: other_suite.id, suite: { user_id: users.collect(&:id).join(",") }

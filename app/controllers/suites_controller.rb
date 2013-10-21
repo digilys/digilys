@@ -123,6 +123,8 @@ class SuitesController < ApplicationController
       user.add_role :suite_contributor, @suite
     end
 
+    @suite.touch
+
     flash[:success] = t(:"suites.add_users.success")
     redirect_to @suite
   end
@@ -133,6 +135,8 @@ class SuitesController < ApplicationController
     users.each do |user|
       user.remove_role :suite_contributor, @suite
     end
+
+    @suite.touch
 
     flash[:success] = t(:"suites.remove_users.success")
     redirect_to @suite
