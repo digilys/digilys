@@ -33,7 +33,7 @@ class User < ActiveRecord::Base
   if Conf.yubikey
     attr_accessible :use_yubikey, :registered_yubikey, :yubiotp
 
-    validates :registered_yubikey, presence: true
+    validates :registered_yubikey, presence: true, uniqueness: true
 
     attr_accessor :yubiotp
 

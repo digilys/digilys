@@ -179,3 +179,7 @@ sv:
           attributes:
             student:
               invalid_instance: Elevens instans måste vara samma som planeringens
+        user:
+          attributes:
+            registered_yubikey:
+              taken: Det finns redan en användare som använder din YubiKey.
