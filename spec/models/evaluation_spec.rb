@@ -983,11 +983,18 @@ describe Evaluation do
     its(:category_list) { should == template.category_list }
     its(:target)        { should == template.target }
     its(:type)          { should == template.type }
+    its(:series_id)     { should be_nil }
 
     context "with attrs" do
       subject { Evaluation.new_from_template(template, { suite_id: 1, name: "Overridden" }) }
       its(:suite_id) { should == 1 }
       its(:name)     { should == "Overridden" }
+    end
+    context "with series" do
+      let(:suite)     { create(:suite) }
+      let(:series)    { create(:series, suite: suite) }
+      let(:template)  { create(:suite_evaluation, series: series, suite: suite) }
+      its(:series_id) { should == series.id }
     end
   end
 

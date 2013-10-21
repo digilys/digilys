@@ -465,6 +465,7 @@ class Evaluation < ActiveRecord::Base
       e.target        = template.target
       e.type          = template.type
       e.value_type    = template.value_type
+      e.series        = template.series        if template.series_id
 
       e.assign_attributes(attrs)
     end

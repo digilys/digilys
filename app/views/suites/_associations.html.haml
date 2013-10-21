@@ -4,7 +4,11 @@
       %th(colspan="2")= Evaluation.model_name.human(count: 2)
     - suite.evaluations.each do |evaluation|
       %tr
-        %td.name= evaluation.name
+        %td.name
+          = evaluation.name
+          - if evaluation.series_id
+            %div
+              %span.badge= evaluation.series.name
         %td.actions
           .btn-group
             %a.btn.btn-mini{href: evaluation_path(evaluation)}=                            t(:".show_action")
