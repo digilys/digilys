@@ -205,6 +205,10 @@ class Evaluation < ActiveRecord::Base
   def overdue?
     !self.status.complete? && self.date < Date.today
   end
+  # Makes it compatible with Meeting
+  def completed?
+    self.status.complete?
+  end
 
   def has_regular_suite?
     self.type.try(:suite?) && !self.suite.blank? && !self.suite.is_template?

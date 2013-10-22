@@ -9,13 +9,13 @@
 
 .row-fluid
   - if @suite.is_template?
-    .btn-group
+    .btn-group.suite-actions
       %a.btn.btn-small{href: new_suite_evaluation_path(@suite)}= t(:".evaluation.add")
       %a.btn.btn-small{href: new_suite_meeting_path(@suite)}=    t(:".meeting.add")
     = render partial: "associations", object: @suite, as: :suite
   - else
     .span8
-      .btn-group
+      .btn-group.suite-actions
         %a.btn.btn-small{href: new_suite_evaluation_path(@suite)}=  t(:".evaluation.add")
         %a.btn.btn-small{href: new_suite_meeting_path(@suite)}=     t(:".meeting.add")
         %a.btn.btn-small{href: new_suite_participant_path(@suite)}= t(:".participant.add")

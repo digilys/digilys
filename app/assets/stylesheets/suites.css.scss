@@ -1,8 +1,6 @@
 @import "variables";
 
 .suite-calendar-table, .suite-associations-table {
-    margin-top: 1em;
-
     .date, .icon {
         width: 1%;
         white-space: nowrap;
@@ -11,6 +9,10 @@
     .overdue a {
         color: $red;
     }
+}
+
+.suite-actions {
+    margin-bottom: 20px;
 }
 
 #select-users-form .hidden {

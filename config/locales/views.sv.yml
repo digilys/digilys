@@ -134,6 +134,11 @@ sv:
       activity:
         open_title: Pågående
         closed_title: Avslutade
+    calendar:
+      open_title: Kommande/försenade
+      closed_title: Genomförda
+      no_open_entities: Det finns inga kommande eller försenade tester eller möten
+      no_closed_entities: Det finns inga genomförda tester eller möten
     color_table:
       add_generic_evaluation_action: Lägg till elevdata
       save_current_state: Spara nuvarande utseende

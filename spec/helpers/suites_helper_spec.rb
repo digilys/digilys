@@ -2,32 +2,39 @@ require 'spec_helper'
 
 describe SuitesHelper do
   context "#calendar_entries" do
-    let(:suite) { create(:suite) }
-    subject { helper.calendar_entries(suite) }
+    let(:suite)       { create(:suite) }
+    subject(:entries) { helper.calendar_entries(suite) }
 
     context "without entites" do
-      it { should be_empty }
+      it { should include(open: [], closed: []) }
     end
 
     context "with entities" do
-      let(:entities) do
+      let!(:open) do
         [
-          create(:suite_evaluation, suite: suite, date: Date.yesterday), 
-          create(:suite_evaluation, suite: suite, date: Date.today), 
-          create(:suite_evaluation, suite: suite, date: Date.tomorrow), 
-          create(:meeting,          suite: suite, date: Date.yesterday), 
-          create(:meeting,          suite: suite, date: Date.today), 
-          create(:meeting,          suite: suite, date: Date.tomorrow)
+          create(:suite_evaluation, suite: suite, date: Date.today,    status:    :empty), 
+          create(:suite_evaluation, suite: suite, date: Date.tomorrow, status:    :partial), 
+          create(:meeting,          suite: suite, date: Date.today,    completed: false), 
+          create(:meeting,          suite: suite, date: Date.tomorrow, completed: false)
+        ]
+      end
+      let!(:closed) do
+        [
+          create(:suite_evaluation, suite: suite, date: Date.yesterday,         status:    :complete), 
+          create(:meeting,          suite: suite, date: Date.yesterday - 1.day, completed: true)
         ]
       end
 
-      it { should match_array(entities) }
+      it "partitions the entities by open/closed and sorts them in date order" do
+        entries[:open].should   match_array(open)
+        entries[:closed].should match_array(closed)
 
-      it "sorts the collection by the entities's date" do
-        prev = nil
-        subject.each do |e|
-          e.date.should >= prev.date unless prev.nil?
-          prev = e
+        entries.each_value do |coll|
+          prev = nil
+          coll.each do |e|
+            e.date.should >= prev.date unless prev.nil?
+            prev = e
+          end
         end
       end
     end

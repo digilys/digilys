@@ -413,6 +413,12 @@ describe Evaluation do
       evaluation.overdue?.should be_false
     end
   end
+  describe ".completed?" do
+    it "matches the status" do
+      build(:suite_evaluation, status: :complete).should    be_completed
+      build(:suite_evaluation, status: :partial).should_not be_completed
+    end
+  end
 
   describe ".has_regular_suite?" do
     context "with no suite" do

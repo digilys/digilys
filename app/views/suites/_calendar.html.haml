@@ -1,22 +1,35 @@
-%table.table.table-bordered.table-hover.table-striped.suite-calendar-table
-  %tbody
-    - calendar_entries(suite).each do |entity|
-      %tr
-        %td.icon
-          - case entity
-          - when Evaluation
-            %i.icon-tasks
-          - when Meeting
-            %i.icon-time
-        %td.date{class: entity.is_a?(Evaluation) && entity.overdue? ? "overdue" : ""}
-          = link_to(entity.date, entity)
-        %td.name= link_to(entity.name, entity)
-        %td.actions
-          - case entity
-          - when Evaluation
-            %a.btn.btn-mini.btn-primary{href: report_evaluation_path(entity)}= t(:".evaluation_report_action")
-            = evaluation_progress_bar(entity)
-          - when Meeting
-            - if entity.completed?
-              %i.icon-ok{title: t(:".meeting_completed")}
-            %a.btn.btn-mini{href: report_meeting_path(entity)}= t(:".meeting_report_action")
+%ul.nav.nav-tabs
+  %li.active
+    %a(href="#open-tasks"   data-toggle="tab")= t(:".open_title")
+  %li
+    %a(href="#closed-tasks" data-toggle="tab")= t(:".closed_title")
+
+.tab-content
+
+  - calendar_entries(suite).each do |state, entities|
+    .tab-pane{id: "#{state}-tasks", class: state == :open ? "active" : ""}
+      - if !entities.blank?
+        %table.table.table-bordered.table-hover.table-striped.suite-calendar-table
+          %tbody
+            - entities.each do |entity|
+              %tr
+                %td.icon
+                  - case entity
+                  - when Evaluation
+                    %i.icon-tasks
+                  - when Meeting
+                    %i.icon-time
+                %td.date{class: entity.is_a?(Evaluation) && entity.overdue? ? "overdue" : ""}
+                  = link_to(entity.date, entity)
+                %td.name= link_to(entity.name, entity)
+                %td.actions
+                  - case entity
+                  - when Evaluation
+                    %a.btn.btn-mini.btn-primary{href: report_evaluation_path(entity)}= t(:".evaluation_report_action")
+                    = evaluation_progress_bar(entity)
+                  - when Meeting
+                    - if entity.completed?
+                      %i.icon-ok{title: t(:".meeting_completed")}
+                    %a.btn.btn-mini{href: report_meeting_path(entity)}= t(:".meeting_report_action")
+      - else
+        .alert.alert-block.alert-info= t(:".no_#{state}_entities")
