@@ -39,7 +39,7 @@ class IndexController < ApplicationController
       activities.
       in_instance(current_instance_id).
       with_status(:open).
-      order("start_date asc nulls last, end_date asc nulls last, name asc").
+      order("end_date asc nulls last, start_date asc nulls last, name asc").
       all
 
     unless current_user.has_role?(:admin)
