@@ -1,7 +1,7 @@
 # Link model for students participating in suites
 class Participant < ActiveRecord::Base
   belongs_to :student
-  belongs_to :suite
+  belongs_to :suite,   touch: true
   belongs_to :group
 
   has_and_belongs_to_many :evaluations

@@ -30,6 +30,17 @@ describe Meeting do
       it { should_not allow_value("201304-29").for(:date) }
     end
   end
+  context "associations" do
+    let(:suite) { create(:suite) }
+
+    it "touches the suite" do
+      updated_at = suite.updated_at
+      Timecop.freeze(Time.now + 5.minutes) do
+        participant = create(:meeting, suite: suite)
+        updated_at.should < suite.reload.updated_at
+      end
+    end
+  end
 
   context ".has_regular_suite?" do
     context "with no suite" do

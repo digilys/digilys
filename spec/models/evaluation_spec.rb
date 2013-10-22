@@ -165,6 +165,18 @@ describe Evaluation do
       end
     end
   end
+  context "associations" do
+    let(:suite) { create(:suite) }
+
+    it "touches the suite" do
+      updated_at = suite.updated_at
+      Timecop.freeze(Time.now + 5.minutes) do
+        participant = create(:suite_evaluation, suite: suite)
+        updated_at.should < suite.reload.updated_at
+      end
+    end
+  end
+
 
   describe ".parse_students_and_groups" do
     let(:suite)        { create(:suite) }
