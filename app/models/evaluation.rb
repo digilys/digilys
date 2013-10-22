@@ -202,6 +202,10 @@ class Evaluation < ActiveRecord::Base
   end
 
 
+  def overdue?
+    !self.status.complete? && self.date < Date.today
+  end
+
   def has_regular_suite?
     self.type.try(:suite?) && !self.suite.blank? && !self.suite.is_template?
   end

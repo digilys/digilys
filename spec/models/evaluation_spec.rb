@@ -399,6 +399,21 @@ describe Evaluation do
     end
   end
 
+  describe ".overdue?" do
+    it "is true when the evaluation is not completed and the date has passed" do
+      evaluation = build(:suite_evaluation, date: Date.yesterday, status: :partial)
+      evaluation.overdue?.should be_true
+    end
+    it "is false when the evaluation is completed and the date has passed" do
+      evaluation = build(:suite_evaluation, date: Date.yesterday, status: :complete)
+      evaluation.overdue?.should be_false
+    end
+    it "is false when the evaluation is not completed and the date has not passed" do
+      evaluation = build(:suite_evaluation, date: Date.today, status: :partial)
+      evaluation.overdue?.should be_false
+    end
+  end
+
   describe ".has_regular_suite?" do
     context "with no suite" do
       subject { build(:evaluation, suite: nil).has_regular_suite? }
