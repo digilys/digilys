@@ -6,121 +6,35 @@ $ ->
         catch err
             return 0
 
-    addSuffix = (value, suffix) ->
-        if value != null
-            value.toString() + suffix
-        else
-            ""
-
     $("#evaluation-form").each ->
         $form = $(this)
 
         $form.find(".evaluation-participants-autocomplete-field").each ->
-            new window.Digilys.StudentGroupAutocomplete($(this))
+            new Digilys.StudentGroupAutocomplete($(this))
 
-        $maxResult     = $("#evaluation_max_result")
-        $redMinText    = $("#evaluation_red_min_text")
-        $redMaxText    = $("#evaluation_red_max_text")
-        $yellowMinText = $("#evaluation_yellow_min_text")
-        $yellowMaxText = $("#evaluation_yellow_max_text")
-        $greenMinText  = $("#evaluation_green_min_text")
-        $greenMaxText  = $("#evaluation_green_max_text")
-        $redMin        = $("#evaluation_red_min")
-        $redMax        = $("#evaluation_red_max")
-        $yellowMin     = $("#evaluation_yellow_min")
-        $yellowMax     = $("#evaluation_yellow_max")
-        $greenMin      = $("#evaluation_green_min")
-        $greenMax      = $("#evaluation_green_max")
-
-        $maxResult.on "change", ->
-            $form.trigger("color-range-change")
-
-        $yellowMinText.on "change", ->
-            $form.trigger("color-range-change")
-        $yellowMaxText.on "change", ->
-            $form.trigger("color-range-change")
-
-        # Update color ranges whenever ranges change
-        $form.on "color-range-change", ->
-            yellowMin = $yellowMinText.val()
-            yellowMax = $yellowMaxText.val()
-
-            suffix    = if /%/.test(yellowMin) then "%" else ""
-
-            yellowMin = intify(yellowMin)
-            yellowMax = intify(yellowMax)
-
-            maxResult = if suffix.length > 0 then 100 else intify($maxResult.val())
-
-            if yellowMin <= yellowMax
-                # When the yellow range is entered in ascending
-                # order, the red range is below the yellow and the green
-                # above
-                ranges =
-                    red:    { min: null,      max: null }
-                    yellow: { min: yellowMin, max: yellowMax }
-                    green:  { min: null,      max: null }
-                
-                ranges.red   = { min: 0,             max: yellowMin - 1 } if yellowMin > 0
-                ranges.green = { min: yellowMax + 1, max: maxResult }     if yellowMax < maxResult
-                
-            else
-                # When the yellow range is entered in the reverse order,
-                # the ranges should change so the red range is above
-                # the yellow range rather than below, and the green is below
-                # rather than above
-                ranges =
-                    red:    { min: null,      max: null }
-                    yellow: { min: yellowMax, max: yellowMin }
-                    green:  { min: null,      max: null }
-                
-                ranges.red   = { min: maxResult,     max: yellowMin + 1 } if yellowMin < maxResult
-                ranges.green = { min: yellowMax - 1, max: 0 }             if yellowMax > 0
-
-            # Update the dummy display ranges
-            $redMinText.val(  addSuffix(ranges.red.min,   suffix))
-            $redMaxText.val(  addSuffix(ranges.red.max,   suffix))
-            $greenMinText.val(addSuffix(ranges.green.min, suffix))
-            $greenMaxText.val(addSuffix(ranges.green.max, suffix))
-
-            # Convert percentage ranges to normal ranges
-            if suffix.length > 0
-                maxResult = intify($maxResult.val())
-
-                ranges =
+        if $form.find(".numeric-fields:first").length > 0
+            new Digilys.ColorRangeEntry(
+                max: "#evaluation_max_result"
+                red:
+                    min: "#evaluation_red_min"
+                    max: "#evaluation_red_max"
+                yellow:
+                    min: "#evaluation_yellow_min"
+                    max: "#evaluation_yellow_max"
+                green:
+                    min: "#evaluation_green_min"
+                    max: "#evaluation_green_max"
+                text:
+                    red:
+                        min: "#evaluation_red_min_text"
+                        max: "#evaluation_red_max_text"
                     yellow:
-                        min: (ranges.yellow.min / 100) * maxResult
-                        max: (ranges.yellow.max / 100) * maxResult
-
-                # Recalculate the red and green ranges base on the real yellow values,
-                # otherwise, the ranges might have gaps or overlapping depending on
-                # the rounding of the percentages
-                if yellowMin <= yellowMax
-                    ranges.red   = { min: 0,                     max: ranges.yellow.min - 1 } if ranges.yellow.min > 0
-                    ranges.green = { min: ranges.yellow.max + 1, max: maxResult }             if ranges.yellow.max < maxResult
-                else
-                    ranges.red   = { min: maxResult,             max: ranges.yellow.max + 1 } if ranges.yellow.max < maxResult
-                    ranges.green = { min: ranges.yellow.min - 1, max: 0 }                     if ranges.yellow.min > 0
-
-            # Update the hidden fields that are actually submitted
-            # They are always in the correct order, meaning min <= max
-            $yellowMin.val(Math.min(ranges.yellow.min, ranges.yellow.max))
-            $yellowMax.val(Math.max(ranges.yellow.min, ranges.yellow.max))
-
-            # Handle empty values
-            if ranges.red && ranges.red.min != null && ranges.red.max != null
-                $redMin.val(Math.min(ranges.red.min, ranges.red.max))
-                $redMax.val(Math.max(ranges.red.min, ranges.red.max))
-            else
-                $redMin.val("")
-                $redMax.val("")
-
-            if ranges.green && ranges.green.min != null && ranges.green.max != null
-                $greenMin.val(Math.min(ranges.green.min, ranges.green.max))
-                $greenMax.val(Math.max(ranges.green.min, ranges.green.max))
-            else
-                $greenMin.val("")
-                $greenMax.val("")
+                        min: "#evaluation_yellow_min_text"
+                        max: "#evaluation_yellow_max_text"
+                    green:
+                        min: "#evaluation_green_min_text"
+                        max: "#evaluation_green_max_text"
+            )
 
         $form.on "change", ".stanine-field-max", ->
             $form.find(".stanine-field-max").each ->
@@ -143,15 +57,6 @@ $ ->
                     $maxField.siblings(".stanine-field-min").val(Math.min(lowerLimit, value))
                 else
                     $maxField.siblings(".stanine-field-min").val("")
-
-        # If we load a form with reverse order colors, flip the
-        # values in the yellow fields
-        if intify($yellowMin.val()) < intify($redMin.val())
-            yellowMinTextVal = $yellowMinText.val()
-            yellowMaxTextVal = $yellowMaxText.val()
-            $yellowMinText.val(yellowMaxTextVal)
-            $yellowMaxText.val(yellowMinTextVal)
-            $form.trigger("color-range-change")
 
         # Hide/show different value fields
         $("#evaluation_value_type").on "change", ->
