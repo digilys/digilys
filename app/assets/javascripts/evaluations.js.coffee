@@ -1,11 +1,4 @@
 $ ->
-    intify = (value) ->
-        try
-            value = parseInt(value)
-            return if isNaN(value) then 0 else value
-        catch err
-            return 0
-
     $("#evaluation-form").each ->
         $form = $(this)
 
@@ -36,27 +29,11 @@ $ ->
                         max: "#evaluation_green_max_text"
             )
 
-        $form.on "change", ".stanine-field-max", ->
-            $form.find(".stanine-field-max").each ->
-                $maxField = $(this)
-
-                value = $maxField.val()
-                value = if value.length > 0 then intify(value) else null
-
-                stanine = $maxField.data("stanine")
-
-                # Set lower limit
-                if value
-                    lowerLimit = 0
-
-                    if stanine > 1
-                        $form.find(".stanine-field-max").slice(0, stanine - 1).each ->
-                            v = $(this).val()
-                            lowerLimit = intify(v) + 1 if v.length > 0
-
-                    $maxField.siblings(".stanine-field-min").val(Math.min(lowerLimit, value))
-                else
-                    $maxField.siblings(".stanine-field-min").val("")
+            new Digilys.StanineRangeEntry(
+                form: $form
+                min: ".stanine-field-min"
+                max: ".stanine-field-max"
+            )
 
         # Hide/show different value fields
         $("#evaluation_value_type").on "change", ->
