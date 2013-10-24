@@ -29,7 +29,7 @@ class Student < ActiveRecord::Base
   has_and_belongs_to_many :activities
 
   accepts_nested_attributes_for :generic_results,
-    reject_if: proc { |attributes| attributes[:value].blank? },
+    reject_if: proc { |attributes| attributes[:value].blank? && attributes[:absent] != "1" },
     allow_destroy: true
 
   attr_accessible :personal_id,

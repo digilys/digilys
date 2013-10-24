@@ -24,7 +24,7 @@
       - else
         = rf.input :value, label: rf.object.evaluation.name
       = rf.hidden_field :evaluation_id
-      = rf.hidden_field :_destroy, value: 0 if !rf.object.new_record?
+      = rf.hidden_field :absent if !rf.object.new_record?
 
   = f.actions do
     = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
