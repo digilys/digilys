@@ -47,6 +47,7 @@ end
 
 before "deploy:finalize_update", "deploy:symlink_external_files"
 before "deploy:finalize_update", "deploy:symlink_relative_public"
+before "deploy:migrate",         "deploy:backup_db"
 
 namespace :deploy do
   desc "Symlinks external files required for the app"
@@ -69,5 +70,14 @@ namespace :deploy do
   desc "Invoke rake task"
   task :invoke do
     run "cd '#{current_path}' && #{rake} #{ENV['task']} RAILS_ENV=#{rails_env}"
+  end
+
+  task :backup_db, roles: :db do
+    run "test -d #{deploy_to}/shared/backup || mkdir -p #{deploy_to}/shared/backup"
+    db = YAML::load(capture("cat #{deploy_to}/shared/config/database.yml"))["production"]
+
+    backup_file = "#{deploy_to}/shared/backup/#{db["database"]}.$(date +%Y%m%d%H%M%S).sql.gz"
+
+    run "pg_dump -U #{db["username"]} #{db["database"]} | gzip > #{backup_file}"
   end
 end
