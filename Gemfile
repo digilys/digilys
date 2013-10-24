@@ -2,6 +2,7 @@ source "https://rubygems.org"
 
 gem "rails",               "3.2.13"
 gem "pg",                  "~> 0.15.1"
+gem "dalli",               "~> 2.6.4"
 gem "haml-rails",          "~> 0.4"
 gem "rails_admin",         "~> 0.4.7"
 gem "devise",              "~> 2.2.3"

@@ -70,6 +70,7 @@ GEM
     config_spartan (1.0.1)
       hashie
     daemon_controller (1.1.2)
+    dalli (2.6.4)
     devise (2.2.3)
       bcrypt-ruby (~> 3.0)
       orm_adapter (~> 0.1)
@@ -281,6 +282,7 @@ DEPENDENCIES
   capybara (~> 2.1.0)
   coffee-rails (~> 3.2.1)
   config_spartan (~> 1.0.1)
+  dalli (~> 2.6.4)
   devise (~> 2.2.3)
   enumerize (~> 0.6.1)
   factory_girl (~> 4.2.0)
