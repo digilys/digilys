@@ -64,6 +64,23 @@ Relationerna mellan de primära modellerna ser ut som följer:
 
 Nedan beskrivs modellerna och dess relationer mer i detalj.
 
+### Instanser (Instance)
+
+Instanser är möjligheten att sätta upp separata virtuella applikationer inuti
+applikationen. De kan användas för att bl.a. se till att de som arbetar i
+applikationen bara har kan se relevant data.
+
+#### Relationer
+
+ * **Elev** - en elev måste tillhöra en instans.
+ * **Grupp** - en grupp måste tillhöra en instans.
+ * **Planering** - en planering måste tillhöra en instans.
+ * **Test** - ett test måste tillhöra en instans, om det inte är ett test som
+   tillhör en planering.
+
+Förutom dessa direkta relationer så är alla modeller som tillhör ovan nämnda
+modeller indirekt associerade med instanser.
+
 ### Användare (User)
 
 Datamodell för användarna i systemet. Används för autentisering av användare
@@ -76,18 +93,32 @@ m.h.a biblioteket `devise`.
  * **Grupp** - en användare kan vara associerad till 0 eller flera grupper.
    Lägger man till en grupp i en planering så får användaren automatiskt
    rättighet att arbeta i planeringen.
+ * **Test** - en användare kan vara associerad till 0 eller flera test. Används
+   för att markera vilka som är ansvariga för ett test i en planering.
  * **Aktivitet** - en användare kan vara associerad till 0 eller flera
    aktiviteter.
+
+Förutom dessa direkta relationer så finns även relationer till modeller via
+roller som användaren har:
+
+ * **Instanser** - en användare kan tillhöra (ha rättigheter på) 1 eller flera
+   instanser.
+ * **Planering** - en användare kan tillhöra (ha rättigheter på) 0 eller flera
+   planeringar.
+
+Se beskrivningen av roller nedan för mer detaljer om roller.
 
 ### Elev (Student)
 
 Datamodell för elever. Innehåller information om eleven, bl.a. namn och
 personnummer. Eleven har även ett fritt fält där man kan ange godtycklig
-information i formen namn/värde. Den godtyckliga informationen är inte avsed att
-aggregeras; vill man ha aggregerade värden kan man använda ett generellt test.
+information i formen namn/värde. Den godtyckliga informationen är inte avsedd
+att aggregeras; vill man ha aggregerade värden kan man använda ett generellt
+test.
 
 #### Relationer
 
+ * **Instans** - en elev måste tillhöra en instans.
  * **Grupp** - en elev kan tillhöra 0 eller flera grupper. När grupper
    associeras med t.ex. planeringar så blir gruppens elever automatisk
    associerade med planeringen.
@@ -104,6 +135,7 @@ hierarkiskt för att skapa strukturen skola-&gt;klasser.
 
 #### Relationer
 
+ * **Instans** - en grupp måste tillhöra en instans.
  * **Grupp** - en grupp kan tillhöra en annan grupp, och således utgöra en del
    av en hierarki.
  * **Elev** - en grupp kan ha 0 eller flera elever. Vanligtvis om gruppen
@@ -127,6 +159,8 @@ en planering så ska alla elever som lades till från den gruppen också tas bor
  * **Elev** - en deltagare tillhör alltid en elev.
  * **Planering** - en deltagare tillhör alltid en planering.
  * **Grupp** - en deltagare kan tillhöra en grupp.
+ * **Test** - en deltagare kan tillhöra 0 eller flera test. Används för att bara
+   utföra test för vissa elever i en planering.
 
 ### Planering (Suite)
 
@@ -135,10 +169,14 @@ en mall, se Mallar nedan för beskrivning.
 
 #### Relationer
 
+ * **Instans** - en planering måste tillhöra en instans.
  * **Deltagare** - en planering har 0 eller flera deltagare.
  * **Test** - en planering har 0 eller flera tester.
  * **Möte** - en planering har 0 eller flera möten.
  * **Aktiviteter** - en planering har 0 eller flera aktiviteter.
+
+Förutom dessa direkta associationer så finns även en eller flera **Användare**
+associerade till planeringen via roller.
 
 ### Test (Evaluation)
 
@@ -171,8 +209,15 @@ resultatet.
 
 #### Relationer
 
+ * **Instans** - ett test måste tillhöra en instans, om det inte är ett test som
+   tillhör en planering.
  * **Planering** - ett test tillhör en planering, om det är av typen Planering.
  * **Resultat** - ett test har 0 eller flera resultat.
+ * **Användare** - ett test har 0 eller flera användare. Används för att markera
+   ansvarig för testet.
+ * **Deltagare** - ett test kan vara direkt associerad med 0 eller flera
+   deltagare. Det gör att endast de direkt associerade behöver rapportera
+   resultat på testet.
 
 ### Resultat (Result)
 
@@ -215,6 +260,34 @@ Rent tekniskt är det ingen skillnad på dessa, det är endast presentationen so
  * **Användare** - aktiviteten har 0 eller flera användare. Det är de användare
    som skall utföra aktiviteten.
 
+### Anpassning (Setting)
+
+En anpassning är en polymorfisk modell där någonting anpassningsbart
+(customizable) kan anpassas av någonting (customizer). Syftet med modellen är
+att ha en generell datamodell där man kan associera anpassningsdata till
+någonting där det är relevant att veta vem eller vad som gjorde anpassningen.
+
+Exempelvis används anpassningen till att spara en specifik användares tillstånd
+på färgkartan så att man får samma utseende om man loggar in från en annan
+dator.
+
+#### Relationer
+
+ * **Customizable** - anpassningen måste tillhöra det som den anpassar.
+ * **Customizer** - anpassningen måste tillhöra den som har gjort anpassningen.
+
+### Tabelltillstånd (TableState)
+
+Ett tabelltillstånd är en polymorfisk modell för att spara och namnge
+tillståndet på en tabell. Används för att spara ner JSON-strukturen som
+representera tillståndet för en DataTables-tabell så att man kan ladda olika
+utseenden på tabellen.
+
+#### Relationer
+
+ * **Base** - tabelltillståndet måste tillhöra den modell vars tabell den har
+   sparat utseendet för.
+
 ## Mallar
 
 Mallar är ett sätt att bygga upp tester och planeringar så att man kan
@@ -234,7 +307,6 @@ specifik för den aktuella planeringen.
 Mallen utgör endast basen för ett test. Väljer man att ändra en mall så påverkas
 inte de tester som skapats från mallen, och mallen ändras inte heller om man
 ändrar testerna.
-
 
 ### Planeringsmallar
 
@@ -274,18 +346,69 @@ instruktionsfilmer, och är kopplade till sökvägar i applikationen.
 
 Generisk taggning av modeller m.h.a. `acts-as-taggable-on`.
 
+## Serialiserad data
+
+Det finns flera fall i modellerna där behovet av en flexibel typ av datastruktur
+behöver användas, men där man inte behöver göra utsökningar baserat på
+innehållet i datastrukturen. I dessa fall har valet gjorts att serialisera
+JSON-data istället för att bygga komplexa generiska tabeller i databasen för att
+tillgodose strukturen. Det gör att man har en kraftfull datastruktur att arbeta
+med i koden, samtidigt som man inte behöver göra stora joins i databasen för att
+hämta ut data.
+
+Valet är även framtidssäkrat: skulle behovet finnas att man behöver göra
+utsökningar av den data som finns i serialiserade fält så finns det två vägar
+att gå. Antingen så bygger man en tabellstruktur och sedan sparar ner den
+befintliga serialiserade datan i tabellerna istället, eller så aktiverar man
+JSON-indexeringen i PostgreSQL.
+
+För specifika detaljer om exakt vilka fält som är serialiserade, se modellerna
+samt dess spec:ar.
+
+### Exempel
+
+De olika representationerna av hur värden mappas mot färger skiljer sig beroende
+på vilken typ av tester det är. Exempelvis så har ett booleskt test följande
+mappning:
+
+    ja:  <färg>
+    nej: <färg>
+
+medan betyg har följande mappning:
+
+    A: <färg>
+    B: <färg>
+    C: <färg>
+    D: <färg>
+    E: <färg>
+    F: <färg>
+
+I båda fallen kan färgerna komma i vilken ordning som helst.
+
+För att göra det så enkelt och flexibelt används en JSON-struktur där man har
+själva resultatet som nyckel och färgen som värde, så att man enkelt kan hämta
+ut vilken färg det är.
+
 ## Användarrättigheter
 
 Beroende på vilken roll en användare har så har den olika rättigheter i
 systemet. För auktoriseringen av användare används `cancan`.
 
-Det finns följande roller i systemet:
+Det finns följande globala roller i systemet:
 
  * **Administratör** - har fulla rättigheter i systemet, kan göra allt.
  * **Superuser** - har rättighet att skapa planeringar och tillhörande
    information, men kan inte påverka grunddata i systemet.
  * **Normal användare** - kan bara hantera de delar av systemet de har
    tilldelats rättigheter till, t.ex. specifika planeringar.
+
+Förutom dessa roller finns även specifika roller på varje specifik planering:
+
+ * **Förvaltare** - har fulla rättigheter på planeringen, kan göra allt inom
+   planeringen. Tilldelas till den som skapar planeringen.
+ * **Bidragsgivare** - kan göra allt i en planering förutom att ändra eller ta
+   bort själva planeringsobjektet. Läggs till av förvaltare efter att
+   planeringen har skapats.
 
 För exakt definition av rättigheterna i systemet hänvisas till
 `Ability`-modellerna samt dokumentationen för `cancan`.

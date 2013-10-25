@@ -2,31 +2,88 @@ digraph ER {
     
     nodesep = 0.4;
 
-    graph [ rankdir=LR overlap=scalexy splines=true];
-    node  [ shape=box ];
-    edge  [ dir=none ];
+    graph [ rankdir=LR overlap=false splines=true ];
+    node  [ shape=box                               ];
+    edge  [ dir=none                                ];
 
-    User       -> Role        [ taillabel="*" headlabel="*" ];
 
-    Student    -> Group       [ taillabel="*" headlabel="*" ];
-    Student    -> Participant [ taillabel="1" headlabel="*" ]
+    // User
 
-    Group      -> Group       [ taillabel="0..1" headlabel="*" ];
-    Group      -> User        [ taillabel="*" headlabel="*" ];
-    Group      -> Participant [ taillabel="1" headlabel="*" ];
+    User -> Role [ taillabel="*" headlabel="*" ];
 
-    Suite      -> Participant [ taillabel="1" headlabel="*" ];
+    // Instance associations
 
-    Evaluation -> Suite       [ taillabel="*" headlabel="0..1" ];
+    IUser       [ label="User"       ];
+    IStudent    [ label="Student"    ];
+    IGroup      [ label="Group"      ];
+    ISuite      [ label="Suite"      ];
+    IEvaluation [ label="Evaluation" ];
 
-    Result     -> Evaluation  [ taillabel="*" headlabel="1" ];
-    Result     -> Student     [ taillabel="*" headlabel="1" ];
+    Instance -> IUser       [ taillabel="1..*" headlabel="*" style="dotted" ];
+    Instance -> IStudent    [ taillabel="1"    headlabel="*"                ];
+    Instance -> IGroup      [ taillabel="1"    headlabel="*"                ];
+    Instance -> ISuite      [ taillabel="1"    headlabel="*"                ];
+    Instance -> IEvaluation [ taillabel="0..1" headlabel="*"                ];
 
-    Meeting    -> Suite       [ taillabel="*" headlabel="1" ];
+    // Students and groups
 
-    Activity   -> Suite       [ taillabel="*" headlabel="1" ];
-    Activity   -> Meeting     [ taillabel="*" headlabel="1" ];
-    Activity   -> Student     [ taillabel="*" headlabel="*" ];
-    Activity   -> User        [ taillabel="*" headlabel="*" ];
-    Activity   -> Group       [ taillabel="*" headlabel="*" ];
+    SGUser [ label="User" ];
+
+    Student -> Group  [ taillabel="*"    headlabel="*" ];
+
+    Group   -> Group  [ taillabel="0..1" headlabel="*" ];
+    Group   -> SGUser [ taillabel="*"    headlabel="*" ];
+
+    // Suite and children
+
+    SUser    [ label="User"    ];
+    SStudent [ label="Student" ];
+    SGroup   [ label="Group"   ];
+
+    subgraph cluster_suite {
+        // Group primary suite associations for a clearer graph
+        style=invisible;
+        Suite;
+        Evaluation;
+        Meeting;
+        Activity;
+        Participant;
+    }
+
+    subgraph cluster_result {
+        // Group result related associations for a clearer graph
+        style=invisible;
+        Result;
+        SStudent;
+        SGroup;
+        Participant;
+    }
+
+    Suite       -> Participant  [ taillabel="1"    headlabel="*"                   ];
+    Suite       -> SUser        [ taillabel="*"    headlabel="*"    style="dotted" ];
+
+    Evaluation  -> Suite        [ taillabel="*"    headlabel="0..1"                ];
+    Evaluation  -> SUser        [ taillabel="*"    headlabel="*"                   ];
+    Evaluation  -> Participant  [ taillabel="*"    headlabel="*"                   ];
+
+    Participant -> SStudent     [ taillabel="*"    headlabel="1"                   ]
+    Participant -> SGroup       [ taillabel="*"    headlabel="1"                   ];
+
+    Result      -> Evaluation   [ taillabel="*"    headlabel="1"                   ];
+    Result      -> SStudent     [ taillabel="*"    headlabel="1"                   ];
+
+    Meeting     -> Suite        [ taillabel="*"    headlabel="1"                   ];
+
+    Activity    -> Suite        [ taillabel="*"    headlabel="1"                   ];
+    Activity    -> Meeting      [ taillabel="*"    headlabel="1"                   ];
+    Activity    -> SStudent     [ taillabel="*"    headlabel="*"                   ];
+    Activity    -> SUser        [ taillabel="*"    headlabel="*"                   ];
+    Activity    -> SGroup       [ taillabel="*"    headlabel="*"                   ];
+
+    // Polymorphic
+
+    Setting     -> Customizable [ taillabel="*"    headlabel="1"                   ];
+    Setting     -> Customizer   [ taillabel="*"    headlabel="1"                   ];
+
+    TableState  -> Base         [ taillabel="*"    headlabel="1"                   ];
 }
