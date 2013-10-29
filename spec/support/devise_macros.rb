@@ -1,4 +1,4 @@
-module ControllerMacros
+module DeviseMacros
 
   ## Devise macros
   def login_user(user_factory = :user)

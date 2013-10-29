@@ -50,7 +50,9 @@ RSpec.configure do |config|
 
   # Devise
   config.include Devise::TestHelpers, type: :controller
-  config.extend  ControllerMacros,    type: :controller
+  config.include Devise::TestHelpers, type: :view
+  config.extend  DeviseMacros,        type: :controller
+  config.extend  DeviseMacros,        type: :view
 
   # View utilities
   config.include ViewUtils,           type: :view
