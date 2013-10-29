@@ -46,13 +46,13 @@ class ActivitiesController < ApplicationController
 
   def authorize_activity!
     if @suite
-      authorize! :contribute_to, @suite
+      authorize! :change, @suite
     elsif @activity.try(:suite)
-      authorize! :contribute_to, @activity.suite
+      authorize! :change, @activity.suite
     elsif @activity
-      authorize! params[:method].to_sym, @activity
+      authorize! params[:action].to_sym, @activity
     else
-      authorize! params[:method].to_sym, Activity
+      authorize! params[:action].to_sym, Activity
     end
   end
 end

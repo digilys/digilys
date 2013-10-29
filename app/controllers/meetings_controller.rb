@@ -61,9 +61,9 @@ class MeetingsController < ApplicationController
 
   def authorize_meeting!
     if @suite
-      authorize! :contribute_to, @suite
+      authorize! :change, @suite
     elsif @meeting.try(:suite)
-      authorize! :contribute_to, @meeting.suite
+      authorize! :change, @meeting.suite
     elsif @meeting
       authorize! params[:action].to_sym, @meeting
     else

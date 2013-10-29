@@ -32,11 +32,11 @@ describe Ability do
         user.add_role :suite_contributor, contributed
       end
 
-      it { should_not be_able_to(:view,          none) }
-      it { should_not be_able_to(:contribute_to, none) }
+      it { should_not be_able_to(:view,   none) }
+      it { should_not be_able_to(:change, none) }
 
-      it { should_not be_able_to(:view,          none) }
-      it { should_not be_able_to(:contribute_to, none) }
+      it { should     be_able_to(:view,   contributed) }
+      it { should     be_able_to(:change, contributed) }
     end
 
     context "Instance member" do
@@ -75,14 +75,14 @@ describe Ability do
 
       it { should_not be_able_to(:manage,        Suite) }
       it { should     be_able_to(:create,        Suite) }
+      it { should     be_able_to(:list,          Suite) }
 
       it { should_not be_able_to(:view,          none) }
       it { should_not be_able_to(:update,        none) }
       it { should_not be_able_to(:destroy,       none) }
 
       it { should     be_able_to(:view,          managed) }
-      it { should     be_able_to(:contribute_to, managed) }
-      it { should     be_able_to(:update,        managed) }
+      it { should     be_able_to(:change,        managed) }
       it { should     be_able_to(:destroy,       managed) }
 
       it { should     be_able_to(:view,          template) }

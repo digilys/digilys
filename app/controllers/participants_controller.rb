@@ -44,7 +44,7 @@ class ParticipantsController < ApplicationController
   private
 
   def authorize_suite!
-    authorize!(:contribute_to, @suite || @participant.suite)
+    authorize!(:change, @suite || @participant.suite)
   end
 
   def instance_filter

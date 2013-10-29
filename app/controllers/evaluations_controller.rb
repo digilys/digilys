@@ -105,9 +105,9 @@ class EvaluationsController < ApplicationController
 
   def authorize_evaluation!
     if @suite
-      authorize! :contribute_to, @suite
+      authorize! :change, @suite
     elsif @evaluation.try(:suite)
-      authorize! :contribute_to, @evaluation.suite
+      authorize! :change, @evaluation.suite
     elsif @evaluation
       authorize! params[:action].to_sym, @evaluation
     else
