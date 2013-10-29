@@ -4,7 +4,8 @@
 
 = render partial: "navigation", locals: { suite: @suite, active: :show }
 
-- can_change = can?(:change, @suite)
+- can_change  = can?(:change,  @suite)
+- can_control = can?(:control, @suite)
 
 - if @suite.is_template?
   .alert.alert-info= t(:".template_notice")
@@ -55,4 +56,5 @@
       .btn-group
         - if can_change
           %a.btn.btn-small{href: select_users_suite_path(@suite)}= t(:".users.add")
-      = render partial: "connected_users", locals: { suite: @suite, can_change: can_change }
+      = render partial: "connected_users", locals: { suite: @suite,
+          can_change: can_change, can_control: can_control }

@@ -149,6 +149,7 @@ sv:
     clear_color_table_state:
       success: Använder utseendet "Kronologisk ordning"
     connected_users:
+      can_change: Kan ändra i planeringen
       remove_user_action: Ta bort från planeringen
     new:
       from_template: Använder mallen %{template_name}.

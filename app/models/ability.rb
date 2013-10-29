@@ -43,6 +43,11 @@ class Ability
                  :associate_users,
       to: :change
 
+    alias_action :destroy,
+                 :add_contributors,
+                 :remove_contributors,
+      to: :control
+
     if user.has_role?(:admin)
       can :manage, :all
     elsif user.has_role?(:superuser)
@@ -76,7 +81,7 @@ class Ability
       user.has_role?(  :suite_manager,     suite) ||
         user.has_role?(:suite_contributor, suite)
     end
-    can :destroy, Suite do |suite|
+    can :control, Suite do |suite|
       user.has_role?(:suite_manager, suite)
     end
 

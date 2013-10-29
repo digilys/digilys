@@ -59,6 +59,8 @@ Digilys::Application.routes.draw do
       get    :select_users
       put    :add_users
       delete :remove_users
+      put    :add_contributors
+      delete :remove_contributors
       put    :add_generic_evaluations
       delete :remove_generic_evaluations
       put    :add_student_data

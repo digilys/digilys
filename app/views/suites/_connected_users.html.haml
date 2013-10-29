@@ -1,6 +1,8 @@
-- can_change ||= false
+- can_change  ||= false
+- can_control ||= false
 
-%table.table.table-striped.users-table
+%table.table.table-striped.users-table.suite-users-table{"data-on-url" => add_contributors_suite_path(),
+   "data-off-url" => remove_contributors_suite_path() }
   %thead
     %tr
       %th.name=   User.human_attribute_name(:name)
@@ -8,7 +10,13 @@
   %tbody
     - suite.users.each do |user|
       %tr
-        %td.email= user.name
+        %td.email
+          = user.name
+          - if can_control && !user.has_role?(:suite_manager, suite)
+            .fieldset.form-inline
+              %label.checkbox
+                = check_box_tag "contributor-toggler-#{user.id}", user.id, user.has_role?(:suite_contributor, suite)
+                %small= t(:".can_change")
 
         %td.actions
           - if can_change

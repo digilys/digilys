@@ -98,7 +98,6 @@ $ ->
 
             addedCloseHandler = true
 
-
     # Handle column removal. This just hijacks any link and triggers the Rails
     # delete action, and has to be done because there is no way to prevent dataTables
     # from doing a sort even if the user clicks a link inside a sortable header
@@ -106,3 +105,8 @@ $ ->
         event.preventDefault()
         $.rails.handleMethod($(this))
         return false
+
+
+    $(".suite-users-table").each ->
+        new Digilys.RemoteToggleList(this, "user_ids")
+

@@ -49,11 +49,11 @@ describe Ability do
 
         ability.should     be_able_to(:view,    suite)
         ability.should     be_able_to(:change,  suite)
-        ability.should     be_able_to(:destroy, suite)
+        ability.should     be_able_to(:control, suite)
 
         ability.should_not be_able_to(:view,    other)
         ability.should_not be_able_to(:change,  other)
-        ability.should_not be_able_to(:destroy, other)
+        ability.should_not be_able_to(:control, other)
 
         associations.each do |association|
           ability.should     be_able_to(:create,  association)
@@ -74,11 +74,11 @@ describe Ability do
 
         ability.should     be_able_to(:view,    suite)
         ability.should     be_able_to(:change,  suite)
-        ability.should_not be_able_to(:destroy, suite)
+        ability.should_not be_able_to(:control, suite)
 
         ability.should_not be_able_to(:view,    other)
         ability.should_not be_able_to(:change,  other)
-        ability.should_not be_able_to(:destroy, other)
+        ability.should_not be_able_to(:control, other)
 
         associations.each do |association|
           ability.should     be_able_to(:create,  association)
@@ -99,11 +99,11 @@ describe Ability do
 
         ability.should     be_able_to(:view,    suite)
         ability.should_not be_able_to(:change,  suite)
-        ability.should_not be_able_to(:destroy, suite)
+        ability.should_not be_able_to(:control, suite)
 
         ability.should_not be_able_to(:view,    other)
         ability.should_not be_able_to(:change,  other)
-        ability.should_not be_able_to(:destroy, other)
+        ability.should_not be_able_to(:control, other)
 
         *readonly, table_state = associations
 

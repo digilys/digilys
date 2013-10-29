@@ -142,6 +142,21 @@ class SuitesController < ApplicationController
     redirect_to @suite
   end
 
+  def add_contributors
+    users = User.where(id: params[:user_ids]).all
+    users.each do |user|
+      user.add_role :suite_contributor, @suite
+    end
+    render json: {status: "ok"}
+  end
+  def remove_contributors
+    users = User.where(id: params[:user_ids]).all
+    users.each do |user|
+      user.remove_role :suite_contributor, @suite
+    end
+    render json: {status: "ok"}
+  end
+
   def add_generic_evaluations
     evaluation = Evaluation.
       with_type(:generic).

@@ -346,6 +346,45 @@ describe SuitesController do
     end
   end
 
+  describe "PUT #add_contributors" do
+    let(:users) { create_list(:user, 2) }
+
+    it "gives the users suite_contributor privileges for the suite" do
+      users.first.has_role?(:suite_contributor, suite).should be_false
+      users.second.has_role?(:suite_contributor, suite).should be_false
+
+      put :add_contributors, id: suite.id, user_ids: users.collect(&:id)
+      response.should be_success
+
+      users.first.has_role?(:suite_contributor, suite).should be_true
+      users.second.has_role?(:suite_contributor, suite).should be_true
+    end
+    it "gives a 404 if the instance does not match" do
+      put :add_contributors, id: other_suite.id, user_ids: users.collect(&:id)
+      response.status.should == 404
+    end
+  end
+  describe "PUT #remove_contributors" do
+    let(:users) { create_list(:user, 2) }
+
+    it "removes the users suite_contributor privileges for the suite" do
+      users.each { |u| u.add_role :suite_contributor, suite }
+
+      users.first.has_role?(:suite_contributor, suite).should be_true
+      users.second.has_role?(:suite_contributor, suite).should be_true
+
+      delete :remove_contributors, id: suite.id, user_ids: users.collect(&:id)
+      response.should be_success
+
+      users.first.has_role?(:suite_contributor, suite).should be_false
+      users.second.has_role?(:suite_contributor, suite).should be_false
+    end
+    it "gives a 404 if the instance does not match" do
+      delete :remove_contributors, id: other_suite.id, user_ids: users.collect(&:id).join(",")
+      response.status.should == 404
+    end
+  end
+
   describe "PUT #add_generic_evaluations" do
     let(:evaluation)       { create(:generic_evaluation) }
     let(:other_evaluation) { create(:generic_evaluation, instance: instance) }
