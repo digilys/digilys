@@ -126,6 +126,10 @@ describe Ability do
           ability.should_not be_able_to(:destroy, association)
         end
       end
+      it "allows suite members to report results" do
+        user.add_role :suite_member, suite
+        ability.should be_able_to(:report, build(:suite_evaluation, suite: suite))
+      end
     end
 
     context "Instance member" do

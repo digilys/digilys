@@ -104,6 +104,12 @@ class Ability
         user.has_role?(:suite_member,      s.base) ||
         user.has_role?(:suite_contributor, s.base)
     end
+    can :report, Evaluation do |e|
+      e.suite &&
+        user.has_role?(:suite_manager,     e.suite) ||
+        user.has_role?(:suite_member,      e.suite) ||
+        user.has_role?(:suite_contributor, e.suite)
+    end
 
     can :search, [ User, Student, Group, Evaluation ]
     can :view,   [ Student, Group ]
