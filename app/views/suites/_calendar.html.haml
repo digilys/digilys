@@ -4,6 +4,8 @@
   %li
     %a(href="#closed-tasks" data-toggle="tab")= t(:".closed_title")
 
+- can_change ||= false
+
 .tab-content
 
   - calendar_entries(suite).each do |state, entities|
@@ -30,6 +32,7 @@
                   - when Meeting
                     - if entity.completed?
                       %i.icon-ok{title: t(:".meeting_completed")}
-                    %a.btn.btn-mini{href: report_meeting_path(entity)}= t(:".meeting_report_action")
+                    - if can_change
+                      %a.btn.btn-mini{href: report_meeting_path(entity)}= t(:".meeting_report_action")
       - else
         .alert.alert-block.alert-info= t(:".no_#{state}_entities")

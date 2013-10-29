@@ -12,7 +12,7 @@
       %li{class: active_if(active == :new)}
         %a{href:new_template_evaluation_path()}= t(:".new_action")
 
-    - elsif evaluation.type.suite?
+    - elsif evaluation.type.suite? && can?(:change, evaluation.suite)
       %li{class: active_if(active == :new)}
         %a{href:new_suite_evaluation_path(evaluation.suite)}= t(:".new_action")
 
@@ -25,10 +25,12 @@
     - if !evaluation.new_record?
       %li{class: active_if(active == :show)}
         %a{href:evaluation_path(evaluation)}= t(:".show_action")
-      %li.secondary-tab{class: active_if(active == :destroy)}
-        %a{href:confirm_destroy_evaluation_path(evaluation)}= t(:".destroy_action")
-      %li.secondary-tab{class: active_if(active == :edit)}
-        %a{href:edit_evaluation_path(evaluation)}= t(:".edit_action")
+      - if can?(:destroy, evaluation)
+        %li.secondary-tab{class: active_if(active == :destroy)}
+          %a{href:confirm_destroy_evaluation_path(evaluation)}= t(:".destroy_action")
+      - if can?(:edit, evaluation)
+        %li.secondary-tab{class: active_if(active == :edit)}
+          %a{href:edit_evaluation_path(evaluation)}= t(:".edit_action")
 
   - if evaluation.type.suite?
     %li

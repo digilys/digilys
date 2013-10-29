@@ -1,6 +1,8 @@
 require "spec_helper"
 
 describe "activities/_navigation" do
+  login_user(:admin)
+
   let(:activity) { create(:activity, status: :closed) }
 
   before(:each) do

@@ -4,6 +4,8 @@
 
 = render partial: "navigation", locals: { suite: @suite, active: :show }
 
+- can_change = can?(:change, @suite)
+
 - if @suite.is_template?
   .alert.alert-info= t(:".template_notice")
 
@@ -15,12 +17,13 @@
     = render partial: "associations", object: @suite, as: :suite
   - else
     .span8
-      .btn-group.suite-actions
-        %a.btn.btn-small{href: new_suite_evaluation_path(@suite)}=  t(:".evaluation.add")
-        %a.btn.btn-small{href: new_suite_meeting_path(@suite)}=     t(:".meeting.add")
-        %a.btn.btn-small{href: new_suite_participant_path(@suite)}= t(:".participant.add")
-        %a.btn.btn-small{href: select_users_suite_path(@suite)}=    t(:".users.add")
-      = render partial: "calendar", object: @suite, as: :suite
+      - if can_change
+        .btn-group.suite-actions
+          %a.btn.btn-small{href: new_suite_evaluation_path(@suite)}=  t(:".evaluation.add")
+          %a.btn.btn-small{href: new_suite_meeting_path(@suite)}=     t(:".meeting.add")
+          %a.btn.btn-small{href: new_suite_participant_path(@suite)}= t(:".participant.add")
+          %a.btn.btn-small{href: select_users_suite_path(@suite)}=    t(:".users.add")
+      = render partial: "calendar", locals: { suite: @suite, can_change: can_change }
 
     .span4
       - open, closed = @suite.activities.partition { |a| a.status.open? }
@@ -42,10 +45,14 @@
     .span6
       %h3= Participant.model_name.human(count: 2)
       .btn-group
-        %a.btn.btn-small{href: new_suite_participant_path(@suite)}= t(:".participant.add")
-      = render partial: "participants/list", object: @suite.participants.order(current_name_order(:students)), as: :participants
+        - if can_change
+          %a.btn.btn-small{href: new_suite_participant_path(@suite)}= t(:".participant.add")
+      = render partial: "participants/list",
+        locals: { participants: @suite.participants.order(current_name_order(:students)),
+          can_change: can_change }
     .span6
       %h3= t(:".users.title")
       .btn-group
-        %a.btn.btn-small{href: select_users_suite_path(@suite)}= t(:".users.add")
-      = render partial: "connected_users", object: @suite, as: :suite
+        - if can_change
+          %a.btn.btn-small{href: select_users_suite_path(@suite)}= t(:".users.add")
+      = render partial: "connected_users", locals: { suite: @suite, can_change: can_change }

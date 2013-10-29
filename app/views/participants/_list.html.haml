@@ -1,3 +1,5 @@
+- can_change ||= false
+
 %table.table.table-striped.participants-table
   %thead
     %tr
@@ -11,5 +13,7 @@
           = link_to(student_name(participant.student), suite_student_path(participant.suite, participant.student))
           %small= participant.group_names
         %td.actions
-          .btn-group
-            %a.btn.btn-mini.btn-danger{href: confirm_destroy_participant_path(participant)}= t(:".destroy_action")
+          - if can_change
+            .btn-group
+              %a.btn.btn-mini.btn-danger{href: confirm_destroy_participant_path(participant)}
+                = t(:".destroy_action")

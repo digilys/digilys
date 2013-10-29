@@ -1,3 +1,5 @@
+- can_change ||= false
+
 %table.table.table-striped.users-table
   %thead
     %tr
@@ -9,12 +11,13 @@
         %td.email= user.name
 
         %td.actions
-          = form_for :suite,
-            url: remove_users_suite_path(suite),
-            method: :delete,
-            html: { id: "remove-user-#{user.id}-form" } do |f|
+          - if can_change
+            = form_for :suite,
+              url: remove_users_suite_path(suite),
+              method: :delete,
+              html: { id: "remove-user-#{user.id}-form" } do |f|
 
-            = f.hidden_field :user_id, value: user.id
+              = f.hidden_field :user_id, value: user.id
 
-            .btn-group
-              = f.submit t(:".remove_user_action"), class: "btn btn-mini btn-danger"
+              .btn-group
+                = f.submit t(:".remove_user_action"), class: "btn btn-mini btn-danger"
