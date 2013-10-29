@@ -110,6 +110,9 @@ class Ability
         user.has_role?(:suite_member,      e.suite) ||
         user.has_role?(:suite_contributor, e.suite)
     end
+    can :report, Activity do |activity|
+      activity.users.include?(user)
+    end
 
     can :search, [ User, Student, Group, Evaluation ]
     can :view,   [ Student, Group ]

@@ -132,6 +132,17 @@ describe Ability do
       end
     end
 
+    context "Activity reporting" do
+      let(:activity) { create(:activity) }
+      let(:other)    { create(:activity) }
+
+      it "allows users to report activites they are assigned to" do
+        activity.users << user
+        ability.should     be_able_to(:report, activity)
+        ability.should_not be_able_to(:report, other)
+      end
+    end
+
     context "Instance member" do
       let(:member_of)     { create(:instance) }
       let(:not_member_of) { create(:instance) }
