@@ -96,7 +96,7 @@
     });
 
     $.extend($.fn.dataTable.defaults, {
-        "sDom": "R<'row'<'span6'f><'span6'l>r>t<'row'<'span6'i><'span6'p>>",
+        "sDom": "R<'row-fluid'<'span6'f><'span6'l>r>t<'row-fluid'<'span6'i><'span6'p>>",
         "sPaginationType": "bootstrap",
         "oLanguage": {
             "sEmptyTable": "Tabellen innehåller ingen data",
