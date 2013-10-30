@@ -37,6 +37,22 @@ describe Student do
     it { should_not allow_value("foo\nbar: baz: foo").for(:data_text).with_message(/rad 1,2/i) }
   end
 
+  context ".touch_suites" do
+    let!(:suite)       { create(:suite) }
+    let!(:student)     { create(:student) }
+    let!(:participant) { create(:participant, student: student, suite: suite) }
+
+    it "touches the suites the student is a participant of" do
+      updated_at = suite.updated_at
+      Timecop.freeze(Time.now + 5.minutes) do
+        student.name << " updated"
+        student.save
+
+        updated_at.should < suite.reload.updated_at
+      end
+    end
+  end
+
   context ".name" do
     subject { create(:student, first_name: "Foo", last_name: "Bar") }
     its(:name) { should == "Foo Bar" }
