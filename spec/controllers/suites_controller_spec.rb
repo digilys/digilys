@@ -79,19 +79,10 @@ describe SuitesController do
   end
 
   describe "GET #color_table" do
-    let(:generic_evaluations)       { create_list(:generic_evaluation, 2) }
-    let!(:other_generic_evaluation) { create(     :generic_evaluation, instance: instance) }
-    before(:each) do
-      suite.generic_evaluations << generic_evaluations.first.id
-      suite.save
-    end
-
-    it "partitions generic evaluations depending on their inclusion in the suite" do
+    it "is successful" do
       get :color_table, id: suite.id
       response.should be_success
       response.should render_template("layouts/fullpage")
-      assigns(:generic_evaluations)[:included].should == [generic_evaluations.first]
-      assigns(:generic_evaluations)[:missing].should  == [generic_evaluations.last]
     end
     it "gives a 404 if the instance does not match" do
       get :color_table, id: other_suite.id
