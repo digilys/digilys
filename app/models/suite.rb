@@ -38,11 +38,22 @@ class Suite < ActiveRecord::Base
   serialize :student_data,        JSON
 
 
-  def generic_evaluations
+  def generic_evaluations(fetch = false)
     if read_attribute(:generic_evaluations).nil?
       write_attribute(:generic_evaluations, [])
     end
-    return read_attribute(:generic_evaluations)
+
+    ids = read_attribute(:generic_evaluations)
+
+    if fetch && !ids.blank?
+      return Evaluation.
+        where(instance_id: self.instance_id, id: ids).
+        with_type(:generic).
+        order("name asc").
+        all
+    else
+      return ids
+    end
   end
   def student_data
     if read_attribute(:student_data).nil?

@@ -25,12 +25,31 @@ describe Suite do
   end
 
   describe ".generic_evaluations" do
-    subject { create(:suite, generic_evaluations: nil) }
+    subject { build(:suite, generic_evaluations: nil) }
     its(:generic_evaluations) { should == [] }
 
     context "with existing data" do
-      subject { create(:suite, generic_evaluations: [1,2,3]) }
+      subject { build(:suite, generic_evaluations: [1,2,3]) }
       its(:generic_evaluations) { should == [1,2,3] }
+    end
+
+    context "fetching" do
+      let(:generics)       { create_list(:generic_evaluation, 2) }
+      let(:wrong_type)     { create(:evaluation_template) }
+      let(:wrong_instance) { create(:generic_evaluation, instance: create(:instance)) }
+
+      it "returns evaluations fetched from the database" do
+        suite = build(:suite, generic_evaluations: generics.collect(&:id))
+        suite.generic_evaluations(true).should match_array(generics)
+      end
+      it "only returns generic evaluations" do
+        suite = build(:suite, generic_evaluations: generics.collect(&:id) + [wrong_type.id])
+        suite.generic_evaluations(true).should match_array(generics)
+      end
+      it "only returns evaluations from the same instance as the suite" do
+        suite = build(:suite, generic_evaluations: generics.collect(&:id) + [wrong_instance.id])
+        suite.generic_evaluations(true).should match_array(generics)
+      end
     end
   end
   describe ".student_data" do
