@@ -2,9 +2,11 @@
   = @suite.name
   %small= @suite.is_template? ? t(:".template_title") : Suite.model_name.human
 
+- cache_key = [ @suite, "color_table", Evaluation.generic_cache_key ]
+
 = render partial: "navigation", locals: { suite: @suite, active: :color_table }
 
-- cache [ @suite, "color_table", "tools" ] do
+- cache [ *cache_key, "tools" ] do
 
   .row-fluid
     .span2
@@ -27,7 +29,7 @@
 
 %table.table.table-bordered.table-hover.suite-results.suite-show-value.results-table.results-fixed-table{data: { "save-local-state-path" => save_color_table_state_suite_path(@suite), "table-state" => JSON.dump(table_state) }}
 
-  - cache [ @suite, "color_table", "table" ] do
+  - cache [ *cache_key, "table" ] do
 
     -# Track values and stanines for averages
     - values = {}
@@ -128,7 +130,7 @@
                 = average_value
               = result_color_image(average_value, evaluation)
 
-- cache [ @suite, "color_table", "dialogs" ] do
+- cache [ *cache_key, "dialogs" ] do
 
   #tools-modal.modal.hide.fade(role="dialog" aria-hidden="true" aria-labelledby="feedback-eula-header" data-backdrop="true")
     .modal-header

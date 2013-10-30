@@ -517,6 +517,11 @@ class Evaluation < ActiveRecord::Base
     return ctx
   end
 
+  # Returns a cache key which covers all generic evaluations
+  def self.generic_cache_key
+    with_type(:generic).maximum("updated_at").to_s(cache_timestamp_format)
+  end
+
 
   def has_grade_stanines?
     return !@stanine_for_grade_a.blank? ||
