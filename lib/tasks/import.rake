@@ -169,12 +169,12 @@ namespace :app do
         end
 
         attributes = {
-          school:      row[0].strip,
-          grade:       row[1].strip,
-          personal_id: row[2].strip,
-          last_name:   row[3].strip,
-          first_name:  row[4].strip,
-          gender:      parse_gender(row[5].strip)
+          school:      row[0].try(:strip),
+          grade:       row[1].try(:strip),
+          personal_id: row[2].try(:strip),
+          last_name:   row[3].try(:strip),
+          first_name:  row[4].try(:strip),
+          gender:      parse_gender(row[5].try(:strip))
         }
 
         data << {
@@ -230,6 +230,8 @@ namespace :app do
             instance_id: ENV["instance_id"]
           )
 
+          grade.parent(true)
+
           student.save!
 
           grade.add_students(student)
@@ -240,7 +242,7 @@ namespace :app do
     end
 
     def parse_gender(str)
-      case str.to_i
+      case str.try(:downcase)
       when "flicka"
         :female
       when "pojke"
