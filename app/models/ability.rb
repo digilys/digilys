@@ -44,16 +44,15 @@ class Ability
 
       # Students
       cannot :destroy, Student
-
-    else # Normal user
-      # Suites and associated models
-      can :list,              Suite
-      can [ :view, :change ], Suite do |suite|
-        user.has_role?(:suite_contributor, suite)
-      end
-      can :search, [ User, Student, Group, Evaluation ]
-      can :view,   [ Student, Group ]
     end
+
+    # Suites and associated models
+    can :list,              Suite
+    can [ :view, :change ], Suite do |suite|
+      user.has_role?(:suite_contributor, suite)
+    end
+    can :search, [ User, Student, Group, Evaluation ]
+    can :view,   [ Student, Group ]
 
     can :list,   Instance
     can :select, Instance do |instance|
