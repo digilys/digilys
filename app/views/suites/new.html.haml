@@ -20,7 +20,8 @@
         = f.hidden_field :template_id,
           class: "suite-template-autocomplete-field",
           data: { url: search_template_suites_path(), 
+            autofocus: true,
             placeholder: t(:".template_placeholder")}
         = f.submit t(:".use_template_action"), class: "btn btn-primary", data: { "loading-text" => t(:wait) }
 
-= render partial: "suites/form", object: @suite, as: :suite
+= render partial: "suites/form", locals: { suite: @suite, autofocus_taken: @suite.template.blank? }

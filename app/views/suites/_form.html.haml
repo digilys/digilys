@@ -1,3 +1,5 @@
+- autofocus_taken ||= false
+
 = semantic_form_for suite, html: { class: "form-horizontal" } do |f|
 
   = f.inputs do
@@ -5,7 +7,7 @@
     = f.hidden_field :template_id
     = f.hidden_field :is_template
 
-    = f.input :name, required: true, input_html: { required: true, autofocus: true }
+    = f.input :name, required: true, input_html: { required: true, autofocus: !autofocus_taken }
 
     - if suite.new_record? && suite.template && !suite.is_template?
       .control-group
