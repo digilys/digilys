@@ -17,11 +17,4 @@ yubikey: false
 
 # login_logo: logos/custom_login_logo.png
 
-
-# Different autofocus choices
-autofocus:
-  evaluations:
-    # Focus the template selector rather than the name field
-    template: false
-
 # instance_banner: Some <b>optional text</b> displayed in a banner at the top of each page
