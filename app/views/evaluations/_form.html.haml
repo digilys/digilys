@@ -51,6 +51,12 @@
           input_html: { class: "tag-field span12",
           data: { "existing-tags" => Evaluation.all_tags(on: :categories).collect(&:name).to_json } }
 
+    .row-fluid
+      .control-group
+        .controls
+          = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
+          %a.btn{href:evaluation_cancel_path(evaluation) }= t(:".cancel_action")
+
   - if evaluation.type.generic?
     - if evaluation.new_record? || evaluation.value_type.numeric?
       = render partial: "evaluations/numeric_fields", locals: { evaluation: evaluation, f: f, hide: !evaluation.value_type.numeric? }
