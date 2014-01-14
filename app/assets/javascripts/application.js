@@ -17,6 +17,7 @@
 //= require bootstrap-datepicker/core
 //= require bootstrap-datepicker/locales/bootstrap-datepicker.sv
 //= require dataTables/jquery.dataTables
+//= require jasny-bootstrap
 //= require_tree ./vendor
 //= require_tree ./defaults
 //= require core
