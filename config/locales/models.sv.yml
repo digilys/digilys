@@ -32,8 +32,8 @@ sv:
         one: Användare
         other: Användare
       instruction:
-        one: Instruktionsfilm
-        other: Instruktionsfilmer
+        one: Instruktioner
+        other: Instruktioner
       table_state:
         one: Tabellutseende
         other: Tabellutseenden

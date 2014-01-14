@@ -347,13 +347,13 @@ sv:
     form:
       film_hint: Klistra in den kod som videotjänsten använder för att bädda in en film på en webbsida.
     create:
-      success: Instruktionsfilmen skapades
+      success: Instruktionerna skapades
     update:
-      success: Instruktionsfilmen uppdaterades
+      success: Instruktionerna uppdaterades
     confirm_destroy:
-      confirmation: Är du säker på att du vill radera instruktionsfilmen?
+      confirmation: Är du säker på att du vill radera instruktionerna?
     destroy:
-      success: Instruktionsfilmen raderades
+      success: Instruktionerna raderades
 
   table_states:
     select:
