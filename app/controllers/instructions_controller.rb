@@ -1,7 +1,26 @@
+require "digilys/exporter"
+
 class InstructionsController < ApplicationController
   layout "fullpage"
 
   load_and_authorize_resource
+
+  def index
+    @instructions = @instructions.order(:title)
+  end
+
+  def export
+    exporter = Digilys::Exporter.new("export")
+    io       = StringIO.new
+
+    exporter.export_instructions(io)
+
+    send_data(
+      io.string,
+      filename: "instructions.json",
+      type:     "application/json"
+    )
+  end
 
   def new
     @instruction.for_page = params[:for_page]

@@ -344,6 +344,8 @@ sv:
       result_line_chart: Resultat
 
   instructions:
+    index:
+      export: Exportera alla
     form:
       film_hint: Klistra in den kod som videotjänsten använder för att bädda in en film på en webbsida.
     create:
