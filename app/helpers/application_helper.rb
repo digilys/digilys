@@ -89,10 +89,28 @@ module ApplicationHelper
     url  = options.delete(:url)
     type = options.delete(:type)
 
+    error_message = content_tag(
+      :div,
+      content_tag(
+        :button,
+        raw("&times;"),
+        class: "close",
+        "data-dismiss" => "alert"
+      ) + t(:gchart_error),
+        class: "alert fade in alert-error"
+    )
+
     html = javascript_tag(%(
       ;(function(google, $) {
         google.setOnLoadCallback(function() {
           var chart = new google.visualization.#{type.to_s.capitalize}Chart(document.getElementById("#{id}"));
+
+          google.visualization.events.addListener(chart, 'error', function(error) {
+            $(document.getElementById(error.id)).parent().remove();
+            #{"console.log(error);" if Rails.env.development?}
+            $("##{id}").prepend('#{error_message}');
+          });
+
           $.getJSON("#{url}", function(data) {
             chart.draw(google.visualization.arrayToDataTable(data), #{options.to_json});
           });

@@ -235,6 +235,8 @@ sv:
   "yes":  Ja
   "no":   Nej
 
+  gchart_error: "Grafen saknar tillräcklig data och kan därför inte visas."
+
   red: Röd
   yellow: Gul
   green: Grön
