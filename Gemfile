@@ -40,7 +40,7 @@ gem "tinymce-rails-langs",             "~> 4.20130625"
 gem "jquery-datatables-rails",         "~> 1.11.2"
 gem "jasny_bootstrap_extension_rails", "~> 0.0.1"
 
-gem "yajl-ruby", "~> 1.1.0", require: false
+gem "yajl-ruby", "~> 1.1.0", require: "yajl"
 
 group :development do
   gem "capistrano", "~> 2.14.2"
