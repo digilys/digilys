@@ -5,9 +5,10 @@ sv:
       help: Hjälp
       logged_in_as: Inloggad som %{name}
       templates: Mallar
-      generics: Grunddata
       import: Importera
   shared:
+    import: Importera
+    generics: Grunddata
     back_action:       Ta mig tillbaka
     continue_action:   Fortsätt leta
     start_over_action: Börja om från början

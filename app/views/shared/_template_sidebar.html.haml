@@ -1,0 +1,6 @@
+- if can? :create, Suite
+  %li{class: active_if(working_with_suite_template?(suite))}
+    %a{href: template_suites_path()}= t(:"template.suites.title")
+- if can? :manage, Evaluation
+  %li{class: active_if(working_with_evaluation_template?(evaluation))}
+    %a{href: template_evaluations_path()}= t(:"template.evaluations.title")
