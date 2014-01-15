@@ -34,8 +34,9 @@
             - if can? :manage, User
               %li{class: active_if(params?(controller: "users"))}
                 %a{href: users_path()}= User.model_name.human(count: 2)
-            %li{class: active_if(params?(controller: "import/instructions"))}
-              %a{href: new_import_instruction_path()}= t(:".import")
+            - if can? :manage, Instruction
+              %li{class: active_if(params?(controller: "import/instructions"))}
+                %a{href: new_import_instruction_path()}= t(:".import")
 
           %ul.nav.pull-right
             - if user_signed_in?
