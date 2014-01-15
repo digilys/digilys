@@ -1,0 +1,8 @@
+- active ||= nil
+
+- content_for :title do
+  - Instruction.model_name.human(count: 2)
+
+%ul.nav.nav-tabs
+  %li{class: active_if(active == :index)}
+    %a{href:instructions_path()}= t(:".index_action")

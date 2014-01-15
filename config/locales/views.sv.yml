@@ -346,6 +346,8 @@ sv:
       result_line_chart: Resultat
 
   instructions:
+    navigation:
+      index_action: Exportera instruktioner
     index:
       export: Exportera alla
     form:

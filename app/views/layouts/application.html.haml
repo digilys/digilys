@@ -65,6 +65,9 @@
                     %h3#instruction-modal-header= instruction.title
                     - if can? :manage, instruction
                       .btn-group
+                        = link_to t(:".export_action"),
+                          instructions_path(),
+                          class: "btn btn-mini"
                         = link_to t(:".edit_action"),
                           edit_instruction_path(instruction, return_to: url_for()),
                           class: "btn btn-mini"

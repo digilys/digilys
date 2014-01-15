@@ -1,5 +1,6 @@
-.page-header
-  %h1= Instruction.model_name.human
+%h1= Instruction.model_name.human
+
+= render partial: "navigation", locals: { active: :index }
 
 .btn-group
   = link_to(t(:".export"), export_instructions_path(), class: "btn")

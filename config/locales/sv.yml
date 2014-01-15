@@ -256,6 +256,7 @@ sv:
   logout_action:       Logga ut
   search_action:       "Sök"
   clear_search_action: "Rensa"
+  export_action:       "Exportera"
 
   select_file: "Välj fil"
   change_file: "Ändra"
