@@ -1,0 +1,19 @@
+.page-header
+  %h1
+    = t(:".import")
+    %small= Instruction.model_name.human
+
+= form_tag({ action: "confirm" }, { method: :post, multipart: true }) do
+  .fileupload.fileupload-new{data: { provides: "fileupload" }}
+    .input-append
+      .uneditable-input.span3
+        %i.icon-file.filupload-exists
+        %span.fileupload-preview
+      %span.btn.btn-file
+        %span.fileupload-new= t(:".select_file")
+        %span.fileupload-exists= t(:".change_file")
+        %input{type: "file", name: "export_file"}
+      %a.btn.fileupload-exists{href: "#", data: { dismiss: "fileupload" } }= t(:".remove_file")
+
+  .form-actions
+    = submit_tag t(:".import"), class: "btn", name: nil

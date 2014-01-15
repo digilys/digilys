@@ -6,6 +6,7 @@ sv:
       logged_in_as: Inloggad som %{name}
       templates: Mallar
       generics: Grunddata
+      import: Importera
   shared:
     back_action:       Ta mig tillbaka
     continue_action:   Fortsätt leta
@@ -384,3 +385,12 @@ sv:
   generic:
     evaluations:
       title: Elevdata
+
+  import:
+    instructions:
+      import: Importera
+      confirm:
+        from_file: Instruktion från fil
+        existing: Befintlig (ersätts vid import)
+      create:
+        success: Instruktionerna importerades

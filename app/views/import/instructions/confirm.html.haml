@@ -1,0 +1,29 @@
+.page-header
+  %h1
+    = t(:".import")
+    %small= Instruction.model_name.human
+
+= form_tag({ action: "create" }, { method: :post }) do
+  %table.table.table-striped.instructions-list
+    %thead
+      %tr
+        %th.uploaded= t(:".from_file")
+        %th.existing= t(:".existing")
+        %th.actions &nbsp;
+    %tbody
+      - @uploaded_instructions.each_with_index do |json, i|
+        - existing = Instruction.where(for_page: json["for_page"]).first
+        %tr
+          %td.uploaded= json["title"]
+          %td.existing= existing.title if existing
+          %td.actions
+            %label.checkbox
+              = check_box_tag("instructions[#{i}][import]", "1", existing.blank?)
+              = t(:".import")
+            - if existing
+              = hidden_field_tag "instructions[#{i}][existing_id]", existing.id
+            - %w(title for_page film description).each do |field|
+              = hidden_field_tag "instructions[#{i}][#{field}]", json[field]
+
+  .form-actions
+    = submit_tag t(:".import"), class: "btn", name: nil

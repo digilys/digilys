@@ -154,6 +154,13 @@ Digilys::Application.routes.draw do
   namespace :generic do
     resources :evaluations, only: [ :index, :new ]
   end
+  namespace :import do
+    resources :instructions, only: [ :new, :create ] do
+      collection do
+        post :confirm
+      end
+    end
+  end
 
   devise_for :users, path: "authenticate"
 

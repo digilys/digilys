@@ -224,7 +224,7 @@ FactoryGirl.define do
 
   factory :instruction do
     sequence(:title) { |i| "Instruction %09d" % i }
-    for_page         "/foo/bar"
+    for_page         { |i| "/foo/bar#{i}" }
     film             "foo"
     description      "foo"
 

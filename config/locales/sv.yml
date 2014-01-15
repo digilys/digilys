@@ -257,6 +257,10 @@ sv:
   search_action:       "Sök"
   clear_search_action: "Rensa"
 
+  select_file: "Välj fil"
+  change_file: "Ändra"
+  remove_file: "Ta bort"
+
   roles:
     admin: Administratör
     superuser: Planerare
