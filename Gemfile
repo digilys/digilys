@@ -18,6 +18,8 @@ gem "yubikey_database_authenticatable",
   git: "https://github.com/mort666/yubikey_database_authenticatable",
   ref: "a8d2ff86928fc342a99dc4974e7f3cbee390f01b"
 
+gem "roo", "~> 1.13.2"
+
 # Servers
 gem "passenger", "~> 3.0.19", require: false
 
