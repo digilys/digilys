@@ -9,7 +9,12 @@
     %tr
       %th.name= Group.human_attribute_name(:name)
       %th.parent= Group.human_attribute_name(:parent)
-    = render_group_tree(@groups)
+  %tbody
+    - if has_search_param?
+      - @groups.each do |g|
+        = render partial: "group_row", locals: { group: g }
+    - else
+      = render_group_tree(@groups)
   %tbody
 
 = paginate(@groups)
