@@ -43,6 +43,8 @@ class SuitesController < ApplicationController
 
   def save_color_table_state
     current_user.save_setting!(@suite, "datatable_state" => JSON.parse(params[:state]))
+    @suite.touch
+
     render json: { result: "OK" }
   end
   def clear_color_table_state
