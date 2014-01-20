@@ -1008,4 +1008,26 @@ describe Evaluation do
 
     it { should match_array(without_explicit_users) }
   end
+
+  describe "#missing_generics_for" do
+    let(:generics)       { create_list(:generic_evaluation, 2) }
+    let(:wrong_type)     { create(:evaluation_template) }
+    let(:wrong_instance) { create(:generic_evaluation, instance: create(:instance)) }
+
+    it "returns all generic evaluations which are not associated to the given object" do
+      obj = build(:suite, generic_evaluations: [generics.first])
+      Evaluation.missing_generics_for(obj).should == [generics.second]
+    end
+    it "handles empty arrays on the object" do
+      generics
+      obj = build(:suite, generic_evaluations: nil)
+      Evaluation.missing_generics_for(obj).should == generics
+    end
+    it "only includes generics from the same instance" do
+      wrong_type
+      wrong_instance
+      obj = build(:suite, generic_evaluations: [generics.first])
+      Evaluation.missing_generics_for(obj).should == [generics.second]
+    end
+  end
 end

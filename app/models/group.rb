@@ -13,6 +13,7 @@ class Group < ActiveRecord::Base
   has_and_belongs_to_many :users,    order: "users.name asc"
 
   has_many :participants, dependent: :nullify
+  has_many :suites,       through:   :students
 
   attr_accessible :name,
     :parent_id,
@@ -24,6 +25,9 @@ class Group < ActiveRecord::Base
   validates :instance, presence: true
 
   validate :must_belong_to_parent_instance
+
+  after_update  :touch_suites
+  after_destroy :touch_suites
 
 
   # Adds students to this group and all the parents
@@ -105,7 +109,14 @@ class Group < ActiveRecord::Base
     where(parent_id: nil)
   end
   
+
   private
+
+  def touch_suites
+    # See ActiveRecord#current_time_from_proper_timezone
+    timestamp = self.class.default_timezone == :utc ? Time.now.utc : Time.now
+    self.suites.update_all(updated_at: timestamp)
+  end
 
   def remove_students_from_all(students, groups)
     groups.each do |group|

@@ -38,22 +38,13 @@ class SuitesController < ApplicationController
 
   layout "fullpage", only: :color_table
   def color_table
-    evaluations = Evaluation.
-      with_type(:generic).
-      where(instance_id: current_instance_id).
-      order("name asc").
-      partition { |e| @suite.generic_evaluations.include?(e.id) }
-
-    @generic_evaluations = {
-      included: evaluations.first,
-      missing:  evaluations.last
-    }
-
     @user_settings = current_user.settings.for(@suite).first.try(:data)
   end
 
   def save_color_table_state
     current_user.save_setting!(@suite, "datatable_state" => JSON.parse(params[:state]))
+    @suite.touch
+
     render json: { result: "OK" }
   end
   def clear_color_table_state

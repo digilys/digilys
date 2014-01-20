@@ -502,6 +502,26 @@ class Evaluation < ActiveRecord::Base
     where("evaluations.id not in (select evaluation_id from evaluations_users)")
   end
 
+  # Returns missing generic evalutions for a specific object
+  # that has an attribute .generic_evaluations which is an array
+  # with associated generic evaluations
+  def self.missing_generics_for(obj)
+    ctx = where(instance_id: obj.instance_id).
+      with_type(:generic).
+      order("name asc")
+
+    if !(ids = obj.generic_evaluations).blank?
+      ctx = ctx.where("id not in (?)", ids)
+    end
+      
+    return ctx
+  end
+
+  # Returns a cache key which covers all generic evaluations
+  def self.generic_cache_key
+    with_type(:generic).maximum("updated_at").to_s(cache_timestamp_format)
+  end
+
 
   def has_grade_stanines?
     return !@stanine_for_grade_a.blank? ||

@@ -7,54 +7,56 @@
 - can_change  = can?(:change,  @suite)
 - can_control = can?(:control, @suite)
 
-- if @suite.is_template?
-  .alert.alert-info= t(:".template_notice")
+- cache [ @suite, "show", can_change, can_control ] do
 
-.row-fluid
   - if @suite.is_template?
-    .btn-group.suite-actions
-      %a.btn.btn-small{href: new_suite_evaluation_path(@suite)}= t(:".evaluation.add")
-      %a.btn.btn-small{href: new_suite_meeting_path(@suite)}=    t(:".meeting.add")
-    = render partial: "associations", object: @suite, as: :suite
-  - else
-    .span8
-      - if can_change
-        .btn-group.suite-actions
-          %a.btn.btn-small{href: new_suite_evaluation_path(@suite)}=  t(:".evaluation.add")
-          %a.btn.btn-small{href: new_suite_meeting_path(@suite)}=     t(:".meeting.add")
-          %a.btn.btn-small{href: new_suite_participant_path(@suite)}= t(:".participant.add")
-          %a.btn.btn-small{href: select_users_suite_path(@suite)}=    t(:".users.add")
-      = render partial: "calendar", locals: { suite: @suite, can_change: can_change }
+    .alert.alert-info= t(:".template_notice")
 
-    .span4
-      - open, closed = @suite.activities.partition { |a| a.status.open? }
-      #activity-accordion.accordion
-        - [ [:open, open], [:closed, closed] ].each do |name, activities|
-          - indicate_active = name == :open && !activities.blank?
-          .accordion-group
-            .accordion-heading
-              %a.accordion-toggle{href: "#activity-accordion-#{name}", data: { toggle: "collapse", parent: "#activity-accordion"}}
-                = t(:".activity.#{name}_title")
-                %span.badge{class: indicate_active ? "badge-success" : ""}= activities.length
-            .accordion-body.collapse{id: "activity-accordion-#{name}", class: indicate_active ? "in" : ""}
-              .accordion-inner
-                = render partial: "activities/list", locals: { activities: activities }
-
-
-- unless @suite.is_template?
   .row-fluid
-    .span6
-      %h3= Participant.model_name.human(count: 2)
-      .btn-group
+    - if @suite.is_template?
+      .btn-group.suite-actions
+        %a.btn.btn-small{href: new_suite_evaluation_path(@suite)}= t(:".evaluation.add")
+        %a.btn.btn-small{href: new_suite_meeting_path(@suite)}=    t(:".meeting.add")
+      = render partial: "associations", object: @suite, as: :suite
+    - else
+      .span8
         - if can_change
-          %a.btn.btn-small{href: new_suite_participant_path(@suite)}= t(:".participant.add")
-      = render partial: "participants/list",
-        locals: { participants: @suite.participants.order(current_name_order(:students)),
-          can_change: can_change }
-    .span6
-      %h3= t(:".users.title")
-      .btn-group
-        - if can_change
-          %a.btn.btn-small{href: select_users_suite_path(@suite)}= t(:".users.add")
-      = render partial: "connected_users", locals: { suite: @suite,
-          can_change: can_change, can_control: can_control }
+          .btn-group.suite-actions
+            %a.btn.btn-small{href: new_suite_evaluation_path(@suite)}=  t(:".evaluation.add")
+            %a.btn.btn-small{href: new_suite_meeting_path(@suite)}=     t(:".meeting.add")
+            %a.btn.btn-small{href: new_suite_participant_path(@suite)}= t(:".participant.add")
+            %a.btn.btn-small{href: select_users_suite_path(@suite)}=    t(:".users.add")
+        = render partial: "calendar", locals: { suite: @suite, can_change: can_change }
+
+      .span4
+        - open, closed = @suite.activities.partition { |a| a.status.open? }
+        #activity-accordion.accordion
+          - [ [:open, open], [:closed, closed] ].each do |name, activities|
+            - indicate_active = name == :open && !activities.blank?
+            .accordion-group
+              .accordion-heading
+                %a.accordion-toggle{href: "#activity-accordion-#{name}", data: { toggle: "collapse", parent: "#activity-accordion"}}
+                  = t(:".activity.#{name}_title")
+                  %span.badge{class: indicate_active ? "badge-success" : ""}= activities.length
+              .accordion-body.collapse{id: "activity-accordion-#{name}", class: indicate_active ? "in" : ""}
+                .accordion-inner
+                  = render partial: "activities/list", locals: { activities: activities }
+
+
+  - unless @suite.is_template?
+    .row-fluid
+      .span6
+        %h3= Participant.model_name.human(count: 2)
+        .btn-group
+          - if can_change
+            %a.btn.btn-small{href: new_suite_participant_path(@suite)}= t(:".participant.add")
+        = render partial: "participants/list",
+          locals: { participants: @suite.participants.order(current_name_order(:students)),
+            can_change: can_change }
+      .span6
+        %h3= t(:".users.title")
+        .btn-group
+          - if can_change
+            %a.btn.btn-small{href: select_users_suite_path(@suite)}= t(:".users.add")
+        = render partial: "connected_users", locals: { suite: @suite,
+            can_change: can_change, can_control: can_control }
