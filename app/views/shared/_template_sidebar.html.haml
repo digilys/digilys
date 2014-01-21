@@ -1,3 +1,6 @@
+- suite ||= nil
+- evaluation ||= nil
+
 - if can? :create, Suite
   %li{class: active_if(working_with_suite_template?(suite))}
     %a{href: template_suites_path()}= t(:"template.suites.title")
