@@ -1030,4 +1030,26 @@ describe Evaluation do
       Evaluation.missing_generics_for(obj).should == [generics.second]
     end
   end
+
+  describe "#generic_cache_key" do
+    subject { Evaluation.generic_cache_key }
+    context "with generic evaluations" do
+      let(:oldest) { Time.now - 10.minutes }
+      let(:newest) { Time.now - 10.minutes }
+
+      before(:each) do
+        Timecop.freeze(oldest) do
+          create(:generic_evaluation)
+        end
+        Timecop.freeze(newest) do
+          create(:generic_evaluation)
+        end
+      end
+
+      it { should == newest.to_s(ActiveRecord::Base.cache_timestamp_format) }
+    end
+    context "without generic evaluations" do
+      it { should be_nil }
+    end
+  end
 end
