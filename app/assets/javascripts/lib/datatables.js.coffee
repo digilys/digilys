@@ -12,7 +12,6 @@ datatables.saveState = (state, url) ->
         window.clearTimeout(datatables.stateTimeoutId)
 
     callback = ->
-        console.log(state)
         $.post(url, { _method: "PUT", state: JSON.stringify(state) })
 
     datatables.stateTimeoutId = window.setTimeout(callback, 1000)
