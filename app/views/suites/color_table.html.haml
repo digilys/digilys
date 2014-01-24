@@ -39,16 +39,16 @@
 
     %thead
       %tr
-        %th.student= Student.human_attribute_name(:name)
+        %th#datatable-column-student-names.student= Student.human_attribute_name(:name)
         - @suite.student_data.each do |key|
-          %th.student-data
+          %th.student-data{id: "datatable-column-student-data-#{key.parameterize}"}
             = key
             = link_to "",
               remove_student_data_suite_path(@suite, key: key),
               method: :delete,
               class: "icon-trash remove-column-action"
         - evaluations.each do |evaluation|
-          %th.evaluation
+          %th.evaluation{id: "datatable-column-evaluation-#{evaluation.id}"}
             = evaluation.name
             - if evaluation.type.generic?
               = link_to "",

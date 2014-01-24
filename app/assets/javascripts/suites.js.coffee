@@ -21,11 +21,17 @@ $ ->
             }
         ]
         fnStateLoad: (settings) ->
-            this.data("table-state")
+            domIds = $.makeArray($(this).find("thead tr:first th").map -> this.id)
+            return window.Digilys.datatables.convertIDsToColumnIndexes(this.data("table-state"), domIds)
         fnStateSave: (settings, state) ->
+            domIds = $.makeArray($(this).find("thead tr:first th").map -> this.id)
+
+            state = window.Digilys.datatables.convertColumnIndexesToIDs(state, domIds)
+
             url = this.data("save-local-state-path")
             this.data("current-state", state)
-            window.Digilys.dataTable.saveState(state, url)
+
+            window.Digilys.datatables.saveState(state, url)
     )
 
     # Filter the table by groups
