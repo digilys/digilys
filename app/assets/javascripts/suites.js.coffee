@@ -22,11 +22,9 @@ $ ->
         ]
         fnStateLoad: (settings) ->
             domIds = $.makeArray($(this).find("thead tr:first th").map -> this.id)
-            return window.Digilys.datatables.convertIDsToColumnIndexes(this.data("table-state"), domIds)
+            return window.Digilys.datatables.processStateForLoading(this.data("table-state"), domIds)
         fnStateSave: (settings, state) ->
-            domIds = $.makeArray($(this).find("thead tr:first th").map -> this.id)
-
-            state = window.Digilys.datatables.convertColumnIndexesToIDs(state, domIds)
+            state = window.Digilys.datatables.processStateForSaving(state, this.fnSettings().aoColumns)
 
             url = this.data("save-local-state-path")
             this.data("current-state", state)
