@@ -117,6 +117,8 @@ sv:
       templates_action: Mallar
       color_table: Färgkarta
       charts: Trender
+      index_action: Aktiva
+      closed_action: Avslutade
     form:
       student_placeholder: Sök och välj elever
       group_placeholder: Sök och välj grupper

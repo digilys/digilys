@@ -48,6 +48,7 @@ Digilys::Application.routes.draw do
 
   resources :suites do
     collection do
+      get  :closed
       post :new_from_template
     end
     member do

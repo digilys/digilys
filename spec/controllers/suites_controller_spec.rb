@@ -11,8 +11,9 @@ describe SuitesController do
     let!(:regular_suites)  { create_list(:suite, 2) }
     let!(:template_suites) { create_list(:suite, 2, is_template: true) }
     let!(:other_instance)  { other_suite }
+    let!(:closed_suite)    { create(:suite, status: :closed) }
 
-    it "lists regular suites" do
+    it "lists regular, open suites" do
       get :index
       response.should be_success
       assigns(:suites).should match_array(regular_suites)
@@ -29,10 +30,45 @@ describe SuitesController do
       before(:each) do
         logged_in_user.grant :suite_member, regular_suites.first
         logged_in_user.grant :suite_member, other_instance
+        logged_in_user.grant :suite_member, closed_suite
       end
 
       it "lists regular suites accessible by the user" do
         get :index
+        response.should be_success
+        assigns(:suites).should == [regular_suites.first]
+      end
+    end
+  end
+
+  describe "GET #closed" do
+    let!(:regular_suites)  { create_list(:suite, 2, status: :closed) }
+    let!(:template_suites) { create_list(:suite, 2, is_template: true, status: :closed) }
+    let!(:other_instance)  { create(:suite, status: :closed, instance: instance) }
+    let!(:open_suite)    { create(:suite, status: :open) }
+
+    it "lists regular, open suites" do
+      get :closed
+      response.should be_success
+      assigns(:suites).should match_array(regular_suites)
+    end
+    it "is filterable" do
+      get :closed, q: { name_cont: regular_suites.first.name}
+      response.should be_success
+      assigns(:suites).should == [regular_suites.first]
+    end
+
+    context "with a regular user" do
+      login_user(:user)
+
+      before(:each) do
+        logged_in_user.grant :suite_member, regular_suites.first
+        logged_in_user.grant :suite_member, other_instance
+        logged_in_user.grant :suite_member, open_suite
+      end
+
+      it "lists regular suites accessible by the user" do
+        get :closed
         response.should be_success
         assigns(:suites).should == [regular_suites.first]
       end

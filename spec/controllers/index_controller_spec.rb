@@ -11,6 +11,7 @@ describe IndexController do
 
     let!(:suite)              { create(:suite) }
     let!(:inaccessible_suite) { create(:suite) }
+    let!(:closed_suite)       { create(:suite, status: :closed) }
     let!(:instance_suite)     { create(:suite, instance: instance)}
 
     let!(:overdue_evaluation)                { create(:suite_evaluation, suite: suite,          date: Date.today - 2.days) }
@@ -33,6 +34,7 @@ describe IndexController do
 
     before(:each) do
       user.grant       :suite_member, suite
+      user.grant       :suite_member, closed_suite
       user.grant       :suite_member, instance_suite
       other_user.grant :suite_member, suite
 
@@ -44,7 +46,7 @@ describe IndexController do
       get :index
       response.should be_success
     end
-    it "lists accessible suites" do
+    it "lists open, accessible suites" do
       get :index
       assigns(:suites).should == [suite]
     end

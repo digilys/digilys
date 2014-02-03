@@ -25,6 +25,8 @@
     - if can? :index, Suite
       %li{class: active_if(active == :index)}
         %a{href:suites_path()}= t(:".index_action")
+      %li{class: active_if(active == :closed)}
+        %a{href:closed_suites_path()}= t(:".closed_action")
     - if can? :new, Suite
       %li{class: active_if(active == :new)}
         %a{href:new_suite_path()}= t(:".new_action")

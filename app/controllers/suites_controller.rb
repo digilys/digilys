@@ -9,13 +9,12 @@ class SuitesController < ApplicationController
 
 
   def index
-    if !current_user.has_role?(:admin)
-      @suites = @suites.with_role([:suite_manager, :suite_member], current_user)
-    end
+    list(:open)
+  end
 
-    @suites = @suites.regular.order(:name)
-    @suites = @suites.search(params[:q]).result if has_search_param?
-    @suites = @suites.page(params[:page])
+  def closed
+    list(:closed)
+    render action: "index"
   end
 
   def search_participants
@@ -183,6 +182,16 @@ class SuitesController < ApplicationController
   end
 
   private
+
+  def list(status)
+    if !current_user.has_role?(:admin)
+      @suites = @suites.with_role([:suite_manager, :suite_member], current_user)
+    end
+
+    @suites = @suites.regular.with_status(status).order(:name)
+    @suites = @suites.search(params[:q]).result if has_search_param?
+    @suites = @suites.page(params[:page])
+  end
 
   # Loads an entity from a template id.
   # Required as a before_filter so it works with cancan's auth
