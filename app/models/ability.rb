@@ -46,6 +46,8 @@ class Ability
     alias_action :destroy,
                  :add_contributors,
                  :remove_contributors,
+                 :confirm_status_change,
+                 :change_status,
       to: :control
 
     if user.has_role?(:admin)

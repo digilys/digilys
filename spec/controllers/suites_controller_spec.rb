@@ -286,6 +286,34 @@ describe SuitesController do
     end
   end
 
+  describe "GET #confirm_status_change" do
+    it "switches the status without saving" do
+      get :confirm_status_change, id: suite.id
+      response.should be_success
+      assigns(:suite).status.to_sym.should == :closed
+      assigns(:suite).should be_changed
+    end
+    it "gives a 404 if the instance does not match" do
+      get :confirm_status_change, id: other_suite.id
+      response.status.should == 404
+    end
+  end
+  describe "PUT #change_status" do
+    it "updates the status and redirects to the suite page" do
+      put :change_status, id: suite.id, suite: { status: "closed" }
+      response.should redirect_to(suite)
+      suite.reload.should be_closed
+    end
+    it "renders the confirm_change_status view when validation fails" do
+      put :change_status, id: suite.id, suite: { status: "invalid" }
+      response.should render_template("confirm_status_change")
+    end
+    it "gives a 404 if the instance does not match" do
+      put :change_status, id: other_suite.id
+      response.status.should == 404
+    end
+  end
+
   describe "GET #confirm_destroy" do
     it "is successful" do
       get :confirm_destroy, id: suite.id

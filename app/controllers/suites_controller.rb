@@ -90,6 +90,20 @@ class SuitesController < ApplicationController
     end
   end
 
+  def confirm_status_change
+    @suite.status = @suite.open? ? :closed : :open
+  end
+  def change_status
+    @suite.status = params[:suite][:status].to_sym
+
+    if @suite.save
+      flash[:success] = t(:"suites.change_status.success.#{@suite.status}")
+      redirect_to @suite
+    else
+      render action: "confirm_status_change"
+    end
+  end
+
   def confirm_destroy
   end
   def destroy
