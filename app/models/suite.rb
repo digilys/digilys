@@ -1,4 +1,6 @@
 class Suite < ActiveRecord::Base
+  extend Enumerize
+
   resourcify
 
   belongs_to :instance
@@ -30,6 +32,8 @@ class Suite < ActiveRecord::Base
     :evaluations_attributes,
     :meetings_attributes,
     :participants_attributes
+
+  enumerize :status, in: [ :open, :closed ], predicates: true, scope: true, default: :open
 
   validates :name,     presence: true
   validates :instance, presence: true

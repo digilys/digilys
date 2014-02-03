@@ -56,6 +56,7 @@ FactoryGirl.define do
     sequence(:name)     { |i| "Suite %09d" % i }
     is_template         false
     generic_evaluations nil
+    status              :open
 
     factory :invalid_suite do
       name nil
