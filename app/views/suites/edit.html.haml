@@ -4,4 +4,6 @@
 
 = render partial: "navigation", locals: { suite: @suite, active: :edit }
 
+= closed_suite_message(@suite)
+
 = render partial: "form", object: @suite, as: :suite

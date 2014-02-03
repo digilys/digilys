@@ -192,6 +192,8 @@ sv:
       success: Deltagarna lades till i planeringen.
     remove_users:
       success: Deltagaren togs bort från planeringen.
+    closed_suite_message_html: Planeringen är avslutad. Det är inte rekommenderat att göra ändringar i avslutade planeringar.
+    closed_suite_message_change_status_html: Om du vill göra ändringar, kan du återuppta planeringen.
 
   participants:
     new_action: Lägg till i planeringen

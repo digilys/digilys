@@ -4,6 +4,8 @@
 
 = render partial: "navigation", locals: { evaluation: @evaluation, only_return: true }
 
+= closed_suite_message(@suite)
+
 = semantic_form_for @evaluation,
   url: submit_report_evaluation_path(@evaluation),
   html: { id: "result-entry-form", class: "form-horizontal" } do |f|

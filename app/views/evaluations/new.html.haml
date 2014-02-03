@@ -2,4 +2,6 @@
 
 = render partial: "navigation", locals: { evaluation: @evaluation, active: :new }
 
+= closed_suite_message(@evaluation.suite)
+
 = render partial: "form", object: @evaluation, as: :evaluation

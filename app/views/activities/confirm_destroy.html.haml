@@ -4,4 +4,6 @@
 
 = render partial: "navigation", locals: { activity: @activity, active: :destroy }
 
+= closed_suite_message(@activity.suite)
+
 = confirm_destroy_form(@activity, t(:".confirmation.#{@activity.type}"))
