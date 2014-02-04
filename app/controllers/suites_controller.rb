@@ -125,6 +125,7 @@ class SuitesController < ApplicationController
 
     users.each do |user|
       user.remove_role :suite_member, @suite
+      user.remove_role :suite_contributor, @suite
     end
 
     @suite.touch

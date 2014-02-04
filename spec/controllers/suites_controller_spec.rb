@@ -318,16 +318,19 @@ describe SuitesController do
   describe "DELETE #remove_users" do
     let(:users) { create_list(:user, 2) }
 
-    it "removes the users' suite_member privileges for the suite" do
+    it "removes the users' suite_member and suite_contributor privileges for the suite" do
       users.each { |u| u.add_role :suite_member, suite }
+      users.first.add_role :suite_contributor, suite
 
       users.first.has_role?(:suite_member, suite).should be_true
+      users.first.has_role?(:suite_contributor, suite).should be_true
       users.second.has_role?(:suite_member, suite).should be_true
 
       delete :remove_users, id: suite.id, suite: { user_id: users.collect(&:id).join(",") }
       response.should redirect_to(suite)
 
       users.first.has_role?(:suite_member, suite).should be_false
+      users.first.has_role?(:suite_contributor, suite).should be_false
       users.second.has_role?(:suite_member, suite).should be_false
     end
     it "touches the suite" do
