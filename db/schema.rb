@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131112071246) do
+ActiveRecord::Schema.define(:version => 20140205125649) do
 
   create_table "activities", :force => true do |t|
     t.integer  "suite_id"
@@ -65,6 +65,7 @@ ActiveRecord::Schema.define(:version => 20131112071246) do
     t.text     "stanines"
     t.string   "status",                        :default => "empty"
     t.integer  "instance_id"
+    t.boolean  "imported",                      :default => false
   end
 
   add_index "evaluations", ["status"], :name => "index_evaluations_on_status"

@@ -65,6 +65,8 @@ describe Evaluation do
       it { should allow_mass_assignment_of(:"color_for_grade_#{grade}") }
       it { should allow_mass_assignment_of(:"stanine_for_grade_#{grade}") }
     end
+
+    it { should_not allow_mass_assignment_of(:imported) }
   end
   context "validation" do
     it { should validate_presence_of(:name) }

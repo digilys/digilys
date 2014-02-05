@@ -51,6 +51,7 @@ namespace :app do
         attributes = d[:attributes]
         evaluation = Evaluation.new
 
+        evaluation.imported      = true
         evaluation.value_type    = :numeric
         evaluation.target        = :all
         evaluation.type          = :template

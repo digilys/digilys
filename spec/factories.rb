@@ -89,6 +89,7 @@ FactoryGirl.define do
     colors          nil
     stanines        nil
     status          :empty
+    imported        false
 
     ignore do
       _yellow   15..35
