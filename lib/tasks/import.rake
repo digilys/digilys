@@ -44,12 +44,23 @@ namespace :app do
         }
       end
 
-      valid   = []
-      invalid = []
+      valid       = []
+      invalid     = []
+      instance_id = ENV["instance_id"]
+      update      = ENV["update"]
+      updated     = 0
 
       data.each do |d|
         attributes = d[:attributes]
-        evaluation = Evaluation.new
+
+        evaluation = Evaluation.where(
+          imported:    true,
+          instance_id: instance_id,
+          name:        attributes[:name],
+          description: attributes[:description]
+        ).first if update
+
+        evaluation ||= Evaluation.new
 
         evaluation.imported      = true
         evaluation.value_type    = :numeric
@@ -87,13 +98,15 @@ namespace :app do
         evaluation.stanine9_min  = attributes[:stanine9].try(:min)
         evaluation.stanine9_max  = attributes[:stanine9].try(:max)
 
-        evaluation.instance_id   = ENV["instance_id"]
+        evaluation.instance_id   = instance_id
 
         if evaluation.valid?
           valid << evaluation
         else
           invalid << d.merge(model: evaluation)
         end
+
+        updated += 1 unless evaluation.new_record?
       end
 
       if !invalid.blank?
@@ -101,15 +114,13 @@ namespace :app do
         invalid.each { |d| puts d[:original_row].to_json + "\n" + d[:model].errors.to_json + "\n\n" }
       end
 
+      puts "\nTotal: #{valid.length + invalid.length}, to be updated: #{updated}" if update
+
       puts "\nEnter 'yes' to import #{valid.length} valid rows, or 'no' to abort:"
 
       if get_input()
         puts "\nImporting..."
-
         valid.collect(&:save!)
-
-        puts "\nNew ids:"
-        puts valid.collect(&:id).join(",")
       else
         puts "\nAborting..."
       end
