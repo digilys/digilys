@@ -60,6 +60,13 @@ module ApplicationHelper
     return false
   end
 
+
+  # Checks if the user is under the import namespace
+  def working_with_import?
+    params[:controller].start_with?("import/")
+  end
+
+
   # Renders a form for confirming a destroy action
   def confirm_destroy_form(entity, message, options = {})
     cancel_path = url_for(options[:cancel_to] || url_for(entity))

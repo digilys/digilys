@@ -30,17 +30,18 @@ group :assets do
   gem "therubyracer", "~> 0.11.4", require: "v8"
 end
 
-gem "jquery-rails",               "~> 2.2.1"
-gem "bootstrap-sass",             "~> 2.3.1.0"
-gem "kaminari-bootstrap",         "~> 0.1.3"
-gem "formtastic-bootstrap",       "~> 2.1.1"
-gem "select2-rails",              "~> 3.5.0"
-gem "bootstrap-datepicker-rails", "~> 1.0.0.5"
-gem "tinymce-rails",              "~> 4.0.2"
-gem "tinymce-rails-langs",        "~> 4.20130625"
-gem "jquery-datatables-rails",    "~> 1.11.2"
+gem "jquery-rails",                    "~> 2.2.1"
+gem "bootstrap-sass",                  "~> 2.3.1.0"
+gem "kaminari-bootstrap",              "~> 0.1.3"
+gem "formtastic-bootstrap",            "~> 2.1.1"
+gem "select2-rails",                   "~> 3.5.0"
+gem "bootstrap-datepicker-rails",      "~> 1.0.0.5"
+gem "tinymce-rails",                   "~> 4.0.2"
+gem "tinymce-rails-langs",             "~> 4.20130625"
+gem "jquery-datatables-rails",         "~> 1.11.2"
+gem "jasny_bootstrap_extension_rails", "~> 0.0.1"
 
-gem "yajl-ruby", "~> 1.1.0", require: false
+gem "yajl-ruby", "~> 1.1.0", require: "yajl"
 
 group :development do
   gem "capistrano", "~> 2.14.2"

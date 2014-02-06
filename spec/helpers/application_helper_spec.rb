@@ -67,6 +67,25 @@ describe ApplicationHelper do
     end
   end
 
+  describe "#working_with_import?" do
+    let(:params) { { controller: controller_name } }
+    before       { helper.stub(:params).and_return(params) }
+    subject      { helper.working_with_import? }
+
+    context "under import namespace" do
+      let(:controller_name) { "import/foo" }
+      it                    { should be_true }
+    end
+    context "under other namespace" do
+      let(:controller_name) { "imports/foo" }
+      it                    { should be_false }
+    end
+    context "under no namespace" do
+      let(:controller_name) { "importfoo" }
+      it                    { should be_false }
+    end
+  end
+
   describe "#confirm_destroy_form" do
     before(:each) do
       helper.stub(:render) { |options| options }

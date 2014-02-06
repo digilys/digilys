@@ -5,6 +5,27 @@ describe InstructionsController do
 
   let(:instruction) { create(:instruction) }
 
+  describe "GET #index" do
+    let!(:instructions) { create_list(:instruction, 2) }
+
+    it "lists instructions" do
+      get :index
+      response.should be_successful
+      assigns(:instructions).should match_array(instructions)
+    end
+  end
+
+  describe "GET #export" do
+    let!(:instruction) { create(:instruction) }
+
+    it "exports instructions as json" do
+      get :export
+      response.should be_successful
+      result = Yajl::Parser.parse(response.body)
+      result["_id"].should == "export-#{instruction.id}"
+    end
+  end
+
   describe "GET #new" do
     it "sets the for_page parameter" do
       get :new, for_page: "/foo/bar"

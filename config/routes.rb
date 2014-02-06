@@ -125,7 +125,10 @@ Digilys::Application.routes.draw do
     end
   end
 
-  resources :instructions, except: [ :index, :show ] do
+  resources :instructions, except: [ :show ] do
+    collection do
+      get :export
+    end
     member do
       get :confirm_destroy
     end
@@ -153,6 +156,13 @@ Digilys::Application.routes.draw do
   end
   namespace :generic do
     resources :evaluations, only: [ :index, :new ]
+  end
+  namespace :import do
+    resources :instructions, only: [ :new, :create ] do
+      collection do
+        post :confirm
+      end
+    end
   end
 
   devise_for :users, path: "authenticate"

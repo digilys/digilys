@@ -5,8 +5,10 @@ sv:
       help: Hjälp
       logged_in_as: Inloggad som %{name}
       templates: Mallar
-      generics: Grunddata
+      import: Importera
   shared:
+    import: Importera
+    generics: Grunddata
     back_action:       Ta mig tillbaka
     continue_action:   Fortsätt leta
     start_over_action: Börja om från början
@@ -361,6 +363,10 @@ sv:
       result_line_chart: Resultat
 
   instructions:
+    navigation:
+      index_action: Exportera instruktioner
+    index:
+      export: Exportera alla
     form:
       film_hint: Klistra in den kod som videotjänsten använder för att bädda in en film på en webbsida.
     create:
@@ -399,3 +405,12 @@ sv:
   generic:
     evaluations:
       title: Elevdata
+
+  import:
+    instructions:
+      import: Importera
+      confirm:
+        from_file: Instruktion från fil
+        existing: Befintlig (ersätts vid import)
+      create:
+        success: Instruktionerna importerades
