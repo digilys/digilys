@@ -255,9 +255,9 @@ namespace :app do
 
     def parse_gender(str)
       case str.try(:downcase)
-      when "flicka"
+      when "flicka", "f", "kvinna", "k"
         :female
-      when "pojke"
+      when "pojke", "f", "man", "m"
         :male
       else
         nil
