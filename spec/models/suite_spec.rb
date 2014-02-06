@@ -22,6 +22,7 @@ describe Suite do
   context "validation" do
     it { should validate_presence_of(:name) }
     it { should validate_presence_of(:instance) }
+    it { should ensure_inclusion_of(:status).in_array(%w(open closed)) }
   end
 
   describe ".generic_evaluations" do

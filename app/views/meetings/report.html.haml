@@ -2,6 +2,8 @@
   = @meeting.name
   %small= @meeting.suite.name
 
+= closed_suite_message(@meeting.suite)
+
 = render partial: "navigation", locals: { meeting: @meeting, active: :report }
 
 - content_for :page_end do

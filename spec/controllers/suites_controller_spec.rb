@@ -11,8 +11,9 @@ describe SuitesController do
     let!(:regular_suites)  { create_list(:suite, 2) }
     let!(:template_suites) { create_list(:suite, 2, is_template: true) }
     let!(:other_instance)  { other_suite }
+    let!(:closed_suite)    { create(:suite, status: :closed) }
 
-    it "lists regular suites" do
+    it "lists regular, open suites" do
       get :index
       response.should be_success
       assigns(:suites).should match_array(regular_suites)
@@ -29,10 +30,45 @@ describe SuitesController do
       before(:each) do
         logged_in_user.grant :suite_member, regular_suites.first
         logged_in_user.grant :suite_member, other_instance
+        logged_in_user.grant :suite_member, closed_suite
       end
 
       it "lists regular suites accessible by the user" do
         get :index
+        response.should be_success
+        assigns(:suites).should == [regular_suites.first]
+      end
+    end
+  end
+
+  describe "GET #closed" do
+    let!(:regular_suites)  { create_list(:suite, 2, status: :closed) }
+    let!(:template_suites) { create_list(:suite, 2, is_template: true, status: :closed) }
+    let!(:other_instance)  { create(:suite, status: :closed, instance: instance) }
+    let!(:open_suite)    { create(:suite, status: :open) }
+
+    it "lists regular, open suites" do
+      get :closed
+      response.should be_success
+      assigns(:suites).should match_array(regular_suites)
+    end
+    it "is filterable" do
+      get :closed, q: { name_cont: regular_suites.first.name}
+      response.should be_success
+      assigns(:suites).should == [regular_suites.first]
+    end
+
+    context "with a regular user" do
+      login_user(:user)
+
+      before(:each) do
+        logged_in_user.grant :suite_member, regular_suites.first
+        logged_in_user.grant :suite_member, other_instance
+        logged_in_user.grant :suite_member, open_suite
+      end
+
+      it "lists regular suites accessible by the user" do
+        get :closed
         response.should be_success
         assigns(:suites).should == [regular_suites.first]
       end
@@ -247,6 +283,34 @@ describe SuitesController do
     it "prevents changing the instance" do
       put :update, id: suite.id, suite: { instance_id: instance.id }
       suite.reload.instance.should_not == instance
+    end
+  end
+
+  describe "GET #confirm_status_change" do
+    it "switches the status without saving" do
+      get :confirm_status_change, id: suite.id
+      response.should be_success
+      assigns(:suite).status.to_sym.should == :closed
+      assigns(:suite).should be_changed
+    end
+    it "gives a 404 if the instance does not match" do
+      get :confirm_status_change, id: other_suite.id
+      response.status.should == 404
+    end
+  end
+  describe "PUT #change_status" do
+    it "updates the status and redirects to the suite page" do
+      put :change_status, id: suite.id, suite: { status: "closed" }
+      response.should redirect_to(suite)
+      suite.reload.should be_closed
+    end
+    it "renders the confirm_change_status view when validation fails" do
+      put :change_status, id: suite.id, suite: { status: "invalid" }
+      response.should render_template("confirm_status_change")
+    end
+    it "gives a 404 if the instance does not match" do
+      put :change_status, id: other_suite.id
+      response.status.should == 404
     end
   end
 

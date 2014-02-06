@@ -201,13 +201,14 @@ ActiveRecord::Schema.define(:version => 20140205125649) do
 
   create_table "suites", :force => true do |t|
     t.string   "name"
-    t.datetime "created_at",                                             :null => false
-    t.datetime "updated_at",                                             :null => false
+    t.datetime "created_at",                                              :null => false
+    t.datetime "updated_at",                                              :null => false
     t.boolean  "is_template",                         :default => false
     t.integer  "template_id"
     t.string   "generic_evaluations", :limit => 1024
     t.string   "student_data",        :limit => 1024
     t.integer  "instance_id"
+    t.string   "status",                              :default => "open"
   end
 
   create_table "table_states", :force => true do |t|

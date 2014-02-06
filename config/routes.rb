@@ -48,9 +48,12 @@ Digilys::Application.routes.draw do
 
   resources :suites do
     collection do
+      get  :closed
       post :new_from_template
     end
     member do
+      get    :confirm_status_change
+      put    :change_status
       get    :search_participants
       get    :color_table
       put    :save_color_table_state

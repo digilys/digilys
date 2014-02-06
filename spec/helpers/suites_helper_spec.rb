@@ -228,4 +228,32 @@ describe SuitesHelper do
       helper.format_range(10..10).should == 10
     end
   end
+
+  describe ".closed_suite_message" do
+    let(:can_change) { true }
+    let(:suite)      { build(:suite, status: :closed, id: -1) }
+    let(:result)     { helper.closed_suite_message(suite) }
+    subject(:html)   { Capybara::Node::Simple.new(result) }
+
+    before(:each)    { helper.stub(:can?).and_return(can_change) }
+
+    it { should have_selector(".alert.alert-block.alert-warning p", count: 2) }
+    it { should have_selector("p a[href='#{confirm_status_change_suite_path(suite)}']") }
+
+    context "with an open suite" do
+      let(:suite) { build(:suite, status: :open) }
+      subject     { result }
+      it          { should be_nil }
+    end
+    context "without a suite" do
+      let(:suite) { nil }
+      subject     { result }
+      it          { should be_nil }
+    end
+    context "with an unprivileged user" do
+      let(:can_change) { false }
+      it               { should     have_selector(".alert.alert-block.alert-warning p", count: 1) }
+      it               { should_not have_selector("p a") }
+    end
+  end
 end

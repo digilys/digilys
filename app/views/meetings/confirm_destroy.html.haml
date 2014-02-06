@@ -4,4 +4,6 @@
 
 = render partial: "navigation", locals: { meeting: @meeting, active: :destroy }
 
+= closed_suite_message(@meeting.suite)
+
 = confirm_destroy_form(@meeting, t(:".confirmation"))

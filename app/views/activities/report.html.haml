@@ -4,6 +4,8 @@
 
 = render partial: "navigation", locals: { activity: @activity, active: :report }
 
+= closed_suite_message(@activity.suite)
+
 - content_for :page_end do
   = tinymce_assets
   = tinymce
