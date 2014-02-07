@@ -3,7 +3,6 @@ class User < ActiveRecord::Base
 
   devise :"#{Conf.yubikey ? "yubikey_" : ""}database_authenticatable",
     :registerable,
-    :rememberable,
     :trackable,
     :validatable
 
