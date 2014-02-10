@@ -230,23 +230,34 @@ namespace :app do
           school_name = d[:attributes][:school]
           grade_name  = d[:attributes][:grade]
           student     = d[:model]
+          school      = nil
+          grade       = nil
 
-          school = Group.where([ "name ilike ?", school_name ]).first_or_create!(
-            imported: true,
-            name: school_name,
-            instance_id: ENV["instance_id"]
-          )
-          grade = school.children.where([ "name ilike ?", grade_name ]).first_or_create!(
-            imported: true,
-            name: grade_name,
-            instance_id: ENV["instance_id"]
-          )
+          unless school_name.blank?
+            school = Group.where([ "name ilike ?", school_name ]).first_or_create!(
+              imported: true,
+              name: school_name,
+              instance_id: ENV["instance_id"]
+            )
+          end
 
-          grade.parent(true)
+          unless grade_name.blank?
+            grade = school.children.where([ "name ilike ?", grade_name ]).first_or_create!(
+              imported: true,
+              name: grade_name,
+              instance_id: ENV["instance_id"]
+            )
+
+            grade.parent(true)
+          end
 
           student.save!
 
-          grade.add_students(student)
+          if grade
+            grade.add_students(student)
+          elsif school
+            school.add_students(student)
+          end
         end
       else
         puts "\nAborting..."
