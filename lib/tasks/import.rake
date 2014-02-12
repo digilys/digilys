@@ -1,6 +1,7 @@
 # Tasks for importing data
 require "digilys/importer"
 require "digilys/evaluation_template_importer"
+require "digilys/student_data_importer"
 
 namespace :app do
   namespace :import do
@@ -29,108 +30,22 @@ namespace :app do
     end
 
     task students_and_groups_from_tsv: :environment do
-      title = true
-      data = []
+      tsv = CSV.open(ENV["file"], col_sep: "\t")
 
-      CSV.foreach(ENV["file"], col_sep: "\t") do |row|
-        # Skip first row
-        if title
-          title = false
-          next
-        end
+      importer = Digilys::StudentDataImporter.new(tsv, ENV["instance_id"])
 
-        attributes = {
-          school:      row[0].try(:strip),
-          grade:       row[1].try(:strip),
-          personal_id: row[2].try(:strip),
-          last_name:   row[3].try(:strip),
-          first_name:  row[4].try(:strip),
-          gender:      parse_gender(row[5].try(:strip))
-        }
-
-        data << {
-          original_row: row,
-          attributes:   attributes
-        }
-      end
-
-      valid   = []
-      invalid = []
-
-      data.each do |d|
-        attributes = d[:attributes]
-
-        student = Student.where(personal_id: attributes[:personal_id]).first_or_initialize()
-
-        student.first_name  = attributes[:first_name]
-        student.last_name   = attributes[:last_name]
-        student.gender      = attributes[:gender]
-
-        student.instance_id = ENV["instance_id"]
-
-        if student.valid?
-          valid << d.merge(model: student)
-        else
-          invalid << d.merge(model: student)
-        end
-      end
-
-      if !invalid.blank?
+      if !importer.valid?
         puts "Invalid rows:\n"
         invalid.each { |d| puts d[:original_row].to_json + "\n" + d[:model].errors.to_json + "\n\n" }
       end
 
-      puts "\nEnter 'yes' to import #{valid.length} valid rows, or 'no' to abort:"
+      puts "\nEnter 'yes' to import #{importer.valid_count} valid rows, or 'no' to abort:"
       
       if get_input()
         puts "\nImporting..."
-
-        valid.each do |d|
-          school_name = d[:attributes][:school]
-          grade_name  = d[:attributes][:grade]
-          student     = d[:model]
-          school      = nil
-          grade       = nil
-
-          unless school_name.blank?
-            school = Group.where([ "name ilike ?", school_name ]).first_or_create!(
-              imported: true,
-              name: school_name,
-              instance_id: ENV["instance_id"]
-            )
-          end
-
-          unless grade_name.blank?
-            grade = school.children.where([ "name ilike ?", grade_name ]).first_or_create!(
-              imported: true,
-              name: grade_name,
-              instance_id: ENV["instance_id"]
-            )
-
-            grade.parent(true)
-          end
-
-          student.save!
-
-          if grade
-            grade.add_students(student)
-          elsif school
-            school.add_students(student)
-          end
-        end
+        importer.import!
       else
         puts "\nAborting..."
-      end
-    end
-
-    def parse_gender(str)
-      case str.try(:downcase)
-      when "flicka", "f", "kvinna", "k"
-        :female
-      when "pojke", "f", "man", "m"
-        :male
-      else
-        nil
       end
     end
 
