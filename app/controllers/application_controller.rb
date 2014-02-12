@@ -106,6 +106,10 @@ class ApplicationController < ActionController::Base
     authorize! :import, :all
   end
 
+  def timestamp_prefix(s)
+    "#{Time.zone.now.to_s(ActiveRecord::Base.cache_timestamp_format)}-#{s}"
+  end
+
 
   private
 

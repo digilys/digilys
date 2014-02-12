@@ -12,6 +12,8 @@ sv:
     back_action:       Ta mig tillbaka
     continue_action:   Fortsätt leta
     start_over_action: Börja om från början
+    import_sidebar:
+      evaluation_templates: Testmallar
     "404":
       title: Ojdå!
       body_html: |
@@ -407,10 +409,63 @@ sv:
       title: Elevdata
 
   import:
+    import: Importera
     instructions:
-      import: Importera
       confirm:
         from_file: Instruktion från fil
         existing: Befintlig (ersätts vid import)
       create:
         success: Instruktionerna importerades
+    evaluation_templates:
+      evaluation_templates: Testmallar
+      instruction_html: |
+        <h5>Instruktioner för import av testmallar</h5>
+        <ul>
+        <li>Importen kräver en CSV-fil, alltså en textfil med kommaseparerade värden.</li>
+        <li>
+        För att få en CSV-fil från Google-dokumentet gör man följande:
+          <ol>
+          <li>Öppna Google-dokumentet</li>
+          <li>Gå till det blad som innehåller testmallarna som ska importeras</li>
+          <li>Välj File &gt; Download as &gt; Comma separated values (.csv, current sheet)</li>
+          <li>Filen som laddas ner är den som ska anges nedan.</li>
+          </ol>
+        </li>
+        <li><b>Det är viktigt att korrekt format används i Google-dokumentet. Är inte formatet korrekt fungerar inte importen.</b></li>
+        </ul>
+      format_specification: Formatspecifikation
+      format_specification_html: |
+        <p>Kolumnerna i Google-dokumentet måste vara följande:</p>
+        <ol>
+        <li>Testets namn</li>
+        <li>En beskrivning på testet</li>
+        <li>Kategorier, en kommaseparerad lista, t.ex. matematik, grammatik</li>
+        <li>Maxvärde</li>
+        <li>Värde för rött, se intervallangivelse nedan för detaljer</li>
+        <li>Värde för gult, se intervallangivelse nedan för detaljer</li>
+        <li>Värde för grönt, se intervallangivelse nedan för detaljer</li>
+        <li>Värde för stanine 1, se intervallangivelse nedan för detaljer</li>
+        <li>Värde för stanine 2, se intervallangivelse nedan för detaljer</li>
+        <li>Värde för stanine 3, se intervallangivelse nedan för detaljer</li>
+        <li>Värde för stanine 4, se intervallangivelse nedan för detaljer</li>
+        <li>Värde för stanine 5, se intervallangivelse nedan för detaljer</li>
+        <li>Värde för stanine 6, se intervallangivelse nedan för detaljer</li>
+        <li>Värde för stanine 7, se intervallangivelse nedan för detaljer</li>
+        <li>Värde för stanine 8, se intervallangivelse nedan för detaljer</li>
+        <li>Värde för stanine 9, se intervallangivelse nedan för detaljer</li>
+        <li>Kommentar, används inte i DigiLys</li>
+        </ol>
+        <p>Ordningen på kolumnerna <b>måste</b> vara enligt ovanstående. Ordningen får inte ändras och man får inte lägga in ytterligare kolumner.</p>
+        <p>Första raden i filen måste vara en rubrikrad. Vid import hoppas alltid första raden över, och om det inte är en rubrikrad kommer testet inte att importeras.</p>
+        <p>Intervall kan anges enligt följande format:</p>
+        <ul>
+        <li>Ett värde, ex 10</li>
+        <li>Ett intervall, ex 10-20</li>
+        <li>Ett öppet intervall, där minimum eller maximum används för saknade värden, ex. -20 eller 20-</li>
+        <li>Procentuellt intervall, ex 10-20%. Detta gäller bara värdena för rött, gult och grönt, inte stanine.</li>
+        </ul>
+      correct_data: Inga fel hittades i den uppladdade filen
+      errors_found: Fel hittades i den uppladdade filen. Var god korrigera filen. Se nedan för detaljer.
+      create:
+        success: "%{count} testmallar importerades"
+        error: "Fel uppstod när testmallarna skulle importeras. Vid felrapport, var god att ange följande till utvecklarna: %{filename}."

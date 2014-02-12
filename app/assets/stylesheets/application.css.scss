@@ -121,3 +121,11 @@
 .placeholderFocus { color: #333; }
 
 .instance-banner.alert { margin: 0; }
+
+.import-confirmation-list {
+    white-space: nowrap;
+
+    .error ul {
+        margin-bottom: 0;
+    }
+}
