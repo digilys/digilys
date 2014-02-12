@@ -34,7 +34,7 @@
             - if can? :manage, User
               %li{class: active_if(params?(controller: "users"))}
                 %a{href: users_path()}= User.model_name.human(count: 2)
-            - if can? :manage, Instruction
+            - if can? :import, :all
               %li{class: active_if(params?(controller: "import/instructions"))}
                 %a{href: new_import_instruction_path()}= t(:".import")
 

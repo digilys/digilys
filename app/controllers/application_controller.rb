@@ -102,6 +102,10 @@ class ApplicationController < ActionController::Base
     return result.values
   end
 
+  def authorize_import
+    authorize! :import, :all
+  end
+
 
   private
 
