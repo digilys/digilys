@@ -140,6 +140,17 @@ describe EvaluationsHelper do
       output.should have_selector(".progress .bar-disabled[style=\"width: 20.0%\"]")
     end
 
+    it "includes percentages in the title" do
+      create_result(0, 1) # red
+      create_result(1, 5) # yellow
+      create_result(2, 6) # yellow
+      create_result(3, 8) # green
+      create_result(4, nil) # absent
+
+      output.find(".evaluation-status-progress[title]")["title"].should ==
+        "#{t(:red)}: 20%<br>#{t(:yellow)}: 40%<br>#{t(:green)}: 20%<br>#{t(:absent)}: 20%"
+    end
+
     context "rounding" do
       let(:participants) { create_list(:participant, 7, suite: suite) }
       
