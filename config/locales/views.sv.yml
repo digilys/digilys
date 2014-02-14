@@ -494,6 +494,7 @@ sv:
         <p>Första raden i filen måste vara en rubrikrad. Vid import hoppas alltid första raden över, och om det inte är en rubrikrad kommer den eleven inte att importeras.</p>
         <p>För att uppdatera en elevs information måste personnumret vara identiskt med det som redan ligger i DigiLys. Skiljer det sig på något sätt, t.ex. genom att man har 12 siffror eller saknar streck mellan födelsedatum och de fyra sista siffrorna, så kommer inte importen kunna hitta den befintliga eleven, utan en ny elev skapas.</p>
       confirm:
+        student_update: Eleven finns redan i DigiLys och kommer att uppdateras.
         school: Skola
         grade: Klass
         error: Ett fel uppstod när filen skulle läsas in. Var god kontrollera att formatet är korrekt. Vid problem, kontakta ansvariga tekniker.

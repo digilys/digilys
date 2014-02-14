@@ -63,7 +63,7 @@ class Digilys::StudentDataImporter
     @invalid.length
   end
 
-  attr_reader :invalid
+  attr_reader :valid, :invalid
 
   def import!
     return false unless valid?

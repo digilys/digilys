@@ -18,6 +18,7 @@
     %table.table.table-striped.table-condensed.import-confirmation-list
       %thead
         %tr
+          %th.new_record &nbsp;
           %th.school=      t(:".school")
           %th.grade=       t(:".grade")
           %th.personal_id= Student.human_attribute_name(:personal_id)
@@ -25,9 +26,12 @@
           %th.first_name=  Student.human_attribute_name(:first_name)
           %th.gender=      Student.human_attribute_name(:gender)
       %tbody
-        - @importer.parsed_attributes.each do |d|
+        - @importer.valid.each do |d|
           - a = d[:attributes]
           %tr
+            %td.new_record
+              - unless d[:model].new_record?
+                %i.icon-retweet{title: t(:".student_update")}
             %td.school=      a[:school]
             %td.grade=       a[:grade]
             %td.personal_id= a[:personal_id]
