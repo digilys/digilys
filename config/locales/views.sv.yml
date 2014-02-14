@@ -14,6 +14,7 @@ sv:
     start_over_action: Börja om från början
     import_sidebar:
       evaluation_templates: Testmallar
+      student_data: Elevinformation
     "404":
       title: Ojdå!
       body_html: |
@@ -410,6 +411,9 @@ sv:
 
   import:
     import: Importera
+    format_specification: Formatspecifikation
+    correct_data: Inga fel hittades i den uppladdade filen
+    errors_found: Fel hittades i den uppladdade filen. Var god korrigera filen. Se nedan för detaljer.
     instructions:
       confirm:
         from_file: Instruktion från fil
@@ -433,7 +437,6 @@ sv:
         </li>
         <li><b>Det är viktigt att korrekt format används i Google-dokumentet. Är inte formatet korrekt fungerar inte importen.</b></li>
         </ul>
-      format_specification: Formatspecifikation
       format_specification_html: |
         <p>Kolumnerna i Google-dokumentet måste vara följande:</p>
         <ol>
@@ -464,8 +467,36 @@ sv:
         <li>Ett öppet intervall, där minimum eller maximum används för saknade värden, ex. -20 eller 20-</li>
         <li>Procentuellt intervall, ex 10-20%. Detta gäller bara värdena för rött, gult och grönt, inte stanine.</li>
         </ul>
-      correct_data: Inga fel hittades i den uppladdade filen
-      errors_found: Fel hittades i den uppladdade filen. Var god korrigera filen. Se nedan för detaljer.
       create:
         success: "%{count} testmallar importerades"
         error: "Fel uppstod när testmallarna skulle importeras. Vid felrapport, var god att ange följande till utvecklarna: %{filename}."
+    student_data:
+      student_data: Elevinformation
+      instruction_html: |
+        <h5>Information för import av elevinformation</h5>
+        <ul>
+        <li>Importen kräver en Excel-fil.</li>
+        <li>Om Excel-filen innehåller många rader kan det ta lång tid att läsa in filen. Var god överväg att dela upp filen i flera med färre rader i varje.</li>
+        <li>Excel-filer är komplexa, så det finns en risk att filen inte läses in korrekt p.g.a. tekniska detaljer i Excel.</li>
+        <li><b>Det är viktigt att korrekt format används i Excel-filen. Är inte formatet korrekt fungerar inte importen.</b></li>
+        </ul>
+      format_specification_html: |
+        <p>Kolumnerna i Excel-dokumentet måste vara följande:</p>
+        <ol>
+        <li>Skola</li>
+        <li>Klass</li>
+        <li>Personnummer</li>
+        <li>Efternamn</li>
+        <li>Förnamn</li>
+        <li>Kön, anges som flicka/pojke</li>
+        </ol>
+        <p>Ordningen på kolumnerna <b>måste</b> vara enligt ovanstående. Ordningen får inte ändras och man får inte lägga in ytterligare kolumner.</p>
+        <p>Första raden i filen måste vara en rubrikrad. Vid import hoppas alltid första raden över, och om det inte är en rubrikrad kommer den eleven inte att importeras.</p>
+        <p>För att uppdatera en elevs information måste personnumret vara identiskt med det som redan ligger i DigiLys. Skiljer det sig på något sätt, t.ex. genom att man har 12 siffror eller saknar streck mellan födelsedatum och de fyra sista siffrorna, så kommer inte importen kunna hitta den befintliga eleven, utan en ny elev skapas.</p>
+      confirm:
+        school: Skola
+        grade: Klass
+        error: Ett fel uppstod när filen skulle läsas in. Var god kontrollera att formatet är korrekt. Vid problem, kontakta ansvariga tekniker.
+      create:
+        success: "%{count} elever importerades"
+        error: "Fel uppstod när eleverna skulle importeras. Vid felrapport, var god att ange följande till utvecklarna: %{filename}."

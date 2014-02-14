@@ -168,6 +168,11 @@ Digilys::Application.routes.draw do
         post :confirm
       end
     end
+    resources :student_data, only: [ :new, :create ] do
+      collection do
+        post :confirm
+      end
+    end
   end
 
   devise_for :users, path: "authenticate"

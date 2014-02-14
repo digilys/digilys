@@ -2,3 +2,5 @@
   %a{href: new_import_instruction_path()}= Instruction.model_name.human(count: 2)
 %li{class: active_if(params?(controller: "import/evaluation_templates"))}
   %a{href: new_import_evaluation_template_path()}= t(:".evaluation_templates")
+%li{class: active_if(params?(controller: "import/student_data"))}
+  %a{href: new_import_student_data_path()}= t(:".student_data")
