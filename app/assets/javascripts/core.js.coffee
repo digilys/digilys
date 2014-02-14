@@ -16,3 +16,5 @@ $ ->
 
     $("form:not(.prevent-navigation-confirmation)").each ->
         new Digilys.WarnableForm($(this), Digilys.navigationConfirmation)
+
+    $(".import-confirmation-list").tooltip(selector: "[title]")
