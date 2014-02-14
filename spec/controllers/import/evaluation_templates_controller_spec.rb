@@ -77,5 +77,40 @@ describe Import::EvaluationTemplatesController do
         response.should redirect_to(new_import_evaluation_template_url())
       end
     end
+
+    context "updating" do
+      let(:instance) { create(:instance) }
+
+      temp_file(
+        File.join(Rails.root, "tmp/uploads"),
+        <<-CSV.strip_heredoc
+      ,,,,,,,,,,,,,,,
+      Template1,Template1 desc,"foo, bar",50,0-24,25-39,40-50,0,0,0,1-9,10-19,20-29,30-39,40-44,45-50
+      CSV
+      )
+
+      let!(:existing) { create(
+        :evaluation_template,
+        name: "Template1",
+        description: "Template1 desc",
+        instance: instance,
+        imported: true,
+        max_result: 100
+      ) }
+
+      before(:each) do
+        controller.stub(:current_instance_id).and_return(instance.id)
+      end
+
+      it "should update existing if required" do
+        post :create, filename: File.basename(temp_file), update: "1"
+        Evaluation.count.should == 1
+        existing.reload.max_result.should == 50
+      end
+      it "should not update existing by default" do
+        post :create, filename: File.basename(temp_file)
+        Evaluation.count.should == 2
+      end
+    end
   end
 end

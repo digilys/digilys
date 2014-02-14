@@ -412,7 +412,7 @@ sv:
   import:
     import: Importera
     format_specification: Formatspecifikation
-    correct_data: Inga fel hittades i den uppladdade filen
+    correct_data: Inga fel hittades i den uppladdade filen.
     errors_found: Fel hittades i den uppladdade filen. Var god korrigera filen. Se nedan för detaljer.
     instructions:
       confirm:
@@ -467,6 +467,12 @@ sv:
         <li>Ett öppet intervall, där minimum eller maximum används för saknade värden, ex. -20 eller 20-</li>
         <li>Procentuellt intervall, ex 10-20%. Detta gäller bara värdena för rött, gult och grönt, inte stanine.</li>
         </ul>
+      new:
+        try_update: Försök att uppdatera befintliga mallar genom att jämföra rubrik och beskrivning
+      confirm:
+        update_information: DigiLys har försökt att hitta mallar att uppdatera. Var god verifiera nedan att uppdateringen ser rätt ut.
+        found_existing: Befintlig mall hittades
+        existing_not_found: Befintlig mall hittades inte
       create:
         success: "%{count} testmallar importerades"
         error: "Fel uppstod när testmallarna skulle importeras. Vid felrapport, var god att ange följande till utvecklarna: %{filename}."

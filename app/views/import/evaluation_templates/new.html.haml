@@ -27,6 +27,12 @@
             %input{type: "file", name: "csv_file"}
           %a.btn.fileupload-exists{href: "#", data: { dismiss: "fileupload" } }= t(:".remove_file")
 
+      .control-group
+        .controls
+          %label.checkbox
+            = check_box_tag("update")
+            = t(:".try_update")
+
       .form-actions
         = submit_tag t(:".import"), class: "btn", name: nil
 

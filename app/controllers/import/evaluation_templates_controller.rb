@@ -12,7 +12,7 @@ class Import::EvaluationTemplatesController < ApplicationController
     full_path = File.join(Rails.root, "tmp/uploads", @filename)
     FileUtils.cp params[:csv_file].path, full_path
 
-    @importer = importer_for(full_path)
+    @importer = importer_for(full_path, params[:update])
   rescue => e
     logger.error(e.message)
     flash[:error] = t(:"import.evaluation_templates.confirm.error")
@@ -27,7 +27,7 @@ class Import::EvaluationTemplatesController < ApplicationController
       return
     end
 
-    importer = importer_for(import_file)
+    importer = importer_for(import_file, params[:update])
 
     if importer.valid?
       importer.import!
@@ -42,8 +42,8 @@ class Import::EvaluationTemplatesController < ApplicationController
 
   private
 
-  def importer_for(path)
+  def importer_for(path, update)
     csv = CSV.open(path)
-    Digilys::EvaluationTemplateImporter.new(csv, current_instance_id, false)
+    Digilys::EvaluationTemplateImporter.new(csv, current_instance_id, update)
   end
 end

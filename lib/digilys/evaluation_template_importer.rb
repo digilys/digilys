@@ -105,7 +105,7 @@ class Digilys::EvaluationTemplateImporter
       evaluation.instance_id   = @instance_id
 
       if evaluation.valid?
-        @valid << evaluation
+        @valid << d.merge(model: evaluation)
       else
         @invalid << d.merge(model: evaluation)
       end
@@ -124,10 +124,10 @@ class Digilys::EvaluationTemplateImporter
   end
   attr_reader :update_count
 
-  attr_reader :invalid
+  attr_reader :valid, :invalid
 
   def import!
-    @valid.collect(&:save!) if valid?
+    @valid.collect { |d| d[:model].save! } if valid?
   end
 
 

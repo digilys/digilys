@@ -6,18 +6,24 @@
 - if @importer.valid?
   .alert.alert-block.alert-success
     = t(:".correct_data")
+    - if params[:update]
+      = t(:".update_information")
 
   = form_tag({ action: "create" }, { method: :post }) do
 
     = hidden_field_tag :filename, @filename
+    - if params[:update]
+      = hidden_field_tag :update, params[:update]
 
     .form-actions
       = submit_tag t(:".import"), class: "btn btn-success", name: nil
       = link_to t(:".cancel_action"), new_import_evaluation_template_path(), class: "btn"
 
-    %table.table.table-striped.table-condensed.import-confirmation-list
+    %table.table.table-condensed.import-confirmation-list{class: "#{"table-striped" unless params[:update]}"}
       %thead
         %tr
+          - if params[:update]
+            %th.update &nbsp;
           %th.name=          Evaluation.human_attribute_name(:name)
           %th.description=   Evaluation.human_attribute_name(:description)
           %th.category_list= Evaluation.human_attribute_name(:category_list)
@@ -35,9 +41,17 @@
           %th.stanine8=      t(:".stanine") + " 8"
           %th.stanine9=      t(:".stanine") + " 9"
       %tbody
-        - @importer.parsed_attributes.each do |d|
+        - @importer.valid.each do |d|
           - a = d[:attributes]
           %tr
+            - if params[:update]
+              %td.update
+                - if d[:model].new_record?
+                  %span.label.label-warning
+                    %i.icon-remove{title: t(:".existing_not_found")}
+                - else
+                  %span.label.label-success
+                    %i.icon-ok{title: t(:".found_existing")}
             %td.name=          a[:name]
             %td.description=   a[:description]
             %td.category_list= a[:category_list]
