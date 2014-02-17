@@ -54,7 +54,7 @@ namespace :deploy do
   task :symlink_external_files, roles: :app do
     run "ln -nfs #{deploy_to}/shared/config/database.yml #{release_path}/config/database.yml"
     run "ln -nfs #{deploy_to}/shared/config/app_config.private.yml #{release_path}/config/app/base.private.yml"
-    run "test -d #{deploy_to}/shared/uploads || mkdir -p #{deploy_to}/shared/backup; ln -nfs #{deploy_to}/shared/uploads #{release_path}/tmp/uploads"
+    run "test -d #{deploy_to}/shared/uploads || mkdir -p #{deploy_to}/shared/uploads; mkdir -p #{release_path}/tmp; ln -nfs #{deploy_to}/shared/uploads #{release_path}/tmp/uploads"
   end
 
   desc "Symlinks the relative public directory, if any"
