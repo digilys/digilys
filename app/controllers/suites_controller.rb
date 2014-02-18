@@ -152,6 +152,9 @@ class SuitesController < ApplicationController
     users.each do |user|
       user.add_role :suite_contributor, @suite
     end
+
+    @suite.touch
+
     render json: {status: "ok"}
   end
   def remove_contributors
@@ -159,6 +162,9 @@ class SuitesController < ApplicationController
     users.each do |user|
       user.remove_role :suite_contributor, @suite
     end
+
+    @suite.touch
+
     render json: {status: "ok"}
   end
 
