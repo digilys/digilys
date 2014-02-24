@@ -116,3 +116,9 @@ $ ->
     $(".suite-users-table").each ->
         new Digilys.RemoteToggleList(this, "user_ids")
 
+    $(".evaluation-status-progress[title]").tooltip(
+        html:      true
+        placement: "right"
+        delay:     { show: 300, hide: 100 }
+    )
+
