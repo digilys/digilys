@@ -19,7 +19,7 @@ gem "yubikey_database_authenticatable",
   ref: "a8d2ff86928fc342a99dc4974e7f3cbee390f01b"
 
 # Servers
-gem "passenger", "~> 3.0.19", require: false
+gem "passenger", "~> 4.0.37", require: false
 
 # Gems used only for assets and not required
 # in production environments by default.
