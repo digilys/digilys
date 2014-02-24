@@ -54,12 +54,26 @@ describe Suite do
     end
   end
   describe ".student_data" do
-    subject { create(:suite, student_data: nil) }
+    subject(:suite)    { create(:suite, student_data: nil) }
     its(:student_data) { should == [] }
 
+    it "only allows unique entries" do
+      suite.student_data << "foo"
+      suite.student_data << "foo"
+      suite.student_data << "bar"
+      suite.save
+      suite.reload.student_data.should match_array(%w(foo bar))
+    end
+
     context "with existing data" do
-      subject { create(:suite, student_data: %w(foo bar baz)) }
+      subject(:suite)    { create(:suite, student_data: %w(foo bar baz)) }
       its(:student_data) { should == %w(foo bar baz) }
+
+      it "only allows unique entries" do
+        suite.student_data << "foo"
+        suite.save
+        suite.reload.student_data.should match_array(%w(foo bar baz))
+      end
     end
   end
 

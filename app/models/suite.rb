@@ -35,6 +35,8 @@ class Suite < ActiveRecord::Base
 
   enumerize :status, in: [ :open, :closed ], predicates: true, scope: true, default: :open
 
+  before_save :ensure_unique_student_data
+
   validates :name,     presence: true
   validates :instance, presence: true
 
@@ -116,4 +118,7 @@ class Suite < ActiveRecord::Base
     end
   end
 
+  def ensure_unique_student_data
+    self.student_data.uniq!
+  end
 end
