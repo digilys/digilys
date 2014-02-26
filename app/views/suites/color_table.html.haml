@@ -73,7 +73,8 @@
             %th.student
               - name = student_name(student)
               %a.student{href:"#",
-                data: { toggle: "popover",
+                data: { toggle: "single-popover",
+                type: "student",
                 title: name,
                 "sort-key" => name,
                 groups: student.group_ids.to_json } }

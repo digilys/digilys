@@ -84,31 +84,15 @@ $ ->
             # Store the state globally
             Digilys.currentResult = button.data("value")
 
-        # Display a popover of student data
-        addedCloseHandler = false
+        Digilys.bindPopoverCloser($("body"))
 
-        $("a.student", colorTable).each ->
-            trigger = $(this)
-            trigger.popover(
-                html: true
-                content: ->
-                    # popover requires the content as a string, so we convert the
-                    # table from the sibling markup to text
-                    # http://stackoverflow.com/a/8127137
-                    return $(this).siblings(".student-details-popover-table").clone().show().wrap("<div/>").parent().html()
-            )
-            trigger.click (e) ->
-                e.preventDefault()
-                $("a.student", colorTable).not(this).popover("hide")
+        new Digilys.SinglePopover colorTable,
+            content: ->
+                trigger = $(this)
 
-            if !addedCloseHandler
-                $("html").on "click.popover.data-api", (event) ->
-                    $target = $(event.target)
+                switch trigger.data("type")
+                    when "student" then trigger.siblings(".student-details-popover-table").clone().show()
 
-                    if $target.data("toggle") != "popover" && $target.closest(".popover").length == 0
-                        $("a.student", colorTable).popover("hide")
-
-                addedCloseHandler = true
 
         # Handle column removal. This just hijacks any link and triggers the Rails
         # delete action, and has to be done because there is no way to prevent dataTables
