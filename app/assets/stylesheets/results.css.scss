@@ -78,14 +78,16 @@ table.results-table {
         width: 14em;
     }
 
-    &.suite-show-value   .value   { display: block; }
-    &.suite-show-stanine .stanine { display: block; }
-
     &.table-hover tbody tr {
         &:hover > .result-red    { background-color: darken($red, 5%); }
         &:hover > .result-yellow { background-color: darken($yellow, 5%); }
         &:hover > .result-green  { background-color: darken($green, 5%); }
     }
+}
+
+.color-table {
+    &.color-table-show-value   .value   { display: block; }
+    &.color-table-show-stanine .stanine { display: block; }
 }
 
 @media print {

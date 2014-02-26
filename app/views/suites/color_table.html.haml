@@ -14,7 +14,7 @@
         %button.btn.active(data-value="value") Resultat
         %button.btn(data-value="stanine") Stanine
     .span3
-      %select#suite-group-selector{multiple: true, data: { placeholder: "Visar alla grupper" }}
+      %select#color-table-group-selector{multiple: true, data: { placeholder: "Visar alla grupper" }}
         = options_for_select(@suite.group_hierarchy.collect { |g| [[g.name, g.parent.try(:name)].compact.join(", "), g.id]})
     .span3.form-inline
       %select#table-state-selector{data: { url: select_table_state_path(":id"),
@@ -27,108 +27,110 @@
 
 - table_state = @user_settings ? @user_settings["datatable_state"] : nil
 
-%table.table.table-bordered.table-hover.suite-results.suite-show-value.results-table.results-fixed-table{data: { "save-local-state-path" => save_color_table_state_suite_path(@suite), "table-state" => JSON.dump(table_state) }}
+.color-table.color-table-show-value{data: { "save-local-state-path" => save_color_table_state_suite_path(@suite), "table-state" => JSON.dump(table_state) }}
 
   - cache [ *cache_key, "table" ] do
 
-    -# Track values and stanines for averages
-    - values = {}
-    - stanines = {}
+    %table.table.table-bordered.table-hover.data-table.results-table.results-fixed-table
 
-    - evaluations = @suite.generic_evaluations(true) + @suite.evaluations
+      -# Track values and stanines for averages
+      - values = {}
+      - stanines = {}
 
-    %thead
-      %tr
-        %th#datatable-column-student-names.student= Student.human_attribute_name(:name)
-        - @suite.student_data.each do |key|
-          %th.student-data{id: "datatable-column-student-data-#{key.parameterize}"}
-            = key
-            = link_to "",
-              remove_student_data_suite_path(@suite, key: key),
-              method: :delete,
-              class: "icon-trash remove-column-action"
-        - evaluations.each do |evaluation|
-          %th.evaluation{id: "datatable-column-evaluation-#{evaluation.id}"}
-            = evaluation.name
-            - if evaluation.type.generic?
+      - evaluations = @suite.generic_evaluations(true) + @suite.evaluations
+
+      %thead
+        %tr
+          %th#datatable-column-student-names.student= Student.human_attribute_name(:name)
+          - @suite.student_data.each do |key|
+            %th.student-data{id: "datatable-column-student-data-#{key.parameterize}"}
+              = key
               = link_to "",
-                remove_generic_evaluations_suite_path(@suite, evaluation_id: evaluation.id),
+                remove_student_data_suite_path(@suite, key: key),
                 method: :delete,
                 class: "icon-trash remove-column-action"
-
-          -# Initialize the tracking variables
-          - values[evaluation.id]   = []
-          - stanines[evaluation.id] = []
-
-      %tr.filter-row
-        - 1.upto(@suite.student_data.length + evaluations.length + 1) do
-          %td.filter
-            %input{type: "text", placeholder: t(:".search_action")}
-
-    %tbody
-      - @suite.students.order(current_name_order).each do |student|
-        %tr
-          %th.student
-            - name = student_name(student)
-            %a.student{href:"#",
-              data: { toggle: "popover",
-              title: name,
-              "sort-key" => name,
-              groups: student.group_ids.to_json } }
-              = name
-            = render partial: "students/details_table", locals: { student: student }
-
-          - @suite.student_data.each do |key|
-            %td.result
-              - d = student.data_humanized[key] || "-"
-              %div{"data-sort-key" => d}= d
           - evaluations.each do |evaluation|
-            - result = evaluation.result_for(student)
-            %td.result{class: result_color_class(result)}
-              %div{"data-sort-key" => result.try(:display_value) || "-"}
-                - if result && result.stanine
-                  %ul
-                    %li.value=   result.display_value
-                    %li.stanine= result.stanine
-                - else
-                  %span= result.try(:display_value) || "-"
-                = result_color_image(result)
+            %th.evaluation{id: "datatable-column-evaluation-#{evaluation.id}"}
+              = evaluation.name
+              - if evaluation.type.generic?
+                = link_to "",
+                  remove_generic_evaluations_suite_path(@suite, evaluation_id: evaluation.id),
+                  method: :delete,
+                  class: "icon-trash remove-column-action"
 
-            -# Add to track variables
-            - unless evaluation.value_type.boolean?
-              - values[evaluation.id]   << result.value   if result.try(:value)
-              - stanines[evaluation.id] << result.stanine if result.try(:stanine)
+            -# Initialize the tracking variables
+            - values[evaluation.id]   = []
+            - stanines[evaluation.id] = []
 
-    %tfoot
-      %tr.spacer
-        - 1.upto(@suite.student_data.length + evaluations.length + 1) do
-          %th &nbsp;
-      %tr.averages
-        %th= t(:".averages")
-        - unless @suite.student_data.blank?
-          - 1.upto(@suite.student_data.length) do
-            %td &nbsp;
+        %tr.filter-row
+          - 1.upto(@suite.student_data.length + evaluations.length + 1) do
+            %td.filter
+              %input{type: "text", placeholder: t(:".search_action")}
 
-        - evaluations.each do |evaluation|
+      %tbody
+        - @suite.students.order(current_name_order).each do |student|
+          %tr
+            %th.student
+              - name = student_name(student)
+              %a.student{href:"#",
+                data: { toggle: "popover",
+                title: name,
+                "sort-key" => name,
+                groups: student.group_ids.to_json } }
+                = name
+              = render partial: "students/details_table", locals: { student: student }
 
-          - if !values[evaluation.id].blank?
-            - average_value = values[evaluation.id].instance_eval { reduce(:+).to_f / size }
-            - if !evaluation.value_aliases.blank?
-              - average_value = evaluation.alias_for(average_value.round)
-            - else
-              - average_value = number_with_precision(average_value, precision: 2) || "-"
-          - else
-            - average_value = "-"
+            - @suite.student_data.each do |key|
+              %td.result
+                - d = student.data_humanized[key] || "-"
+                %div{"data-sort-key" => d}= d
+            - evaluations.each do |evaluation|
+              - result = evaluation.result_for(student)
+              %td.result{class: result_color_class(result)}
+                %div{"data-sort-key" => result.try(:display_value) || "-"}
+                  - if result && result.stanine
+                    %ul
+                      %li.value=   result.display_value
+                      %li.stanine= result.stanine
+                  - else
+                    %span= result.try(:display_value) || "-"
+                  = result_color_image(result)
 
-          %td.result{class: result_color_class(average_value, evaluation)}
-            %div
-              - if !stanines[evaluation.id].blank?
-                %ul
-                  %li.value= average_value
-                  %li.stanine= number_with_precision(stanines[evaluation.id].instance_eval { reduce(:+).to_f / size }, precision: 2)
+              -# Add to track variables
+              - unless evaluation.value_type.boolean?
+                - values[evaluation.id]   << result.value   if result.try(:value)
+                - stanines[evaluation.id] << result.stanine if result.try(:stanine)
+
+      %tfoot
+        %tr.spacer
+          - 1.upto(@suite.student_data.length + evaluations.length + 1) do
+            %th &nbsp;
+        %tr.averages
+          %th= t(:".averages")
+          - unless @suite.student_data.blank?
+            - 1.upto(@suite.student_data.length) do
+              %td &nbsp;
+
+          - evaluations.each do |evaluation|
+
+            - if !values[evaluation.id].blank?
+              - average_value = values[evaluation.id].instance_eval { reduce(:+).to_f / size }
+              - if !evaluation.value_aliases.blank?
+                - average_value = evaluation.alias_for(average_value.round)
               - else
-                = average_value
-              = result_color_image(average_value, evaluation)
+                - average_value = number_with_precision(average_value, precision: 2) || "-"
+            - else
+              - average_value = "-"
+
+            %td.result{class: result_color_class(average_value, evaluation)}
+              %div
+                - if !stanines[evaluation.id].blank?
+                  %ul
+                    %li.value= average_value
+                    %li.stanine= number_with_precision(stanines[evaluation.id].instance_eval { reduce(:+).to_f / size }, precision: 2)
+                - else
+                  = average_value
+                = result_color_image(average_value, evaluation)
 
 - cache [ *cache_key, "dialogs" ] do
 
@@ -150,7 +152,7 @@
         = text_field_tag "table-state-name",
           nil,
           placeholder: TableState.human_attribute_name(:name)
-        %button#save-table-state.btn{data: { datatable: ".suite-results", url: suite_table_states_path(@suite) }}
+        %button#save-table-state.btn{data: { datatable: ".color-table .data-table", url: suite_table_states_path(@suite) }}
           = t(:".save_current_state")
         %small.help-block= t(:".edit_table_state_notice")
       %table#table-states.table.table-striped.table-hover{"data-delete-action-name" => t(:".destroy_action")}
