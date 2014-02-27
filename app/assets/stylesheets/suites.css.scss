@@ -50,6 +50,15 @@
     }
 }
 
+.color-table-column-popup {
+    .locked { display: none; }
+
+    &.locked {
+        .locked { display: block; }
+        .unlocked { display: none; }
+    }
+}
+
 .tooltip strong.date {
     font-size: 1.3em;
 }

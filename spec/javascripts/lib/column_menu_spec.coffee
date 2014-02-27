@@ -44,6 +44,14 @@ describe "Digilys.ColumnMenu", ->
         it "removes the show-column action if there are no hidden columns", ->
             expect(columnMenu.menu.find("[data-action=show-column]")).toHaveLength(0)
 
+        it "adds a locked class to the menu if options.locked is set", ->
+            expect(columnMenu.menu).not.toHaveClass("locked")
+
+            options.locked = true
+
+            columnMenu = new Digilys.ColumnMenu(dataTable, columnIndex, menuElem, options)
+            expect(columnMenu.menu).toHaveClass("locked")
+
 
     describe ".handleAction()", ->
         it "is bound to the click event of data-action elements in the menu", ->
@@ -84,6 +92,11 @@ describe "Digilys.ColumnMenu", ->
             spyOn(columnMenu, "lock")
             columnMenu.handleAction("lock-column")
             expect(columnMenu.lock).toHaveBeenCalled()
+
+        it "calls .unlock() when receiving the event unlock-column", ->
+            spyOn(columnMenu, "unlock")
+            columnMenu.handleAction("unlock-column")
+            expect(columnMenu.unlock).toHaveBeenCalled()
 
 
     describe ".hide()", ->
@@ -212,6 +225,7 @@ describe "Digilys.ColumnMenu", ->
             columnMenu.dataTable.fnSettings = -> {}
             expect(columnMenu.fixedCount()).toEqual 0
 
+
     describe ".lock()", ->
         beforeEach ->
             columnMenu.fixedCount             = -> 3
@@ -239,3 +253,39 @@ describe "Digilys.ColumnMenu", ->
                 iLeftColumns:  4
                 iRightColumns: 0
             )
+
+
+    describe ".unlock()", ->
+        beforeEach ->
+            columnMenu.fixedCount             = -> 5
+            columnMenu.columnIndex            = 3
+            columnMenu.dataTable.fnColReorder = ->
+            columnMenu.dataTable.trigger      = ->
+
+            spyOn(columnMenu.dataTable, "fnColReorder")
+            spyOn(columnMenu.dataTable, "trigger")
+            spyOn(jQuery.fn.dataTable,  "FixedColumns")
+
+        it "moves the column to the correct position", ->
+            columnMenu.unlock()
+            expect(columnMenu.dataTable.fnColReorder).toHaveBeenCalledWith(3, 4)
+
+        it "triggers a destroy event for the fixed columns on the data table", ->
+            columnMenu.unlock()
+            expect(columnMenu.dataTable.trigger).toHaveBeenCalledWith("destroy.dt.DTFC")
+
+        it "(re)creates a fixed columns object for the data table", ->
+            columnMenu.unlock()
+            expect(jQuery.fn.dataTable.FixedColumns).toHaveBeenCalledWith(
+                columnMenu.dataTable,
+                sHeightMatch:  "none"
+                iLeftColumns:  4
+                iRightColumns: 0
+            )
+
+        it "does not create a fixed columns object if the last column was removed", ->
+            columnMenu.fixedCount  = -> 1
+            columnMenu.columnIndex = 1
+            columnMenu.unlock()
+            expect(jQuery.fn.dataTable.FixedColumns).not.toHaveBeenCalled()
+

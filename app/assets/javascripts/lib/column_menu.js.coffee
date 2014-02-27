@@ -9,6 +9,8 @@ class ColumnMenu
             .attr("id", "")
             .show()
 
+        @menu.addClass("locked") if options.locked
+
         columns = @dataTable.fnSettings().aoColumns
         hasHiddenColumns = (1 for column in columns when !column.bVisible).length > 0
 
@@ -26,9 +28,10 @@ class ColumnMenu
         @options.beforeAction.call(this, action) if typeof(@options.beforeAction) == "function"
 
         switch action
-            when "hide-column" then @hide()
-            when "show-column" then @showModal(trigger)
-            when "lock-column" then @lock()
+            when "hide-column"   then @hide()
+            when "show-column"   then @showModal(trigger)
+            when "lock-column"   then @lock()
+            when "unlock-column" then @unlock()
 
 
         @options.afterAction.call(this, action) if typeof(@options.afterAction) == "function"
@@ -61,6 +64,21 @@ class ColumnMenu
             iLeftColumns:  count + 1
             iRightColumns: 0
         )
+
+
+    unlock: ->
+        count = @fixedCount()
+        @dataTable.fnColReorder(@columnIndex, count - 1)
+
+        @dataTable.trigger("destroy.dt.DTFC")
+
+        if count > 1
+            new jQuery.fn.dataTable.FixedColumns(
+                @dataTable,
+                sHeightMatch:  "none"
+                iLeftColumns:  count - 1
+                iRightColumns: 0
+            )
 
 
     fixedCount: ->

@@ -117,10 +117,14 @@ $ ->
                         return trigger.siblings(".student-details-popover-table").clone().show()
                     # Column menu popover
                     when "column-menu"
+                        columnIndex = Digilys.datatables.columnIndex(dataTable, trigger)
+                        columnIndex ?= trigger.closest("th").index()
+
                         return new Digilys.ColumnMenu(
                             dataTable,
-                            Digilys.datatables.columnIndex(dataTable, trigger),
+                            columnIndex,
                             "#color-table-column-popup",
                             beforeAction: -> trigger.popover("destroy")
+                            locked: trigger.closest(".DTFC_LeftWrapper").length > 0
                         ).menu
 
