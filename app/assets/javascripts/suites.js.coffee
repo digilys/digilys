@@ -36,6 +36,8 @@ $ ->
             container: "body"
         )
 
+        tableState   = colorTable.data("table-state")
+
         dataTable = $(".data-table", colorTable).dataTable(
             bSortCellsTop:   true
             bPaginate:       false
@@ -52,15 +54,30 @@ $ ->
             ]
             fnStateLoad: (settings) ->
                 domIds = $.makeArray(this.find("thead tr:first th").map -> this.id)
-                return Digilys.datatables.processStateForLoading(colorTable.data("table-state"), domIds)
+                return Digilys.datatables.processStateForLoading(tableState, domIds)
             fnStateSave: (settings, state) ->
-                state = Digilys.datatables.processStateForSaving(state, this.fnSettings().aoColumns)
+                settings = this.fnSettings()
+                fixedColumns = if settings._oFixedColumns then settings._oFixedColumns.s.iLeftColumns
+
+                state = Digilys.datatables.processStateForSaving(
+                    state,
+                    settings.aoColumns
+                    fixedColumns: fixedColumns
+                )
 
                 url = colorTable.data("save-local-state-path")
                 this.data("current-state", state)
 
                 Digilys.datatables.saveState(state, url)
         )
+
+        if tableState.fixedColumns
+            new jQuery.fn.dataTable.FixedColumns(
+                dataTable,
+                sHeightMatch:  "none"
+                iLeftColumns:  tableState.fixedColumns
+                iRightColumns: 0
+            )
 
         # Filter the table by groups
         groupSelector = $("#color-table-group-selector")

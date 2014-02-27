@@ -65,6 +65,8 @@ class ColumnMenu
             iRightColumns: 0
         )
 
+        @dataTable._fnSaveState(@dataTable.fnSettings())
+
 
     unlock: ->
         count = @fixedCount()
@@ -79,6 +81,8 @@ class ColumnMenu
                 iLeftColumns:  count - 1
                 iRightColumns: 0
             )
+
+        @dataTable._fnSaveState(@dataTable.fnSettings())
 
 
     fixedCount: ->

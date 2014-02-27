@@ -231,9 +231,11 @@ describe "Digilys.ColumnMenu", ->
             columnMenu.fixedCount             = -> 3
             columnMenu.columnIndex            = 5
             columnMenu.dataTable.fnColReorder = ->
+            columnMenu.dataTable._fnSaveState = ->
             columnMenu.dataTable.trigger      = ->
 
             spyOn(columnMenu.dataTable, "fnColReorder")
+            spyOn(columnMenu.dataTable, "_fnSaveState")
             spyOn(columnMenu.dataTable, "trigger")
             spyOn(jQuery.fn.dataTable,  "FixedColumns")
 
@@ -254,15 +256,21 @@ describe "Digilys.ColumnMenu", ->
                 iRightColumns: 0
             )
 
+        it "saves the datatable state", ->
+            columnMenu.lock()
+            expect(columnMenu.dataTable._fnSaveState).toHaveBeenCalled()
+
 
     describe ".unlock()", ->
         beforeEach ->
             columnMenu.fixedCount             = -> 5
             columnMenu.columnIndex            = 3
             columnMenu.dataTable.fnColReorder = ->
+            columnMenu.dataTable._fnSaveState = ->
             columnMenu.dataTable.trigger      = ->
 
             spyOn(columnMenu.dataTable, "fnColReorder")
+            spyOn(columnMenu.dataTable, "_fnSaveState")
             spyOn(columnMenu.dataTable, "trigger")
             spyOn(jQuery.fn.dataTable,  "FixedColumns")
 
@@ -288,4 +296,9 @@ describe "Digilys.ColumnMenu", ->
             columnMenu.columnIndex = 1
             columnMenu.unlock()
             expect(jQuery.fn.dataTable.FixedColumns).not.toHaveBeenCalled()
+
+        it "saves the datatable state", ->
+            columnMenu.unlock()
+            expect(columnMenu.dataTable._fnSaveState).toHaveBeenCalled()
+
 

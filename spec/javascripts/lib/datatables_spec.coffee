@@ -16,7 +16,8 @@ describe "Digilys.datatables", ->
             expect(
                 processStateForSaving(
                     { "ColReorder": [ 2, 1, 0 ] },
-                    aoColumns("foo", "bar", "baz")
+                    aoColumns("foo", "bar", "baz"),
+                    {}
                 )
             ).toEqual { "ColReorder": [ "foo", "bar", "baz" ] }
 
@@ -24,7 +25,8 @@ describe "Digilys.datatables", ->
             expect(
                 processStateForSaving(
                     { "abVisCols": [ true, false, true, false ] },
-                    aoColumns("foo", "bar", "baz", "apa")
+                    aoColumns("foo", "bar", "baz", "apa"),
+                    {}
                 )
             ).toEqual { "abVisCols": [ "bar", "apa" ] }
 
@@ -38,9 +40,19 @@ describe "Digilys.datatables", ->
             expect(
                 processStateForSaving(
                     { "abVisCols": visible },
-                    columns
+                    columns,
+                    {}
                 )
             ).toEqual { "abVisCols": [ "baz", "apa" ]}
+
+        it "adds the number of fixed columns from the options to the state", ->
+            expect(
+                processStateForSaving(
+                    {},
+                    [],
+                    { fixedColumns: 18 }
+                )
+            ).toEqual { "fixedColumns": 18 }
 
     describe "processStateForLoading", ->
         processStateForLoading = window.Digilys.datatables.processStateForLoading

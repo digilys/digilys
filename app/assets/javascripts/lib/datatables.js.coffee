@@ -21,10 +21,11 @@ datatables.saveState = (state, url) ->
 #
 # - Replaces column indexes in the order array with DOM ids
 # - Changes the visual columns array to include only the DOM ids of the hidden columns
+# - Includes the number of fixed columns
 #
 # The expected arguments are the state that's to be saved, and
 # the column definitions from dataTables (fnSettings().aoColumns)
-datatables.processStateForSaving = (state, columns) ->
+datatables.processStateForSaving = (state, columns, options) ->
 
     return state unless state
 
@@ -38,6 +39,8 @@ datatables.processStateForSaving = (state, columns) ->
         hidden.push(col.nTh.id) for col in columns when !state.abVisCols[col._ColReorder_iOrigCol]
 
         state.abVisCols = hidden
+
+    state.fixedColumns = options.fixedColumns if options.fixedColumns
 
     return state
 
