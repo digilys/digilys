@@ -133,6 +133,16 @@
   %ul#color-table-column-popup.nav.nav-pills.nav-stacked.hide(aria-hidden="true")
     %li
       %a(href="#" data-action="hide-column")= t(:".hide_column_action")
+    %li
+      %a(href="#show-column-modal" data-action="show-column")= t(:".show_column_action")
+
+  #show-column-modal.modal.hide.fade(role="dialog" aria-hidden="true" data-backdrop="true")
+    .modal-header
+      %button.close{type: "button", data: { dismiss: "modal" }, aria: { hidden: "true" }} &times;
+      %h3= t(:".show_column_action")
+    .modal-body
+      .alert.alert-block.alert-info= t(:".show_column_hint")
+      %ul.unstyled
 
   #tools-modal.modal.hide.fade(role="dialog" aria-hidden="true" aria-labelledby="feedback-eula-header" data-backdrop="true")
     .modal-header
