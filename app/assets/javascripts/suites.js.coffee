@@ -121,6 +121,6 @@ $ ->
                             dataTable,
                             Digilys.datatables.columnIndex(dataTable, trigger),
                             "#color-table-column-popup",
-                            -> trigger.popover("hide")
+                            beforeAction: -> trigger.popover("destroy")
                         ).menu
 

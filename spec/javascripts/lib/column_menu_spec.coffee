@@ -3,7 +3,7 @@ describe "Digilys.ColumnMenu", ->
     columnIndex = null
     menuElem    = null
     showTrigger = null
-    onAction    = null
+    options     = null
     columnMenu  = null
 
 
@@ -23,16 +23,16 @@ describe "Digilys.ColumnMenu", ->
 
         menuElem.append(showTrigger)
 
-        onAction = ->
+        options = {}
 
-        columnMenu = new Digilys.ColumnMenu(dataTable, columnIndex, menuElem, onAction)
+        columnMenu = new Digilys.ColumnMenu(dataTable, columnIndex, menuElem, options)
 
 
     describe "constructor", ->
         it "correctly assigns the arguments", ->
             expect(columnMenu.dataTable).toBe dataTable
             expect(columnMenu.columnIndex).toBe columnIndex
-            expect(columnMenu.onAction).toBe onAction
+            expect(columnMenu.options).toBe options
 
         it "clones the menu, shows it, and removes the id", ->
             menu = columnMenu.menu
@@ -68,10 +68,22 @@ describe "Digilys.ColumnMenu", ->
             columnMenu.handleAction("show-column")
             expect(columnMenu.showModal).toHaveBeenCalled()
 
-        it "calls the onAction callback", ->
-            spyOn(columnMenu, "onAction")
+        it "calls the action callbacks", ->
+            options.beforeAction = ->
+            options.afterAction = ->
+
+            spyOn(options, "beforeAction")
+            spyOn(options, "afterAction")
+
             columnMenu.handleAction("hide-column")
-            expect(columnMenu.onAction).toHaveBeenCalled()
+
+            expect(options.beforeAction).toHaveBeenCalled()
+            expect(options.afterAction).toHaveBeenCalled()
+
+        it "calls .lock() when receiving the event lock-column", ->
+            spyOn(columnMenu, "lock")
+            columnMenu.handleAction("lock-column")
+            expect(columnMenu.lock).toHaveBeenCalled()
 
 
     describe ".hide()", ->
@@ -189,3 +201,41 @@ describe "Digilys.ColumnMenu", ->
             columnMenu.columnIndex = 1
             columnMenu.show(3)
             expect(columnMenu.dataTable.fnColReorder).toHaveBeenCalledWith(3, 2)
+
+
+    describe ".fixedCount()", ->
+        it "returns the number of fixed columns in the data table", ->
+            columnMenu.dataTable.fnSettings = -> _oFixedColumns: s: iLeftColumns: 123
+            expect(columnMenu.fixedCount()).toEqual 123
+
+        it "handles when there are no fixed columns", ->
+            columnMenu.dataTable.fnSettings = -> {}
+            expect(columnMenu.fixedCount()).toEqual 0
+
+    describe ".lock()", ->
+        beforeEach ->
+            columnMenu.fixedCount             = -> 3
+            columnMenu.columnIndex            = 5
+            columnMenu.dataTable.fnColReorder = ->
+            columnMenu.dataTable.trigger      = ->
+
+            spyOn(columnMenu.dataTable, "fnColReorder")
+            spyOn(columnMenu.dataTable, "trigger")
+            spyOn(jQuery.fn.dataTable,  "FixedColumns")
+
+        it "moves the column to the correct position", ->
+            columnMenu.lock()
+            expect(columnMenu.dataTable.fnColReorder).toHaveBeenCalledWith(5, 3)
+
+        it "triggers a destroy event for the fixed columns on the data table", ->
+            columnMenu.lock()
+            expect(columnMenu.dataTable.trigger).toHaveBeenCalledWith("destroy.dt.DTFC")
+
+        it "(re)creates a fixed columns object for the data table", ->
+            columnMenu.lock()
+            expect(jQuery.fn.dataTable.FixedColumns).toHaveBeenCalledWith(
+                columnMenu.dataTable,
+                sHeightMatch:  "none"
+                iLeftColumns:  4
+                iRightColumns: 0
+            )

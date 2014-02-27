@@ -41,7 +41,10 @@
 
       %thead
         %tr
-          %th#datatable-column-student-names.student= Student.human_attribute_name(:name)
+          %th#datatable-column-student-names.student
+            = student_name = Student.human_attribute_name(:name)
+            = link_to "", "#", class: "icon-cog column-menu-action",
+              data: { type: "column-menu", toggle: "single-popover", title: student_name }
           - @suite.student_data.each do |key|
             %th.student-data{id: "datatable-column-student-data-#{key.parameterize}"}
               = key
@@ -128,6 +131,8 @@
 - cache [ *cache_key, "dialogs" ] do
 
   %ul#color-table-column-popup.nav.nav-pills.nav-stacked.hide(aria-hidden="true")
+    %li
+      %a(href="#" data-action="lock-column")= t(:".lock_column_action")
     %li
       %a(href="#" data-action="hide-column")= t(:".hide_column_action")
     %li

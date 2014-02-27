@@ -4,7 +4,7 @@ actions for the column
 ###
 
 class ColumnMenu
-    constructor: (@dataTable, @columnIndex, menu, @onAction) ->
+    constructor: (@dataTable, @columnIndex, menu, @options = {}) ->
         @menu = $(menu).clone()
             .attr("id", "")
             .show()
@@ -23,12 +23,15 @@ class ColumnMenu
 
 
     handleAction: (action, trigger) ->
+        @options.beforeAction.call(this, action) if typeof(@options.beforeAction) == "function"
+
         switch action
             when "hide-column" then @hide()
             when "show-column" then @showModal(trigger)
+            when "lock-column" then @lock()
 
-        @onAction()
 
+        @options.afterAction.call(this, action) if typeof(@options.afterAction) == "function"
 
     hide: ->
         @dataTable.fnSetColumnVis(@columnIndex, false)
@@ -46,6 +49,27 @@ class ColumnMenu
         @dataTable.fnSetColumnVis(shownIdx, true)
         @dataTable.fnColReorder(shownIdx, sourceIdx)
         @dataTable._fnSaveState(@dataTable.fnSettings())
+
+    lock: ->
+        count = @fixedCount()
+        @dataTable.fnColReorder(@columnIndex, count)
+        @dataTable.trigger("destroy.dt.DTFC") if count > 0
+
+        new jQuery.fn.dataTable.FixedColumns(
+            @dataTable,
+            sHeightMatch:  "none"
+            iLeftColumns:  count + 1
+            iRightColumns: 0
+        )
+
+
+    fixedCount: ->
+        settings = @dataTable.fnSettings()._oFixedColumns
+
+        if settings
+            return settings.s.iLeftColumns
+        else
+            return 0
 
 
     showModal: (trigger) ->
