@@ -152,6 +152,7 @@ sv:
       clear_state: Kronologisk ordning
       tools: Verktyg
       edit_table_state_notice: Om du skriver samma namn som ett befintligt utseende uppdateras det utseendet
+      hide_column_action: Dölj kolumn
     clear_color_table_state:
       success: Använder utseendet "Kronologisk ordning"
     connected_users:

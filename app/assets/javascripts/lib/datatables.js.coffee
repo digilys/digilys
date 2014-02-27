@@ -80,6 +80,13 @@ datatables.processStateForLoading = (state, domIds) ->
 
     return state
 
+# Returns the index of the column in which the element
+# The element must be in the table header
+datatables.columnIndex = (datatable, elem) ->
+    header  = elem.closest("th").get(0)
+    columns = datatable.fnSettings().aoColumns
+    return (idx for column, idx in columns when column.nTh == header)[0]
+
 # Export
 window.Digilys ?= {}
 window.Digilys.datatables = datatables

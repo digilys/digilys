@@ -101,3 +101,27 @@ describe "Digilys.datatables", ->
                 )
             ).toEqual { "abVisCols": [ true, false, true, true, "error" ] }
 
+    describe "columnIndex", ->
+        datatable = null
+        header    = null
+
+        columnIndex = Digilys.datatables.columnIndex
+
+        beforeEach ->
+            header = $("<th/>")
+
+            datatable =
+                fnSettings: ->
+                    aoColumns: [
+                        { nTh: $("<th/>").get(0) },
+                        { nTh: header.get(0) },
+                        { nTh: $("<th/>").get(0) },
+                    ]
+
+        it "returns the column index given a header", ->
+            expect(columnIndex(datatable, header)).toEqual 1
+
+        it "returns the column index given an element inside the header", ->
+            elem = $("<i/>")
+            header.append(elem)
+            expect(columnIndex(datatable, elem)).toEqual 1

@@ -45,18 +45,13 @@
           - @suite.student_data.each do |key|
             %th.student-data{id: "datatable-column-student-data-#{key.parameterize}"}
               = key
-              = link_to "",
-                remove_student_data_suite_path(@suite, key: key),
-                method: :delete,
-                class: "icon-trash remove-column-action"
+              = link_to "", "#", class: "icon-cog column-menu-action",
+                data: { type: "column-menu", toggle: "single-popover", title: key }
           - evaluations.each do |evaluation|
             %th.evaluation{id: "datatable-column-evaluation-#{evaluation.id}"}
               = evaluation.name
-              - if evaluation.type.generic?
-                = link_to "",
-                  remove_generic_evaluations_suite_path(@suite, evaluation_id: evaluation.id),
-                  method: :delete,
-                  class: "icon-trash remove-column-action"
+              = link_to "", "#", class: "icon-cog column-menu-action",
+                data: { type: "column-menu", toggle: "single-popover", title: evaluation.name }
 
             -# Initialize the tracking variables
             - values[evaluation.id]   = []
@@ -134,6 +129,10 @@
                 = result_color_image(average_value, evaluation)
 
 - cache [ *cache_key, "dialogs" ] do
+
+  %ul#color-table-column-popup.nav.nav-pills.nav-stacked.hide(aria-hidden="true")
+    %li
+      %a(href="#" data-action="hide-column")= t(:".hide_column_action")
 
   #tools-modal.modal.hide.fade(role="dialog" aria-hidden="true" aria-labelledby="feedback-eula-header" data-backdrop="true")
     .modal-header

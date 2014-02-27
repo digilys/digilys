@@ -20,6 +20,14 @@ $ ->
     colorTable = $(".color-table")
 
     if colorTable.length > 0
+        # Don't fire the click event on the th element, it causes
+        # a column sort
+        $(".column-menu-action", colorTable).on "click", (event) ->
+            # Just trigger the event on the row, bypassing everything inside
+            # the header
+            $(this).closest("tr").trigger(event)
+            return false
+
         dataTable = $(".data-table", colorTable).dataTable(
             bSortCellsTop: true
             bPaginate:     false
@@ -84,21 +92,24 @@ $ ->
             # Store the state globally
             Digilys.currentResult = button.data("value")
 
+        # Close popovers when clicking outside a popover
         Digilys.bindPopoverCloser($("body"))
 
+        # Single popovers in the color table
         new Digilys.SinglePopover colorTable,
             content: ->
                 trigger = $(this)
 
                 switch trigger.data("type")
-                    when "student" then trigger.siblings(".student-details-popover-table").clone().show()
-
-
-        # Handle column removal. This just hijacks any link and triggers the Rails
-        # delete action, and has to be done because there is no way to prevent dataTables
-        # from doing a sort even if the user clicks a link inside a sortable header
-        $(".remove-column-action", colorTable).on "click", (event) ->
-            event.preventDefault()
-            $.rails.handleMethod($(this))
-            return false
+                    # Student details popover
+                    when "student"
+                        return trigger.siblings(".student-details-popover-table").clone().show()
+                    # Column menu popover
+                    when "column-menu"
+                        return new Digilys.ColumnMenu(
+                            dataTable,
+                            Digilys.datatables.columnIndex(dataTable, trigger),
+                            "#color-table-column-popup",
+                            -> trigger.popover("hide")
+                        ).menu
 

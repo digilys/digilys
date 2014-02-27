@@ -19,9 +19,14 @@
     float: right;
 }
 
-.popover .table {
-    width: auto;
-    margin: 0;
+.popover {
+    .nav {
+        margin-bottom: 0;
+    }
+    .table {
+        width: auto;
+        margin: 0;
+    }
 }
 
 th .popover {
