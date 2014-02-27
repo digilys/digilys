@@ -43,10 +43,14 @@ describe "Digilys.SinglePopover", ->
             expect(popover.previous).toBeNull()
 
     describe ".hidePrevious()", ->
-        popover = null
+        popover  = null
+        previous = null
 
         beforeEach ->
             popover = create()
+
+            previous = { popover: -> }
+            spyOn(previous, "popover")
 
         it "is bound to the shown event on the context", ->
             spyOn(popover, "hidePrevious")
@@ -66,13 +70,16 @@ describe "Digilys.SinglePopover", ->
             expect(popover.previous).toHaveClass("previous-target")
 
         it "hides the previous popover", ->
-            previous = { popover: -> }
-            spyOn(previous, "popover")
-
             popover.previous = previous
 
             popover.hidePrevious(target: "<div/>")
             expect(previous.popover).toHaveBeenCalledWith("hide")
+
+        it "does nothing when the event is undefined", ->
+            popover.previous = previous
+            popover.hidePrevious()
+            expect(previous.popover).not.toHaveBeenCalledWith("hide")
+
 
 describe ".bindPopoverCloser()", ->
     context      = null

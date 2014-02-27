@@ -19,3 +19,10 @@
     visibility: visible;
     display: block;
 }
+
+.tooltip strong.date {
+    font-size: 1.3em;
+}
+.tooltip strong.date.overdue {
+    color: $red;
+}

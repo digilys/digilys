@@ -18,8 +18,9 @@ class SinglePopover
         @context.on "hidden", => @previous = null
 
     hidePrevious: (event) ->
-        @previous.popover("hide") if @previous
-        @previous = $(event.target)
+        if event
+            @previous.popover("hide") if @previous
+            @previous = $(event.target)
 
 ###
 Hides all popovers when clicking on something that's not a popover

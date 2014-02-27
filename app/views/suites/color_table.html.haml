@@ -48,7 +48,7 @@
               = link_to "", "#", class: "icon-cog column-menu-action",
                 data: { type: "column-menu", toggle: "single-popover", title: key }
           - evaluations.each do |evaluation|
-            %th.evaluation{id: "datatable-column-evaluation-#{evaluation.id}"}
+            %th.evaluation{id: "datatable-column-evaluation-#{evaluation.id}", title: evaluation_info(evaluation)}
               = evaluation.name
               = link_to "", "#", class: "icon-cog column-menu-action",
                 data: { type: "column-menu", toggle: "single-popover", title: evaluation.name }

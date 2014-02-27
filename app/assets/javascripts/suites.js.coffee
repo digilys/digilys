@@ -28,6 +28,14 @@ $ ->
             $(this).closest("tr").trigger(event)
             return false
 
+        # Evaluation info popup
+        $("th[title]", colorTable).tooltip(
+            html:      true
+            placement: "top"
+            delay:     { show: 300, hide: 100 }
+            container: "body"
+        )
+
         dataTable = $(".data-table", colorTable).dataTable(
             bSortCellsTop: true
             bPaginate:     false
