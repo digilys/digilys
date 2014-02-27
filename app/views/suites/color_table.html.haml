@@ -98,9 +98,6 @@
                 - stanines[evaluation.id] << result.stanine if result.try(:stanine)
 
       %tfoot
-        %tr.spacer
-          - 1.upto(@suite.student_data.length + evaluations.length + 1) do
-            %th &nbsp;
         %tr.averages
           %th= t(:".averages")
           - unless @suite.student_data.blank?

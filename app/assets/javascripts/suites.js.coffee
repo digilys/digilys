@@ -37,10 +37,13 @@ $ ->
         )
 
         dataTable = $(".data-table", colorTable).dataTable(
-            bSortCellsTop: true
-            bPaginate:     false
-            bInfo:         false
-            bStateSave:    true
+            bSortCellsTop:   true
+            bPaginate:       false
+            bInfo:           false
+            bStateSave:      true
+            sScrollX:        "100%"
+            sScrollY:        ""
+            bScrollCollapse: true
             aoColumnDefs:  [
                 {
                     aTargets: [ "_all" ],
