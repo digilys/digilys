@@ -20,13 +20,17 @@ $ ->
     colorTable = $(".color-table")
 
     if colorTable.length > 0
-        # Don't fire the click event on the th element, it causes
-        # a column sort
-        $(".column-menu-action", colorTable).on "click", (event) ->
-            # Just trigger the event on the row, bypassing everything inside
-            # the header
-            $(this).closest("tr").trigger(event)
-            return false
+
+        if colorTable.hasClass("no-column-menu")
+            $(".column-menu-action", colorTable).remove()
+        else
+            # Don't fire the click event on the th element, it causes
+            # a column sort
+            $(".column-menu-action", colorTable).on "click", (event) ->
+                # Just trigger the event on the row, bypassing everything inside
+                # the header
+                $(this).closest("tr").trigger(event)
+                return false
 
         # Evaluation info popup
         $("th[title]", colorTable).tooltip(

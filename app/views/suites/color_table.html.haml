@@ -2,6 +2,8 @@
   = @suite.name
   %small= @suite.is_template? ? t(:".template_title") : Suite.model_name.human
 
+- can_change = can?(:change, @suite)
+
 - cache_key = [ @suite, "color_table", Evaluation.generic_cache_key ]
 
 = render partial: "navigation", locals: { suite: @suite, active: :color_table }
@@ -27,7 +29,7 @@
 
 - table_state = @user_settings ? @user_settings["datatable_state"] : nil
 
-.color-table.color-table-show-value{data: { "save-local-state-path" => save_color_table_state_suite_path(@suite), "table-state" => JSON.dump(table_state) }}
+.color-table.color-table-show-value{class: "#{can_change ? "" : "no-column-menu"}", data: { "save-local-state-path" => save_color_table_state_suite_path(@suite), "table-state" => JSON.dump(table_state) }}
 
   - cache [ *cache_key, "table" ] do
 
