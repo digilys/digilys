@@ -1,0 +1,123 @@
+.page-header
+  %h1
+    = t(:".import")
+    %small= t(:".evaluation_templates")
+
+- if @importer.valid?
+  .alert.alert-block.alert-success
+    = t(:".correct_data")
+    - if params[:update]
+      = t(:".update_information")
+
+  = form_tag({ action: "create" }, { method: :post }) do
+
+    = hidden_field_tag :filename, @filename
+    - if params[:update]
+      = hidden_field_tag :update, params[:update]
+
+    .form-actions
+      = submit_tag t(:".import"), class: "btn btn-success", name: nil
+      = link_to t(:".cancel_action"), new_import_evaluation_template_path(), class: "btn"
+
+    %table.table.table-condensed.import-confirmation-list{class: "#{"table-striped" unless params[:update]}"}
+      %thead
+        %tr
+          - if params[:update]
+            %th.update &nbsp;
+          %th.name=          Evaluation.human_attribute_name(:name)
+          %th.description=   Evaluation.human_attribute_name(:description)
+          %th.category_list= Evaluation.human_attribute_name(:category_list)
+          %th.max_result=    Evaluation.human_attribute_name(:max_result)
+          %th.red=           t(:".red")
+          %th.yellow=        t(:".yellow")
+          %th.green=         t(:".green")
+          %th.stanine1=      t(:".stanine") + " 1"
+          %th.stanine2=      t(:".stanine") + " 2"
+          %th.stanine3=      t(:".stanine") + " 3"
+          %th.stanine4=      t(:".stanine") + " 4"
+          %th.stanine5=      t(:".stanine") + " 5"
+          %th.stanine6=      t(:".stanine") + " 6"
+          %th.stanine7=      t(:".stanine") + " 7"
+          %th.stanine8=      t(:".stanine") + " 8"
+          %th.stanine9=      t(:".stanine") + " 9"
+      %tbody
+        - @importer.valid.each do |d|
+          - a = d[:attributes]
+          %tr
+            - if params[:update]
+              %td.update
+                - if d[:model].new_record?
+                  %span.label.label-warning
+                    %i.icon-remove{title: t(:".existing_not_found")}
+                - else
+                  %span.label.label-success
+                    %i.icon-ok{title: t(:".found_existing")}
+            %td.name=          a[:name]
+            %td.description=   a[:description]
+            %td.category_list= a[:category_list]
+            %td.max_result=    a[:max_result]
+            %td.red=           a[:red]
+            %td.yellow=        a[:yellow]
+            %td.green=         a[:green]
+            %td.stanine1=      a[:stanine1]
+            %td.stanine2=      a[:stanine2]
+            %td.stanine3=      a[:stanine3]
+            %td.stanine4=      a[:stanine4]
+            %td.stanine5=      a[:stanine5]
+            %td.stanine6=      a[:stanine6]
+            %td.stanine7=      a[:stanine7]
+            %td.stanine8=      a[:stanine8]
+            %td.stanine9=      a[:stanine9]
+
+    .form-actions
+      = submit_tag t(:".import"), class: "btn btn-success", name: nil
+      = link_to t(:".cancel_action"), new_import_evaluation_template_path(), class: "btn"
+
+- else
+  .alert.alert-block.alert-errors
+    = t(:".errors_found")
+
+  %table.table.table-condensed.import-confirmation-list
+    %thead
+      %tr
+        %th.name=          Evaluation.human_attribute_name(:name)
+        %th.description=   Evaluation.human_attribute_name(:description)
+        %th.category_list= Evaluation.human_attribute_name(:category_list)
+        %th.max_result=    Evaluation.human_attribute_name(:max_result)
+        %th.red=           t(:".red")
+        %th.yellow=        t(:".yellow")
+        %th.green=         t(:".green")
+        %th.stanine1=      t(:".stanine") + " 1"
+        %th.stanine2=      t(:".stanine") + " 2"
+        %th.stanine3=      t(:".stanine") + " 3"
+        %th.stanine4=      t(:".stanine") + " 4"
+        %th.stanine5=      t(:".stanine") + " 5"
+        %th.stanine6=      t(:".stanine") + " 6"
+        %th.stanine7=      t(:".stanine") + " 7"
+        %th.stanine8=      t(:".stanine") + " 8"
+        %th.stanine9=      t(:".stanine") + " 9"
+    %tbody
+      - @importer.invalid.each do |d|
+        - r = d[:original_row]
+        %tr
+          %td.name=          r[0]
+          %td.description=   r[1]
+          %td.category_list= r[2]
+          %td.max_result=    r[3]
+          %td.red=           r[4]
+          %td.yellow=        r[5]
+          %td.green=         r[6]
+          %td.stanine1=      r[7]
+          %td.stanine2=      r[8]
+          %td.stanine3=      r[9]
+          %td.stanine4=      r[10]
+          %td.stanine5=      r[11]
+          %td.stanine6=      r[12]
+          %td.stanine7=      r[13]
+          %td.stanine8=      r[14]
+          %td.stanine9=      r[15]
+        %tr.error
+          %td(colspan=16)
+            %ul
+              - d[:model].errors.full_messages.each do |err|
+                %li= err

@@ -1,0 +1,16 @@
+%h1
+  = @suite.name
+  %small= @suite.is_template? ? t(:".template_title") : Suite.model_name.human
+
+= render partial: "navigation", locals: { suite: @suite, active: :confirm_status_change }
+
+= semantic_form_for @suite, url: change_status_suite_path(@suite), method: :put do |f|
+
+  = f.hidden_field :status
+
+  .alert.alert-block.alert-warning
+    %p= t(:".message.#{@suite.status}")
+
+  = f.actions do
+    = f.action :submit, label: t(:".change_status_action.#{@suite.status}"), button_html: { class: "btn btn-warning"}
+    %a.btn{href:suite_path(@suite)}= t(:".cancel_action")

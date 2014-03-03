@@ -1,0 +1,15 @@
+%h1= Instruction.model_name.human
+
+= render partial: "navigation", locals: { active: :index }
+
+.btn-group
+  = link_to(t(:".export"), export_instructions_path(), class: "btn")
+
+%table.table.table-striped.instructions-list
+  %thead
+    %tr
+      %th.title= Instruction.human_attribute_name(:title)
+  %tbody
+    - @instructions.each do |instruction|
+      %tr
+        %td.title= instruction.title

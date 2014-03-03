@@ -19,9 +19,14 @@
     float: right;
 }
 
-.popover .table {
-    width: auto;
-    margin: 0;
+.popover {
+    .nav {
+        margin-bottom: 0;
+    }
+    .table {
+        width: auto;
+        margin: 0;
+    }
 }
 
 th .popover {
@@ -38,3 +43,15 @@ th .popover {
     }
 }
 
+.btn-file > input {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    font-size: 23px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    transform: translate(-300px, 0) scale(4);
+    direction: ltr;
+}

@@ -34,6 +34,7 @@ describe Result do
     end
   end
   context "associations" do
+    let(:student)    { create(:student) }
     let(:suite)      { create(:suite) }
     let(:evaluation) { create(:suite_evaluation, suite: suite) }
 
@@ -42,6 +43,13 @@ describe Result do
       Timecop.freeze(Time.now + 5.minutes) do
         participant = create(:result, evaluation: evaluation)
         updated_at.should < suite.reload.updated_at
+      end
+    end
+    it "touches the student" do
+      updated_at = student.updated_at
+      Timecop.freeze(Time.now + 5.minutes) do
+        participant = create(:result, student: student)
+        updated_at.should < student.reload.updated_at
       end
     end
   end

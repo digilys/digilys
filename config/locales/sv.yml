@@ -242,6 +242,7 @@ sv:
   green: Grön
   stanine: Stanine
   normal_distribution: Normalfördelning
+  absent: Frånvarande
 
   # Basic common actions
   # These are not put under a sub-key because we want i18n cascading to work
@@ -256,6 +257,11 @@ sv:
   logout_action:       Logga ut
   search_action:       "Sök"
   clear_search_action: "Rensa"
+  export_action:       "Exportera"
+
+  select_file: "Välj fil"
+  change_file: "Ändra"
+  remove_file: "Ta bort"
 
   roles:
     admin: Administratör

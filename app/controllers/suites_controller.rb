@@ -9,13 +9,12 @@ class SuitesController < ApplicationController
 
 
   def index
-    if !current_user.has_role?(:admin)
-      @suites = @suites.with_role([:suite_manager, :suite_member], current_user)
-    end
+    list(:open)
+  end
 
-    @suites = @suites.regular.order(:name)
-    @suites = @suites.search(params[:q]).result if has_search_param?
-    @suites = @suites.page(params[:page])
+  def closed
+    list(:closed)
+    render action: "index"
   end
 
   def search_participants
@@ -38,22 +37,13 @@ class SuitesController < ApplicationController
 
   layout "fullpage", only: :color_table
   def color_table
-    evaluations = Evaluation.
-      with_type(:generic).
-      where(instance_id: current_instance_id).
-      order("name asc").
-      partition { |e| @suite.generic_evaluations.include?(e.id) }
-
-    @generic_evaluations = {
-      included: evaluations.first,
-      missing:  evaluations.last
-    }
-
     @user_settings = current_user.settings.for(@suite).first.try(:data)
   end
 
   def save_color_table_state
     current_user.save_setting!(@suite, "datatable_state" => JSON.parse(params[:state]))
+    @suite.touch
+
     render json: { result: "OK" }
   end
   def clear_color_table_state
@@ -100,6 +90,20 @@ class SuitesController < ApplicationController
     end
   end
 
+  def confirm_status_change
+    @suite.status = @suite.open? ? :closed : :open
+  end
+  def change_status
+    @suite.status = params[:suite][:status].to_sym
+
+    if @suite.save
+      flash[:success] = t(:"suites.change_status.success.#{@suite.status}")
+      redirect_to @suite
+    else
+      render action: "confirm_status_change"
+    end
+  end
+
   def confirm_destroy
   end
   def destroy
@@ -134,6 +138,7 @@ class SuitesController < ApplicationController
 
     users.each do |user|
       user.remove_role :suite_member, @suite
+      user.remove_role :suite_contributor, @suite
     end
 
     @suite.touch
@@ -147,6 +152,9 @@ class SuitesController < ApplicationController
     users.each do |user|
       user.add_role :suite_contributor, @suite
     end
+
+    @suite.touch
+
     render json: {status: "ok"}
   end
   def remove_contributors
@@ -154,6 +162,9 @@ class SuitesController < ApplicationController
     users.each do |user|
       user.remove_role :suite_contributor, @suite
     end
+
+    @suite.touch
+
     render json: {status: "ok"}
   end
 
@@ -192,6 +203,16 @@ class SuitesController < ApplicationController
   end
 
   private
+
+  def list(status)
+    if !current_user.has_role?(:admin)
+      @suites = @suites.with_role([:suite_manager, :suite_member], current_user)
+    end
+
+    @suites = @suites.regular.with_status(status).order(:name)
+    @suites = @suites.search(params[:q]).result if has_search_param?
+    @suites = @suites.page(params[:page])
+  end
 
   # Loads an entity from a template id.
   # Required as a before_filter so it works with cancan's auth

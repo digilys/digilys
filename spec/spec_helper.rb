@@ -57,6 +57,9 @@ RSpec.configure do |config|
   config.extend  DeviseMacros,        type: :controller
   config.extend  DeviseMacros,        type: :view
 
+  # Controller utilities
+  config.extend ControllerMacros, type: :controller
+
   # View utilities
   config.include ViewUtils,           type: :view
 end

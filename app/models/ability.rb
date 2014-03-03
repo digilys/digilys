@@ -4,9 +4,9 @@ class Ability
   def initialize(user)
     return unless user
 
-    alias_action :index, :search,    to: :list
-    alias_action :new_from_template, to: :create
-    alias_action :confirm_destroy,   to: :destroy
+    alias_action :index, :closed, :search, to: :list
+    alias_action :new_from_template,       to: :create
+    alias_action :confirm_destroy,         to: :destroy
 
     alias_action :submit_report,
                  :destroy_report,
@@ -46,6 +46,8 @@ class Ability
     alias_action :destroy,
                  :add_contributors,
                  :remove_contributors,
+                 :confirm_status_change,
+                 :change_status,
       to: :control
 
     if user.has_role?(:admin)

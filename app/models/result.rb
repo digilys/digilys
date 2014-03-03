@@ -1,6 +1,6 @@
 class Result < ActiveRecord::Base
   belongs_to :evaluation, touch: true
-  belongs_to :student
+  belongs_to :student,    touch: true
 
   attr_accessible :evaluation_id, :student_id, :value, :absent
 

@@ -19,64 +19,76 @@
         .instance-banner.alert= Conf.instance_banner.html_safe
       .navbar-inner
         .container-fluid
+          %a.btn.btn-navbar(data-toggle="collapse" data-target=".nav-collapse")
+            %span.icon-bar
+            %span.icon-bar
+            %span.icon-bar
+
           %a.brand{href: root_url()}
             DigiLys
 
-          %ul.nav
-            - if Conf.multiple_instances && user_signed_in?
-              = instance_indicator
-              %li.divider-vertical
-            %li{class: active_if(working_with_templates)}
-              - if can? :create, Suite
-                %a{href: template_suites_path()}= t(:".templates")
-              - elsif can? :manage, Evaluation
-                %a{href: template_evaluations_path()}= t(:".templates")
-            - if can? :manage, User
-              %li{class: active_if(params?(controller: "users"))}
-                %a{href: users_path()}= User.model_name.human(count: 2)
+          .nav-collapse.collapse
+            %ul.nav
+              - if Conf.multiple_instances && user_signed_in?
+                = instance_indicator
+                %li.divider-vertical
+              %li{class: active_if(working_with_templates)}
+                - if can? :create, Suite
+                  %a{href: template_suites_path()}= t(:".templates")
+                - elsif can? :manage, Evaluation
+                  %a{href: template_evaluations_path()}= t(:".templates")
+              - if can? :manage, User
+                %li{class: active_if(params?(controller: "users"))}
+                  %a{href: users_path()}= User.model_name.human(count: 2)
+              - if can? :import, :all
+                %li{class: active_if(working_with_import?)}
+                  %a{href: new_import_instruction_path()}= t(:".import")
 
-          %ul.nav.pull-right
-            - if user_signed_in?
-              %li
-                = link_to edit_user_path(current_user) do
-                  %small= t(:".logged_in_as", name: current_user.name)
-              %li
-                = link_to t(:".logout_action"), destroy_user_session_path(), method: :delete
-            - else
-              %li
-                = link_to t(:".login_action"), new_user_session_path()
-            - if Conf.feedback
-              %li
-                %a(href="#feedback-modal" role="button" data-toggle="modal")= t(:".feedback")
-                #feedback-modal.modal.hide.fade(role="dialog" aria-hidden="true" aria-labelledby="feedback-modal-header")
-                  .modal-header
-                    %button.close(data-dismiss="modal" aria-hidden="true") x
-                    %h3#feedback-modal-header= t(:".feedback")
-                  .modal-body
-                    %iframe{src:Conf.feedback.url, width:"760", height:"500", frameborder:"0", marginheight:"0", marginwidth:"0"}
-            - if instruction = Instruction.for_controller_action(params[:controller], params[:action])
-              %li
-                %a(href="#instruction-modal" role="button" data-toggle="modal")= t(:".help")
-                #instruction-modal.modal.hide.fade(role="dialog" aria-hidden="true" aria-labelledby="feedback-modal-header")
-                  .modal-header
-                    %button.close(data-dismiss="modal" aria-hidden="true") x
-                    %h3#instruction-modal-header= instruction.title
-                    - if can? :manage, instruction
-                      .btn-group
-                        = link_to t(:".edit_action"),
-                          edit_instruction_path(instruction, return_to: url_for()),
-                          class: "btn btn-mini"
-                        = link_to t(:".destroy_action"),
-                          confirm_destroy_instruction_path(instruction, return_to: url_for()),
-                          class: "btn btn-mini btn-danger"
-                  .modal-body
-                    = instruction.film.try(:html_safe)
-                    = instruction.description.try(:html_safe)
-            - elsif can? :manage, Instruction
-              %li
-                = link_to new_instruction_path(return_to: url_for(), for_page: "#{params[:controller]}/#{params[:action]}") do
-                  %i.icon-pencil
-                  %em= t(:".help")
+            %ul.nav.pull-right
+              - if user_signed_in?
+                %li
+                  = link_to edit_user_path(current_user) do
+                    %small= t(:".logged_in_as", name: current_user.name)
+                %li
+                  = link_to t(:".logout_action"), destroy_user_session_path(), method: :delete
+              - else
+                %li
+                  = link_to t(:".login_action"), new_user_session_path()
+              - if Conf.feedback
+                %li
+                  %a(href="#feedback-modal" role="button" data-toggle="modal")= t(:".feedback")
+                  #feedback-modal.modal.hide.fade(role="dialog" aria-hidden="true" aria-labelledby="feedback-modal-header")
+                    .modal-header
+                      %button.close(data-dismiss="modal" aria-hidden="true") x
+                      %h3#feedback-modal-header= t(:".feedback")
+                    .modal-body
+                      %iframe{src:Conf.feedback.url, width:"760", height:"500", frameborder:"0", marginheight:"0", marginwidth:"0"}
+              - if instruction = Instruction.for_controller_action(params[:controller], params[:action])
+                %li
+                  %a(href="#instruction-modal" role="button" data-toggle="modal")= t(:".help")
+                  #instruction-modal.modal.hide.fade(role="dialog" aria-hidden="true" aria-labelledby="feedback-modal-header")
+                    .modal-header
+                      %button.close(data-dismiss="modal" aria-hidden="true") x
+                      %h3#instruction-modal-header= instruction.title
+                      - if can? :manage, instruction
+                        .btn-group
+                          = link_to t(:".export_action"),
+                            instructions_path(),
+                            class: "btn btn-mini"
+                          = link_to t(:".edit_action"),
+                            edit_instruction_path(instruction, return_to: url_for()),
+                            class: "btn btn-mini"
+                          = link_to t(:".destroy_action"),
+                            confirm_destroy_instruction_path(instruction, return_to: url_for()),
+                            class: "btn btn-mini btn-danger"
+                    .modal-body
+                      = instruction.film.try(:html_safe)
+                      = instruction.description.try(:html_safe)
+              - elsif can? :manage, Instruction
+                %li
+                  = link_to new_instruction_path(return_to: url_for(), for_page: "#{params[:controller]}/#{params[:action]}") do
+                    %i.icon-pencil
+                    %em= t(:".help")
 
 
 
@@ -92,29 +104,11 @@
             .well
               %ul.nav.nav-list
                 - if working_with_templates
-
-                  - if can? :create, Suite
-                    %li{class: active_if(working_with_suite_template?(@suite))}
-                      %a{href: template_suites_path()}= t(:"template.suites.title")
-                  - if can? :manage, Evaluation
-                    %li{class: active_if(working_with_evaluation_template?(@evaluation))}
-                      %a{href: template_evaluations_path()}= t(:"template.evaluations.title")
-
+                  = render "shared/template_sidebar", locals: { suite: @suite, evaluation: @evaluation }
+                - elsif working_with_import?
+                  = render "shared/import_sidebar", locals: { suite: @suite, evaluation: @evaluation }
                 - else
-                  - if can? :list, Suite
-                    %li{class: active_if(working_with_suite?(@suite, @evaluation))}
-                      %a{href: suites_path()}= Suite.model_name.human(count: 2)
-                  - if can? :manage, Student
-                    %li{class: active_if(params?(controller: "students"))}
-                      %a{href: students_path()}= Student.model_name.human(count: 2)
-                  - if can? :manage, Group
-                    %li{class: active_if(params?(controller: "groups"))}
-                      %a{href: groups_path()}= Group.model_name.human(count: 2)
-
-                  - if can? :manage, Evaluation
-                    %li.nav-header= t(:".generics")
-                    %li{class: active_if(working_with_generic_evaluation?(@evaluation))}
-                      %a{href: generic_evaluations_path()}= t(:"generic.evaluations.title")
+                  = render "shared/workspace_sidebar", locals: { suite: @suite, evaluation: @evaluation }
 
           .content.span9
             = content_for?(:content) ? yield(:content) : yield

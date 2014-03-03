@@ -48,9 +48,12 @@ Digilys::Application.routes.draw do
 
   resources :suites do
     collection do
+      get  :closed
       post :new_from_template
     end
     member do
+      get    :confirm_status_change
+      put    :change_status
       get    :search_participants
       get    :color_table
       put    :save_color_table_state
@@ -122,7 +125,10 @@ Digilys::Application.routes.draw do
     end
   end
 
-  resources :instructions, except: [ :index, :show ] do
+  resources :instructions, except: [ :show ] do
+    collection do
+      get :export
+    end
     member do
       get :confirm_destroy
     end
@@ -150,6 +156,23 @@ Digilys::Application.routes.draw do
   end
   namespace :generic do
     resources :evaluations, only: [ :index, :new ]
+  end
+  namespace :import do
+    resources :instructions, only: [ :new, :create ] do
+      collection do
+        post :confirm
+      end
+    end
+    resources :evaluation_templates, only: [ :new, :create ] do
+      collection do
+        post :confirm
+      end
+    end
+    resources :student_data, only: [ :new, :create ] do
+      collection do
+        post :confirm
+      end
+    end
   end
 
   devise_for :users, path: "authenticate"

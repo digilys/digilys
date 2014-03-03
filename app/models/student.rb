@@ -53,7 +53,10 @@ class Student < ActiveRecord::Base
 
   serialize   :data, JSON
   validate    :validate_data_text
-  before_save :convert_data_text_to_data
+
+  before_save   :convert_data_text_to_data
+  after_update  :touch_suites
+  after_destroy :touch_suites
 
   def name
     "#{self.first_name} #{self.last_name}"
@@ -177,5 +180,12 @@ class Student < ActiveRecord::Base
     end
 
     return value
+  end
+
+
+  def touch_suites
+    # See ActiveRecord#current_time_from_proper_timezone
+    timestamp = self.class.default_timezone == :utc ? Time.now.utc : Time.now
+    self.suites.update_all(updated_at: timestamp)
   end
 end

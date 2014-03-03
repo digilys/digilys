@@ -1,0 +1,40 @@
+.page-header
+  %h1
+    = t(:".import")
+    %small= t(:".evaluation_templates")
+
+%ul.nav.nav-tabs
+  %li.active
+    %a(href="#upload"               data-toggle="tab")= t(:".import")
+  %li
+    %a(href="#format-specification" data-toggle="tab")= t(:".format_specification")
+
+.tab-content
+  .tab-pane.active#upload
+
+    .alert.alert-block.alert-info
+      = t(:".instruction_html")
+
+    = form_tag({ action: "confirm" }, { method: :post, multipart: true }) do
+      .fileupload.fileupload-new{data: { provides: "fileupload" }}
+        .input-append
+          .uneditable-input.span3
+            %i.icon-file.fileupload-exists
+            %span.fileupload-preview
+          %span.btn.btn-file
+            %span.fileupload-new= t(:".select_file")
+            %span.fileupload-exists= t(:".change_file")
+            %input{type: "file", name: "csv_file"}
+          %a.btn.fileupload-exists{href: "#", data: { dismiss: "fileupload" } }= t(:".remove_file")
+
+      .control-group
+        .controls
+          %label.checkbox
+            = check_box_tag("update")
+            = t(:".try_update")
+
+      .form-actions
+        = submit_tag t(:".import"), class: "btn", name: nil
+
+  .tab-pane#format-specification
+    = t(:".format_specification_html")

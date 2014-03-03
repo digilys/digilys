@@ -65,9 +65,12 @@ describe Evaluation do
       it { should allow_mass_assignment_of(:"color_for_grade_#{grade}") }
       it { should allow_mass_assignment_of(:"stanine_for_grade_#{grade}") }
     end
+
     it { should     allow_mass_assignment_of(:series)}
     it { should     allow_mass_assignment_of(:series_id)}
     it { should_not allow_mass_assignment_of(:is_series_current)}
+
+    it { should_not allow_mass_assignment_of(:imported) }
   end
   context "validation" do
     it { should validate_presence_of(:name) }
@@ -1095,6 +1098,50 @@ describe Evaluation do
         create(:generic_evaluation,  status: :empty)
       ]
       Evaluation.only_series_currents.all.should match_array(evaluations)
+    end
+  end
+
+  describe "#missing_generics_for" do
+    let(:generics)       { create_list(:generic_evaluation, 2) }
+    let(:wrong_type)     { create(:evaluation_template) }
+    let(:wrong_instance) { create(:generic_evaluation, instance: create(:instance)) }
+
+    it "returns all generic evaluations which are not associated to the given object" do
+      obj = build(:suite, generic_evaluations: [generics.first])
+      Evaluation.missing_generics_for(obj).should == [generics.second]
+    end
+    it "handles empty arrays on the object" do
+      generics
+      obj = build(:suite, generic_evaluations: nil)
+      Evaluation.missing_generics_for(obj).should == generics
+    end
+    it "only includes generics from the same instance" do
+      wrong_type
+      wrong_instance
+      obj = build(:suite, generic_evaluations: [generics.first])
+      Evaluation.missing_generics_for(obj).should == [generics.second]
+    end
+  end
+
+  describe "#generic_cache_key" do
+    subject { Evaluation.generic_cache_key }
+    context "with generic evaluations" do
+      let(:oldest) { Time.now - 10.minutes }
+      let(:newest) { Time.now - 10.minutes }
+
+      before(:each) do
+        Timecop.freeze(oldest) do
+          create(:generic_evaluation)
+        end
+        Timecop.freeze(newest) do
+          create(:generic_evaluation)
+        end
+      end
+
+      it { should == newest.to_s(ActiveRecord::Base.cache_timestamp_format) }
+    end
+    context "without generic evaluations" do
+      it { should be_nil }
     end
   end
 end

@@ -11,8 +11,9 @@ describe SuitesController do
     let!(:regular_suites)  { create_list(:suite, 2) }
     let!(:template_suites) { create_list(:suite, 2, is_template: true) }
     let!(:other_instance)  { other_suite }
+    let!(:closed_suite)    { create(:suite, status: :closed) }
 
-    it "lists regular suites" do
+    it "lists regular, open suites" do
       get :index
       response.should be_success
       assigns(:suites).should match_array(regular_suites)
@@ -29,10 +30,45 @@ describe SuitesController do
       before(:each) do
         logged_in_user.grant :suite_member, regular_suites.first
         logged_in_user.grant :suite_member, other_instance
+        logged_in_user.grant :suite_member, closed_suite
       end
 
       it "lists regular suites accessible by the user" do
         get :index
+        response.should be_success
+        assigns(:suites).should == [regular_suites.first]
+      end
+    end
+  end
+
+  describe "GET #closed" do
+    let!(:regular_suites)  { create_list(:suite, 2, status: :closed) }
+    let!(:template_suites) { create_list(:suite, 2, is_template: true, status: :closed) }
+    let!(:other_instance)  { create(:suite, status: :closed, instance: instance) }
+    let!(:open_suite)    { create(:suite, status: :open) }
+
+    it "lists regular, open suites" do
+      get :closed
+      response.should be_success
+      assigns(:suites).should match_array(regular_suites)
+    end
+    it "is filterable" do
+      get :closed, q: { name_cont: regular_suites.first.name}
+      response.should be_success
+      assigns(:suites).should == [regular_suites.first]
+    end
+
+    context "with a regular user" do
+      login_user(:user)
+
+      before(:each) do
+        logged_in_user.grant :suite_member, regular_suites.first
+        logged_in_user.grant :suite_member, other_instance
+        logged_in_user.grant :suite_member, open_suite
+      end
+
+      it "lists regular suites accessible by the user" do
+        get :closed
         response.should be_success
         assigns(:suites).should == [regular_suites.first]
       end
@@ -79,19 +115,10 @@ describe SuitesController do
   end
 
   describe "GET #color_table" do
-    let(:generic_evaluations)       { create_list(:generic_evaluation, 2) }
-    let!(:other_generic_evaluation) { create(     :generic_evaluation, instance: instance) }
-    before(:each) do
-      suite.generic_evaluations << generic_evaluations.first.id
-      suite.save
-    end
-
-    it "partitions generic evaluations depending on their inclusion in the suite" do
+    it "is successful" do
       get :color_table, id: suite.id
       response.should be_success
       response.should render_template("layouts/fullpage")
-      assigns(:generic_evaluations)[:included].should == [generic_evaluations.first]
-      assigns(:generic_evaluations)[:missing].should  == [generic_evaluations.last]
     end
     it "gives a 404 if the instance does not match" do
       get :color_table, id: other_suite.id
@@ -101,10 +128,16 @@ describe SuitesController do
 
   describe "PUT #save_color_table_state" do
     it "sets the requested table state as the current user's setting for the suite" do
-      put :save_color_table_state, id: suite.id, state: '{"foo": "bar"}'
-      response.should be_success
 
-      logged_in_user.settings.for(suite).first.data["datatable_state"].should == { "foo" => "bar" }
+     updated_at = suite.updated_at
+     put :save_color_table_state, id: suite.id, state: '{"foo": "bar"}'
+
+     response.should be_success
+     logged_in_user.settings.for(suite).first.data["datatable_state"].should == { "foo" => "bar" }
+
+     Timecop.freeze(Time.now + 5.minutes) do
+       updated_at.should < suite.reload.updated_at 
+     end
     end
     it "gives a 404 if the instance does not match" do
       put :save_color_table_state, id: other_suite.id, state: '{"foo": "bar"}'
@@ -253,6 +286,34 @@ describe SuitesController do
     end
   end
 
+  describe "GET #confirm_status_change" do
+    it "switches the status without saving" do
+      get :confirm_status_change, id: suite.id
+      response.should be_success
+      assigns(:suite).status.to_sym.should == :closed
+      assigns(:suite).should be_changed
+    end
+    it "gives a 404 if the instance does not match" do
+      get :confirm_status_change, id: other_suite.id
+      response.status.should == 404
+    end
+  end
+  describe "PUT #change_status" do
+    it "updates the status and redirects to the suite page" do
+      put :change_status, id: suite.id, suite: { status: "closed" }
+      response.should redirect_to(suite)
+      suite.reload.should be_closed
+    end
+    it "renders the confirm_change_status view when validation fails" do
+      put :change_status, id: suite.id, suite: { status: "invalid" }
+      response.should render_template("confirm_status_change")
+    end
+    it "gives a 404 if the instance does not match" do
+      put :change_status, id: other_suite.id
+      response.status.should == 404
+    end
+  end
+
   describe "GET #confirm_destroy" do
     it "is successful" do
       get :confirm_destroy, id: suite.id
@@ -321,16 +382,19 @@ describe SuitesController do
   describe "DELETE #remove_users" do
     let(:users) { create_list(:user, 2) }
 
-    it "removes the users' suite_member privileges for the suite" do
+    it "removes the users' suite_member and suite_contributor privileges for the suite" do
       users.each { |u| u.add_role :suite_member, suite }
+      users.first.add_role :suite_contributor, suite
 
       users.first.has_role?(:suite_member, suite).should be_true
+      users.first.has_role?(:suite_contributor, suite).should be_true
       users.second.has_role?(:suite_member, suite).should be_true
 
       delete :remove_users, id: suite.id, suite: { user_id: users.collect(&:id).join(",") }
       response.should redirect_to(suite)
 
       users.first.has_role?(:suite_member, suite).should be_false
+      users.first.has_role?(:suite_contributor, suite).should be_false
       users.second.has_role?(:suite_member, suite).should be_false
     end
     it "touches the suite" do
@@ -359,6 +423,13 @@ describe SuitesController do
       users.first.has_role?(:suite_contributor, suite).should be_true
       users.second.has_role?(:suite_contributor, suite).should be_true
     end
+    it "touches the suite" do
+      updated_at = suite.updated_at
+      Timecop.freeze(Time.now + 5.minutes) do
+        put :add_contributors, id: suite.id, user_ids: users.collect(&:id)
+        updated_at.should < suite.reload.updated_at
+      end
+    end
     it "gives a 404 if the instance does not match" do
       put :add_contributors, id: other_suite.id, user_ids: users.collect(&:id)
       response.status.should == 404
@@ -378,6 +449,13 @@ describe SuitesController do
 
       users.first.has_role?(:suite_contributor, suite).should be_false
       users.second.has_role?(:suite_contributor, suite).should be_false
+    end
+    it "touches the suite" do
+      updated_at = suite.updated_at
+      Timecop.freeze(Time.now + 5.minutes) do
+        delete :remove_contributors, id: suite.id, user_ids: users.collect(&:id)
+        updated_at.should < suite.reload.updated_at
+      end
     end
     it "gives a 404 if the instance does not match" do
       delete :remove_contributors, id: other_suite.id, user_ids: users.collect(&:id).join(",")

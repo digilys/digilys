@@ -1,6 +1,6 @@
 %h1= Suite.model_name.human(count: 2)
 
-= render partial: "navigation", locals: { active: :index }
+= render partial: "navigation", locals: { active: params[:action].to_sym }
 
 = simple_search_form(:name_cont)
 

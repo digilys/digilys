@@ -5,11 +5,16 @@ sv:
       help: Hjälp
       logged_in_as: Inloggad som %{name}
       templates: Mallar
-      generics: Grunddata
+      import: Importera
   shared:
+    import: Importera
+    generics: Grunddata
     back_action:       Ta mig tillbaka
     continue_action:   Fortsätt leta
     start_over_action: Börja om från början
+    import_sidebar:
+      evaluation_templates: Testmallar
+      student_data: Elevinformation
     "404":
       title: Ojdå!
       body_html: |
@@ -118,6 +123,10 @@ sv:
       templates_action: Mallar
       color_table: Färgkarta
       charts: Trender
+      index_action: Aktiva
+      closed_action: Avslutade
+      confirm_status_change_for_open: Avsluta
+      confirm_status_change_for_closed: Återuppta
     form:
       student_placeholder: Sök och välj elever
       group_placeholder: Sök och välj grupper
@@ -147,6 +156,11 @@ sv:
       clear_state: Kronologisk ordning
       tools: Verktyg
       edit_table_state_notice: Om du skriver samma namn som ett befintligt utseende uppdateras det utseendet
+      lock_column_action: Lås kolumn
+      unlock_column_action: Sluta lås kolumn
+      hide_column_action: Dölj kolumn
+      show_column_action: Visa dold kolumn
+      show_column_hint: Kolumnen du väljer att visa kommer att hamna efter den kolumn du klickade på.
     clear_color_table_state:
       success: Använder utseendet "Kronologisk ordning"
     connected_users:
@@ -160,6 +174,17 @@ sv:
       success:
         regular: Planeringen skapades
         template: Planeringsmallen skapades
+    confirm_status_change:
+      message:
+        open: Om du återupptar planeringen flyttas den från avslutade planeringar till aktiva. Det kommer åter vara möjligt att arbeta som vanligt i planeringen.
+        closed: Om du avslutar planeringen flyttas den från aktiva planeringar till avslutade. Det är inte rekommenderat att ändra planeringen efter att den avslutats.
+      change_status_action:
+        closed: Avsluta
+        open: Återuppta
+    change_status:
+      success:
+        closed: Planeringen avslutades
+        open: Planeringen återupptogs
     update:
       success:
         regular: Planeringen uppdaterades
@@ -178,6 +203,8 @@ sv:
       success: Deltagarna lades till i planeringen.
     remove_users:
       success: Deltagaren togs bort från planeringen.
+    closed_suite_message_html: Planeringen är avslutad. Det är inte rekommenderat att göra ändringar i avslutade planeringar.
+    closed_suite_message_change_status_html: Om du vill göra ändringar, kan du återuppta planeringen.
 
   participants:
     new_action: Lägg till i planeringen
@@ -346,6 +373,10 @@ sv:
       result_line_chart: Resultat
 
   instructions:
+    navigation:
+      index_action: Exportera instruktioner
+    index:
+      export: Exportera alla
     form:
       film_hint: Klistra in den kod som videotjänsten använder för att bädda in en film på en webbsida.
     create:
@@ -384,3 +415,102 @@ sv:
   generic:
     evaluations:
       title: Elevdata
+
+  import:
+    import: Importera
+    format_specification: Formatspecifikation
+    correct_data: Inga fel hittades i den uppladdade filen.
+    errors_found: Fel hittades i den uppladdade filen. Var god korrigera filen. Se nedan för detaljer.
+    instructions:
+      confirm:
+        from_file: Instruktion från fil
+        existing: Befintlig (ersätts vid import)
+      create:
+        success: Instruktionerna importerades
+    evaluation_templates:
+      evaluation_templates: Testmallar
+      instruction_html: |
+        <h5>Instruktioner för import av testmallar</h5>
+        <ul>
+        <li>Importen kräver en CSV-fil, alltså en textfil med kommaseparerade värden.</li>
+        <li>
+        För att få en CSV-fil från Google-dokumentet gör man följande:
+          <ol>
+          <li>Öppna Google-dokumentet</li>
+          <li>Gå till det blad som innehåller testmallarna som ska importeras</li>
+          <li>Välj File &gt; Download as &gt; Comma separated values (.csv, current sheet)</li>
+          <li>Filen som laddas ner är den som ska anges nedan.</li>
+          </ol>
+        </li>
+        <li><b>Det är viktigt att korrekt format används i Google-dokumentet. Är inte formatet korrekt fungerar inte importen.</b></li>
+        </ul>
+      format_specification_html: |
+        <p>Kolumnerna i Google-dokumentet måste vara följande:</p>
+        <ol>
+        <li>Testets namn</li>
+        <li>En beskrivning på testet</li>
+        <li>Kategorier, en kommaseparerad lista, t.ex. matematik, grammatik</li>
+        <li>Maxvärde</li>
+        <li>Värde för rött, se intervallangivelse nedan för detaljer</li>
+        <li>Värde för gult, se intervallangivelse nedan för detaljer</li>
+        <li>Värde för grönt, se intervallangivelse nedan för detaljer</li>
+        <li>Värde för stanine 1, se intervallangivelse nedan för detaljer</li>
+        <li>Värde för stanine 2, se intervallangivelse nedan för detaljer</li>
+        <li>Värde för stanine 3, se intervallangivelse nedan för detaljer</li>
+        <li>Värde för stanine 4, se intervallangivelse nedan för detaljer</li>
+        <li>Värde för stanine 5, se intervallangivelse nedan för detaljer</li>
+        <li>Värde för stanine 6, se intervallangivelse nedan för detaljer</li>
+        <li>Värde för stanine 7, se intervallangivelse nedan för detaljer</li>
+        <li>Värde för stanine 8, se intervallangivelse nedan för detaljer</li>
+        <li>Värde för stanine 9, se intervallangivelse nedan för detaljer</li>
+        <li>Kommentar, används inte i DigiLys</li>
+        </ol>
+        <p>Ordningen på kolumnerna <b>måste</b> vara enligt ovanstående. Ordningen får inte ändras och man får inte lägga in ytterligare kolumner.</p>
+        <p>Första raden i filen måste vara en rubrikrad. Vid import hoppas alltid första raden över, och om det inte är en rubrikrad kommer testet inte att importeras.</p>
+        <p>Intervall kan anges enligt följande format:</p>
+        <ul>
+        <li>Ett värde, ex 10</li>
+        <li>Ett intervall, ex 10-20</li>
+        <li>Ett öppet intervall, där minimum eller maximum används för saknade värden, ex. -20 eller 20-</li>
+        <li>Procentuellt intervall, ex 10-20%. Detta gäller bara värdena för rött, gult och grönt, inte stanine.</li>
+        </ul>
+      new:
+        try_update: Försök att uppdatera befintliga mallar genom att jämföra rubrik och beskrivning
+      confirm:
+        update_information: DigiLys har försökt att hitta mallar att uppdatera. Var god verifiera nedan att uppdateringen ser rätt ut.
+        found_existing: Befintlig mall hittades
+        existing_not_found: Befintlig mall hittades inte
+      create:
+        success: "%{count} testmallar importerades"
+        error: "Fel uppstod när testmallarna skulle importeras. Vid felrapport, var god att ange följande till utvecklarna: %{filename}."
+    student_data:
+      student_data: Elevinformation
+      instruction_html: |
+        <h5>Information för import av elevinformation</h5>
+        <ul>
+        <li>Importen kräver en Excel-fil.</li>
+        <li>Om Excel-filen innehåller många rader kan det ta lång tid att läsa in filen. Var god överväg att dela upp filen i flera med färre rader i varje.</li>
+        <li>Excel-filer är komplexa, så det finns en risk att filen inte läses in korrekt p.g.a. tekniska detaljer i Excel.</li>
+        <li><b>Det är viktigt att korrekt format används i Excel-filen. Är inte formatet korrekt fungerar inte importen.</b></li>
+        </ul>
+      format_specification_html: |
+        <p>Kolumnerna i Excel-dokumentet måste vara följande:</p>
+        <ol>
+        <li>Skola</li>
+        <li>Klass</li>
+        <li>Personnummer</li>
+        <li>Efternamn</li>
+        <li>Förnamn</li>
+        <li>Kön, anges som flicka/pojke</li>
+        </ol>
+        <p>Ordningen på kolumnerna <b>måste</b> vara enligt ovanstående. Ordningen får inte ändras och man får inte lägga in ytterligare kolumner.</p>
+        <p>Första raden i filen måste vara en rubrikrad. Vid import hoppas alltid första raden över, och om det inte är en rubrikrad kommer den eleven inte att importeras.</p>
+        <p>För att uppdatera en elevs information måste personnumret vara identiskt med det som redan ligger i DigiLys. Skiljer det sig på något sätt, t.ex. genom att man har 12 siffror eller saknar streck mellan födelsedatum och de fyra sista siffrorna, så kommer inte importen kunna hitta den befintliga eleven, utan en ny elev skapas.</p>
+      confirm:
+        student_update: Befintlig elev uppdateras
+        school: Skola
+        grade: Klass
+        error: Ett fel uppstod när filen skulle läsas in. Var god kontrollera att formatet är korrekt. Vid problem, kontakta ansvariga tekniker.
+      create:
+        success: "%{count} elever importerades"
+        error: "Fel uppstod när eleverna skulle importeras. Vid felrapport, var god att ange följande till utvecklarna: %{filename}."

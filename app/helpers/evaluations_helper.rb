@@ -32,19 +32,49 @@ module EvaluationsHelper
 
     bars = []
 
+    options = {
+      class: "progress evaluation-status-progress"
+    }
+
     if !result_distribution.blank?
       bars << content_tag(:div, "", class:"bar bar-success",  style: "width: #{round_down(result_distribution[:green])}%")
       bars << content_tag(:div, "", class:"bar bar-yellow",   style: "width: #{round_down(result_distribution[:yellow])}%")
       bars << content_tag(:div, "", class:"bar bar-danger",   style: "width: #{round_down(result_distribution[:red])}%")
       bars << content_tag(:div, "", class:"bar bar-disabled", style: "width: #{round_down(result_distribution[:absent])}%")
+
+      options[:title] = percentage_text(result_distribution)
     end
 
-    bar_container = content_tag(:div, bars.join("").html_safe, class: "progress evaluation-status-progress")
+    bar_container = content_tag(
+      :div,
+      bars.join("").html_safe,
+      options
+    )
+  end
+
+  def evaluation_info(evaluation)
+    if evaluation.has_regular_suite?
+      "<strong class=\"date#{" overdue" if evaluation.overdue?}\">" +
+        evaluation.date.to_s +
+        "</strong><br>" +
+        percentage_text(evaluation.result_distribution)
+    end
   end
 
   private
 
   def round_down(value)
     (value * 10.0).floor / 10.0
+  end
+
+  def percentage_text(result_distribution)
+    return "" unless result_distribution
+
+    [
+      "#{t(:red)}: #{result_distribution[:red].round}%",
+      "#{t(:yellow)}: #{result_distribution[:yellow].round}%",
+      "#{t(:green)}: #{result_distribution[:green].round}%",
+      "#{t(:absent)}: #{result_distribution[:absent].round}%",
+    ].join("<br>")
   end
 end

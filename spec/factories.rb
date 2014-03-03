@@ -56,6 +56,7 @@ FactoryGirl.define do
     sequence(:name)     { |i| "Suite %09d" % i }
     is_template         false
     generic_evaluations nil
+    status              :open
 
     factory :invalid_suite do
       name nil
@@ -90,6 +91,7 @@ FactoryGirl.define do
     stanines          nil
     status            :empty
     is_series_current false
+    imported          false
 
     ignore do
       _yellow   15..35
@@ -234,7 +236,7 @@ FactoryGirl.define do
 
   factory :instruction do
     sequence(:title) { |i| "Instruction %09d" % i }
-    for_page         "/foo/bar"
+    for_page         { |i| "/foo/bar#{i}" }
     film             "foo"
     description      "foo"
 

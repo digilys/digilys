@@ -113,4 +113,10 @@ describe ApplicationController do
       }
     end
   end
+
+  describe "#timestamp_prefix" do
+    let(:timestamp) { Time.zone.now - 10.minutes }
+    subject(:result) { Timecop.freeze(timestamp) { controller.send(:timestamp_prefix, "foo") } }
+    it { should == "#{timestamp.to_s ActiveRecord::Base.cache_timestamp_format}-foo" }
+  end
 end

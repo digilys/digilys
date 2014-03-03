@@ -58,4 +58,27 @@ module SuitesHelper
       range
     end
   end
+
+  # Displays an information message for closed suites
+  def closed_suite_message(suite)
+    if suite && suite.closed?
+      change_status_paragraph = if can?(:change_status, suite)
+        content_tag(
+          :p,
+          link_to(t(:"suites.closed_suite_message_change_status_html"), confirm_status_change_suite_path(suite))
+        )
+      else
+        "".html_safe
+      end
+
+      content_tag(
+        :div,
+        content_tag(
+          :p,
+          t(:"suites.closed_suite_message_html")
+        ) + change_status_paragraph,
+        class: "alert alert-block alert-warning"
+      )
+    end
+  end
 end
