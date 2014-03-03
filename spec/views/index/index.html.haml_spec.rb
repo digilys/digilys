@@ -27,7 +27,7 @@ describe "index/index" do
   end
   context "with activities" do
     let(:activities) { [ create(:activity, end_date: Date.yesterday, status: :open), create(:activity) ] }
-    it               { should have_selector(".dashboard-table tbody tr",        count: 2)}
-    it               { should have_selector(".dashboard-table td.main.overdue", count: 1)}
+    it               { should have_selector(".dashboard-table tbody tr",   count: 2)}
+    it               { should have_selector(".dashboard-table td.overdue", count: 1)}
   end
 end
