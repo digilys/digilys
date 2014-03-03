@@ -1,3 +1,5 @@
+require "csv"
+
 module Digilys::ExcelConverter
   def convert_student_data_file(source_file_name, target_file_name, source_file_extension = nil)
     source_file_extension ||= File.extname(source_file_name)

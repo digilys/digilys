@@ -1,3 +1,4 @@
+require "csv"
 require "digilys/evaluation_template_importer"
 
 class Import::EvaluationTemplatesController < ApplicationController

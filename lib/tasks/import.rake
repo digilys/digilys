@@ -1,4 +1,5 @@
 # Tasks for importing data
+require "csv"
 require "digilys/importer"
 require "digilys/evaluation_template_importer"
 require "digilys/student_data_importer"
