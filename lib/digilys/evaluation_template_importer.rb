@@ -57,12 +57,19 @@ class Digilys::EvaluationTemplateImporter
     @parsed_attributes.each do |d|
       attributes = d[:attributes]
 
-      evaluation = Evaluation.with_type(:template).where(
-        imported:    true,
-        instance_id: @instance_id,
-        name:        attributes[:name],
-        description: attributes[:description]
-      ).first if @update_existing
+      if @update_existing
+        matching = Evaluation.with_type(:template).where(
+          imported:    true,
+          instance_id: @instance_id,
+          name:        attributes[:name]
+        )
+
+        if matching.length == 1
+          evaluation = matching.first
+        else
+          evaluation = matching.detect { |e| e.description == attributes[:description] }
+        end
+      end
 
       evaluation ||= Evaluation.new
 

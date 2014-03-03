@@ -331,6 +331,49 @@ describe Digilys::EvaluationTemplateImporter do
         e.stanine9_min.should  == 45
         e.stanine9_max.should  == 50
       end
+
+      context "matching existing" do
+        before(:each) do
+          create(
+            :evaluation_template,
+            instance:      instance,
+            imported:      true,
+            name:          "Template2",
+            description:   "Template2 desc",
+            category_list: "apa,bepa",
+            max_result:    30,
+            _yellow:       10..20,
+            _stanines:     nil
+          )
+          create(
+            :evaluation_template,
+            instance:      instance,
+            imported:      true,
+            name:          "Template2",
+            description:   "Template2 desc1",
+            category_list: "apa,bepa",
+            max_result:    30,
+            _yellow:       10..20,
+            _stanines:     nil
+          )
+        end
+
+        it "matches first by name, then by description if multiple share the same name" do
+          Evaluation.count.should == 3
+
+          importer.import!
+
+          Evaluation.count.should == 3
+
+          # By name
+          e = Evaluation.where(name: "Template1").first
+          e.max_result.should == 50
+
+          # By name and description
+          e = Evaluation.where(name: "Template2", description: "Template2 desc").first
+          e.max_result.should == 50
+        end
+      end
     end
   end
 end

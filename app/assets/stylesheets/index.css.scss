@@ -1,11 +1,11 @@
 .dashboard-table {
-    td, th {
-        white-space: nowrap;
-    }
     td.main {
         width: 100%;
         white-space: normal;
     }
+
+    .date { white-space: nowrap; }
+
 
     small.date {
         display: block;

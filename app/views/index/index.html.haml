@@ -27,7 +27,7 @@
           - @meetings.each do |meeting|
             %tr
               %td= link_to meeting.suite.name, meeting.suite
-              %td= l meeting.date
+              %td.date= l meeting.date
               %td.main= link_to meeting.name, meeting
 
   .span6
@@ -41,7 +41,7 @@
           - @activities.each do |activity|
             %tr
               %td= link_to activity.suite.name, activity.suite
-              %td.main{class: activity.overdue? ? "overdue" : ""}
+              %td{class: activity.overdue? ? "overdue" : ""}
                 = link_to activity do
                   %span.name= activity.name
                   - if activity.start_date || activity.end_date
@@ -59,7 +59,7 @@
               %th(colspan=3)= t(:".#{key}_evaluations")
             - evaluations.each do |evaluation|
               %tr
-                %td= link_to evaluation.suite.name, evaluation.suite
+                %td.main= link_to evaluation.suite.name, evaluation.suite
                 %td.main
                   = link_to evaluation.name, evaluation
                   %small.date= l evaluation.date
