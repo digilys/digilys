@@ -74,11 +74,13 @@
 
     .header {
         cursor: pointer;
+        position: relative;
     }
     .header:after {
         content: "";
-        float:  right;
-        margin-top: 7px;
+        position: absolute;
+        bottom: 7px;
+        right: 7px;
         border-width: 0 4px 4px;
         border-style: solid;
         border-color: #000 transparent;
@@ -128,4 +130,14 @@
     .error ul {
         margin-bottom: 0;
     }
+}
+
+.column-menu-action {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    @include opacity(80);
+}
+.column-menu-action:hover {
+    @include opacity(100);
 }

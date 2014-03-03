@@ -140,6 +140,17 @@ describe EvaluationsHelper do
       output.should have_selector(".progress .bar-disabled[style=\"width: 20.0%\"]")
     end
 
+    it "includes percentages in the title" do
+      create_result(0, 1) # red
+      create_result(1, 5) # yellow
+      create_result(2, 6) # yellow
+      create_result(3, 8) # green
+      create_result(4, nil) # absent
+
+      output.find(".evaluation-status-progress[title]")["title"].should ==
+        "#{t(:red)}: 20%<br>#{t(:yellow)}: 40%<br>#{t(:green)}: 20%<br>#{t(:absent)}: 20%"
+    end
+
     context "rounding" do
       let(:participants) { create_list(:participant, 7, suite: suite) }
       
@@ -159,6 +170,56 @@ describe EvaluationsHelper do
         output.should have_selector(".progress .bar-danger[style=\"width: 28.5%\"]") # 2.0/7.0 = 0.28571...
         output.should have_selector(".progress .bar-disabled[style=\"width: 0.0%\"]")
       end
+    end
+  end
+
+  describe "#evaluation_info" do
+    let(:suite)        { create(:suite) }
+    let(:evaluation)   { create(:suite_evaluation, suite: suite, max_result: 10, _yellow: 4..7) }
+    let(:participants) { create_list(:participant, 5, suite: suite) }
+
+    subject(:output)   { helper.evaluation_info(evaluation) }
+
+    def create_result(participant_index, value)
+      create(:result,
+        student: participants[participant_index].student,
+        evaluation: evaluation,
+        value: value,
+        absent: value.nil?
+      )
+    end
+
+    before(:each) do
+      create_result(0, 1) # red
+      create_result(1, 5) # yellow
+      create_result(2, 6) # yellow
+      create_result(3, 8) # green
+      create_result(4, nil) # absent
+    end
+
+    it "includes percentages by color" do
+      output.should(
+        include(
+          "#{t(:red)}: 20%<br>#{t(:yellow)}: 40%<br>#{t(:green)}: 20%<br>#{t(:absent)}: 20%"
+        )
+      )
+    end
+    it "includes the evaluation's date" do
+      output.should include("<strong class=\"date\">#{evaluation.date}</strong>")
+    end
+    it "includes an overdue class for overdue evaluations" do
+      evaluation.status = :partial
+      evaluation.date = Date.yesterday
+      output = helper.evaluation_info(evaluation)
+      output.should include("<strong class=\"date overdue\">#{evaluation.date}</strong>")
+    end
+    it "outputs nothing if the evaluation is not a suite evaluation" do
+      helper.evaluation_info(create(:evaluation_template)).should be_nil
+    end
+
+    it "handles evaluations without results" do
+      evaluation = create(:suite_evaluation)
+      helper.evaluation_info(evaluation).should_not include("%")
     end
   end
 end

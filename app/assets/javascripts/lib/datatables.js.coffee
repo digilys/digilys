@@ -16,23 +16,39 @@ datatables.saveState = (state, url) ->
 
     datatables.stateTimeoutId = window.setTimeout(callback, 1000)
 
-# Converts column indexes in a datatable state to DOM ids for better
-# persistence and handling when the underlying DOM order changes
-datatables.convertColumnIndexesToIDs = (state, domIds) ->
+# Processes a datatables state into a state that is eligible
+# for saving.
+#
+# - Replaces column indexes in the order array with DOM ids
+# - Changes the visual columns array to include only the DOM ids of the hidden columns
+# - Includes the number of fixed columns
+#
+# The expected arguments are the state that's to be saved, and
+# the column definitions from dataTables (fnSettings().aoColumns)
+datatables.processStateForSaving = (state, columns, options) ->
+
+    return state unless state
 
     if state.ColReorder
-        # Just replace the column order with the DOM ids, since the DOM ids are
-        # sorted by dom order
-        state.ColReorder = domIds
+        state.ColReorder = []
+        state.ColReorder.push(col.nTh.id) for col in columns
+
+    if state.abVisCols
+        hidden = []
+
+        hidden.push(col.nTh.id) for col in columns when !state.abVisCols[col._ColReorder_iOrigCol]
+
+        state.abVisCols = hidden
+
+    state.fixedColumns = options.fixedColumns if options.fixedColumns
 
     return state
 
 # Converts DOM ids to column indexes
-datatables.convertIDsToColumnIndexes = (state, domIds) ->
-    # Don't process non-converted states
-    return state if !state || !state.ColReorder || !/^datatable-column/.test(state.ColReorder[0])
+datatables.processStateForLoading = (state, domIds) ->
+    return state unless state
 
-    if state.ColReorder
+    if state.ColReorder && /^datatable-column/.test(state.ColReorder[0])
         colReorder = []
 
         # Replace DOM ids with the columns index in the DOM (before the reorder)
@@ -46,13 +62,33 @@ datatables.convertIDsToColumnIndexes = (state, domIds) ->
 
         # Handle any columns that exists in the DOM but not in the state
         # by adding them last
-        for idx in [0..domIds.length-1]
-            if colReorder.indexOf(idx) < 0
-                colReorder.push(idx)
+        colReorder.push(idx) for idx in [0..domIds.length-1] when colReorder.indexOf(idx) < 0
 
         state.ColReorder = colReorder
 
+    if state.abVisCols && (state.abVisCols.length <= 0 || /^datatable-column/.test(state.abVisCols[0]))
+        columns = []
+
+        # Make all columns shown by default
+        columns.push(true) for id in domIds
+
+        # Hide all columns matching the ids in the array of hidden column ids
+        for id in state.abVisCols
+            idx = domIds.indexOf(id)
+
+            if idx >= 0
+                columns[idx] = false
+
+        state.abVisCols = columns
+
     return state
+
+# Returns the index of the column in which the element
+# The element must be in the table header
+datatables.columnIndex = (datatable, elem) ->
+    header  = elem.closest("th").get(0)
+    columns = datatable.fnSettings().aoColumns
+    return (idx for column, idx in columns when column.nTh == header)[0]
 
 # Export
 window.Digilys ?= {}
