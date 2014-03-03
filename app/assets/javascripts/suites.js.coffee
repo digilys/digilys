@@ -71,7 +71,7 @@ $ ->
                 Digilys.datatables.saveState(state, url)
         )
 
-        if tableState.fixedColumns
+        if tableState && tableState.fixedColumns
             new jQuery.fn.dataTable.FixedColumns(
                 dataTable,
                 sHeightMatch:  "none"
