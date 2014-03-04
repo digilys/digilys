@@ -18,3 +18,5 @@ $ ->
         new Digilys.WarnableForm($(this), Digilys.navigationConfirmation)
 
     $(".import-confirmation-list").tooltip(selector: "[title]")
+
+    $("form.masked-on-submit").on "submit", -> new Digilys.LoadMask($(this))
