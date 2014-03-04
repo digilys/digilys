@@ -132,6 +132,19 @@ describe Group do
       group.add_students(create_list(:student, 2, instance: create(:instance)))
       group.students(true).should be_empty
     end
+
+    context "automatic participation" do
+      let!(:parent1_suite)       { create(:suite) }
+      let!(:parent1_participant) { create(:participant, suite: parent1_suite, student: students.first, group: parent1) }
+      let!(:group_suite)         { create(:suite) }
+      let!(:group_participant)   { create(:participant, suite: group_suite,   student: students.first, group: group) }
+
+      it "adds the users as participants to any suites the group or the parents, are associated with" do
+        group.add_students(students.last)
+        parent1_suite.participants.where(student_id: students.last.id).should have(1).items
+        group_suite.participants.where(student_id: students.last.id).should have(1).items
+      end
+    end
   end
 
   context ".remove_students" do
@@ -162,6 +175,22 @@ describe Group do
     it "handles an array of student ids" do
       group.remove_students(students.collect(&:id).collect(&:to_s))
       group.students.should be_blank
+    end
+
+    context "automatic departicipation" do
+      let!(:parent1_suite)       { create(:suite) }
+      let!(:parent1_participant) { create(:participant, suite: parent1_suite, student: students.first, group: parent1) }
+      let!(:parent2_suite)       { create(:suite) }
+      let!(:parent2_participant) { create(:participant, suite: parent2_suite, student: students.first, group: parent2) }
+      let!(:group_suite)         { create(:suite) }
+      let!(:group_participant)   { create(:participant, suite: group_suite,   student: students.first, group: group) }
+
+      it "removes the users as participants from any suites the group hierarchy is associated with" do
+        parent2.remove_students(students.first)
+        parent1_suite.participants.where(student_id: students.first.id).should be_blank
+        parent2_suite.participants.where(student_id: students.first.id).should be_blank
+        group_suite.participants.where(student_id: students.first.id).should be_blank
+      end
     end
   end
 

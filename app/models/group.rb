@@ -12,8 +12,9 @@ class Group < ActiveRecord::Base
   has_and_belongs_to_many :activities
   has_and_belongs_to_many :users,    order: "users.name asc"
 
-  has_many :participants, dependent: :nullify
-  has_many :suites,       through:   :students
+  has_many :participants,    dependent: :nullify
+  has_many :suites,          through:   :participants
+  has_many :indirect_suites, through:   :students,    source: :suites
 
   attr_accessible :name,
     :parent_id,
@@ -44,7 +45,10 @@ class Group < ActiveRecord::Base
 
     until group.nil?
       students.each do |student|
-        group.students << student unless group.students.include?(student)
+        unless group.students.include?(student)
+          group.students << student
+          group.suites.each { |suite| suite.participants.create(student_id: student.id, group_id: group.id) }
+        end
       end
       group = group.parent
     end
@@ -62,6 +66,9 @@ class Group < ActiveRecord::Base
 
     until group.nil?
       group.students.delete(students)
+      students.each do |student|
+        Participant.destroy_all(student_id: student.id, group_id: group.id)
+      end
       group = group.parent
     end
   end
@@ -115,12 +122,15 @@ class Group < ActiveRecord::Base
   def touch_suites
     # See ActiveRecord#current_time_from_proper_timezone
     timestamp = self.class.default_timezone == :utc ? Time.now.utc : Time.now
-    self.suites.update_all(updated_at: timestamp)
+    self.indirect_suites.update_all(updated_at: timestamp)
   end
 
   def remove_students_from_all(students, groups)
     groups.each do |group|
       group.students.delete(students)
+      students.each do |student|
+        Participant.destroy_all(student_id: student.id, group_id: group.id)
+      end
       remove_students_from_all(students, group.children)
     end
   end
