@@ -52,8 +52,14 @@ $ ->
             bScrollCollapse: true
             aoColumnDefs:  [
                 {
+                    aTargets: [ 0 ],
+                    sType:    "sort-key"
+                    sWidth:   "15em"
+                },
+                {
                     aTargets: [ "_all" ],
                     sType:    "sort-key"
+                    sWidth:   "6em"
                 }
             ]
             fnStateLoad: (settings) ->

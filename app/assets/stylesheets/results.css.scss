@@ -71,11 +71,8 @@ table.results-table {
     }
 
     .filter input {
-        width: 6em;
+        width: 85%;
         margin: 0;
-    }
-    .filter:first-child input {
-        width: 14em;
     }
 
     &.table-hover tbody tr {
