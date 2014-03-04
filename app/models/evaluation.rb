@@ -26,7 +26,7 @@ class Evaluation < ActiveRecord::Base
   acts_as_taggable_on :categories
 
   enumerize :type,       in: [ :generic, :template, :suite ], predicates: { prefix: true }, scope: true
-  enumerize :target,     in: [ :all, :male, :female ],        predicates: { prefix: true }, default: :all
+  enumerize :target,     in: [ :all, :male, :female ],        predicates: { prefix: true }, scope: true, default: :all
   enumerize :value_type, in: [ :numeric, :boolean, :grade ],  predicates: { prefix: true }, default: :numeric
   enumerize :status,     in: [ :empty, :partial, :complete ], predicates: { prefix: true }, scope: true, default: :empty
 

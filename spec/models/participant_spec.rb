@@ -69,6 +69,55 @@ describe Participant do
     it { should match_array(groups.collect(&:name)) }
   end
 
+  describe ".add_absent_results_for_passed_evaluations" do
+    let!(:suite)           { create(:suite) }
+    let!(:old_evaluations) { create_list(:suite_evaluation, 2, suite: suite, date: Date.yesterday) }
+    let!(:new_evaluation)  { create(     :suite_evaluation,    suite: suite, date: Date.today) }
+
+    it "adds absent results for passed evaluations" do
+      old_evaluations.each { |e| e.results.should be_blank }
+      new_evaluation.results.should be_blank
+
+      participant = create(:participant, suite: suite)
+
+      old_evaluations.each do |e|
+        e.results(true).should have(1).items
+        result = e.results.first
+        result.student.should == participant.student
+        result.absent?.should be_true
+      end
+
+      new_evaluation.results(true).should be_blank
+    end
+
+    context "with evaluations targeted at gender" do
+      let!(:male_evaluation)   { create(:suite_evaluation, suite: suite, date: Date.yesterday, target: :male) }
+      let!(:female_evaluation) { create(:suite_evaluation, suite: suite, date: Date.yesterday, target: :female) }
+
+      it "does not add results to the wrong gender" do
+        male_evaluation.results.should be_blank
+        female_evaluation.results.should be_blank
+        participant = create(:participant, suite: suite, student: create(:student, gender: :female))
+        male_evaluation.results(true).should be_blank
+        female_evaluation.results(true).first.student.should == participant.student
+      end
+    end
+    context "with evaluations targeted at specific students" do
+      let!(:targeted) {
+        create(
+          :suite_evaluation,
+          suite: suite,
+          date: Date.yesterday,
+          evaluation_participants: [create(:participant)]
+        )
+      }
+      it "does not add results to targeted evaluations" do
+        targeted.results.should be_blank
+        participant = create(:participant, suite: suite)
+        targeted.results(true).should be_blank
+      end
+    end
+  end
 
   describe ".add_group_users_to_suite" do
     let(:user)    { create(:user) }
