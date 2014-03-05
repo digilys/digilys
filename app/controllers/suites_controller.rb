@@ -174,7 +174,7 @@ class SuitesController < ApplicationController
       where(instance_id: current_instance_id).
       find(params[:suite][:generic_evaluations])
 
-    @suite.generic_evaluations << evaluation.id
+    @suite.add_generic_evaluations(evaluation.id)
     @suite.save
 
     redirect_to color_table_suite_url(@suite)
@@ -185,19 +185,19 @@ class SuitesController < ApplicationController
       where(instance_id: current_instance_id).
       find(params[:evaluation_id])
 
-    @suite.generic_evaluations.delete(evaluation.id)
+    @suite.remove_generic_evaluations(evaluation.id)
     @suite.save
 
     redirect_to color_table_suite_url(@suite)
   end
 
   def add_student_data
-    @suite.student_data << params[:key]
+    @suite.add_student_data(params[:key])
     @suite.save
     redirect_to color_table_suite_url(@suite)
   end
   def remove_student_data
-    @suite.student_data.delete(params[:key])
+    @suite.remove_student_data(params[:key])
     @suite.save
     redirect_to color_table_suite_url(@suite)
   end
