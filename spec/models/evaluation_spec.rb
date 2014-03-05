@@ -179,6 +179,15 @@ describe Evaluation do
       end
     end
   end
+  context "versioning", versioning: true do
+    it { should be_versioned }
+    it "stores the new suite id as metadata" do
+      evaluation = create(:suite_evaluation)
+      evaluation.suite = create(:suite)
+      evaluation.save
+      evaluation.versions.last.suite_id.should == evaluation.suite_id
+    end
+  end
 
 
   describe ".parse_students_and_groups" do

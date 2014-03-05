@@ -1,5 +1,8 @@
 # Link model for students participating in suites
 class Participant < ActiveRecord::Base
+
+  has_paper_trail meta: { suite_id: ->(s) { s.suite_id } }
+
   belongs_to :student
   belongs_to :suite,   touch: true
   belongs_to :group

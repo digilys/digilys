@@ -2,6 +2,7 @@ class Suite < ActiveRecord::Base
   extend Enumerize
 
   resourcify
+  has_paper_trail meta: { suite_id: ->(s) { s.id } }
 
   belongs_to :instance
   belongs_to :template,  class_name: "Suite"
