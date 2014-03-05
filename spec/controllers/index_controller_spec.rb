@@ -1,6 +1,8 @@
 require 'spec_helper'
 
-describe IndexController do
+describe IndexController, versioning: !ENV["debug_versioning"].blank? do
+  debug_versioning(ENV["debug_versioning"]) if ENV["debug_versioning"]
+
   describe "GET #index" do
     login_user
 

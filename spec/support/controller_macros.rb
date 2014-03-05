@@ -31,4 +31,15 @@ module ControllerMacros
       temp_file.unlink
     end
   end
+
+  def debug_versioning(type)
+    append_before(:each) do
+      @versions_before_example = PaperTrail::Version.where(item_type: type).count
+    end
+
+    after(:each) do |x|
+      m = x.example.metadata
+      puts "Versions: #{PaperTrail::Version.where(item_type: type).count - @versions_before_example}, #{m[:example_group].full_description} #{m[:description_args].first} #{m[:file_path]}:#{m[:line_number]}"
+    end
+  end
 end

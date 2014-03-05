@@ -1,6 +1,8 @@
 require 'spec_helper'
 
-describe Template::SuitesController do
+describe Template::SuitesController, versioning: !ENV["debug_versioning"].blank? do
+  debug_versioning(ENV["debug_versioning"]) if ENV["debug_versioning"]
+
   login_user(:admin)
 
   let(:instance) { create(:instance) }
