@@ -141,3 +141,15 @@
 .column-menu-action:hover {
     @include opacity(100);
 }
+
+.log-table {
+    .when, .who, .subject {
+        white-space: nowrap;
+        width: 1%;
+    }
+
+    small {
+        display: block;
+        color: #999;
+    }
+}

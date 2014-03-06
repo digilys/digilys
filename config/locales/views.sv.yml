@@ -126,6 +126,7 @@ sv:
       closed_action: Avslutade
       confirm_status_change_for_open: Avsluta
       confirm_status_change_for_closed: Återuppta
+      log_action: Historik
     form:
       student_placeholder: Sök och välj elever
       group_placeholder: Sök och välj grupper
@@ -165,6 +166,10 @@ sv:
     connected_users:
       can_change: Kan ändra i planeringen
       remove_user_action: Ta bort från planeringen
+    log:
+      when: När?
+      who: Vem?
+      what: Vad?
     new:
       from_template: Använder mallen %{template_name}.
       template_placeholder: Sök och välj en mall

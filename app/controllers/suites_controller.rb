@@ -35,6 +35,13 @@ class SuitesController < ApplicationController
   def show
   end
 
+  def log
+    @versions = PaperTrail::Version.where(suite_id: @suite.id)
+    @versions = @versions.select([ :id, :item_type, :item_id, :event, :whodunnit, :object_changes, :created_at ])
+    @versions = @versions.includes(:item)
+    @versions = @versions.order("created_at desc").page(params[:page])
+  end
+
   layout "fullpage", only: :color_table
   def color_table
     @user_settings = current_user.settings.for(@suite).first.try(:data)

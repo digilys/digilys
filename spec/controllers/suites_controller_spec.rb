@@ -116,6 +116,23 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
     end
   end
 
+  describe "GET #log", versioning: true do
+    it "displays paper_trail versions related to the suite" do
+      dummy   = create(:meeting)
+      meeting = build(:meeting, suite: suite)
+      meeting.save
+
+      get :log, id: suite.id
+      response.should be_success
+
+      assigns(:versions).collect(&:id).uniq.should match_array((meeting.versions + suite.versions).collect(&:id))
+    end
+    it "gives a 404 if the instance does not match" do
+      get :log, id: other_suite.id
+      response.status.should == 404
+    end
+  end
+
   describe "GET #color_table" do
     it "is successful" do
       get :color_table, id: suite.id
