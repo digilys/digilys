@@ -17,15 +17,18 @@
       .btn-group.suite-actions
         %a.btn.btn-small{href: new_suite_evaluation_path(@suite)}= t(:".evaluation.add")
         %a.btn.btn-small{href: new_suite_meeting_path(@suite)}=    t(:".meeting.add")
+    - elsif can_change
+      .btn-group.suite-actions
+        %a.btn.btn-small{href: new_suite_evaluation_path(@suite)}=  t(:".evaluation.add")
+        %a.btn.btn-small{href: new_suite_meeting_path(@suite)}=     t(:".meeting.add")
+        %a.btn.btn-small{href: new_suite_participant_path(@suite)}= t(:".participant.add")
+        %a.btn.btn-small{href: select_users_suite_path(@suite)}=    t(:".users.add")
+
+  .row-fluid
+    - if @suite.is_template?
       = render partial: "associations", object: @suite, as: :suite
     - else
       .span8
-        - if can_change
-          .btn-group.suite-actions
-            %a.btn.btn-small{href: new_suite_evaluation_path(@suite)}=  t(:".evaluation.add")
-            %a.btn.btn-small{href: new_suite_meeting_path(@suite)}=     t(:".meeting.add")
-            %a.btn.btn-small{href: new_suite_participant_path(@suite)}= t(:".participant.add")
-            %a.btn.btn-small{href: select_users_suite_path(@suite)}=    t(:".users.add")
         = render partial: "calendar", locals: { suite: @suite, can_change: can_change }
 
       .span4
