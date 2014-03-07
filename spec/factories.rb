@@ -68,6 +68,22 @@ FactoryGirl.define do
     end
   end
 
+  factory :color_table do
+    instance        { Instance.order(:id).first || create(:instance) }
+    suite           nil
+
+    sequence(:name) { |i| "Color Table %09d" % i }
+    student_data    []
+
+    factory :invalid_color_table do
+      name nil
+    end
+    factory :suite_color_table do
+      instance nil
+      suite
+    end
+  end
+
   factory :participant do
     student
     suite

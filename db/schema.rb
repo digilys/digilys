@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140304073507) do
+ActiveRecord::Schema.define(:version => 20140307093438) do
 
   create_table "activities", :force => true do |t|
     t.integer  "suite_id"
@@ -47,6 +47,22 @@ ActiveRecord::Schema.define(:version => 20140304073507) do
   end
 
   add_index "activities_users", ["activity_id", "user_id"], :name => "index_activities_users_on_activity_id_and_user_id"
+
+  create_table "color_tables", :force => true do |t|
+    t.string   "name"
+    t.text     "student_data", :default => "[]"
+    t.integer  "instance_id"
+    t.integer  "suite_id"
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
+  end
+
+  create_table "color_tables_evaluations", :id => false, :force => true do |t|
+    t.integer "color_table_id"
+    t.integer "evaluation_id"
+  end
+
+  add_index "color_tables_evaluations", ["color_table_id", "evaluation_id"], :name => "index_colortab_eval_on_ids"
 
   create_table "evaluations", :force => true do |t|
     t.integer  "suite_id"

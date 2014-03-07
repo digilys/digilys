@@ -17,6 +17,7 @@ class Evaluation < ActiveRecord::Base
 
   has_and_belongs_to_many :evaluation_participants, class_name: "Participant", include: :student
   has_and_belongs_to_many :users
+  has_and_belongs_to_many :color_tables
 
   belongs_to :suite,              touch:      true,         inverse_of: :evaluations
   has_many   :suite_participants, through:    :suite,       source: :participants

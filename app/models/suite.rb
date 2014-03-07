@@ -47,10 +47,13 @@ class Suite < ActiveRecord::Base
 
   has_many :results, through: :evaluations
 
+  has_one  :color_table
+
   has_many :table_states,
     as: :base,
     order: "name asc",
     dependent: :destroy
+
 
   accepts_nested_attributes_for :evaluations,
     :meetings,
