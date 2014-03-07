@@ -5,19 +5,21 @@
 - content_for :title do
   - Meeting.model_name.human(count: 2)
 
-%ul.nav.nav-tabs
+%ul.nav.nav-tabs.nav-split
   - if meeting
     %li{class: active_if(active == :show)}
       %a{href:meeting_path(meeting)}= t(:".show_action")
     - if suite && !suite.is_template? && can?(:report, meeting)
       %li{class: active_if(active == :report)}
         %a{href:report_meeting_path(meeting)}= t(:".meeting_report_action")
-    - if can?(:destroy, meeting)
-      %li.secondary-tab{class: active_if(active == :destroy)}
-        %a{href:confirm_destroy_meeting_path(meeting)}= t(:".destroy_action")
-    - if can?(:destroy, meeting)
-      %li.secondary-tab{class: active_if(active == :edit)}
-        %a{href:edit_meeting_path(meeting)}= t(:".edit_action")
+    %li.secondaries
+      %ul.nav.nav-tabs.nav-split
+        - if can?(:edit, meeting)
+          %li{class: active_if(active == :edit)}
+            %a{href:edit_meeting_path(meeting)}= t(:".edit_action")
+        - if can?(:destroy, meeting)
+          %li{class: active_if(active == :destroy)}
+            %a{href:confirm_destroy_meeting_path(meeting)}= t(:".destroy_action")
 
   - else
     %li{class: active_if(active == :new)}

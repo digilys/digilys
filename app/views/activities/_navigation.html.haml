@@ -3,17 +3,20 @@
 - content_for :title do
   - Activity.model_name.human(count: 2)
 
-%ul.nav.nav-tabs
+%ul.nav.nav-tabs.nav-split
   %li{class: active_if(active == :show)}
     %a{href:activity_path(activity)}= t(:".show_action")
   - if (!activity.closed? || activity.status_changed?) && can?(:report, activity)
     %li{class: active_if(active == :report)}
       %a{href:report_activity_path(activity)}= t(:".activity_report_action.#{activity.type}")
-  - if can?(:destroy, activity)
-    %li.secondary-tab{class: active_if(active == :destroy)}
-      %a{href:confirm_destroy_activity_path(activity)}= t(:".destroy_action")
-  - if can?(:destroy, activity)
-    %li.secondary-tab{class: active_if(active == :edit)}
-      %a{href:edit_activity_path(activity)}= t(:".edit_action")
   %li
     %a{href:suite_path(activity.suite)}= t(:".return_to_suite")
+
+  %li.secondaries
+    %ul.nav.nav-tabs.nav-split
+      - if can?(:edit, activity)
+        %li{class: active_if(active == :edit)}
+          %a{href:edit_activity_path(activity)}= t(:".edit_action")
+      - if can?(:destroy, activity)
+        %li{class: active_if(active == :destroy)}
+          %a{href:confirm_destroy_activity_path(activity)}= t(:".destroy_action")

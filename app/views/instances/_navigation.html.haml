@@ -4,7 +4,7 @@
 - content_for :title do
   - Instance.model_name.human(count: 2)
 
-%ul.nav.nav-tabs
+%ul.nav.nav-tabs.nav-split
   %li{class: active_if(active == :index)}
     %a{href:instances_path()}= t(:".index_action")
   %li{class: active_if(active == :new)}
@@ -16,5 +16,7 @@
         %a{href:instance_path(instance)}= t(:".show_action")
 
     - if can? :edit, instance
-      %li.secondary-tab{class: active_if(active == :edit)}
-        %a{href:edit_instance_path(instance)}= t(:".edit_action")
+      %li.secondaries
+        %ul.nav.nav-tabs.nav-split
+          %li{class: active_if(active == :edit)}
+            %a{href:edit_instance_path(instance)}= t(:".edit_action")

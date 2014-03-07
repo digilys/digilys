@@ -4,7 +4,7 @@
 - content_for :title do
   = t(:"evaluations.titles.#{evaluation.type}s.text", suite: evaluation.suite.try(:name))
 
-%ul.nav.nav-tabs
+%ul.nav.nav-tabs.nav-split
   - if !only_return
     - if evaluation.type.template?
       %li
@@ -25,14 +25,22 @@
     - if !evaluation.new_record?
       %li{class: active_if(active == :show)}
         %a{href:evaluation_path(evaluation)}= t(:".show_action")
-      - if can?(:destroy, evaluation)
-        %li.secondary-tab{class: active_if(active == :destroy)}
-          %a{href:confirm_destroy_evaluation_path(evaluation)}= t(:".destroy_action")
-      - if can?(:edit, evaluation)
-        %li.secondary-tab{class: active_if(active == :edit)}
-          %a{href:edit_evaluation_path(evaluation)}= t(:".edit_action")
 
-  - if evaluation.type.suite?
+    - if evaluation.type.suite?
+      %li
+        %a{href:suite_path(evaluation.suite)}= t(:".return_to_suite")
+
+    - if !evaluation.new_record?
+      %li.secondaries
+        %ul.nav.nav-tabs.nav-split
+          - if can?(:edit, evaluation)
+            %li{class: active_if(active == :edit)}
+              %a{href:edit_evaluation_path(evaluation)}= t(:".edit_action")
+          - if can?(:destroy, evaluation)
+            %li{class: active_if(active == :destroy)}
+              %a{href:confirm_destroy_evaluation_path(evaluation)}= t(:".destroy_action")
+
+  - else
     %li
       %a{href:suite_path(evaluation.suite)}= t(:".return_to_suite")
 

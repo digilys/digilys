@@ -4,7 +4,7 @@
 - content_for :title do
   - (suite && suite.is_template?) || active == :template ? t(:".templates_title") : Suite.model_name.human(count: 2)
 
-%ul.nav.nav-tabs
+%ul.nav.nav-tabs.nav-split
   - if suite
     %li{class: active_if(active == :show)}
       %a{href:suite_path(suite)}= t(:".show_action")
@@ -14,17 +14,18 @@
       %li{class: active_if(active == :charts)}
         %a{href:color_area_chart_suite_visualization_path(suite)}= t(:".charts")
 
-    - if can? :destroy, suite
-      %li.secondary-tab{class: active_if(active == :destroy)}
-        %a{href:confirm_destroy_suite_path(suite)}= t(:".destroy_action")
-    - if can? :change_status, suite
-      - unless suite.is_template?
-        %li.secondary-tab{class: active_if(active == :confirm_status_change)}
-          %a{href:confirm_status_change_suite_path(suite)}
-            = t(:".confirm_status_change_for_#{suite.status_changed? ? suite.status_was : suite.status}")
-    - if can? :edit, suite
-      %li.secondary-tab{class: active_if(active == :edit)}
-        %a{href:edit_suite_path(suite)}= t(:".edit_action")
+    %li.secondaries
+      %ul.nav.nav-tabs.nav-split
+        - if can? :edit, suite
+          %li{class: active_if(active == :edit)}
+            %a{href:edit_suite_path(suite)}= t(:".edit_action")
+        - if !suite.is_template? && can?(:change_status, suite)
+          %li{class: active_if(active == :confirm_status_change)}
+            %a{href:confirm_status_change_suite_path(suite)}
+              = t(:".confirm_status_change_for_#{suite.status_changed? ? suite.status_was : suite.status}")
+        - if can? :destroy, suite
+          %li{class: active_if(active == :destroy)}
+            %a{href:confirm_destroy_suite_path(suite)}= t(:".destroy_action")
 
   - else
     - if can? :index, Suite

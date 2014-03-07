@@ -15,10 +15,6 @@
   @include gradient-vertical(lighten($grayLight, 15%), $grayLight);
 }
 
-.nav-tabs .secondary-tab {
-    float: right;
-}
-
 .popover {
     .nav {
         margin-bottom: 0;
@@ -54,4 +50,57 @@ th .popover {
     filter: alpha(opacity=0);
     transform: translate(-300px, 0) scale(4);
     direction: ltr;
+}
+
+.nav .secondaries {
+    float: right;
+}
+.nav .secondaries .nav {
+    margin: 0;
+}
+
+@media (max-width: 525px) {
+    .nav-split {
+        position: relative;
+    }
+
+    // Stacked tabs and pills
+    .nav-split > li {
+        float: none;
+        width: 45%;
+    }
+    .nav-split > li > a {
+        margin-right: 0; // no need for the gap between nav items
+    }
+
+    // Tabs
+    .nav-tabs.nav-split {
+        border-bottom: 0;
+    }
+    .nav-tabs.nav-split > li > a {
+        border: 1px solid #ddd;
+        @include border-radius(0);
+    }
+    .nav-tabs.nav-split > li:first-child > a {
+        @include border-top-radius(4px);
+    }
+    .nav-tabs.nav-split > li:last-child > a {
+        @include border-bottom-radius(4px);
+    }
+    .nav-tabs.nav-split > li > a:hover,
+    .nav-tabs.nav-split > li > a:focus {
+        border-color: #ddd;
+        z-index: 2;
+    }
+
+    .nav-split .secondaries {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 45%;
+        height: 100%;
+    }
+    .secondaries .nav-split > li {
+        width: 100%;
+    }
 }

@@ -4,7 +4,7 @@
 - content_for :title do
   - Group.model_name.human(count: 2)
 
-%ul.nav.nav-tabs
+%ul.nav.nav-tabs.nav-split
   - if group
     - if can? :show, group
       %li{class: active_if(active == :show)}
@@ -19,12 +19,14 @@
       %li{class: active_if(active == :select_users)}
         %a{href:select_users_group_path(group)}= t(:".select_users_action")
 
-    - if can? :destroy, group
-      %li.secondary-tab{class: active_if(active == :destroy)}
-        %a{href:confirm_destroy_group_path(group)}= t(:".destroy_action")
-    - if can? :edit, group
-      %li.secondary-tab{class: active_if(active == :edit)}
-        %a{href:edit_group_path(group)}= t(:".edit_action")
+    %li.secondaries
+      %ul.nav.nav-tabs.nav-split
+        - if can? :edit, group
+          %li{class: active_if(active == :edit)}
+            %a{href:edit_group_path(group)}= t(:".edit_action")
+        - if can? :destroy, group
+          %li{class: active_if(active == :destroy)}
+            %a{href:confirm_destroy_group_path(group)}= t(:".destroy_action")
 
   - else
     %li{class: active_if(active == :index)}
