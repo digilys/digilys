@@ -91,6 +91,12 @@ Digilys::Application.routes.draw do
     end
   end
 
+  resources :color_tables do
+    member do
+      get :confirm_destroy
+    end
+  end
+
   resources :participants, only: [ :create, :destroy ] do
     member do
       get :confirm_destroy

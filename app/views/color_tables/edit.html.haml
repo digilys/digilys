@@ -1,0 +1,7 @@
+%h1
+  = @color_table.name_was
+  %small= ColorTable.model_name.human
+
+= render partial: "navigation", locals: { active: :edit, color_table: @color_table }
+
+= render partial: "form", object: @color_table, as: :color_table

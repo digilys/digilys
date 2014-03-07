@@ -1,0 +1,5 @@
+%h1
+  = @color_table.name
+  %small= ColorTable.model_name.human
+
+= render partial: "navigation", locals: { color_table: @color_table, active: :show }

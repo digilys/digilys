@@ -1,0 +1,7 @@
+= semantic_form_for color_table, html: { id: "color-table-form", class: "form-horizontal" } do |f|
+  = f.inputs do
+    = f.input :name, required: true, input_html: { required: true, autofocus: true }
+
+  = f.actions do
+    = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
+    %a.btn{href:f.object.new_record? ? color_tables_path() : color_table_path(f.object)}= t(:".cancel_action")
