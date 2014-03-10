@@ -472,6 +472,18 @@ class Evaluation < ActiveRecord::Base
     self.joins(:suite).where("suites.instance_id" => instance_id)
   end
 
+  def self.search_in_instance(instance_id, search_params)
+    q = where([ "suites.instance_id = :instance_id or evaluations.instance_id = :instance_id", instance_id: instance_id ])
+
+    # Ransack joins the suites table if the search params contains
+    # parameters like suite_name
+    unless search_params.keys.any? { |k| k =~ /suite_/ }
+      q = q.joins("left join suites on suites.id = evaluations.suite_id")
+    end
+
+    q.search(search_params).result
+  end
+
   def self.overdue
     with_status(:empty, :partial).where([ "date < ?", Date.today ])
   end

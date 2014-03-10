@@ -112,6 +112,7 @@ sv:
         name: Rubrik
         suite_id: Planering
         suite: Planering
+        evaluation_ids: Tester och elevdata
       meeting:
         suite: Planering
         suite_id: Planering

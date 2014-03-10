@@ -3,6 +3,7 @@ class ColorTablesController < ApplicationController
   load_and_authorize_resource through: :suite, shallow: true
 
   before_filter :instance_filter
+  prepend_before_filter :parse_evaluation_ids, only: [ :create, :update ]
 
   
   def index
@@ -62,5 +63,10 @@ class ColorTablesController < ApplicationController
     elsif @color_table && !@color_table.new_record?
       raise ActiveRecord::RecordNotFound if @color_table.instance_id != current_instance_id
     end
+  end
+
+  def parse_evaluation_ids
+    ids = params[:color_table][:evaluation_ids]
+    params[:color_table][:evaluation_ids] = ids.split(",") if ids.is_a?(String)
   end
 end

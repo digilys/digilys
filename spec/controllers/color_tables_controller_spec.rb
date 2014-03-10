@@ -56,6 +56,10 @@ describe ColorTablesController do
     end
   end
   describe "POST #create" do
+    let(:evaluations) { [
+      create(:generic_evaluation),
+      create(:suite_evaluation)
+    ] }
     it "creates a color table" do
       post :create, color_table: valid_parameters_for(:color_table)
       response.should redirect_to(ColorTable.last)
@@ -68,6 +72,10 @@ describe ColorTablesController do
       post :create, color_table: valid_parameters_for(:color_table).merge(instance_id: instance.id)
       assigns(:color_table).instance.should_not == instance
       assigns(:color_table).instance.should     == logged_in_user.active_instance
+    end
+    it "supports assigning evaluations by a list of comma separated ids" do
+      post :create, color_table: valid_parameters_for(:color_table).merge(evaluation_ids: evaluations.collect(&:id).join(","))
+      assigns(:color_table).evaluations.should match_array(evaluations)
     end
   end
 
@@ -82,6 +90,10 @@ describe ColorTablesController do
     end
   end
   describe "PUT #update" do
+    let(:evaluations) { [
+      create(:generic_evaluation),
+      create(:suite_evaluation)
+    ] }
     it "redirects to the color table when successful" do
       new_name = "#{color_table.name} updated" 
       put :update, id: color_table.id, color_table: { name: new_name }
@@ -99,6 +111,10 @@ describe ColorTablesController do
     it "prevents changing the instance" do
       put :update, id: color_table.id, color_table: { instance_id: instance.id }
       color_table.reload.instance.should_not == instance
+    end
+    it "supports assigning evaluations by a list of comma separated ids" do
+      put :update, id: color_table.id, color_table: { evaluation_ids: evaluations.collect(&:id).join(",") }
+      color_table.reload.evaluations(true).should match_array(evaluations)
     end
   end
 

@@ -113,3 +113,28 @@ class StudentGroupAutocomplete extends Autocomplete
         page: page
 
 window.Digilys.StudentGroupAutocomplete = StudentGroupAutocomplete
+
+
+###
+Creates an autocomplete for searching for evaluations, both by
+their name or by the suite's name
+###
+
+class EvaluationAutocomplete extends Autocomplete
+    constructor: (elem) ->
+        super elem
+
+    requestData: (term, page) ->
+        term = term.replace(/^[\s,]*(.*?)[\s,]*$/, "$1")
+
+        q = {}
+
+        if term.indexOf(",") > -1
+            q["name_cont_any"] = term
+            q["suite_name_cont_any"] = term
+        else
+            q["name_or_suite_name_cont"] = term
+
+        return { q: q, page: page }
+
+window.Digilys.EvaluationAutocomplete = EvaluationAutocomplete

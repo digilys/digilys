@@ -245,3 +245,28 @@ describe "Digilys.StudentGroupAutocomplete", ->
             expect(result.sq).toEqual   first_name_or_last_name_cont: "term"
             expect(result.gq).toEqual   name_cont:                    "term"
             expect(result.page).toEqual "page"
+
+
+describe "Digilys.EvaluationAutocomplete", ->
+    elem         = null
+    autocomplete = null
+
+    beforeEach ->
+        elem         = $('<input type="hidden" />')
+        autocomplete = new Digilys.EvaluationAutocomplete(elem)
+
+    describe ".requestData()", ->
+        it "uses name_or_suite_name_cont when a single search term is given", ->
+            result = autocomplete.requestData("term", "page")
+            expect(result.q).toEqual name_or_suite_name_cont: "term"
+
+        it "uses both name_cont_any and suite_name_cont_any when multiple search terms are given", ->
+            result = autocomplete.requestData("term1,term2", "page")
+            expect(result.q).toEqual(
+                name_cont_any: "term1,term2"
+                suite_name_cont_any: "term1,term2"
+            )
+
+        it "removes any empty comma signs at the start and end of the term", ->
+            result = autocomplete.requestData(" ,, ,term, ,", "page")
+            expect(result.q).toEqual name_or_suite_name_cont: "term"

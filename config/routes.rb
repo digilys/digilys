@@ -105,6 +105,7 @@ Digilys::Application.routes.draw do
 
   resources :evaluations, except: [ :index, :new ] do
     collection do
+      get  :search
       post :new_from_template
     end
     member do

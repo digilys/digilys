@@ -9,7 +9,8 @@ class ColorTable < ActiveRecord::Base
     :suite,
     :suite_id,
     :instance,
-    :instance_id
+    :instance_id,
+    :evaluation_ids
 
   validates :name,     presence: true
   validates :instance, presence: { unless: :suite }, inclusion: { in: [nil], if: :suite }
@@ -31,6 +32,12 @@ class ColorTable < ActiveRecord::Base
   end
   def suite_evaluations
     self.evaluations.with_type(:suite).order("date asc, id asc")
+  end
+
+  def evaluations_select2_data
+    self.evaluations.
+      includes(:suite).
+      collect { |e| { id: e.id, text: "#{e.name}#{", #{e.suite.name}" if e.suite}" } }
   end
 
 
