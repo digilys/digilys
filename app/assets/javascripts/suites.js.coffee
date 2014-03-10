@@ -76,7 +76,7 @@ $ ->
                 )
 
                 url = colorTable.data("save-local-state-path")
-                this.data("current-state", state)
+                colorTable.data("current-state", state)
 
                 Digilys.datatables.saveState(state, url)
         )
