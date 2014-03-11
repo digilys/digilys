@@ -5,26 +5,6 @@
 }
 
 table.results-table {
-    &.results-fixed-table {
-        table-layout: fixed;
-        width: 1%;
-
-        thead {
-            th {
-                width: 7em;
-                word-wrap: break-word;
-            }
-            th:first-child {
-                width: 15em;
-                word-wrap: break-word;
-            }
-        }
-
-        tbody th, tfoot th {
-            text-align: right;
-        }
-    }
-
     .result {
         padding: 0;
         text-align: center;
