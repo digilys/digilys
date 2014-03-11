@@ -42,6 +42,7 @@ describe ColorTablesController do
     it "is successful" do
       get :show, id: color_table.id
       response.should be_success
+      response.should render_template("layouts/fullpage")
     end
     it "gives a 404 if the instance does not match" do
       get :show, id: other_instance.id
@@ -140,4 +141,67 @@ describe ColorTablesController do
     end
   end
 
+  describe "PUT #save_state" do
+    it "sets the requested table state as the current user's setting for the color_table" do
+     updated_at = color_table.updated_at
+     put :save_state, id: color_table.id, state: '{"foo": "bar"}'
+
+     response.should be_success
+     logged_in_user.settings.for(color_table).first.data["datatable_state"].should == { "foo" => "bar" }
+
+     Timecop.freeze(Time.now + 5.minutes) do
+       updated_at.should < color_table.reload.updated_at 
+     end
+    end
+    it "gives a 404 if the instance does not match" do
+      put :save_state, id: other_instance.id, state: '{"foo": "bar"}'
+      response.status.should == 404
+    end
+
+    context "with existing data" do
+      before(:each) do
+        logged_in_user.settings.create(customizable: color_table, data: { "datatable_state" => { "bar" => "baz" }, "zomg" => "lol" })
+      end
+      it "overrides the datatable state, and leaves the other data alone" do
+        put :save_state, id: color_table.id, state: '{"foo": "bar"}'
+        response.should be_success
+
+        data = logged_in_user.settings.for(color_table).first.data
+        data["datatable_state"].should == { "foo" => "bar" }
+        data["zomg"].should            == "lol"
+      end
+    end
+  end
+
+  describe "GET #clear_state" do
+    before(:each) do
+      logged_in_user.settings.create(customizable: color_table, data: { "datatable_state" => { "bar" => "baz" }, "zomg" => "lol" })
+    end
+    it "removes the datatable setting" do
+      get :clear_state, id: color_table.id
+      response.should redirect_to(color_table)
+
+      data = logged_in_user.settings.for(color_table).first.data
+      data["datatable_state"].should be_nil
+      data["zomg"].should            == "lol"
+    end
+    it "gives a 404 if the instance does not match" do
+      get :clear_state, id: other_instance.id
+      response.status.should == 404
+    end
+  end
+
+  describe "PUT #add_student_data" do
+    it "adds a student data key to the suite" do
+      color_table.student_data.should be_blank
+
+      put :add_student_data, id: color_table.id, key: "foo"
+      response.should redirect_to(color_table)
+      color_table.reload.student_data.should include("foo")
+    end
+    it "gives a 404 if the instance does not match" do
+      put :add_student_data, id: other_instance.id, key: "foo"
+      response.status.should == 404
+    end
+  end
 end

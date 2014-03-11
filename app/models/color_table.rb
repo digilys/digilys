@@ -2,7 +2,10 @@ class ColorTable < ActiveRecord::Base
   belongs_to              :instance
   belongs_to              :suite
   has_and_belongs_to_many :evaluations
-  has_many                :table_states,        as: :base, order: "name asc", dependent: :destroy
+  has_many                :results,      through: :evaluations
+  has_many                :students,     through: :results, uniq: true
+  has_many                :groups,       through: :students, uniq: true
+  has_many                :table_states, as: :base, order: "name asc", dependent: :destroy
 
   attr_accessible :name,
     :student_data,
@@ -40,6 +43,16 @@ class ColorTable < ActiveRecord::Base
       collect { |e| { id: e.id, text: "#{e.name}#{", #{e.suite.name}" if e.suite}" } }
   end
 
+  def group_hierarchy
+    partition = self.groups.order("groups.parent_id asc, groups.name asc").group_by(&:parent_id)
+
+    sorted_groups = []
+
+    # The top level has parent_id == nil
+    sort_partitioned_groups(sorted_groups, partition, nil)
+    return sorted_groups
+  end
+
 
   def self.regular
     where("suite_id is null")
@@ -50,6 +63,15 @@ class ColorTable < ActiveRecord::Base
 
 
   private
+
+  def sort_partitioned_groups(sorted_groups, partition, key)
+    return if partition[key].blank?
+
+    partition[key].each do |group|
+      sorted_groups << group
+      sort_partitioned_groups(sorted_groups, partition, group.id)
+    end
+  end
 
   def ensure_unique_student_data
     self.student_data.uniq!

@@ -117,7 +117,6 @@ sv:
     show_action: Översikt
     template_title: Planeringsmall
     templates_title: Planeringsmallar
-    averages: Medelvärde
     navigation:
       templates_action: Mallar
       color_table: Färgkarta
@@ -150,20 +149,6 @@ sv:
       no_open_entities: Det finns inga kommande eller försenade tester eller möten
       no_closed_entities: Det finns inga genomförda tester eller möten
       report_all: Rapportera alla markerade
-    color_table:
-      add_generic_evaluation_action: Lägg till elevdata
-      save_current_state: Spara nuvarande utseende
-      change_state: Byt utseende
-      clear_state: Kronologisk ordning
-      tools: Verktyg
-      edit_table_state_notice: Om du skriver samma namn som ett befintligt utseende uppdateras det utseendet
-      lock_column_action: Lås kolumn
-      unlock_column_action: Sluta lås kolumn
-      hide_column_action: Dölj kolumn
-      show_column_action: Visa dold kolumn
-      show_column_hint: Kolumnen du väljer att visa kommer att hamna efter den kolumn du klickade på.
-    clear_color_table_state:
-      success: Använder utseendet "Kronologisk ordning"
     connected_users:
       can_change: Kan ändra i planeringen
       remove_user_action: Ta bort från planeringen
@@ -214,6 +199,21 @@ sv:
   color_tables:
     form:
       evaluations_placeholder: Sök och välj tester och elevdata
+    color_table:
+      all_groups: Visar alla grupper
+      save_current_state: Spara nuvarande utseende
+      change_state: Byt utseende
+      clear_state: Kronologisk ordning
+      tools: Verktyg
+      edit_table_state_notice: Om du skriver samma namn som ett befintligt utseende uppdateras det utseendet
+      lock_column_action: Lås kolumn
+      unlock_column_action: Sluta lås kolumn
+      hide_column_action: Dölj kolumn
+      show_column_action: Visa dold kolumn
+      show_column_hint: Kolumnen du väljer att visa kommer att hamna efter den kolumn du klickade på.
+      averages: Medelvärde
+    clear_state:
+      success: Använder utseendet "Kronologisk ordning"
     create:
       success: Färgkartan skapades
     update:

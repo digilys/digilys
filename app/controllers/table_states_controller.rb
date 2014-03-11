@@ -1,6 +1,6 @@
 class TableStatesController < ApplicationController
-  load_and_authorize_resource :suite
-  load_and_authorize_resource through: :suite, shallow: true
+  load_and_authorize_resource :color_table
+  load_and_authorize_resource through: :color_table, shallow: true
 
   before_filter :instance_filter
 
@@ -11,7 +11,7 @@ class TableStatesController < ApplicationController
   def select
     current_user.save_setting!(@base, "datatable_state" => @table_state.data)
     flash[:success] = t(:"table_states.select.success", name: @table_state.name)
-    redirect_to url_for([ :color_table, @base ])
+    redirect_to @base
   end
 
   def create
@@ -56,7 +56,16 @@ class TableStatesController < ApplicationController
   private
 
   def instance_filter
-    @base = @table_state.try(:base) || @suite
-    raise ActiveRecord::RecordNotFound if @base && @base.respond_to?(:instance_id) && @base.instance_id != current_instance_id
+    @base = @table_state.try(:base) || @color_table
+
+    if @base && @base.respond_to?(:instance_id)
+      if @base.instance_id.nil? && @base.respond_to?(:suite)
+        if @base.suite.instance_id != current_instance_id
+          raise ActiveRecord::RecordNotFound
+        end
+      elsif @base.instance_id != current_instance_id
+        raise ActiveRecord::RecordNotFound
+      end
+    end
   end
 end

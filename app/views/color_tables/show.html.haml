@@ -3,3 +3,5 @@
   %small= ColorTable.model_name.human
 
 = render partial: "navigation", locals: { color_table: @color_table, active: :show }
+
+= render partial: "color_table", locals: { color_table: @color_table, user_settings: @user_settings, can_change: true }

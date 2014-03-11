@@ -118,16 +118,6 @@ class Suite < ActiveRecord::Base
     self.student_data -= keys
   end
 
-  def group_hierarchy
-    partition = self.groups.group_by(&:parent_id)
-
-    sorted_groups = []
-
-    # The top level has parent_id == nil
-    sort_partitioned_groups(sorted_groups, partition, nil)
-    return sorted_groups
-  end
-
   def update_evaluation_statuses!
     self.evaluations(true).each { |e| e.update_status! }
   end
@@ -158,15 +148,6 @@ class Suite < ActiveRecord::Base
 
 
   private
-
-  def sort_partitioned_groups(sorted_groups, partition, key)
-    return if partition[key].blank?
-
-    partition[key].each do |group|
-      sorted_groups << group
-      sort_partitioned_groups(sorted_groups, partition, group.id)
-    end
-  end
 
   def ensure_unique_student_data
     self.student_data.uniq!

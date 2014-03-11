@@ -12,7 +12,9 @@ class ColorTablesController < ApplicationController
     @color_tables = @color_tables.page(params[:page])
   end
 
+  layout "fullpage", only: :show
   def show
+    @user_settings = current_user.settings.for(@color_table).first.try(:data)
   end
 
   def new
@@ -50,6 +52,26 @@ class ColorTablesController < ApplicationController
     @color_table.destroy
     flash[:success] = t(:"color_tables.destroy.success")
     redirect_to color_tables_url()
+  end
+
+
+  def save_state
+    current_user.save_setting!(@color_table, "datatable_state" => JSON.parse(params[:state]))
+    @color_table.touch
+
+    render json: { result: "OK" }
+  end
+
+  def clear_state
+    flash[:notice] = t(:"color_tables.clear_state.success")
+    current_user.save_setting!(@color_table, "datatable_state" => nil)
+    redirect_to @color_table
+  end
+
+  def add_student_data
+    @color_table.student_data << params[:key]
+    @color_table.save
+    redirect_to @color_table
   end
 
 
