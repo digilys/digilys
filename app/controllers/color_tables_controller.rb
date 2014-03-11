@@ -7,6 +7,10 @@ class ColorTablesController < ApplicationController
 
   
   def index
+    if !current_user.has_role?(:admin)
+      @color_tables = @color_tables.with_role([:manager, :editor, :reader], current_user)
+    end
+
     @color_tables = @color_tables.regular
     @color_tables = @color_tables.search(params[:q]).result if has_search_param?
     @color_tables = @color_tables.page(params[:page])
@@ -24,6 +28,7 @@ class ColorTablesController < ApplicationController
     @color_table.instance = current_instance
 
     if @color_table.save
+      current_user.add_role(:manager, @color_table)
       flash[:success] = t(:"color_tables.create.success")
       redirect_to @color_table
     else

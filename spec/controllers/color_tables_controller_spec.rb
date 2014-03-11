@@ -36,6 +36,29 @@ describe ColorTablesController do
       response.should be_success
       assigns(:color_tables).should == [regular.first]
     end
+
+    context "with a regular user" do
+      login_user(:user)
+
+      let(:edited)  { create(:color_table) }
+      let(:managed) { create(:color_table) }
+
+      before(:each) do
+        logged_in_user.add_role :reader,  regular.first
+        logged_in_user.add_role :editor,  edited
+        logged_in_user.add_role :manager, managed
+      end
+
+      it "lists regular suites accessible by the user" do
+        get :index
+        response.should be_success
+        assigns(:color_tables).should match_array([
+          regular.first,
+          edited,
+          managed
+        ])
+      end
+    end
   end
 
   describe "GET #show" do
@@ -77,6 +100,10 @@ describe ColorTablesController do
     it "supports assigning evaluations by a list of comma separated ids" do
       post :create, color_table: valid_parameters_for(:color_table).merge(evaluation_ids: evaluations.collect(&:id).join(","))
       assigns(:color_table).evaluations.should match_array(evaluations)
+    end
+    it "grants manager privileges to the creator" do
+      post :create, color_table: valid_parameters_for(:color_table)
+      logged_in_user.should have_role(:manager, assigns(:color_table))
     end
   end
 

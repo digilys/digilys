@@ -1,4 +1,6 @@
 class ColorTable < ActiveRecord::Base
+  resourcify
+
   belongs_to              :instance
   belongs_to              :suite
   has_and_belongs_to_many :evaluations

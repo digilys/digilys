@@ -1,15 +1,15 @@
 - user_settings ||= nil
-- can_change    ||= false
 
-- cache_key = [ color_table, Evaluation.generic_cache_key ]
+- cache_key  = [ color_table, Evaluation.generic_cache_key ]
+- can_change = can?(:update, color_table)
 
-- cache [ *cache_key, "tools" ] do
+.row-fluid
+  .span2
+    .btn-group.result-toggles
+      %button.btn.active(data-value="value") Resultat
+      %button.btn(data-value="stanine") Stanine
 
-  .row-fluid
-    .span2
-      .btn-group.result-toggles
-        %button.btn.active(data-value="value") Resultat
-        %button.btn(data-value="stanine") Stanine
+  - cache [ *cache_key, "tools" ] do
     .span3
       %select#color-table-group-selector{multiple: true, data: { placeholder: t(:".all_groups") }}
         = options_for_select(color_table.group_hierarchy.collect { |g| [[g.name, g.parent.try(:name)].compact.join(", "), g.id]})
@@ -17,7 +17,9 @@
       %select#table-state-selector{data: { url: select_table_state_path(":id"),
         "clear-url" => clear_state_color_table_path(color_table) }}
         = options_for_select([[t(:".change_state"), ""], [t(:".clear_state"), "0"]]) + options_from_collection_for_select(color_table.table_states, "id", "name")
-    .span2
+
+  .span2
+    - if can_change
       %a.btn{href:"#tools-modal", data: { toggle: "modal" }}
         %i.icon-wrench
         = t(:".tools")
