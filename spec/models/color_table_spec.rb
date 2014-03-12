@@ -9,10 +9,6 @@ describe ColorTable do
       subject { build(:invalid_color_table) }
       it { should_not be_valid }
     end
-    context "suite" do
-      subject { build(:suite_color_table) }
-      it { should be_valid }
-    end
   end
   context "accessible attributes" do
     it { should allow_mass_assignment_of(:name) }
@@ -27,7 +23,7 @@ describe ColorTable do
     it { should validate_presence_of(:instance) }
 
     context "with suite" do
-      subject { create(:suite_color_table) }
+      subject { create(:suite).color_table }
       it { should_not allow_value(create(:instance)).for(:instance) }
     end
   end
@@ -68,14 +64,14 @@ describe ColorTable do
   end
 
   describe "#regular" do
-    let!(:regular) { create_list(:color_table,       2) }
-    let!(:suite)   { create_list(:suite_color_table, 2) }
+    let!(:regular) { create_list(:color_table, 2) }
+    let!(:suite)   { create_list(:suite,       2).collect(&:color_table) }
     subject        { ColorTable.regular }
     it             { should match_array(regular) }
   end
   describe "#with_suites" do
-    let!(:regular) { create_list(:color_table,       2) }
-    let!(:suite)   { create_list(:suite_color_table, 2) }
+    let!(:regular) { create_list(:color_table, 2) }
+    let!(:suite)   { create_list(:suite,       2).collect(&:color_table) }
     subject        { ColorTable.with_suites }
     it             { should match_array(suite) }
   end

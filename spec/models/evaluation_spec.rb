@@ -170,7 +170,6 @@ describe Evaluation do
   end
   context "associations" do
     let(:suite)       { create(:suite) }
-    let(:color_table) { create(:suite_color_table) }
 
     it "touches the suite" do
       updated_at = suite.updated_at
@@ -181,16 +180,16 @@ describe Evaluation do
     end
 
     it "adds the evaluation to the suite's color table" do
-      evaluation = create(:suite_evaluation, suite: color_table.suite)
-      color_table.evaluations(true).should include(evaluation)
+      evaluation = create(:suite_evaluation, suite: suite)
+      suite.color_table.evaluations(true).should include(evaluation)
     end
     it "does not add multiple entries for the evaluation to the suite's color table" do
-      evaluation = create(:suite_evaluation, suite: color_table.suite)
-      color_table.evaluations(true).length.should == 1
+      evaluation = create(:suite_evaluation, suite: suite)
+      suite.color_table.evaluations(true).length.should == 1
 
       evaluation.name = "#{evaluation.name} updated"
       evaluation.save
-      color_table.evaluations(true).length.should == 1
+      suite.color_table.evaluations(true).length.should == 1
     end
   end
   context "versioning", versioning: true do

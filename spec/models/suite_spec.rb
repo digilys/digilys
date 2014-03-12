@@ -31,6 +31,21 @@ describe Suite do
       suite.versions.last.suite_id.should == suite.id
     end
   end
+  context "associations" do
+    context "color table" do
+      let(:color_table) { build(:color_table, instance: nil) }
+      it "creates a color table when creating a suite" do
+        create(:suite, color_table: nil).color_table.should_not be_blank
+      end
+      it "does not create a color table for templates" do
+        create(:suite, color_table: nil, is_template: true).color_table.should be_blank
+      end
+      it "does not overwrite an existing color table" do
+        suite = create(:suite, color_table: color_table)
+        color_table.reload.suite.should == suite
+      end
+    end
+  end
 
   describe ".generic_evaluations" do
     subject { build(:suite, generic_evaluations: nil) }

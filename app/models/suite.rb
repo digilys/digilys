@@ -47,7 +47,8 @@ class Suite < ActiveRecord::Base
 
   has_many :results, through: :evaluations
 
-  has_one  :color_table
+  has_one :color_table,
+    dependent: :destroy
 
   has_many :table_states,
     as: :base,
@@ -70,7 +71,8 @@ class Suite < ActiveRecord::Base
 
   enumerize :status, in: [ :open, :closed ], predicates: true, scope: true, default: :open
 
-  before_save :ensure_unique_student_data
+  before_save  :ensure_unique_student_data
+  after_create :ensure_color_table
 
   validates :name,     presence: true
   validates :instance, presence: true
@@ -168,5 +170,15 @@ class Suite < ActiveRecord::Base
 
   def ensure_unique_student_data
     self.student_data.uniq!
+  end
+
+  def ensure_color_table
+    return if self.is_template
+
+    if !self.color_table
+      self.create_color_table!(name: self.name)
+    elsif self.color_table.new_record?
+      self.color_table.save!
+    end
   end
 end

@@ -78,10 +78,6 @@ FactoryGirl.define do
     factory :invalid_color_table do
       name nil
     end
-    factory :suite_color_table do
-      instance nil
-      suite
-    end
   end
 
   factory :participant do
