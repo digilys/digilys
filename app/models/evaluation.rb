@@ -187,9 +187,10 @@ class Evaluation < ActiveRecord::Base
 
   before_validation :parse_students_and_groups
   before_validation :set_default_values_for_value_type
-  after_update      :touch_results
   before_save       :set_aliases_from_value_type
   before_save       :persist_colors_and_stanines
+  after_create      :add_to_suite_color_table
+  after_update      :touch_results
 
 
   def colors_serialized
@@ -568,8 +569,15 @@ class Evaluation < ActiveRecord::Base
     return nil
   end
 
+
   def touch_results
     self.results(true).map(&:save) if self.colors_changed? || self.stanines_changed?
+  end
+
+  def add_to_suite_color_table
+    if self.type.suite? && self.suite.color_table
+      self.suite.color_table.evaluations << self
+    end
   end
 
 
