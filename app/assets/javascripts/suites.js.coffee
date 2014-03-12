@@ -47,9 +47,9 @@ $ ->
             bPaginate:       false
             bInfo:           false
             bStateSave:      true
-            sScrollX:        "100%"
-            sScrollY:        ""
-            bScrollCollapse: true
+            #sScrollX:        "100%"
+            #sScrollY:        ""
+            #bScrollCollapse: true
             aoColumnDefs:  [
                 {
                     aTargets: [ 0 ],
@@ -81,13 +81,13 @@ $ ->
                 Digilys.datatables.saveState(state, url)
         )
 
-        if tableState && tableState.fixedColumns
-            new jQuery.fn.dataTable.FixedColumns(
-                dataTable,
-                sHeightMatch:  "none"
-                iLeftColumns:  tableState.fixedColumns
-                iRightColumns: 0
-            )
+        #if tableState && tableState.fixedColumns
+        #    new jQuery.fn.dataTable.FixedColumns(
+        #        dataTable,
+        #        sHeightMatch:  "none"
+        #        iLeftColumns:  tableState.fixedColumns
+        #        iRightColumns: 0
+        #    )
 
         # Filter the table by groups
         groupSelector = $("#color-table-group-selector")

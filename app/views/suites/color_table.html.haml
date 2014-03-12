@@ -133,10 +133,10 @@
 - cache [ *cache_key, "dialogs" ] do
 
   %ul#color-table-column-popup.color-table-column-popup.nav.nav-pills.nav-stacked.hide(aria-hidden="true")
-    %li.locked
-      %a(href="#" data-action="unlock-column")= t(:".unlock_column_action")
-    %li.unlocked
-      %a(href="#" data-action="lock-column")= t(:".lock_column_action")
+    /%li.locked
+    /  %a(href="#" data-action="unlock-column")= t(:".unlock_column_action")
+    /%li.unlocked
+    /  %a(href="#" data-action="lock-column")= t(:".lock_column_action")
     %li.unlocked
       %a(href="#" data-action="hide-column")= t(:".hide_column_action")
     %li.unlocked
