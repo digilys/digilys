@@ -11,11 +11,11 @@ describe "activities/_navigation" do
   end
 
   subject { rendered }
-  it      { should have_selector("li:not(.secondaries)", count: 4) }
+  it      { should have_selector("li li", count: 4) }
 
   context "with open activity" do
     let(:activity) { create(:activity, status: :open) }
-    it             { should have_selector("li:not(.secondaries)", count: 5) }
+    it             { should have_selector("li li", count: 5) }
   end
   context "with changed status" do
     let(:activity) do
@@ -23,6 +23,6 @@ describe "activities/_navigation" do
       a.status = :closed
       a
     end
-    it { should have_selector("li:not(.secondaries)", count: 5) }
+    it { should have_selector("li li", count: 5) }
   end
 end

@@ -7,11 +7,16 @@
 
 %ul.nav.nav-tabs.nav-split
   - if meeting
-    %li{class: active_if(active == :show)}
-      %a{href:meeting_path(meeting)}= t(:".show_action")
-    - if suite && !suite.is_template? && can?(:report, meeting)
-      %li{class: active_if(active == :report)}
-        %a{href:report_meeting_path(meeting)}= t(:".meeting_report_action")
+    %li.primaries
+      %ul.nav.nav-tabs.nav-split
+        %li{class: active_if(active == :show)}
+          %a{href:meeting_path(meeting)}= t(:".show_action")
+        - if suite && !suite.is_template? && can?(:report, meeting)
+          %li{class: active_if(active == :report)}
+            %a{href:report_meeting_path(meeting)}= t(:".meeting_report_action")
+        %li
+          %a{href:suite_path(suite)}= t(:".return_to_suite")
+
     %li.secondaries
       %ul.nav.nav-tabs.nav-split
         - if can?(:edit, meeting)
@@ -22,7 +27,9 @@
             %a{href:confirm_destroy_meeting_path(meeting)}= t(:".destroy_action")
 
   - else
-    %li{class: active_if(active == :new)}
-      %a{href:new_suite_meeting_path(suite)}= t(:".new_action")
-  %li
-    %a{href:suite_path(suite)}= t(:".return_to_suite")
+    %li.primaries
+      %ul.nav.nav-tabs.nav-split
+        %li{class: active_if(active == :new)}
+          %a{href:new_suite_meeting_path(suite)}= t(:".new_action")
+        %li
+          %a{href:suite_path(suite)}= t(:".return_to_suite")

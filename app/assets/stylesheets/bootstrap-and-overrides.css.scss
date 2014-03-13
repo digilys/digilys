@@ -55,18 +55,14 @@ th .popover {
 .nav .secondaries {
     float: right;
 }
+.nav .primaries .nav,
 .nav .secondaries .nav {
     margin: 0;
 }
 
 @media (max-width: 525px) {
-    .nav-split {
-        position: relative;
-    }
-
     // Stacked tabs and pills
     .nav-split > li {
-        float: none;
         width: 45%;
     }
     .nav-split > li > a {
@@ -94,13 +90,10 @@ th .popover {
     }
 
     .nav-split .secondaries {
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 45%;
+        float: right;
         height: 100%;
     }
-    .secondaries .nav-split > li {
+    .nav-split .nav > li {
         width: 100%;
     }
 }
