@@ -53,6 +53,7 @@ sv:
   meeting_report_action: Protokollför
   meeting_completed: Mötet genomfört och protokollfört
   activity_students_placeholder: Sök och välj elever eller grupper
+  user_placeholder: Sök och välj en användare
   users_placeholder: Sök och välj en eller flera användare
 
   students:
@@ -420,6 +421,12 @@ sv:
       success: Instansen skapades
     update:
       success: Instansen uppdaterades
+
+  authorizations:
+    title: Deltagare
+    add_user: Lägg till deltagare
+    remove_user: Ta bort
+    can_change: Kan ändra
 
 
   template:
