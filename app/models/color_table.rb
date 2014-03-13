@@ -5,9 +5,10 @@ class ColorTable < ActiveRecord::Base
   belongs_to              :suite
   has_and_belongs_to_many :evaluations
   has_many                :results,      through: :evaluations
-  has_many                :students,     through: :results, uniq: true
+  has_many                :students,     through: :results,  uniq: true
   has_many                :groups,       through: :students, uniq: true
   has_many                :table_states, as: :base, order: "name asc", dependent: :destroy
+  has_many                :users,        through: :roles,    uniq: true, order: "name asc, email asc"
 
   attr_accessible :name,
     :student_data,

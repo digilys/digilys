@@ -91,7 +91,8 @@ Digilys::Application.routes.draw do
       delete :clear_state
       put    :add_student_data
     end
-    resources :table_states, only: :create
+    resources :table_states,  only: :create
+    resource  :authorization, only: [ :create, :update, :destroy ]
   end
 
   resources :participants, only: [ :create, :destroy ] do

@@ -4,4 +4,17 @@
 
 = render partial: "navigation", locals: { active: :edit, color_table: @color_table }
 
-= render partial: "form", object: @color_table, as: :color_table
+- if @color_table.suite_id
+  = render partial: "form", object: @color_table, as: :color_table
+- else
+  .row-fluid
+    .span6
+      %h3= ColorTable.model_name.human
+      = render partial: "form", object: @color_table, as: :color_table
+    .span6
+      %h3= t(:"authorizations.title")
+
+      = render partial: "authorizations/list",
+        object: @color_table,
+        as: :subject,
+        locals: { base_url: color_table_authorization_path(@color_table) }
