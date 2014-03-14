@@ -1,3 +1,5 @@
+@import "variables";
+
 #color-table-form {
     .hidden {
         visibility: visible;
@@ -26,5 +28,67 @@
 
     tbody th, tfoot th {
         text-align: right;
+    }
+}
+
+#color-table {
+    border-top: 1px solid $tableBorder;
+    border-left: 1px solid $tableBorder;
+
+    .slick-header-column,
+    .slick-cell {
+        border: 0;
+        border-right: 1px solid $tableBorder;
+        border-bottom: 1px solid $tableBorder;
+        line-height: 28px;
+        padding: 1px 7px 0px 8px;
+    }
+    .slick-header-column {
+        float: none;
+        display: table-cell;
+        vertical-align: bottom;
+        height: 100%;
+        padding: 7px 18px 7px 8px;
+        font-weight: bold;
+        font-style: normal;
+        -ms-word-break: break-all;
+        word-break: break-all;
+        word-break: break-word;
+        -webkit-hyphens: auto;
+        -moz-hyphens: auto;
+        hyphens: auto;
+    }
+
+    .slick-column-name {
+        white-space: normal;
+    }
+
+    .slick-header-column-sorted {
+        background-color: rgba(141, 192, 219, 0.25);
+        text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+    }
+    .slick-sort-indicator {
+        width: 0;
+        height: 0;
+        position: absolute;
+        right: 5px;
+        bottom: 12px;
+        border-width: 0 4px 4px;
+        border-style: solid;
+        border-color: #000 transparent;
+        visibility: hidden;
+    }
+    .slick-sort-indicator-asc, .slick-sort-indicator-desc {
+        visibility: visible;
+        @include opacity(60);
+    }
+    .slick-sort-indicator-desc {
+        border-width: 4px 4px 0 4px;
+        visibility: visible;
+        @include box-shadow(none);
+    }
+
+    .averages {
+        font-weight: bold;
     }
 }

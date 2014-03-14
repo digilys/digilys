@@ -140,3 +140,7 @@ $ ->
                             locked: trigger.closest(".DTFC_LeftWrapper").length > 0
                         ).menu
 
+    colorTable = $("#color-table")
+
+    if colorTable.length > 0
+        new Digilys.ColorTable(colorTable, Digilys.colorTable.columns, Digilys.colorTable.data)
