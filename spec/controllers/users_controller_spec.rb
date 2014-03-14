@@ -73,6 +73,18 @@ describe UsersController do
       user.has_role?(:superuser).should be_false
       user.has_role?(:admin).should     be_true
     end
+    it "only touches global roles, not instance roles" do
+      user.add_role :superuser
+      user.add_role :resource, Instance
+      user.add_role :instance, Instance.first
+
+      put :update, id: user.id, user: { role_ids: [Role.find_by_name("admin").id] }
+
+      user.should_not have_role(:superuser)
+      user.should     have_role(:admin)
+      user.should     have_role(:resource, Instance)
+      user.should     have_role(:instance, Instance.first)
+    end
 
     context "instances" do
       let(:instances) { create_list(:instance, 2) }

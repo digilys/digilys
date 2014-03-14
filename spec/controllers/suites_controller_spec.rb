@@ -253,6 +253,48 @@ describe SuitesController do
       assigns(:suite).instance.should_not == instance
       assigns(:suite).instance.should     == logged_in_user.active_instance
     end
+    it "accepts attributes for evaluations, meetings and participants" do
+      # There is a bug that occurs if the has_many declarations in Suite are in
+      # the wrong order. An after_create hook in Partipants caused incoming evaluations
+      # to be wiped from the suite before they were saved. This was remedied by declaring
+      # has_many :evaluations before has_many :participants in Suite.
+      
+      post :create,
+        suite: {
+          name: "Test suite",
+          is_template: "0",
+          instance_id: logged_in_user.active_instance.id,
+          participants_attributes: {
+            "0" => {
+              student_id: student_ids,
+              group_id: group_ids
+            }
+          },
+          evaluations_attributes: {
+            "0" => {
+              type: "suite",
+              max_result: "8",
+              colors_serialized: "{}",
+              stanines_serialized: "{}",
+              name: "Test evaluation",
+              date: Date.today
+            }
+          },
+          meetings_attributes: {
+            "0" => {
+              agenda: "<p>Test agenda</p>",
+              name: "Test meeting",
+              date: Date.today
+            }
+          }
+        }
+
+      response.should redirect_to(Suite.last)
+      Suite.last.participants.collect(&:student).should match_array(students)
+
+      Suite.last.evaluations.should have(1).items
+      Suite.last.meetings.should have(1).items
+    end
   end
 
   describe "GET #edit" do

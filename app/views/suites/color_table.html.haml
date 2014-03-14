@@ -133,10 +133,10 @@
 - cache [ *cache_key, "dialogs" ] do
 
   %ul#color-table-column-popup.color-table-column-popup.nav.nav-pills.nav-stacked.hide(aria-hidden="true")
-    %li.locked
-      %a(href="#" data-action="unlock-column")= t(:".unlock_column_action")
-    %li.unlocked
-      %a(href="#" data-action="lock-column")= t(:".lock_column_action")
+    /%li.locked
+    /  %a(href="#" data-action="unlock-column")= t(:".unlock_column_action")
+    /%li.unlocked
+    /  %a(href="#" data-action="lock-column")= t(:".lock_column_action")
     %li.unlocked
       %a(href="#" data-action="hide-column")= t(:".hide_column_action")
     %li.unlocked
@@ -168,7 +168,7 @@
         = text_field_tag "table-state-name",
           nil,
           placeholder: TableState.human_attribute_name(:name)
-        %button#save-table-state.btn{data: { datatable: ".color-table .data-table", url: suite_table_states_path(@suite) }}
+        %button#save-table-state.btn{data: { datatable: ".color-table", url: suite_table_states_path(@suite) }}
           = t(:".save_current_state")
         %small.help-block= t(:".edit_table_state_notice")
       %table#table-states.table.table-striped.table-hover{"data-delete-action-name" => t(:".destroy_action")}

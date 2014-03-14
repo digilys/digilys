@@ -160,8 +160,9 @@ describe "Digilys.ColumnMenu", ->
 
         it "hides the modal when the a column has been selected", ->
             columnMenu.showModal(modalTrigger)
+            expect(modal).toBeVisible()
             showTrigger.trigger("click")
-            expect(modal.data("modal").isShown).toBe false
+            expect(modal).not.toBeVisible()
 
 
     describe ".populateShowModal()", ->

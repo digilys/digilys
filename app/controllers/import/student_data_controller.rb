@@ -1,3 +1,4 @@
+require "csv"
 require "digilys/excel_converter"
 require "digilys/student_data_importer"
 

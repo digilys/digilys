@@ -47,13 +47,19 @@ $ ->
             bPaginate:       false
             bInfo:           false
             bStateSave:      true
-            sScrollX:        "100%"
-            sScrollY:        ""
-            bScrollCollapse: true
+            #sScrollX:        "100%"
+            #sScrollY:        ""
+            #bScrollCollapse: true
             aoColumnDefs:  [
+                {
+                    aTargets: [ 0 ],
+                    sType:    "sort-key"
+                    sWidth:   "15em"
+                },
                 {
                     aTargets: [ "_all" ],
                     sType:    "sort-key"
+                    sWidth:   "6em"
                 }
             ]
             fnStateLoad: (settings) ->
@@ -70,18 +76,18 @@ $ ->
                 )
 
                 url = colorTable.data("save-local-state-path")
-                this.data("current-state", state)
+                colorTable.data("current-state", state)
 
                 Digilys.datatables.saveState(state, url)
         )
 
-        if tableState && tableState.fixedColumns
-            new jQuery.fn.dataTable.FixedColumns(
-                dataTable,
-                sHeightMatch:  "none"
-                iLeftColumns:  tableState.fixedColumns
-                iRightColumns: 0
-            )
+        #if tableState && tableState.fixedColumns
+        #    new jQuery.fn.dataTable.FixedColumns(
+        #        dataTable,
+        #        sHeightMatch:  "none"
+        #        iLeftColumns:  tableState.fixedColumns
+        #        iRightColumns: 0
+        #    )
 
         # Filter the table by groups
         groupSelector = $("#color-table-group-selector")
