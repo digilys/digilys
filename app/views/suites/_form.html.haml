@@ -15,38 +15,54 @@
           = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
           %a.btn{href:suite.new_record? ? suites_path() : url_for(suite)}= t(:".cancel_action")
 
-  - if suite.new_record? && !suite.is_template?
-    - if suite.template
-      = f.inputs Evaluation.model_name.human(count: 2) do
-        = f.inputs for: :evaluations do |ef|
-          = ef.hidden_field :template_id
-          = ef.hidden_field :type
-          = ef.hidden_field :max_result
-          = ef.hidden_field :colors_serialized
-          = ef.hidden_field :stanines_serialized
+  - if suite.new_record? 
+    - if !suite.is_template?
+      - if suite.template
+        = f.inputs Evaluation.model_name.human(count: 2) do
+          = f.inputs for: :evaluations do |ef|
+            = ef.hidden_field :template_id
+            = ef.hidden_field :type
+            = ef.hidden_field :max_result
+            = ef.hidden_field :colors_serialized
+            = ef.hidden_field :stanines_serialized
 
-          = ef.input :name,                              input_html: { readonly: true }
-          = ef.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }
+            = ef.input :name,                              input_html: { readonly: true }
+            = ef.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }
 
-      = f.inputs Meeting.model_name.human(count: 2) do 
-        = f.inputs for: :meetings do |mf|
-          = mf.input :name,                              input_html: { readonly: true }
-          = mf.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }
+        = f.inputs Meeting.model_name.human(count: 2) do 
+          = f.inputs for: :meetings do |mf|
+            = mf.hidden_field :agenda
 
-    = f.inputs Participant.model_name.human(count: 2), for: :participants, id: "new_participant" do |pf|
-      = pf.input :student_id,
-        as: :hidden,
-        input_html: { class: "student-autocomplete-field span8",
-          data: { url: search_students_path(format: :json),
-            multiple: true,
-            placeholder: t(:".student_placeholder") } }
+            = mf.input :name,                              input_html: { readonly: true }
+            = mf.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }
 
-      = pf.input :group_id,
-        as: :hidden,
-        input_html: { class: "group-autocomplete-field span8",
-          data: { url: search_groups_path(format: :json),
-            placeholder: t(:".group_placeholder"),
-            multiple: true } }
+      = f.inputs Participant.model_name.human(count: 2), for: :participants, id: "new_participant" do |pf|
+        = pf.input :student_id,
+          as: :hidden,
+          input_html: { class: "student-autocomplete-field span8",
+            data: { url: search_students_path(format: :json),
+              multiple: true,
+              placeholder: t(:".student_placeholder") } }
+
+        = pf.input :group_id,
+          as: :hidden,
+          input_html: { class: "group-autocomplete-field span8",
+            data: { url: search_groups_path(format: :json),
+              placeholder: t(:".group_placeholder"),
+              multiple: true } }
+
+    - elsif suite.template
+      = f.inputs for: :evaluations do |ef|
+        = ef.hidden_field :template_id
+        = ef.hidden_field :type
+        = ef.hidden_field :max_result
+        = ef.hidden_field :colors_serialized
+        = ef.hidden_field :stanines_serialized
+        = ef.hidden_field :name
+
+      = f.inputs for: :meetings do |mf|
+        = mf.hidden_field :name
+        = mf.hidden_field :agenda
 
 
   = f.actions do

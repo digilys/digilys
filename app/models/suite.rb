@@ -10,15 +10,46 @@ class Suite < ActiveRecord::Base
     foreign_key: "template_id",
     dependent:   :nullify
 
-  has_many :users,        through: :roles,        uniq: true,          order: "name asc, email asc"
-  has_many :participants, inverse_of: :suite,     include: :student,   dependent: :destroy
-  has_many :students,     through: :participants
-  has_many :groups,       through: :students,     order: "groups.name asc", uniq: true
-  has_many :evaluations,  inverse_of: :suite,     order: "date asc",   dependent: :destroy
-  has_many :results,      through: :evaluations
-  has_many :meetings,     inverse_of: :suite,     dependent: :destroy
-  has_many :activities,   inverse_of: :suite,     order: "start_date asc nulls last, end_date asc nulls last, name asc",   dependent: :destroy
-  has_many :table_states,  as: :base,             order: "name asc",   dependent: :destroy
+  has_many :users,
+    through: :roles,
+    uniq: true,
+    order: "name asc, email asc"
+
+  # It's very important that evaluations is declared before participants
+  # otherwise any operation that happens after participants are saved
+  # might not affect the correct evaluations
+  has_many :evaluations,
+    inverse_of: :suite,
+    order: "date asc",
+    dependent: :destroy
+
+  has_many :meetings,
+    inverse_of: :suite,
+    dependent: :destroy
+
+  has_many :activities,
+    inverse_of: :suite,
+    order: "start_date asc nulls last, end_date asc nulls last, name asc",
+    dependent: :destroy
+
+  has_many :participants,
+    inverse_of: :suite,
+    include: :student,
+    dependent: :destroy
+
+  has_many :students, through: :participants
+
+  has_many :groups,
+    through: :students,
+    order: "groups.name asc",
+    uniq: true
+
+  has_many :results, through: :evaluations
+
+  has_many :table_states,
+    as: :base,
+    order: "name asc",
+    dependent: :destroy
 
   accepts_nested_attributes_for :evaluations,
     :meetings,
@@ -101,7 +132,7 @@ class Suite < ActiveRecord::Base
       end
 
       template.meetings.each do |meeting|
-        s.meetings.build(name: meeting.name)
+        s.meetings.build(name: meeting.name, agenda: meeting.agenda)
       end
     end
   end

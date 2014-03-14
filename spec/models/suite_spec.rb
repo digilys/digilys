@@ -133,8 +133,9 @@ describe Suite do
     end
 
     it "copies the template's meetings" do
-      # Names should be equal...
+      # Names and agendas should be equal...
       suite.meetings.collect(&:name).should match_array(meetings.collect(&:name))
+      suite.meetings.collect(&:agenda).should match_array(meetings.collect(&:agenda))
 
       # ... but none of the ids
       ids = suite.meetings.collect(&:id)
