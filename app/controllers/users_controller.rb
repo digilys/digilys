@@ -67,7 +67,8 @@ class UsersController < ApplicationController
   private
 
   def assign_role(user, role_ids)
-    user.roles.where(resource_type: nil).map(&:destroy)
+    roles = user.roles.where(resource_type: nil)
+    user.roles.delete(*roles)
 
     if !(role_id = role_ids.try(:first)).blank?
       user.add_role Role.find(role_id).name

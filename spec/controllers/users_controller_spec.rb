@@ -84,6 +84,7 @@ describe UsersController do
       user.should     have_role(:admin)
       user.should     have_role(:resource, Instance)
       user.should     have_role(:instance, Instance.first)
+      Role.where(name: "superuser").exists?.should be_true
     end
 
     context "instances" do
