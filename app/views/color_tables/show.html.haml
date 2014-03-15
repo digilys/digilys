@@ -32,7 +32,6 @@
     exports["data"] = data
   })(window.Digilys.colorTable)
 
-#color-table.show-value(style="width: 100%;")
+#color-table.show-value{style: "width: 100%;", "data-search-placeholder" => t(:".search_action")}
 
 /= render partial: "color_table", locals: { color_table: @color_table, user_settings: @user_settings, can_change: true }
-

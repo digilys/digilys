@@ -36,6 +36,7 @@
     border-left: 1px solid $tableBorder;
 
     .slick-header-column,
+    .slick-headerrow-column,
     .slick-cell {
         border: 0;
         border-right: 1px solid $tableBorder;
@@ -43,6 +44,7 @@
         line-height: 28px;
         padding: 1px 7px 0px 7px;
     }
+
     .slick-header-column {
         float: none;
         display: table-cell;
@@ -58,6 +60,17 @@
         -moz-hyphens: auto;
         hyphens: auto;
     }
+
+    .slick-headerrow-column {
+        padding: 7px;
+        text-align: center;
+
+        input {
+            width: 80%;
+            margin: 0;
+        }
+    }
+
     .slick-cell {
         text-align: center;
     }

@@ -7,10 +7,20 @@ class ColorTable
 
         setTableHeight.call(this)
 
+        @settings =
+            searchPlaceholder: @colorTable.data("search-placeholder")
+
+        @filters = {}
+
         options =
-            enableColumnReorder:  true
-            rowHeight:            32
-            formatterFactory:     Formatters
+            explicitInitialization: true
+            enableColumnReorder:    true
+            rowHeight:              32
+            formatterFactory:       Formatters
+            showHeaderRow:          true
+            headerRowHeight:        45
+
+        self = this
 
         # Dataview and grid
         @dataView = new Slick.Data.DataView()
@@ -22,8 +32,19 @@ class ColorTable
         # Sorting
         @grid.onSort.subscribe (e, args) => @sortBy(args.sortCol, args.sortAsc)
 
+        # Filtering
+        @grid.onHeaderRowCellRendered.subscribe (e, args) =>
+            buildFilterInput($(args.node), args.column.id, @settings.searchPlaceholder)
+
+        @colorTable.on "change keyup", ":input", ->
+            elem = $(this)
+            self.filters[elem.data("column-id")] = elem.val()
+            self.dataView.refresh()
+
         # Row metadata
         @dataView.getItemMetadata = rowMetadata.call(this, @dataView.getItemMetadata)
+
+        @grid.init()
 
         loadData.call(this, data)
         @sortBy("student-name", true)
@@ -37,6 +58,7 @@ class ColorTable
     loadData = (data) ->
         @dataView.beginUpdate()
         @dataView.setItems(data)
+        @dataView.setFilter(createFilter(@grid, @filters))
         @dataView.endUpdate()
         @grid.invalidate()
 
@@ -100,6 +122,37 @@ class ColorTable
                 return { cssClasses: "averages" } if item.id == 0
 
             return original(row)
+
+
+    buildFilterInput = (container, columnId, placeholder) ->
+        container.html(
+            $("<input type=\"text\">")
+                .data("column-id", columnId)
+                .attr("placeholder", placeholder)
+        )
+
+    createFilter = (grid, filters) ->
+        (item) ->
+            return true if item.id == 0
+
+            for columnId, text of filters
+                if text != ""
+                    columnIdx = grid.getColumnIndex(columnId)
+
+                    if columnIdx != undefined
+
+                        column = grid.getColumns()[columnIdx]
+
+                        value = item[column.field]
+
+                        return false if !value
+
+                        if typeof(value) == "object"
+                            value = value["display"]
+
+                        return false if value.toLowerCase().indexOf(text.toLowerCase()) == -1
+
+            return true
 
 window.Digilys ?= {}
 window.Digilys.ColorTable = ColorTable

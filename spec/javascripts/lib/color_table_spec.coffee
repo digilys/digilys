@@ -5,10 +5,12 @@ describe "Digilys.ColorTable", ->
     data      = null
 
     beforeEach ->
-        container = $("<div/>").attr("id", "color-table").css({
-            width:  "640px"
-            height: "480px"
-        })
+        container = $("<div/>")
+            .attr("id", "color-table").css({
+                width:  "640px"
+                height: "480px"
+            })
+            .attr("data-search-placeholder", "search-placeholder")
 
     describe "constructor", ->
         beforeEach ->
@@ -34,15 +36,22 @@ describe "Digilys.ColorTable", ->
 
         it "initializes the grid with default options", ->
             options = table.grid.getOptions()
+            expect(options.explicitInitialization).toBe(true)
             expect(options.enableColumnReorder).toBe(true)
             expect(options.rowHeight).toBe(32)
             expect(options.formatterFactory).toBe(Digilys.ColorTableFormatters)
+            expect(options.showHeaderRow).toBe(true)
+            expect(options.headerRowHeight).toBe(45)
 
         it "resizes the table container to fit the window", ->
             expect(container.height()).toEqual($(document).height() - container.offset().top - 20)
 
         it "renders the grid", ->
             expect(container.find(".slick-row")).toHaveLength(2)
+
+        it "adds filter inputs to the header row", ->
+            inputs = container.find(".slick-headerrow :text[placeholder=search-placeholder]")
+            expect(inputs).toHaveLength(2)
 
         it "sorts by the student name by default", ->
             expect(container.find(".slick-header-column-sorted .slick-column-name")).toHaveText("Student name")
@@ -160,6 +169,46 @@ describe "Digilys.ColorTable", ->
 
         it "adds a css class to the cell (patched in slick.grid.js)", ->
             expect(container.find(".slick-cell.zomglol")).toHaveLength(1)
+
+
+    describe "filtering", ->
+        nameInput = null
+        col1Input = null
+
+        beforeEach ->
+            columns = [
+                { id: "student-name", name: "Student name", field: "sn", sortable: true },
+                { id: "col1",         name: "Col 1",        field: "c1", sortable: true }
+            ]
+
+            data = [
+                { id: 1, sn: "foo", c1: "apa" },
+                { id: 2, sn: "bar", c1: "bepa" },
+                { id: 3, sn: "foo", c1: "cepa" },
+                { id: 4, sn: "bar", c1: "cepa" },
+            ]
+
+            table = new Digilys.ColorTable(container, columns, data)
+
+            inputs = container.find(".slick-headerrow :text[placeholder=search-placeholder]")
+            nameInput = $(inputs[0])
+            col1Input = $(inputs[1])
+
+        it "filters by column", ->
+            expect(container.find(".slick-row")).toHaveLength(4)
+            nameInput.val("oo")
+            nameInput.trigger("change")
+            expect(container.find(".slick-row")).toHaveLength(2)
+            expect(container.find(".slick-row")).toHaveText("fooapafoocepa")
+
+        it "filters by multiple columns", ->
+            nameInput.val("oo")
+            nameInput.trigger("keyup")
+            col1Input.val("c")
+            col1Input.trigger("change")
+
+            expect(container.find(".slick-row")).toHaveLength(1)
+            expect(container.find(".slick-row")).toHaveText("foocepa")
 
 
 describe "ColorTableFormatters", ->
