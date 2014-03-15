@@ -10,6 +10,7 @@ class ColorTable
         options =
             enableColumnReorder:  true
             rowHeight:            32
+            formatterFactory:     Formatters
 
         # Dataview and grid
         @dataView = new Slick.Data.DataView()
@@ -66,6 +67,12 @@ class ColorTable
             val1 = row1[column.field]
             val2 = row2[column.field]
 
+            # Handle complex structures
+            if typeof(val1) == "object" && val1
+                val1 = val1["value"]
+            if typeof(val2) == "object" && val2
+                val2 = val2["value"]
+
             return  0 if val1 == val2
 
             # Undefined values are always just above the average row
@@ -94,6 +101,31 @@ class ColorTable
 
             return original(row)
 
-# Export
 window.Digilys ?= {}
 window.Digilys.ColorTable = ColorTable
+
+
+###
+Formatters
+###
+
+Formatters = {}
+
+Formatters.getFormatter = (item) ->
+    if item["type"] == "evaluation"
+        return Formatters.ColorCell
+    else
+        return undefined
+
+Formatters.ColorCell = (row, cell, value, columnDef, dataContext)->
+    t = typeof(value)
+
+    return value if t == "number"
+    return ""    if t != "object" || !value
+
+    if value["stanine"]
+        return "<span class=\"value\">#{value["display"]}</span><span class=\"stanine\">#{value["stanine"]}</span>"
+    else
+        return value["display"]
+
+window.Digilys.ColorTableFormatters = Formatters

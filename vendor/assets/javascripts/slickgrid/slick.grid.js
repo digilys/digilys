@@ -1495,12 +1495,19 @@ if (typeof Slick === "undefined") {
         }
       }
 
-      stringArray.push("<div class='" + cellCss + "'>");
 
       // if there is a corresponding row (if not, this is the Add New row or this data hasn't been loaded yet)
       if (item) {
         var value = getDataItemValueForColumn(item, m);
+
+        if (value && typeof(value) == "object" && value["cssClass"]) {
+            cellCss += " " + value["cssClass"]
+        }
+
+        stringArray.push("<div class='" + cellCss + "'>");
         stringArray.push(getFormatter(row, m)(row, cell, value, m, item));
+      } else {
+        stringArray.push("<div class='" + cellCss + "'>");
       }
 
       stringArray.push("</div>");

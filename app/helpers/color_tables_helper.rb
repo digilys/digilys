@@ -4,7 +4,9 @@ module ColorTablesHelper
       {
         id:       "student-name",
         name:     Student.human_attribute_name(:name),
-        field:    "name"
+        field:    "name",
+        type:     "student-name",
+        cssClass: "student-name"
       }.to_json
     ]
     columns += student_data_columns(student_data) || []
@@ -17,9 +19,10 @@ module ColorTablesHelper
 
     student_data.collect do |key|
       {
-        id:       "student-data-#{key.parameterize}",
-        name:     key,
-        field:    "student_data_#{key.parameterize("_")}"
+        id:    "student-data-#{key.parameterize}",
+        name:  key,
+        field: "student_data_#{key.parameterize("_")}",
+        type:  "student-data"
       }.to_json
     end
   end
@@ -29,9 +32,10 @@ module ColorTablesHelper
 
     evaluations.collect do |evaluation|
       {
-        id:       "evaluation-#{evaluation.id}",
-        name:     evaluation.name,
-        field:    "evaluation_#{evaluation.id}"
+        id:    "evaluation-#{evaluation.id}",
+        name:  evaluation.name,
+        field: "evaluation_#{evaluation.id}",
+        type:  "evaluation"
       }.to_json
     end
   end
@@ -59,7 +63,12 @@ module ColorTablesHelper
           values[evaluation.id] << result.value
         end
 
-        s["evaluation_#{evaluation.id}"] = result.display_value
+        s["evaluation_#{evaluation.id}"] = {
+          display:  result.display_value,
+          value:    result.value,
+          stanine:  result.stanine,
+          cssClass: result.color
+        }
       end
 
       s.to_json

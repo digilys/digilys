@@ -41,7 +41,7 @@
         border-right: 1px solid $tableBorder;
         border-bottom: 1px solid $tableBorder;
         line-height: 28px;
-        padding: 1px 7px 0px 8px;
+        padding: 1px 7px 0px 7px;
     }
     .slick-header-column {
         float: none;
@@ -57,6 +57,9 @@
         -webkit-hyphens: auto;
         -moz-hyphens: auto;
         hyphens: auto;
+    }
+    .slick-cell {
+        text-align: center;
     }
 
     .slick-column-name {
@@ -88,7 +91,21 @@
         @include box-shadow(none);
     }
 
+    .slick-cell.student-name {
+        text-align: right;
+        font-weight: bold;
+    }
     .averages {
         font-weight: bold;
+    }
+
+    .red    { background-color: $red; }
+    .yellow { background-color: $yellow; }
+    .green  { background-color: $green; }
+
+    .stanine { display: none; }
+    &.show-stanine {
+        .value { display: none; }
+        .stanine { display: inline; }
     }
 }

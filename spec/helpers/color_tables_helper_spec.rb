@@ -6,7 +6,9 @@ describe ColorTablesHelper do
     let(:name_column) { {
       id:       "student-name",
       name:     Student.human_attribute_name(:name),
-      field:    "name" }.to_json }
+      field:    "name",
+      type:     "student-name",
+      cssClass: "student-name" }.to_json }
 
     it "renders a name column, student data columns and evaluation columns" do
       should_receive(:student_data_columns).with(%w(Foo)).and_return(["student_data_columns"])
@@ -35,15 +37,17 @@ describe ColorTablesHelper do
       expect(results).to have(2).items
 
       expect(JSON.parse(results.first)).to eq({
-        id:       "student-data-foo",
-        name:     "foo",
-        field:    "student_data_foo"
+        id:    "student-data-foo",
+        name:  "foo",
+        field: "student_data_foo",
+        type:  "student-data"
       }.stringify_keys)
 
       expect(JSON.parse(results.second)).to eq({
-        id:       "student-data-bar-baz",
-        name:     "bar baz",
-        field:    "student_data_bar_baz"
+        id:    "student-data-bar-baz",
+        name:  "bar baz",
+        field: "student_data_bar_baz",
+        type:  "student-data"
       }.stringify_keys)
     end
   end
@@ -60,9 +64,10 @@ describe ColorTablesHelper do
       expect(results).to have(1).items
 
       expect(JSON.parse(results.first)).to eq({
-        id:       "evaluation-123",
-        name:     evaluation.name,
-        field:    "evaluation_123"
+        id:    "evaluation-123",
+        name:  evaluation.name,
+        field: "evaluation_123",
+        type:  "evaluation"
       }.stringify_keys)
     end
   end
@@ -86,7 +91,12 @@ describe ColorTablesHelper do
         name:                 student.name,
         student_data_foo:     "123",
         student_data_bar_baz: "zomg",
-        "evaluation_#{evaluation.id}" => result.display_value
+        "evaluation_#{evaluation.id}" => {
+          display:  result.display_value,
+          value:    result.value,
+          stanine:  result.stanine,
+          cssClass: result.color.to_s
+        }.stringify_keys
       }.stringify_keys)
 
       # Averages

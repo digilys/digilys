@@ -4,6 +4,12 @@
 
 = render partial: "navigation", locals: { color_table: @color_table, active: :show }
 
+.row-fluid
+  .span2
+    .btn-group.result-toggles
+      %button.btn.active(data-value="value") Resultat
+      %button.btn(data-value="stanine") Stanine
+
 - evaluations = @color_table.generic_evaluations + @color_table.suite_evaluations
 
 :javascript
@@ -26,7 +32,7 @@
     exports["data"] = data
   })(window.Digilys.colorTable)
 
-#color-table(style="width: 100%;")
+#color-table.show-value(style="width: 100%;")
 
 /= render partial: "color_table", locals: { color_table: @color_table, user_settings: @user_settings, can_change: true }
 

@@ -144,3 +144,15 @@ $ ->
 
     if colorTable.length > 0
         new Digilys.ColorTable(colorTable, Digilys.colorTable.columns, Digilys.colorTable.data)
+
+        # Toggle between different values in the result table
+        $(".result-toggles").on "click", ".btn:not(.active)", ->
+            button = $(this)
+
+            # Switch to the clicked button
+            button.addClass "active"
+            button.siblings().removeClass "active"
+
+            # Change which value is displayed by replacing the CSS class
+            colorTable.attr "class", (i, cls) ->
+                cls.replace /show-\w+/, "show-#{button.data("value")}"
