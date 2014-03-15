@@ -42,12 +42,13 @@ describe "Digilys.ColorTable", ->
             expect(options.formatterFactory).toBe(Digilys.ColorTableFormatters)
             expect(options.showHeaderRow).toBe(true)
             expect(options.headerRowHeight).toBe(45)
+            expect(options.frozenColumn).toBe(0)
 
         it "resizes the table container to fit the window", ->
             expect(container.height()).toEqual($(document).height() - container.offset().top - 20)
 
         it "renders the grid", ->
-            expect(container.find(".slick-row")).toHaveLength(2)
+            expect(container.find(".slick-row")).toHaveLength(2 * 2)
 
         it "adds filter inputs to the header row", ->
             inputs = container.find(".slick-headerrow :text[placeholder=search-placeholder]")
@@ -155,7 +156,8 @@ describe "Digilys.ColorTable", ->
             table = new Digilys.ColorTable(container, columns, data)
 
         it "adds the css class 'averages' to the row with id 0", ->
-            expect(container.find(".slick-row.averages")).toHaveLength(1)
+            expectedLength = if table.grid.getOptions()["frozenColumn"] > -1 then 2 else 1
+            expect(container.find(".slick-row.averages")).toHaveLength(expectedLength)
 
     describe "cell metadata", ->
         beforeEach ->
@@ -195,11 +197,11 @@ describe "Digilys.ColorTable", ->
             col1Input = $(inputs[1])
 
         it "filters by column", ->
-            expect(container.find(".slick-row")).toHaveLength(4)
+            expect(container.find(".slick-row")).toHaveLength(4 * 2)
             nameInput.val("oo")
             nameInput.trigger("change")
-            expect(container.find(".slick-row")).toHaveLength(2)
-            expect(container.find(".slick-row")).toHaveText("fooapafoocepa")
+            expect(container.find(".slick-row")).toHaveLength(2 * 2)
+            expect(container.find(".slick-row")).toHaveText("foofooapacepa")
 
         it "filters by multiple columns", ->
             nameInput.val("oo")
@@ -207,8 +209,51 @@ describe "Digilys.ColorTable", ->
             col1Input.val("c")
             col1Input.trigger("change")
 
-            expect(container.find(".slick-row")).toHaveLength(1)
+            expect(container.find(".slick-row")).toHaveLength(1 * 2)
             expect(container.find(".slick-row")).toHaveText("foocepa")
+
+
+    describe "column header height", ->
+        left  = null
+        right = null
+        style = null
+
+        beforeEach ->
+            columns = [
+                { id: "student-name", name: "Student name", field: "sn", sortable: true, headerCssClass: "sname" },
+                { id: "col1",         name: "Col 1",        field: "c1", sortable: true, headerCssClass: "col1" }
+            ]
+
+            data = [
+                { id: 1, sn: "foo", c1: "apa" },
+                { id: 2, sn: "bar", c1: "bepa" },
+                { id: 3, sn: "foo", c1: "cepa" },
+                { id: 4, sn: "bar", c1: "cepa" },
+            ]
+            container.appendTo($("body"))
+            style = $("<style type='text/css' rel='stylesheet' />").appendTo($("head"))
+
+        afterEach ->
+            style.remove()
+            container.remove()
+
+        it "makes the column header heights equal when the frozen is larger", ->
+            style.text(".slick-header-column.sname { height: 40px; }; .slick-header-column.col1 { height: 20px; }; ")
+            table = new Digilys.ColorTable(container, columns, data)
+
+            nameHeader = container.find(".slick-header-column.sname")
+            col1Header = container.find(".slick-header-column.col1")
+
+            expect(nameHeader.height()).toEqual(col1Header.height())
+
+        it "makes the column header heights equal when the frozen is smaller", ->
+            style.text(".slick-header-column.sname { height: 40px; }; .slick-header-column.col1 { height: 60px; }; ")
+            table = new Digilys.ColorTable(container, columns, data)
+
+            nameHeader = container.find(".slick-header-column.sname")
+            col1Header = container.find(".slick-header-column.col1")
+
+            expect(nameHeader.height()).toEqual(col1Header.height())
 
 
 describe "ColorTableFormatters", ->

@@ -19,6 +19,7 @@ class ColorTable
             formatterFactory:       Formatters
             showHeaderRow:          true
             headerRowHeight:        45
+            frozenColumn:           0
 
         self = this
 
@@ -44,6 +45,9 @@ class ColorTable
         # Row metadata
         @dataView.getItemMetadata = rowMetadata.call(this, @dataView.getItemMetadata)
 
+        # Column header heights
+        @grid.onHeadersRendered.subscribe (e, args) -> setHeaderHeight($(args.leftNode), $(args.rightNode))
+
         @grid.init()
 
         loadData.call(this, data)
@@ -53,6 +57,15 @@ class ColorTable
     setTableHeight = ->
         offset = @colorTable.offset()
         @colorTable.height($(document).height() - offset.top - 20)
+
+    setHeaderHeight = (leftHeader, rightHeader) ->
+        leftHeight  = leftHeader.children(":first").height()
+        rightHeight = rightHeader.children(":first").height()
+
+        if leftHeight > rightHeight
+            rightHeader.children().height(leftHeight)
+        else if rightHeight > leftHeight
+            leftHeader.children().height(rightHeight)
 
 
     loadData = (data) ->
