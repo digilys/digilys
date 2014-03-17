@@ -3,14 +3,15 @@ Main functionality for creating a color table
 ###
 
 class ColorTable
-    constructor: (@colorTable, @columns, data) ->
+    constructor: (@colorTable, @columns, data, @columnMenu) ->
 
         setTableHeight.call(this)
 
         @settings =
             searchPlaceholder: @colorTable.data("search-placeholder")
 
-        @filters = {}
+        @filters       = {}
+        @hiddenColumns = []
 
         options =
             explicitInitialization: true
@@ -50,6 +51,12 @@ class ColorTable
 
         # Column titles
         @grid.onHeaderCellRendered.subscribe (e, args) -> setColumnTitle(args.column, args.node)
+
+        # Header menu
+        @headerMenu = new Slick.Plugins.HeaderMenu({})
+        @headerMenu.onBeforeMenuShow.subscribe (e, args) => setMenu.call(this, args.menu)
+        @headerMenu.onCommand.subscribe (e, args)        => menuCommand.call(this, args.command, args.column)
+        @grid.registerPlugin(@headerMenu)
 
         @grid.init()
 
@@ -173,6 +180,61 @@ class ColorTable
 
     setColumnTitle = (column, node) ->
         node.setAttribute("title", column.title) if column.title
+
+
+    hideColumn: (column) ->
+        columns = @grid.getColumns()
+
+        if (idx = columns.indexOf(column)) >= 0
+            @hiddenColumns.push(columns.splice(idx, 1)[0])
+            @grid.setColumns(columns)
+
+    showColumn: (columnId, after) ->
+        hidden = (c for c in @hiddenColumns when c.id == columnId)[0]
+        return unless hidden
+        
+        columns = @grid.getColumns()
+
+        if (idx = columns.indexOf(after)) >= 0
+            columns.splice(idx + 1, 0, hidden)
+            @hiddenColumns.splice(@hiddenColumns.indexOf(hidden), 1)
+            @grid.setColumns(columns)
+
+
+    setMenu = (menu) ->
+        menu.items = []
+        menu.items.push(m) for m in @columnMenu when @hiddenColumns.length > 0 || m.command != "show"
+
+    menuCommand = (command, column) ->
+        switch command
+            when "hide" then @hideColumn(column)
+            when "show" then showModal.call(this, column)
+
+
+    showModal = (column) ->
+        modal = $(@colorTable.data("show-column-modal"))
+
+        modal.one "shown", => populateShowModal.call(this, modal)
+
+        self = this
+        modal.one "click", ".show-column-action", ->
+            modal.modal("hide")
+            self.showColumn($(this).data("column-id"), column)
+
+        modal.modal(backdrop: true)
+
+    populateShowModal = (modal) ->
+        list = modal.find("ul")
+        list.html("")
+
+        for column in @hiddenColumns
+            button = $("<button>")
+                .addClass("btn btn-link show-column-action")
+                .data("column-id", column.id)
+                .text(column.name)
+
+            list.append $("<li/>").append(button)
+
 
 window.Digilys ?= {}
 window.Digilys.ColorTable = ColorTable

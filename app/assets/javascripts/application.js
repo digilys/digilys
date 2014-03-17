@@ -23,6 +23,7 @@
 //= require slickgrid/slick.core.js
 //= require slickgrid/slick.dataview.js
 //= require slickgrid/slick.grid.js
+//= require slickgrid/slick.headermenu.js
 //= require_tree ./vendor
 //= require_tree ./defaults
 //= require core

@@ -200,6 +200,9 @@ sv:
 
   color_tables:
     averages: Medelvärde
+    hide_column_action: Dölj kolumn
+    show_column_action: Visa dold kolumn
+    show_column_hint: Kolumnen du väljer att visa kommer att hamna efter den kolumn du klickade på.
     form:
       evaluations_placeholder: Sök och välj tester och elevdata
     color_table:
@@ -211,9 +214,6 @@ sv:
       edit_table_state_notice: Om du skriver samma namn som ett befintligt utseende uppdateras det utseendet
       lock_column_action: Lås kolumn
       unlock_column_action: Sluta lås kolumn
-      hide_column_action: Dölj kolumn
-      show_column_action: Visa dold kolumn
-      show_column_hint: Kolumnen du väljer att visa kommer att hamna efter den kolumn du klickade på.
     clear_state:
       success: Använder utseendet "Kronologisk ordning"
     create:

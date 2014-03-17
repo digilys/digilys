@@ -121,4 +121,43 @@
         .value { display: none; }
         .stanine { display: inline; }
     }
+
+    .slick-header-menubutton {
+        border-left: 1px solid $tableBorder;
+        background: #fff;
+    }
+    .slick-header-menubutton:after {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        content: " ";
+        display: block;
+        width: 14px;
+        height: 14px;
+        line-height: 14px;
+        margin-top: -7px;
+        background-image: url($iconSpritePath);
+        background-repeat: no-repeat;
+        background-position: -432px 0;
+    }
+    .slick-header-menu {
+        background: #fff;
+        z-index: 2;
+        border: 1px solid $tableBorder;
+        border-right: none;
+        padding: 0.5em 1em;
+        @include box-shadow(#{0 5px 10px rgba(0,0,0,.2)});
+    }
+    .slick-header-menuicon {
+        display: none;
+    }
+    .slick-header-menucontent {
+        display: block;
+        padding: 4px 7px;
+    }
+    .slick-header-menucontent:hover {
+        color: $white;
+        background-color: $linkColor;
+        @include border-radius(4px);
+    }
 }

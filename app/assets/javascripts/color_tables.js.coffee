@@ -143,7 +143,12 @@ $ ->
     colorTable = $("#color-table")
 
     if colorTable.length > 0
-        new Digilys.ColorTable(colorTable, Digilys.colorTable.columns, Digilys.colorTable.data)
+        new Digilys.ColorTable(
+            colorTable,
+            Digilys.colorTable.columns,
+            Digilys.colorTable.data,
+            Digilys.colorTable.columnMenu
+        )
 
         # Toggle between different values in the result table
         $(".result-toggles").on "click", ".btn:not(.active)", ->

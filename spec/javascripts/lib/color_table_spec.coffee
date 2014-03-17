@@ -1,8 +1,9 @@
 describe "Digilys.ColorTable", ->
-    container = null
-    table     = null
-    columns   = null
-    data      = null
+    container  = null
+    table      = null
+    columns    = null
+    data       = null
+    columnMenu = null
 
     beforeEach ->
         container = $("<div/>")
@@ -11,6 +12,11 @@ describe "Digilys.ColorTable", ->
                 height: "480px"
             })
             .attr("data-search-placeholder", "search-placeholder")
+            .data("show-column-modal",       "#showmodal-modal")
+
+        columns    = []
+        data       = []
+        columnMenu = []
 
     describe "constructor", ->
         beforeEach ->
@@ -24,15 +30,17 @@ describe "Digilys.ColorTable", ->
                 { id: 2, sn: "bar", c1: "bepa" },
             ]
 
-            table = new Digilys.ColorTable(container, columns, data)
+            table = new Digilys.ColorTable(container, columns, data, columnMenu)
 
         it "correctly assigns the arguments", ->
             expect(table.colorTable).toBe(container)
             expect(table.columns).toBe(columns)
+            expect(table.columnMenu).toBe(columnMenu)
 
-        it "initializes a grid and data view", ->
+        it "initializes a grid, data view, and plugins", ->
             expect(table.dataView.constructor).toBe(Slick.Data.DataView)
             expect(table.grid.constructor).toBe(Slick.Grid)
+            expect(table.headerMenu.constructor).toBe(Slick.Plugins.HeaderMenu)
 
         it "initializes the grid with default options", ->
             options = table.grid.getOptions()
@@ -64,10 +72,7 @@ describe "Digilys.ColorTable", ->
 
     describe "event subscriptions", ->
         beforeEach ->
-            columns = []
-            data = []
-
-            table = new Digilys.ColorTable(container, columns, data)
+            table = new Digilys.ColorTable(container, columns, data, columnMenu)
 
             spyOn(table, "sortBy")
 
@@ -89,7 +94,7 @@ describe "Digilys.ColorTable", ->
                 { id: 2, sn: "bar", c1: "apa" },
             ]
 
-            table = new Digilys.ColorTable(container, columns, data)
+            table = new Digilys.ColorTable(container, columns, data, columnMenu)
             spyOn(table, "compareValues").and.callThrough()
 
         it "sorts by the specified column", ->
@@ -153,7 +158,7 @@ describe "Digilys.ColorTable", ->
                 { id: 1, f: 1}
             ]
 
-            table = new Digilys.ColorTable(container, columns, data)
+            table = new Digilys.ColorTable(container, columns, data, columnMenu)
 
         it "adds the css class 'averages' to the row with id 0", ->
             expectedLength = if table.grid.getOptions()["frozenColumn"] > -1 then 2 else 1
@@ -167,7 +172,7 @@ describe "Digilys.ColorTable", ->
                 { id: 1, f: 1 }
             ]
 
-            table = new Digilys.ColorTable(container, columns, data)
+            table = new Digilys.ColorTable(container, columns, data, columnMenu)
 
         it "adds a css class to the cell (patched in slick.grid.js)", ->
             expect(container.find(".slick-cell.zomglol")).toHaveLength(1)
@@ -190,7 +195,7 @@ describe "Digilys.ColorTable", ->
                 { id: 4, sn: "bar", c1: "cepa" },
             ]
 
-            table = new Digilys.ColorTable(container, columns, data)
+            table = new Digilys.ColorTable(container, columns, data, columnMenu)
 
             inputs = container.find(".slick-headerrow :text[placeholder=search-placeholder]")
             nameInput = $(inputs[0])
@@ -239,7 +244,7 @@ describe "Digilys.ColorTable", ->
 
         it "makes the column header heights equal when the frozen is larger", ->
             style.text(".slick-header-column.sname { height: 40px; }; .slick-header-column.col1 { height: 20px; }; ")
-            table = new Digilys.ColorTable(container, columns, data)
+            table = new Digilys.ColorTable(container, columns, data, columnMenu)
 
             nameHeader = container.find(".slick-header-column.sname")
             col1Header = container.find(".slick-header-column.col1")
@@ -248,7 +253,7 @@ describe "Digilys.ColorTable", ->
 
         it "makes the column header heights equal when the frozen is smaller", ->
             style.text(".slick-header-column.sname { height: 40px; }; .slick-header-column.col1 { height: 60px; }; ")
-            table = new Digilys.ColorTable(container, columns, data)
+            table = new Digilys.ColorTable(container, columns, data, columnMenu)
 
             nameHeader = container.find(".slick-header-column.sname")
             col1Header = container.find(".slick-header-column.col1")
@@ -264,13 +269,137 @@ describe "Digilys.ColorTable", ->
             ]
             data = [ { id: 1, sn: "foo", c1: "apa" } ]
 
-            table = new Digilys.ColorTable(container, columns, data)
+            node = $("<div/>").get(0)
+
+            table = new Digilys.ColorTable(container, columns, data, columnMenu)
 
         it "adds a title to the column node", ->
             expect(container.find(".slick-header-column[title=sname]")).toHaveLength(1)
 
         it "does not add a title attribute when there is no title", ->
             expect(container.find(".slick-header-column[title='']")).toHaveLength(1)
+
+
+    describe ".hideColumn()", ->
+        beforeEach ->
+            columns = [
+                { id: "col1", name: "col1", field: "col1", cssClass: "col1" },
+                { id: "col2", name: "col2", field: "col2", cssClass: "col2" },
+                { id: "col3", name: "col3", field: "col3", cssClass: "col3" }
+            ]
+
+            data = [
+                { id: 1, col1: "1-col1", col2: "1-col2", col3: "1-col3" }
+            ]
+
+            table = new Digilys.ColorTable(container, columns, data, columnMenu)
+
+        it "removes the column from the grid", ->
+            table.hideColumn(columns[1])
+            expect(container.find(".slick-header-column")).toHaveLength(2)
+            expect(container.find(".col2")).toHaveLength(0)
+
+        it "handles invalid columns", ->
+            table.hideColumn({})
+            expect(container.find(".slick-header-column")).toHaveLength(3)
+
+    describe ".showColumn()", ->
+        beforeEach ->
+            columns = [
+                { id: "frozen", name: "col1", field: "col1", headerCssClass: "col1" },
+                { id: "col2", name: "col2", field: "col2", headerCssClass: "col2" },
+                { id: "col3", name: "col3", field: "col3", headerCssClass: "col3" },
+                { id: "col4", name: "col3", field: "col3", headerCssClass: "col3" }
+            ]
+
+            data = [
+                { id: 1, frozen: "1-col1", col2: "1-col2", col3: "1-col3", col4: "1-col4" }
+            ]
+
+            table = new Digilys.ColorTable(container, columns, data, columnMenu)
+
+        it "adds the column to the grid after the specified column", ->
+            col = columns[3]
+            table.hideColumn(col)
+            table.showColumn(col.id, columns[1])
+            expect(container.find(".slick-header-column")).toHaveLength(4)
+            expect(container.find(".col3").index()).toBe(1)
+
+
+    describe "column menu", ->
+        node = null
+
+        beforeEach ->
+            columns = [
+                { id: "col1", name: "col1", field: "col1", headerCssClass: "col1", header: { menu: { items: [] } } }
+                { id: "col2", name: "col2", field: "col2", headerCssClass: "col2", header: { menu: { items: [] } } }
+                { id: "col3", name: "col3", field: "col3", headerCssClass: "col3", header: { menu: { items: [] } } }
+            ]
+            columnMenu = [
+                { title: "hide", command: "hide" },
+                { title: "show", command: "show" },
+                { title: "foo",  command: "foo"  },
+            ]
+
+            table = new Digilys.ColorTable(container, columns, data, columnMenu)
+
+        it "does not include the show command when there are no hidden columns", ->
+            container.find(".col1 .slick-header-menubutton").trigger("click")
+            menuItems = container.find(".slick-header-menu .slick-header-menuitem")
+            expect(menuItems).toHaveLength(2)
+            expect(menuItems).toHaveText("hidefoo")
+
+        it "includes the entire column menu if there are hidden columns", ->
+            table.hideColumn(columns[1])
+            container.find(".col1 .slick-header-menubutton").trigger("click")
+            menuItems = container.find(".slick-header-menu .slick-header-menuitem")
+            expect(menuItems).toHaveLength(3)
+            expect(menuItems).toHaveText("hideshowfoo")
+
+        it "hides the column when clicking the hide entry", ->
+            container.find(".col1 .slick-header-menubutton").trigger("click")
+            container.find(".slick-header-menuitem:first").trigger("click")
+            expect(container.find(".col1")).toHaveLength(0)
+
+        describe "showing columns", ->
+            modal = null
+
+            beforeEach ->
+                modal = $('<div id="showmodal-modal" style="display:none"/>').append("<ul/>")
+                $("body").append(modal)
+
+                table.hideColumn(columns[1]) # Hide col2
+
+            afterEach ->
+                modal.remove()
+
+            it "shows a modal with all hidden columns", ->
+                table.hideColumn(columns[1]) # Hide col3, original array is modified
+
+                container.find(".col1 .slick-header-menubutton").trigger("click")
+                $(container.find(".slick-header-menuitem")[1]).trigger("click")
+
+                expect(modal).toBeVisible()
+                expect(modal.find("button")).toHaveLength(2)
+                expect(modal.find("button")).toHaveText("col2col3")
+
+            it "shows the column when clicking the show entry and selecting a column in the triggered modal", ->
+                container.find(".col3 .slick-header-menubutton").trigger("click")
+                $(container.find(".slick-header-menuitem")[1]).trigger("click")
+
+                modal.find("button").trigger("click")
+
+                expect(modal).not.toBeVisible()
+                expect(container.find(".slick-header-column")).toHaveLength(3)
+
+            it "adds the shown column after the column where the menu was shown", ->
+                container.find(".col3 .slick-header-menubutton").trigger("click")
+                $(container.find(".slick-header-menuitem")[1]).trigger("click")
+
+                modal.find("button").trigger("click")
+
+                expect(modal).not.toBeVisible()
+                expect(container.find(".slick-header-column")).toHaveText("col1col3col2")
 
 
 describe "ColorTableFormatters", ->
