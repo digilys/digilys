@@ -143,7 +143,7 @@ $ ->
     colorTable = $("#color-table")
 
     if colorTable.length > 0
-        new Digilys.ColorTable(
+        ct = new Digilys.ColorTable(
             colorTable,
             Digilys.colorTable.columns,
             Digilys.colorTable.data,
@@ -168,3 +168,5 @@ $ ->
             delay:     { show: 300, hide: 100 }
             container: "body"
         )
+
+        $("#color-table-group-selector").select2().on "change", -> ct.groupFilter($(this).val())

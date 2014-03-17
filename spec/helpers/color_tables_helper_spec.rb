@@ -77,7 +77,8 @@ describe ColorTablesHelper do
 
   describe "#result_rows" do
     let(:evaluation) { create(:generic_evaluation) }
-    let(:student)    { create(:student, data: { "foo" => 123, "bar baz" => "zomg" }) }
+    let(:group)      { create(:group) }
+    let(:student)    { create(:student, data: { "foo" => 123, "bar baz" => "zomg" }, groups: [group]) }
     let(:result)     { create(:result, evaluation: evaluation, student: student) }
 
     it "returns a blank string when there are no students" do
@@ -92,6 +93,7 @@ describe ColorTablesHelper do
       expect(JSON.parse(data.first)).to eq({
         id:                   student.id,
         name:                 student.name,
+        groups:               [group.id],
         student_data_foo:     "123",
         student_data_bar_baz: "zomg",
         "evaluation_#{evaluation.id}" => {

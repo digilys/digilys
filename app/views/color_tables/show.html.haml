@@ -9,6 +9,9 @@
     .btn-group.result-toggles
       %button.btn.active(data-value="value") Resultat
       %button.btn(data-value="stanine") Stanine
+  .span3
+    %select#color-table-group-selector{height: 0, multiple: true, data: { placeholder: t(:".all_groups") }}
+      = options_for_select(@color_table.group_hierarchy.collect { |g| [[g.name, g.parent.try(:name)].compact.join(", "), g.id]})
 
 - evaluations = @color_table.generic_evaluations + @color_table.suite_evaluations
 

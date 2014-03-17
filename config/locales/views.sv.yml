@@ -203,10 +203,10 @@ sv:
     hide_column_action: Dölj kolumn
     show_column_action: Visa dold kolumn
     show_column_hint: Kolumnen du väljer att visa kommer att hamna efter den kolumn du klickade på.
+    all_groups: Visar alla grupper
     form:
       evaluations_placeholder: Sök och välj tester och elevdata
     color_table:
-      all_groups: Visar alla grupper
       save_current_state: Spara nuvarande utseende
       change_state: Byt utseende
       clear_state: Kronologisk ordning

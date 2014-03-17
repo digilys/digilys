@@ -29,7 +29,8 @@ class ColorTable
         @grid     = new Slick.Grid(@colorTable, @dataView, @columns, options)
 
         # Refreshing
-        @dataView.onRowsChanged.subscribe (e, args) => redrawRows.call(this, args.rows)
+        @dataView.onRowsChanged.subscribe (e, args)     => redrawRows.call(this, args.rows)
+        @dataView.onRowCountChanged.subscribe (e, args) => redrawRows.call(this, args.rows)
 
         # Sorting
         @grid.onSort.subscribe (e, args) => @sortBy(args.sortCol, args.sortAsc)
@@ -158,8 +159,19 @@ class ColorTable
         (item) ->
             return true if item.id == 0
 
-            for columnId, text of filters
-                if text != ""
+            for columnId, filter of filters when filter && filter.length > 0
+
+                if columnId == "groups"
+                    return false if !item.groups || item.groups.length <= 0
+
+                    any = false
+                    for id in filter when id in item.groups
+                        any = true
+                        break
+
+                    return false unless any
+
+                else
                     columnIdx = grid.getColumnIndex(columnId)
 
                     if columnIdx != undefined
@@ -173,9 +185,17 @@ class ColorTable
                         if typeof(value) == "object"
                             value = value["display"]
 
-                        return false if value.toLowerCase().indexOf(text.toLowerCase()) == -1
+                        return false if value.toLowerCase().indexOf(filter.toLowerCase()) == -1
 
             return true
+
+    groupFilter: (groupIds) ->
+        if groupIds && groupIds.length > 0
+            @filters.groups = (parseInt(id) for id in groupIds when id.match(/^\d+$/))
+        else
+            @filters.groups = []
+
+        @dataView.refresh()
 
 
     setColumnTitle = (column, node) ->

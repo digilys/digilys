@@ -48,8 +48,9 @@ module ColorTablesHelper
 
     rows = students.collect do |student|
       s = {
-        id:   student.id,
-        name: student.name
+        id:     student.id,
+        name:   student.name,
+        groups: student.group_ids
       }
 
       student_data.each do |key|

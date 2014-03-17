@@ -217,6 +217,34 @@ describe "Digilys.ColorTable", ->
             expect(container.find(".slick-row")).toHaveLength(1 * 2)
             expect(container.find(".slick-row")).toHaveText("foocepa")
 
+    describe ".groupFilter()", ->
+        beforeEach ->
+            columns = [
+                { id: "student-name", name: "Student name", field: "sn", sortable: true }
+            ]
+
+            data = [
+                { id: 1, sn: "student1", groups: [1,2] },
+                { id: 2, sn: "student1", groups: [1] },
+                { id: 3, sn: "student3", groups: [2] },
+                { id: 4, sn: "student4", groups: [3] },
+                { id: 5, sn: "student5", groups: [] },
+                { id: 6, sn: "student6", groups: [] },
+                { id: 7, sn: "student7" }
+            ]
+
+            table = new Digilys.ColorTable(container, columns, data, columnMenu)
+            expect(container.find(".slick-row")).toHaveLength(7 * 2)
+
+        it "shows only students in any of the selected groups", ->
+            table.groupFilter(["1", "2"])
+            expect(container.find(".slick-row")).toHaveLength(3 * 2)
+
+        it "shows all students when resetting to a blank filter", ->
+            table.groupFilter(["1", "2"])
+            expect(container.find(".slick-row")).toHaveLength(3 * 2)
+            table.groupFilter([])
+            expect(container.find(".slick-row")).toHaveLength(7 * 2)
 
     describe "column header height", ->
         left  = null
