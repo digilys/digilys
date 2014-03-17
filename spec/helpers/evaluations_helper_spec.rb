@@ -203,14 +203,17 @@ describe EvaluationsHelper do
         "#{t(:red)}: 20%<br>#{t(:yellow)}: 40%<br>#{t(:green)}: 20%<br>#{t(:absent)}: 20%"
       )
     end
+    it "includes the evaluation's name" do
+      expect(output).to include("<b class=\"name\">#{evaluation.name}</b>")
+    end
     it "includes the evaluation's date" do
-      expect(output).to include("<strong class=\"date\">#{evaluation.date}</strong>")
+      expect(output).to include("<b class=\"date\">#{evaluation.date}</b>")
     end
     it "includes an overdue class for overdue evaluations" do
       evaluation.status = :partial
       evaluation.date = Date.yesterday
       output = helper.evaluation_info(evaluation)
-      expect(output).to include("<strong class=\"date overdue\">#{evaluation.date}</strong>")
+      expect(output).to include("<b class=\"date overdue\">#{evaluation.date}</b>")
     end
     it "outputs nothing if the evaluation is not a suite evaluation" do
       expect(helper.evaluation_info(create(:evaluation_template))).to be_nil

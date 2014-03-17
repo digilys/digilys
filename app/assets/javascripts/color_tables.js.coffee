@@ -156,3 +156,10 @@ $ ->
             # Change which value is displayed by replacing the CSS class
             colorTable.attr "class", (i, cls) ->
                 cls.replace /show-\w+/, "show-#{button.data("value")}"
+
+        $(".slick-header-column[title]", colorTable).tooltip(
+            html:      true
+            placement: "top"
+            delay:     { show: 300, hide: 100 }
+            container: "body"
+        )

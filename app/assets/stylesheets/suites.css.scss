@@ -72,9 +72,12 @@
     }
 }
 
-.tooltip strong.date {
-    font-size: 1.3em;
-}
-.tooltip strong.date.overdue {
-    color: $red;
+.tooltip {
+    b.name, b.date {
+        display: block;
+        font-size: 1.3em;
+    }
+    b.date.overdue {
+        color: $red;
+    }
 }

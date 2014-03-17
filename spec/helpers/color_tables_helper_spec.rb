@@ -60,6 +60,8 @@ describe ColorTablesHelper do
     end
 
     it "generates slick grid column definitions" do
+      should_receive(:evaluation_info).and_return("evaluation_info")
+
       results = evaluation_columns([evaluation])
       expect(results).to have(1).items
 
@@ -67,7 +69,8 @@ describe ColorTablesHelper do
         id:    "evaluation-123",
         name:  evaluation.name,
         field: "evaluation_123",
-        type:  "evaluation"
+        type:  "evaluation",
+        title: "evaluation_info"
       }.stringify_keys)
     end
   end

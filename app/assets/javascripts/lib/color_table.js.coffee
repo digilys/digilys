@@ -48,6 +48,9 @@ class ColorTable
         # Column header heights
         @grid.onHeadersRendered.subscribe (e, args) -> setHeaderHeight($(args.leftNode), $(args.rightNode))
 
+        # Column titles
+        @grid.onHeaderCellRendered.subscribe (e, args) -> setColumnTitle(args.column, args.node)
+
         @grid.init()
 
         loadData.call(this, data)
@@ -166,6 +169,10 @@ class ColorTable
                         return false if value.toLowerCase().indexOf(text.toLowerCase()) == -1
 
             return true
+
+
+    setColumnTitle = (column, node) ->
+        node.setAttribute("title", column.title) if column.title
 
 window.Digilys ?= {}
 window.Digilys.ColorTable = ColorTable

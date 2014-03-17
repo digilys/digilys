@@ -256,6 +256,23 @@ describe "Digilys.ColorTable", ->
             expect(nameHeader.height()).toEqual(col1Header.height())
 
 
+    describe "column titles", ->
+        beforeEach ->
+            columns = [
+                { id: "student-name", name: "Student name", field: "sn", sortable: true, title: "sname" },
+                { id: "col1",         name: "Col 1",        field: "c1", sortable: true }
+            ]
+            data = [ { id: 1, sn: "foo", c1: "apa" } ]
+
+            table = new Digilys.ColorTable(container, columns, data)
+
+        it "adds a title to the column node", ->
+            expect(container.find(".slick-header-column[title=sname]")).toHaveLength(1)
+
+        it "does not add a title attribute when there is no title", ->
+            expect(container.find(".slick-header-column[title='']")).toHaveLength(1)
+
+
 describe "ColorTableFormatters", ->
     F = Digilys.ColorTableFormatters
 

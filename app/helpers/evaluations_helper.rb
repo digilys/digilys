@@ -54,9 +54,10 @@ module EvaluationsHelper
 
   def evaluation_info(evaluation)
     if evaluation.has_regular_suite?
-      "<strong class=\"date#{" overdue" if evaluation.overdue?}\">" +
+      "<b class=\"name\">#{evaluation.name}</b>" +
+        "<b class=\"date#{" overdue" if evaluation.overdue?}\">" +
         evaluation.date.to_s +
-        "</strong><br>" +
+        "</b>" +
         percentage_text(evaluation.result_distribution)
     end
   end

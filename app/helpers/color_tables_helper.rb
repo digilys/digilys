@@ -35,7 +35,8 @@ module ColorTablesHelper
         id:    "evaluation-#{evaluation.id}",
         name:  evaluation.name,
         field: "evaluation_#{evaluation.id}",
-        type:  "evaluation"
+        type:  "evaluation",
+        title: evaluation_info(evaluation)
       }.to_json
     end
   end
