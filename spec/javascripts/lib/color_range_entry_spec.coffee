@@ -82,12 +82,7 @@ describe "Digilys.ColorRangeEntry", ->
             fields.text.yellow.max.trigger("change")
 
             expect(entry.update.calls.length).toEqual(3)
-
-        it "is called with the right context", ->
-            myThis = null
-            entry.update = -> myThis = this
-            fields.max.trigger("change")
-            expect(myThis).toBe entry
+            expect(entry.update.mostRecentCall.object).toBe(entry)
 
         describe "text fields", ->
             setValues = (max, yellowMin, yellowMax) ->
