@@ -74,6 +74,7 @@ describe "Digilys.Autocomplete", ->
             spyOn(autocomplete, "parseResults")
             select2.opts.ajax.results({ results: "foo", more: "bar" }, 1)
             expect(autocomplete.parseResults).toHaveBeenCalledWith({ results: "foo", more: "bar" }, 1)
+            expect(autocomplete.parseResults.mostRecentCall.object).toBe(autocomplete)
 
         it "returns an object with two values parsed from the result", ->
             input =
@@ -85,12 +86,6 @@ describe "Digilys.Autocomplete", ->
                 results: "foo"
                 more:    "bar"
 
-        it "is called with the right context", ->
-            myThis = null
-            autocomplete.parseResults = -> myThis = this
-            select2.opts.ajax.results(1, 1)
-            expect(myThis).toBe autocomplete
-
     describe ".formatResult()", ->
         beforeEach ->
             setup()
@@ -99,12 +94,7 @@ describe "Digilys.Autocomplete", ->
             spyOn(autocomplete, "formatResult")
             select2.opts.formatResult(1,2,3)
             expect(autocomplete.formatResult).toHaveBeenCalledWith(1,2,3)
-
-        it "is called with the right context", ->
-            myThis = null
-            autocomplete.formatResult = -> myThis = this
-            select2.opts.formatResult(1,2,3)
-            expect(myThis).toBe autocomplete
+            expect(autocomplete.formatResult.mostRecentCall.object).toBe(autocomplete)
 
         it "defaults to select2's formatResult", ->
             expect(autocomplete.formatResult).toBe $.fn.select2.defaults.formatResult
@@ -119,14 +109,7 @@ describe "Digilys.Autocomplete", ->
             spyOn(autocomplete, "requestData")
             elem.data("select2").opts.ajax.data(1,2,3)
             expect(autocomplete.requestData).toHaveBeenCalledWith(1,2,3)
-
-        it "is called with the right context", ->
-            autocomplete             = new Digilys.Autocomplete(elem)
-            myThis                   = null
-            autocomplete.requestData = -> myThis = this
-
-            elem.data("select2").opts.ajax.data(1,2,3)
-            expect(myThis).toBe autocomplete
+            expect(autocomplete.requestData.mostRecentCall.object).toBe(autocomplete)
 
         it "defaults to a query by name", ->
             autocomplete = new Digilys.Autocomplete(elem)

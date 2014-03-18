@@ -37,6 +37,7 @@ class Evaluation < ActiveRecord::Base
     :instance,
     :instance_id,
     :template_id,
+    :suite,
     :suite_id,
     :max_result,
     :name,

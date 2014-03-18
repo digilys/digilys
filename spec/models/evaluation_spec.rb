@@ -39,6 +39,7 @@ describe Evaluation do
     it { should allow_mass_assignment_of(:type) }
     it { should allow_mass_assignment_of(:instance) }
     it { should allow_mass_assignment_of(:instance_id) }
+    it { should allow_mass_assignment_of(:suite) }
     it { should allow_mass_assignment_of(:suite_id) }
     it { should allow_mass_assignment_of(:name) }
     it { should allow_mass_assignment_of(:description) }
