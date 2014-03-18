@@ -3,6 +3,10 @@
     display: block;
 }
 
-.participants-table .name small {
-    display: block;
+.participants-table {
+    margin-top: 20px;
+
+    .name small {
+        display: block;
+    }
 }

@@ -35,7 +35,7 @@ class Suite < ActiveRecord::Base
 
   has_many :participants,
     inverse_of: :suite,
-    include: :student,
+    include: [ :student, :group ],
     dependent: :destroy
 
   has_many :students, through: :participants
