@@ -75,6 +75,30 @@ class EvaluationsController < ApplicationController
 
     @evaluation.results.sort_by! { |r| r.student.send(first) + r.student.send(second) }
   end
+  def report_all
+    if params[:ids].blank?
+      redirect_to @suite
+    elsif params[:ids].length == 1
+      redirect_to report_evaluation_url(params[:ids].first)
+    else
+      @evaluations = Evaluation.order(:date).find(params[:ids])
+
+      @participants = {}
+
+      @evaluations.each do |evaluation|
+        evaluation.participants.each do |participant|
+          unless evaluation.results.detect { |r| r.student_id == participant.student_id }
+            evaluation.results.build(student_id: participant.student_id)
+          end
+
+          @participants[participant.id] = participant unless @participants.has_key?(participant.id)
+        end
+      end
+
+      @participants = @participants.values
+      @participants.sort_by!(&:name)
+    end
+  end
 
   def submit_report
     @suite        = @evaluation.suite
@@ -86,6 +110,31 @@ class EvaluationsController < ApplicationController
     else
       render action: "report"
     end
+  end
+  def submit_report_all
+    params[:results].each do |evaluation_id, students|
+      evaluation = Evaluation.find(evaluation_id)
+
+      students.each do |student_id, value|
+        result = evaluation.results.detect { |r| r.student_id == student_id.to_i }
+        result ||= evaluation.results.build(student_id: student_id.to_i)
+
+        if value.blank? && !result.new_record?
+          result.destroy
+        elsif value == "absent"
+          result.absent = true
+          result.value = nil
+          result.save
+        else
+          result.absent = false
+          result.value = value
+          result.save
+        end
+      end
+    end
+
+    flash[:success] = t(:"evaluations.submit_report.success")
+    redirect_to(@suite)
   end
 
   def destroy_report

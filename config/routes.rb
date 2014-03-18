@@ -71,7 +71,12 @@ Digilys::Application.routes.draw do
       delete :remove_student_data
     end
 
-    resources :evaluations,  only: :new
+    resources :evaluations,  only: :new do
+      collection do
+        post :report_all
+        post :submit_report_all
+      end
+    end
     resources :participants, only: :new
     resources :meetings,     only: :new
     resources :students,     only: :show

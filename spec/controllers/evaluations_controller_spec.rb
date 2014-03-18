@@ -185,6 +185,61 @@ describe EvaluationsController, versioning: !ENV["debug_versioning"].blank? do
       response.status.should == 404
     end
   end
+  describe "POST #report_all" do
+    let(:suite)       { create(:suite) }
+    let(:evaluations) { [
+      create(:suite_evaluation, suite: suite),
+      create(:suite_evaluation, suite: suite, target: :female)
+    ] }
+    let(:participants) { [
+      create(:male_participant,   suite: suite),
+      create(:female_participant, suite: suite)
+    ] }
+
+    it "is successful" do
+      post :report_all, suite_id: suite.id, ids: evaluations.collect(&:id)
+      response.should be_successful
+      assigns(:evaluations).should match_array(evaluations)
+    end
+    it "builds results where missing for an evaluation's participants" do
+      # One existing result
+      create(:result, evaluation: evaluations.first, student: participants.second.student)
+
+      post :report_all, suite_id: suite.id, ids: evaluations.collect(&:id)
+
+      # It builds two results, one for the female in the female evaluation
+      # one for the male in the other evaluation
+      assigns(:evaluations).each do |evaluation|
+        if evaluation.target.female?
+          evaluation.results.should have(1).items
+          evaluation.results.first.new_record?.should be_true
+          evaluation.results.first.student_id.should == participants.second.student_id
+        else
+          evaluation.results.should have(2).items
+
+          evaluation.results.each do |r|
+            if r.new_record?
+              r.student_id.should == participants.first.student_id
+            else
+              r.student_id.should == participants.second.student_id
+            end
+          end
+        end
+      end
+    end
+    it "redirects to the suite if there are no evaluation ids" do
+      post :report_all, suite_id: suite.id, ids: []
+      response.should redirect_to(suite)
+    end
+    it "redirects to the regular report interface if there is only one evaluation id" do
+      post :report_all, suite_id: suite.id, ids: [evaluation.id]
+      response.should redirect_to(report_evaluation_url(evaluation))
+    end
+    it "generates a 404 if the suite instance does not match" do
+      post :report_all, suite_id: other_suite.id, ids: [other_evaluation.id]
+      response.status.should == 404
+    end
+  end
   describe "PUT #submit_report" do
     it "redirects to the evaluation's suite when successful" do
       new_name = "#{evaluation.name} updated" 
@@ -198,6 +253,90 @@ describe EvaluationsController, versioning: !ENV["debug_versioning"].blank? do
     end
     it "generates a 404 if the suite instance does not match" do
       put :submit_report, id: other_evaluation.id, evaluation: {}
+      response.status.should == 404
+    end
+  end
+  describe "POST #submit_report_all" do
+    let(:suite)       { create(:suite) }
+    let(:evaluations) { create_list(:suite_evaluation, 2, suite: suite) }
+    let(:students)    { create_list(:student, 2) }
+
+    it "redirects to the suite" do
+      post :submit_report_all, suite_id: suite.id, results: []
+      response.should redirect_to(suite)
+    end
+    it "creates new results with values or absent flags where missing, skipping blank results" do
+      req = {
+        evaluations.first.id.to_s => {
+          students.first.id.to_s => "1",
+          students.second.id.to_s => "absent"
+        },
+        evaluations.second.id.to_s => {
+          students.second.id.to_s => "2"
+        }
+      }
+      post :submit_report_all, suite_id: suite.id, results: req
+
+      results = evaluations.first.results(true)
+      results.should have(2).items
+      result = results.detect { |r| r.student_id == students.first.id }
+      result.value.should == 1
+      result = results.detect { |r| r.student_id == students.second.id }
+      result.absent.should be_true
+
+      results = evaluations.second.results(true)
+      results.should have(1).items
+      results.first.value.should == 2
+      results.first.student_id.should == students.second.id
+    end
+    it "updates existing results" do
+      res1 = create(:result, value: 1,   evaluation: evaluations.first,  student: students.second)
+      res2 = create(:result, value: nil, evaluation: evaluations.second, student: students.second, absent: true)
+
+      req = {
+        evaluations.first.id.to_s => {
+          students.first.id.to_s => "1",
+          students.second.id.to_s => "absent"
+        },
+        evaluations.second.id.to_s => {
+          students.second.id.to_s => "2"
+        }
+      }
+      post :submit_report_all, suite_id: suite.id, results: req
+
+      results = evaluations.first.results(true)
+      results.should have(2).items
+      result = results.detect { |r| r.student_id == students.first.id }
+      result.value.should == 1
+      result = results.detect { |r| r.student_id == students.second.id }
+      result.absent.should be_true
+      result.id.should == res1.id
+
+      results = evaluations.second.results(true)
+      results.should have(1).items
+      results.first.value.should == 2
+      results.first.student_id.should == students.second.id
+      results.first.id.should == res2.id
+    end
+    it "destroys results when receiving blank values for existing results" do
+      res1 = create(:result, value: 1,   evaluation: evaluations.first,  student: students.second)
+      res2 = create(:result, value: nil, evaluation: evaluations.second, student: students.second, absent: true)
+
+      req = {
+        evaluations.first.id.to_s => {
+          students.second.id.to_s => ""
+        },
+        evaluations.second.id.to_s => {
+          students.second.id.to_s => ""
+        }
+      }
+      post :submit_report_all, suite_id: suite.id, results: req
+
+      Result.exists?(res1.id).should be_false
+      Result.exists?(res2.id).should be_false
+    end
+    it "generates a 404 if the suite instance does not match" do
+      post :submit_report_all, suite_id: other_suite.id, results: []
       response.status.should == 404
     end
   end
