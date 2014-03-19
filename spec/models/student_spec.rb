@@ -26,6 +26,7 @@ describe Student do
     it { should validate_presence_of(:last_name) }
     it { should validate_presence_of(:instance) }
     it { should ensure_inclusion_of(:gender).in_array(%w(male female)) }
+    it { should_not allow_value(nil).for(:gender)}
   end
   context ".validate_data_text" do
     it { should allow_value(nil).for(:data_text) }

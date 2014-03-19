@@ -47,6 +47,7 @@ class Student < ActiveRecord::Base
   validates :first_name,  presence: true
   validates :last_name,   presence: true
   validates :instance,    presence: true
+  validates :gender,      inclusion: %w(male female)
 
   enumerize :gender, in: [ :male, :female ]
 
