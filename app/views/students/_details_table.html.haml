@@ -1,4 +1,4 @@
-%table.table.table-bordered.details-table.student-details-popover-table(style="display: none;")
+%table.table.table-bordered.details-table.student-details-popover-table
   %tbody
     %tr
       %th= Student.human_attribute_name(:personal_id)
@@ -8,6 +8,6 @@
       %td= student.gender_text
     - student.data_humanized.each_pair do |key, value|
       %tr
-        %th= link_to(key, { action: "add_student_data", key: key }, method: :put)
+        %th= link_to(key, add_student_data_color_table_path(params[:color_table_id], key: key), method: :put)
         %td= value
 

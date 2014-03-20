@@ -43,6 +43,7 @@
 
 #color-table.show-value{style: "width: 100%;",
   "data-search-placeholder" => t(:".search_action"),
+  "data-student-url-template" => color_table_student_path(@color_table, id: ":id"),
   "data-show-column-modal" => "#show-column-modal" }
 
 #show-column-modal.modal.hide.fade(role="dialog" aria-hidden="true" data-backdrop="true")

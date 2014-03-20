@@ -267,12 +267,20 @@ Formatters
 Formatters = {}
 
 Formatters.getFormatter = (item) ->
-    if item["type"] == "evaluation"
-        return Formatters.ColorCell
-    else
-        return undefined
+    switch item.type
+        when "student-name" then Formatters.StudentNameCell
+        when "evaluation"   then Formatters.ColorCell
+        else undefined
 
-Formatters.ColorCell = (row, cell, value, columnDef, dataContext)->
+Formatters.StudentNameCell = (row, cell, value, columnDef, dataContext) ->
+    return value if dataContext.id == 0
+
+    button = $("<button class=\"student-action btn btn-link\" data-id=\"#{dataContext.id}\" data-toggle=\"single-popover\"/>")
+        .text(value)
+        .attr("data-title", value)
+    return button[0].outerHTML
+
+Formatters.ColorCell = (row, cell, value, columnDef, dataContext) ->
     t = typeof(value)
 
     return value if t == "number"

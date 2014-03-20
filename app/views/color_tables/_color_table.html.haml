@@ -77,7 +77,7 @@
                 "sort-key" => name,
                 groups: student.group_ids.to_json } }
                 = name
-              = render partial: "students/details_table", locals: { student: student }
+              .student-details-popover-table(style="display:none;")
 
             - color_table.student_data.each do |key|
               %td.result

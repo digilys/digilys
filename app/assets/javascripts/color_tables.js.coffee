@@ -170,3 +170,18 @@ $ ->
         )
 
         $("#color-table-group-selector").select2().on "change", -> ct.groupFilter($(this).val())
+
+        # Student popover
+        studentUrlTemplate = colorTable.data("student-url-template")
+
+        new Digilys.SinglePopover colorTable, content: ->
+            content = $("<div/>")
+            content.load(studentUrlTemplate.replace(":id", $(this).data("id")))
+            return content
+
+        colorTable.on "shown", (event) ->
+            $(".popover").addClass("ajax-popover") if $(event.target).is(".student-action")
+
+        # Close popovers when clicking outside a popover
+        Digilys.bindPopoverCloser($("body"))
+

@@ -110,6 +110,12 @@
     .slick-cell.student-name {
         text-align: right;
         font-weight: bold;
+
+        button {
+            padding: 0;
+            border: 0;
+            font-weight: bold;
+        }
     }
     .averages {
         font-weight: bold;

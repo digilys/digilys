@@ -434,11 +434,35 @@ describe "ColorTableFormatters", ->
     F = Digilys.ColorTableFormatters
 
     describe ".getFormatter()", ->
+        it "returns StudentName for student columns", ->
+            expect(F.getFormatter(type: "student-name")).toBe(F.StudentNameCell)
         it "returns ColorCell for evaluation columns", ->
             expect(F.getFormatter(type: "evaluation")).toBe(F.ColorCell)
         it "returns undefined for unknown column types", ->
             expect(F.getFormatter(type: "unknown")).toBeUndefined()
             expect(F.getFormatter({})).toBeUndefined()
+
+    describe "StudentNameCell", ->
+        StudentNameCell = F.StudentNameCell
+        rawResult = null
+        result = null
+
+        beforeEach ->
+            rawResult = StudentNameCell(0, 0, "Student Name", {}, { id: 123 })
+            result    = $(rawResult)
+
+        it "returns a string", ->
+            expect(typeof rawResult).toBe("string")
+
+        it "wraps the name in a button", ->
+            expect(result).toHaveText("Student Name")
+            expect(result).toBeMatchedBy("button.student-action")
+
+        it "adds the student's id as data", ->
+            expect(result).toHaveData("id", 123)
+
+        it "does not wrap the result when the id is 0", ->
+            expect(StudentNameCell(0, 0, "Student Name", {}, { id: 0 })).toEqual("Student Name")
 
     describe "ColorCell", ->
         ColorCell = F.ColorCell

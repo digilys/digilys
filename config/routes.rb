@@ -93,6 +93,7 @@ Digilys::Application.routes.draw do
     end
     resources :table_states,  only: :create
     resource  :authorization, only: [ :create, :update, :destroy ]
+    resources :students,      only: :show
   end
 
   resources :participants, only: [ :create, :destroy ] do
