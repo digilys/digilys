@@ -33,8 +33,10 @@
     }
 
     menu = [
-      { title: "#{t(:".hide_column_action")}", command: "hide" },
-      { title: "#{t(:".show_column_action")}", command: "show" }
+      { title: "#{t(:".lock_column_action")}",   command: "lock"   },
+      { title: "#{t(:".unlock_column_action")}", command: "unlock" },
+      { title: "#{t(:".hide_column_action")}",   command: "hide"   },
+      { title: "#{t(:".show_column_action")}",   command: "show"   }
     ]
     exports.columns    = columns
     exports.data       = data

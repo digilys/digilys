@@ -20,7 +20,7 @@ class ColorTable
             formatterFactory:       Formatters
             showHeaderRow:          true
             headerRowHeight:        45
-            frozenColumn:           0
+            frozenColumn:           -1
 
         self = this
 
@@ -55,7 +55,7 @@ class ColorTable
 
         # Header menu
         @headerMenu = new Slick.Plugins.HeaderMenu({})
-        @headerMenu.onBeforeMenuShow.subscribe (e, args) => setMenu.call(this, args.menu)
+        @headerMenu.onBeforeMenuShow.subscribe (e, args) => setMenu.call(this, args.menu, args.column)
         @headerMenu.onCommand.subscribe (e, args)        => menuCommand.call(this, args.command, args.column)
         @grid.registerPlugin(@headerMenu)
 
@@ -221,14 +221,57 @@ class ColorTable
             @grid.setColumns(columns)
 
 
-    setMenu = (menu) ->
+    lockColumn: (columnId) ->
+        columns = @grid.getColumns()
+
+        # Find column index based on its id
+        idx = (i for col, i in columns when col.id == columnId)[0]
+
+        return if idx == undefined
+
+        num = @grid.getOptions().frozenColumn + 1
+
+        # Move the column to the last frozen position
+        column = columns.splice(idx, 1)[0]
+        columns.splice(num, 0, column)
+
+        @grid.setColumns(columns)
+        @grid.setOptions(frozenColumn: num)
+
+    unlockColumn: (columnId) ->
+        columns = @grid.getColumns()
+
+        # Find column index based on its id
+        idx = (i for col, i in columns when col.id == columnId)[0]
+
+        return if idx == undefined
+
+        num = @grid.getOptions().frozenColumn - 1
+
+        # Move the column to the just after the last frozen position
+        column = columns.splice(idx, 1)[0]
+        columns.splice(num + 1, 0, column)
+
+        @grid.setColumns(columns)
+        @grid.setOptions(frozenColumn: num)
+
+
+    setMenu = (menu, column) ->
         menu.items = []
-        menu.items.push(m) for m in @columnMenu when @hiddenColumns.length > 0 || m.command != "show"
+
+        for m in @columnMenu
+            continue if m.command == "show"   && @hiddenColumns.length <= 0
+            continue if m.command == "lock"   && column.frozen
+            continue if m.command == "unlock" && !column.frozen
+
+            menu.items.push(m)
 
     menuCommand = (command, column) ->
         switch command
-            when "hide" then @hideColumn(column)
-            when "show" then showModal.call(this, column)
+            when "hide"   then @hideColumn(column)
+            when "show"   then showModal.call(this, column)
+            when "lock"   then @lockColumn(column.id)
+            when "unlock" then @unlockColumn(column.id)
 
 
     showModal = (column) ->

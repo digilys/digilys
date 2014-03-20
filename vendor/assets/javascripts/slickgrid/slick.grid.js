@@ -807,6 +807,8 @@ if (typeof Slick === "undefined") {
             for (var i = 0; i < columns.length; i++) {
                 var m = columns[i];
 
+                m.frozen = (i <= options.frozenColumn);
+
                 var $headerTarget = (options.frozenColumn > -1) ? ((i <= options.frozenColumn) ? $headerL : $headerR) : $headerL;
                 var $headerRowTarget = (options.frozenColumn > -1) ? ((i <= options.frozenColumn) ? $headerRowL : $headerRowR) : $headerRowL;
 

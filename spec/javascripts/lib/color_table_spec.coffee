@@ -50,13 +50,13 @@ describe "Digilys.ColorTable", ->
             expect(options.formatterFactory).toBe(Digilys.ColorTableFormatters)
             expect(options.showHeaderRow).toBe(true)
             expect(options.headerRowHeight).toBe(45)
-            expect(options.frozenColumn).toBe(0)
+            expect(options.frozenColumn).toBe(-1)
 
         it "resizes the table container to fit the window", ->
             expect(container.height()).toEqual($(document).height() - container.offset().top - 20)
 
         it "renders the grid", ->
-            expect(container.find(".slick-row")).toHaveLength(2 * 2)
+            expect(container.find(".slick-row")).toHaveLength(2)
 
         it "adds filter inputs to the header row", ->
             inputs = container.find(".slick-headerrow :text[placeholder=search-placeholder]")
@@ -202,11 +202,11 @@ describe "Digilys.ColorTable", ->
             col1Input = $(inputs[1])
 
         it "filters by column", ->
-            expect(container.find(".slick-row")).toHaveLength(4 * 2)
+            expect(container.find(".slick-row")).toHaveLength(4)
             nameInput.val("oo")
             nameInput.trigger("change")
-            expect(container.find(".slick-row")).toHaveLength(2 * 2)
-            expect(container.find(".slick-row")).toHaveText("foofooapacepa")
+            expect(container.find(".slick-row")).toHaveLength(2)
+            expect(container.find(".slick-row")).toHaveText("fooapafoocepa")
 
         it "filters by multiple columns", ->
             nameInput.val("oo")
@@ -214,7 +214,7 @@ describe "Digilys.ColorTable", ->
             col1Input.val("c")
             col1Input.trigger("change")
 
-            expect(container.find(".slick-row")).toHaveLength(1 * 2)
+            expect(container.find(".slick-row")).toHaveLength(1)
             expect(container.find(".slick-row")).toHaveText("foocepa")
 
     describe ".groupFilter()", ->
@@ -234,17 +234,17 @@ describe "Digilys.ColorTable", ->
             ]
 
             table = new Digilys.ColorTable(container, columns, data, columnMenu)
-            expect(container.find(".slick-row")).toHaveLength(7 * 2)
+            expect(container.find(".slick-row")).toHaveLength(7)
 
         it "shows only students in any of the selected groups", ->
             table.groupFilter(["1", "2"])
-            expect(container.find(".slick-row")).toHaveLength(3 * 2)
+            expect(container.find(".slick-row")).toHaveLength(3)
 
         it "shows all students when resetting to a blank filter", ->
             table.groupFilter(["1", "2"])
-            expect(container.find(".slick-row")).toHaveLength(3 * 2)
+            expect(container.find(".slick-row")).toHaveLength(3)
             table.groupFilter([])
-            expect(container.find(".slick-row")).toHaveLength(7 * 2)
+            expect(container.find(".slick-row")).toHaveLength(7)
 
     describe "column header height", ->
         left  = null
@@ -273,6 +273,7 @@ describe "Digilys.ColorTable", ->
         it "makes the column header heights equal when the frozen is larger", ->
             style.text(".slick-header-column.sname { height: 40px; }; .slick-header-column.col1 { height: 20px; }; ")
             table = new Digilys.ColorTable(container, columns, data, columnMenu)
+            table.lockColumn("student-name")
 
             nameHeader = container.find(".slick-header-column.sname")
             col1Header = container.find(".slick-header-column.col1")
@@ -282,6 +283,7 @@ describe "Digilys.ColorTable", ->
         it "makes the column header heights equal when the frozen is smaller", ->
             style.text(".slick-header-column.sname { height: 40px; }; .slick-header-column.col1 { height: 60px; }; ")
             table = new Digilys.ColorTable(container, columns, data, columnMenu)
+            table.lockColumn("student-name")
 
             nameHeader = container.find(".slick-header-column.sname")
             col1Header = container.find(".slick-header-column.col1")
@@ -351,7 +353,79 @@ describe "Digilys.ColorTable", ->
             table.hideColumn(col)
             table.showColumn(col.id, columns[1])
             expect(container.find(".slick-header-column")).toHaveLength(4)
-            expect(container.find(".col3").index()).toBe(1)
+            expect(container.find(".col3").index()).toBe(2)
+
+
+    describe ".lockColumn()", ->
+        beforeEach ->
+            columns = [
+                { id: "col1", name: "col1", field: "col1", headerCssClass: "col1" },
+                { id: "col2", name: "col2", field: "col2", headerCssClass: "col2" },
+                { id: "col3", name: "col3", field: "col3", headerCssClass: "col3" }
+            ]
+
+            data = [
+                { id: 1, col1: "1-col1", col2: "1-col2", col3: "1-col3" }
+            ]
+
+            table = new Digilys.ColorTable(container, columns, data, columnMenu)
+
+        it "locks the specified column to the left", ->
+            expect(container.find(".slick-header-columns-left").children()).toHaveLength(3)
+
+            table.lockColumn("col2")
+
+            expect(container.find(".slick-header-columns-left").children()).toHaveLength(1)
+            expect(container.find(".slick-header-columns-right").children()).toHaveLength(2)
+
+            expect(container.find(".slick-header-columns-left").children(":first")).toHaveClass("col2")
+
+        it "adds a locked column to the end of the already locked columns", ->
+            table.lockColumn("col3")
+            table.lockColumn("col2")
+
+            expect(container.find(".slick-header-columns-right").children()).toHaveLength(1)
+
+            children = container.find(".slick-header-columns-left").children()
+
+            expect(children).toHaveLength(2)
+            expect(children).toHaveText("col3col2")
+
+        it "handles invalid column ids", ->
+            table.lockColumn("unknown")
+            expect(container.find(".slick-header-columns-left").children()).toHaveLength(3)
+
+    describe ".unlockColumn()", ->
+        beforeEach ->
+            columns = [
+                { id: "col1", name: "col1", field: "col1", headerCssClass: "col1" },
+                { id: "col2", name: "col2", field: "col2", headerCssClass: "col2" },
+                { id: "col3", name: "col3", field: "col3", headerCssClass: "col3" }
+            ]
+
+            data = [
+                { id: 1, col1: "1-col1", col2: "1-col2", col3: "1-col3" }
+            ]
+
+            table = new Digilys.ColorTable(container, columns, data, columnMenu)
+            table.lockColumn("col1")
+            table.lockColumn("col2")
+
+        it "unlocks the column", ->
+            expect(container.find(".slick-header-columns-left .col2")).toHaveLength(1)
+
+            table.unlockColumn("col2")
+
+            expect(container.find(".slick-header-columns-left .col2")).toHaveLength(0)
+            expect(container.find(".slick-header-columns-right .col2")).toHaveLength(1)
+
+        it "moves the unlocked column to just after the locked columns", ->
+            table.unlockColumn("col1")
+            expect(container.find(".slick-header-columns-right .slick-header-column")).toHaveClass("col1")
+
+        it "handles invalid column ids", ->
+            table.lockColumn("unknown")
+            expect(container.find(".slick-header-columns-left").children()).toHaveLength(2)
 
 
     describe "column menu", ->
@@ -364,9 +438,10 @@ describe "Digilys.ColorTable", ->
                 { id: "col3", name: "col3", field: "col3", headerCssClass: "col3", header: { menu: { items: [] } } }
             ]
             columnMenu = [
-                { title: "hide", command: "hide" },
-                { title: "show", command: "show" },
-                { title: "foo",  command: "foo"  },
+                { title: "hide",   command: "hide"   },
+                { title: "show",   command: "show"   },
+                { title: "lock",   command: "lock"   },
+                { title: "unlock", command: "unlock" },
             ]
 
             table = new Digilys.ColorTable(container, columns, data, columnMenu)
@@ -375,19 +450,48 @@ describe "Digilys.ColorTable", ->
             container.find(".col1 .slick-header-menubutton").trigger("click")
             menuItems = container.find(".slick-header-menu .slick-header-menuitem")
             expect(menuItems).toHaveLength(2)
-            expect(menuItems).toHaveText("hidefoo")
+            expect(menuItems).toHaveText("hidelock")
 
         it "includes the entire column menu if there are hidden columns", ->
             table.hideColumn(columns[1])
             container.find(".col1 .slick-header-menubutton").trigger("click")
             menuItems = container.find(".slick-header-menu .slick-header-menuitem")
             expect(menuItems).toHaveLength(3)
-            expect(menuItems).toHaveText("hideshowfoo")
+            expect(menuItems).toHaveText("hideshowlock")
+
+        it "does not include the unlock command when the column is not locked", ->
+            container.find(".col1 .slick-header-menubutton").trigger("click")
+            menuItems = container.find(".slick-header-menu .slick-header-menuitem")
+            expect(menuItems).toHaveLength(2)
+            expect(menuItems).toHaveText("hidelock")
+
+        it "does not include the lock command when the column is locked", ->
+            table.lockColumn("col1")
+            container.find(".col1 .slick-header-menubutton").trigger("click")
+            menuItems = container.find(".slick-header-menu .slick-header-menuitem")
+            expect(menuItems).toHaveLength(2)
+            expect(menuItems).toHaveText("hideunlock")
 
         it "hides the column when clicking the hide entry", ->
             container.find(".col1 .slick-header-menubutton").trigger("click")
             container.find(".slick-header-menuitem:first").trigger("click")
             expect(container.find(".col1")).toHaveLength(0)
+
+        it "locks the column when clicking the lock entry", ->
+            container.find(".col1 .slick-header-menubutton").trigger("click")
+            $(container.find(".slick-header-menuitem")[1]).trigger("click")
+
+            expect(container.find(".slick-header-columns-left").children()).toHaveLength(1)
+            expect(container.find(".slick-header-columns-left .col1")).toHaveLength(1)
+            expect(container.find(".slick-header-columns-right .col1")).toHaveLength(0)
+
+        it "unlocks the column when clicking the unlock entry", ->
+            table.lockColumn("col1")
+            container.find(".col1 .slick-header-menubutton").trigger("click")
+            $(container.find(".slick-header-menuitem")[1]).trigger("click")
+
+            expect(container.find(".slick-header-columns-left").children()).toHaveLength(3)
+            expect(container.find(".slick-header-columns-right").children()).toHaveLength(0)
 
         describe "showing columns", ->
             modal = null
