@@ -28,12 +28,19 @@ class ColorTable
         @dataView = new Slick.Data.DataView()
         @grid     = new Slick.Grid(@colorTable, @dataView, @columns, options)
 
+        # State change events
+        @stateChange = (e, args) => @colorTable.trigger("state-change", this)
+        @grid.onColumnsResized.subscribe   @stateChange
+        @grid.onColumnsReordered.subscribe @stateChange
+
         # Refreshing
         @dataView.onRowsChanged.subscribe (e, args)     => redrawRows.call(this, args.rows)
         @dataView.onRowCountChanged.subscribe (e, args) => redrawRows.call(this, args.rows)
 
         # Sorting
-        @grid.onSort.subscribe (e, args) => @sortBy(args.sortCol, args.sortAsc)
+        @grid.onSort.subscribe (e, args) =>
+            @sortBy(args.sortCol, args.sortAsc)
+            @stateChange()
 
         # Filtering
         @grid.onHeaderRowCellRendered.subscribe (e, args) =>
@@ -43,6 +50,7 @@ class ColorTable
             elem = $(this)
             self.filters[elem.data("column-id")] = elem.val()
             self.dataView.refresh()
+            self.stateChange()
 
         # Row metadata
         @dataView.getItemMetadata = rowMetadata.call(this, @dataView.getItemMetadata)
@@ -196,6 +204,7 @@ class ColorTable
             @filters.groups = []
 
         @dataView.refresh()
+        @stateChange()
 
 
     setColumnTitle = (column, node) ->
@@ -208,6 +217,7 @@ class ColorTable
         if (idx = columns.indexOf(column)) >= 0
             @hiddenColumns.push(columns.splice(idx, 1)[0])
             @grid.setColumns(columns)
+            @stateChange()
 
     showColumn: (columnId, after) ->
         hidden = (c for c in @hiddenColumns when c.id == columnId)[0]
@@ -219,6 +229,7 @@ class ColorTable
             columns.splice(idx + 1, 0, hidden)
             @hiddenColumns.splice(@hiddenColumns.indexOf(hidden), 1)
             @grid.setColumns(columns)
+            @stateChange()
 
 
     lockColumn: (columnId) ->
@@ -237,6 +248,7 @@ class ColorTable
 
         @grid.setColumns(columns)
         @grid.setOptions(frozenColumn: num)
+        @stateChange()
 
     unlockColumn: (columnId) ->
         columns = @grid.getColumns()
@@ -254,6 +266,7 @@ class ColorTable
 
         @grid.setColumns(columns)
         @grid.setOptions(frozenColumn: num)
+        @stateChange()
 
 
     setMenu = (menu, column) ->

@@ -534,6 +534,97 @@ describe "Digilys.ColorTable", ->
                 expect(container.find(".slick-header-column")).toHaveText("col1col3col2")
 
 
+    describe "state change event", ->
+        beforeEach ->
+            columns = [
+                {
+                    id:             "col1",
+                    name:           "col1",
+                    field:          "col1",
+                    sortable:       true,
+                    cssClass:       "col1",
+                    headerCssClass: "col1",
+                    header:         { menu: { items: [] } }
+                },
+                {
+                    id:             "col2",
+                    name:           "col2",
+                    field:          "col2",
+                    sortable:       true,
+                    cssClass:       "col2",
+                    headerCssClass: "col2",
+                    header:         { menu: { items: [] } }
+                },
+                {
+                    id:             "col3",
+                    name:           "col3",
+                    field:          "col3",
+                    sortable:       true,
+                    cssClass:       "col3",
+                    headerCssClass: "col3",
+                    header:         { menu: { items: [] } }
+                }
+            ]
+            columnMenu = [
+                { title: "hide",   command: "hide"   },
+                { title: "show",   command: "show"   },
+                { title: "lock",   command: "lock"   },
+                { title: "unlock", command: "unlock" }
+            ]
+
+            table = new Digilys.ColorTable(container, columns, data, columnMenu)
+            table.lockColumn("col1")
+            table.hideColumn(columns[2])
+
+            spyOnEvent(container, "state-change")
+
+        afterEach ->
+            expect("state-change").toHaveBeenTriggeredOnAndWith(container, table)
+
+        it "is triggered when the sorting changes", ->
+            container.find(".col2 .slick-column-name").trigger("click")
+
+        it "is triggered when the column order changes", ->
+            # Hard to test drag-and-drop, so just trigger the event
+            table.grid.onColumnsReordered.notify({}, new Slick.EventData())
+
+        it "is triggered when the column filter changes", ->
+            container.find(".slick-headerrow :text").first().val("x").trigger("change")
+
+        it "is triggered when the group filter changes", ->
+            table.groupFilter(["1"])
+
+        it "is triggered when a column is hidden", ->
+            container.find(".col1 .slick-header-menubutton").trigger("click")
+            menuSelection = container.find(".slick-header-menuitem:first")
+            expect(menuSelection).toHaveText("hide")
+            menuSelection.trigger("click")
+
+        it "is triggered when a column is shown", ->
+            modal = $('<div id="showmodal-modal" style="display:none"/>').append("<ul/>")
+            $("body").append(modal)
+
+            container.find(".col1 .slick-header-menubutton").trigger("click")
+            menuSelection = $(container.find(".slick-header-menuitem")[1])
+            expect(menuSelection).toHaveText("show")
+            menuSelection.trigger("click")
+            modal.find("button").trigger("click")
+
+            modal.remove()
+
+        it "is triggered when a column is locked", ->
+            container.find(".col2 .slick-header-menubutton").trigger("click")
+            menuSelection = $(container.find(".slick-header-menuitem")[2])
+            expect(menuSelection).toHaveText("lock")
+            menuSelection.trigger("click")
+
+        it "is triggered when a column is unlocked", ->
+            container.find(".col1 .slick-header-menubutton").trigger("click")
+            menuSelection = $(container.find(".slick-header-menuitem")[2])
+            expect(menuSelection).toHaveText("unlock")
+            menuSelection.trigger("click")
+
+
 describe "ColorTableFormatters", ->
     F = Digilys.ColorTableFormatters
 
