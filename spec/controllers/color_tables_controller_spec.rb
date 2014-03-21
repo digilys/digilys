@@ -173,7 +173,7 @@ describe ColorTablesController do
     it "sets the requested table state as the current user's setting for the color_table" do
      put :save_state, id: color_table.id, state: '{"foo": "bar"}'
      expect(response).to be_success
-     expect(logged_in_user.settings.for(color_table).first.data["datatable_state"]).to eq({ "foo" => "bar" })
+     expect(logged_in_user.settings.for(color_table).first.data["color_table_state"]).to eq({ "foo" => "bar" })
     end
     it "gives a 404 if the instance does not match" do
       put :save_state, id: other_instance.id, state: '{"foo": "bar"}'
@@ -182,14 +182,14 @@ describe ColorTablesController do
 
     context "with existing data" do
       before(:each) do
-        logged_in_user.settings.create(customizable: color_table, data: { "datatable_state" => { "bar" => "baz" }, "zomg" => "lol" })
+        logged_in_user.settings.create(customizable: color_table, data: { "color_table_state" => { "bar" => "baz" }, "zomg" => "lol" })
       end
       it "overrides the datatable state, and leaves the other data alone" do
         put :save_state, id: color_table.id, state: '{"foo": "bar"}'
         expect(response).to be_success
 
         data = logged_in_user.settings.for(color_table).first.data
-        expect(data["datatable_state"]).to eq({ "foo" => "bar" })
+        expect(data["color_table_state"]).to eq({ "foo" => "bar" })
         expect(data["zomg"]).to            eq "lol"
       end
     end
@@ -197,14 +197,14 @@ describe ColorTablesController do
 
   describe "GET #clear_state" do
     before(:each) do
-      logged_in_user.settings.create(customizable: color_table, data: { "datatable_state" => { "bar" => "baz" }, "zomg" => "lol" })
+      logged_in_user.settings.create(customizable: color_table, data: { "color_table_state" => { "bar" => "baz" }, "zomg" => "lol" })
     end
     it "removes the datatable setting" do
       get :clear_state, id: color_table.id
       expect(response).to redirect_to(color_table)
 
       data = logged_in_user.settings.for(color_table).first.data
-      expect(data["datatable_state"]).to be_nil
+      expect(data["color_table_state"]).to be_nil
       expect(data["zomg"]).to            eq "lol"
     end
     it "gives a 404 if the instance does not match" do

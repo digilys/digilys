@@ -4,6 +4,15 @@
 
 = render partial: "navigation", locals: { color_table: @color_table, active: :show }
 
+- table_state     = {}
+- selected_groups = nil
+
+- if @user_settings && @user_settings["color_table_state"]
+  - table_state = @user_settings["color_table_state"]
+
+  - if @user_settings["color_table_state"]["filters"]
+    - selected_groups = @user_settings["color_table_state"]["filters"]["groups"]
+
 .row-fluid
   .span2
     .btn-group.result-toggles
@@ -11,7 +20,8 @@
       %button.btn(data-value="stanine") Stanine
   .span3
     %select#color-table-group-selector{height: 0, multiple: true, data: { placeholder: t(:".all_groups") }}
-      = options_for_select(@color_table.group_hierarchy.collect { |g| [[g.name, g.parent.try(:name)].compact.join(", "), g.id]})
+      = options_for_select(@color_table.group_hierarchy.collect { |g| [[g.name, g.parent.try(:name)].compact.join(", "), g.id]},
+        selected_groups)
 
 - evaluations = @color_table.generic_evaluations + @color_table.suite_evaluations
 
@@ -21,7 +31,7 @@
 
   ;(function(exports) {
 
-    var columns, data, menu
+    var columns, data, menu, state
 
     columns = [#{color_table_columns(@color_table.student_data, evaluations)}]
     data = [#{result_rows(@color_table.students.order(current_name_order), @color_table.student_data, evaluations).join(",")}]
@@ -38,15 +48,20 @@
       { title: "#{t(:".hide_column_action")}",   command: "hide"   },
       { title: "#{t(:".show_column_action")}",   command: "show"   }
     ]
+
+    state = #{JSON.dump(table_state)};
+
     exports.columns    = columns
     exports.data       = data
     exports.columnMenu = menu
+    exports.state      = state
   })(window.Digilys.colorTable)
 
 #color-table.show-value{style: "width: 100%;",
-  "data-search-placeholder" => t(:".search_action"),
+  "data-search-placeholder"   => t(:".search_action"),
+  "data-save-local-state-url" => save_state_color_table_path(@color_table),
   "data-student-url-template" => color_table_student_path(@color_table, id: ":id"),
-  "data-show-column-modal" => "#show-column-modal" }
+  "data-show-column-modal"    => "#show-column-modal" }
 
 #show-column-modal.modal.hide.fade(role="dialog" aria-hidden="true" data-backdrop="true")
   .modal-header

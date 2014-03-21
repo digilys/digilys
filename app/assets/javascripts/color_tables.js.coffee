@@ -150,6 +150,16 @@ $ ->
             Digilys.colorTable.columnMenu
         )
 
+        # State handling
+        saveStateUrl = colorTable.data("save-local-state-url")
+
+        colorTable.on "state-change", () ->
+            utils.throttle 1000, "color-table-state-saving", ->
+                $.post(saveStateUrl, { _method: "PUT", state: JSON.stringify(ct.getState()) })
+
+        if Digilys.colorTable.state
+            ct.setState(Digilys.colorTable.state)
+
         # Toggle between different values in the result table
         $(".result-toggles").on "click", ".btn:not(.active)", ->
             button = $(this)

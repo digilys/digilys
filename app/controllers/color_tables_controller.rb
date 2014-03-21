@@ -61,13 +61,13 @@ class ColorTablesController < ApplicationController
 
 
   def save_state
-    current_user.save_setting!(@color_table, "datatable_state" => JSON.parse(params[:state]))
+    current_user.save_setting!(@color_table, "color_table_state" => JSON.parse(params[:state]))
     render json: { result: "OK" }
   end
 
   def clear_state
     flash[:notice] = t(:"color_tables.clear_state.success")
-    current_user.save_setting!(@color_table, "datatable_state" => nil)
+    current_user.save_setting!(@color_table, "color_table_state" => nil)
     redirect_to @color_table
   end
 
