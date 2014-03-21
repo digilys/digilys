@@ -625,6 +625,258 @@ describe "Digilys.ColorTable", ->
             menuSelection.trigger("click")
 
 
+    describe ".getState()", ->
+        beforeEach ->
+            h = { menu: { items: [] } }
+            columns = [
+                { id: "student-name", name: "sn", field: "sn", sortable: true, headerCssClass: "sn", header: h, width: 90 },
+                { id: "col1",         name: "c1", field: "c1", sortable: true, headerCssClass: "c1", header: h, width: 91 },
+                { id: "col2",         name: "c2", field: "c2", sortable: true, headerCssClass: "c2", header: h, width: 92 },
+                { id: "col3",         name: "c3", field: "c3", sortable: true, headerCssClass: "c3", header: h, width: 93 },
+                { id: "col4",         name: "c4", field: "c4", sortable: true, headerCssClass: "c4", header: h, width: 94 }
+            ]
+            columnMenu = [
+                { title: "hide",   command: "hide"   },
+                { title: "show",   command: "show"   },
+                { title: "lock",   command: "lock"   },
+                { title: "unlock", command: "unlock" }
+            ]
+
+            table = new Digilys.ColorTable(container, columns, data, columnMenu)
+
+            state = table.getState()
+            expect(state.sort).toEqual([ columnId: "student-name", sortAsc: true ])
+            expect(state.columnOrder).toEqual([ "student-name", "col1", "col2", "col3", "col4" ])
+            expect(state.columnWidths).toEqual("student-name": 90, "col1": 91, "col2": 92, "col3": 93, "col4": 94)
+            expect(state.filters).toEqual({})
+            expect(state.lockedColumns).toEqual(0)
+            expect(state.hiddenColumns).toEqual([])
+
+        it "includes the current sort column and order", ->
+            container.find(".c3 .slick-column-name").trigger("click")
+            state = table.getState()
+            expect(state.sort).toEqual([ columnId: "col3", sortAsc: true ])
+
+            container.find(".c3 .slick-column-name").trigger("click")
+            state = table.getState()
+            expect(state.sort).toEqual([ columnId: "col3", sortAsc: false ])
+
+        it "includes the column order", ->
+            # Hard to test drag-and-drop so we manipulate the grid instead
+            cols = table.grid.getColumns()
+            col = cols.splice(1, 1)[0] # col1
+            cols.splice(2, 0, col) # col1 to after col2
+
+            state = table.getState()
+            expect(state.columnOrder).toEqual([ "student-name", "col2", "col1", "col3", "col4" ])
+
+            table.hideColumn(col)
+            state = table.getState()
+            expect(state.columnOrder).toEqual([ "student-name", "col2", "col3", "col4" ])
+
+        it "includes column widths", ->
+            # Hard to test drag-and-drop so we manipulate the grid instead
+            cols = table.grid.getColumns()
+            cols[3].width = 123
+            table.grid.setColumns(cols)
+
+            state = table.getState()
+            expect(state.columnWidths).toEqual("student-name": 90, "col1": 91, "col2": 92, "col3": 123, "col4": 94)
+
+        it "includes filters, both column and group", ->
+            container.find(".slick-headerrow-column.l1.r1 :text")
+                .val("x")
+                .trigger("change")
+            state = table.getState()
+            expect(state.filters).toEqual(col1: "x")
+
+            table.groupFilter(["1", "2"])
+            state = table.getState()
+            expect(state.filters).toEqual(col1: "x", groups: [1,2])
+
+        it "includes the number of locked columns", ->
+            container.find(".c2 .slick-header-menubutton").trigger("click")
+            menuSelection = $(container.find(".slick-header-menuitem")[1])
+            expect(menuSelection).toHaveText("lock")
+            menuSelection.trigger("click")
+
+            state = table.getState()
+            expect(state.lockedColumns).toEqual(1)
+
+        it "includes hidden columns", ->
+            container.find(".c2 .slick-header-menubutton").trigger("click")
+            menuSelection = $(container.find(".slick-header-menuitem")[0])
+            expect(menuSelection).toHaveText("hide")
+            menuSelection.trigger("click")
+
+            state = table.getState()
+            expect(state.hiddenColumns).toEqual([ "col2" ])
+
+    describe ".setState()", ->
+        beforeEach ->
+            h = { menu: { items: [] } }
+            columns = [
+                { id: "student-name", name: "sn", field: "sn", sortable: true, headerCssClass: "sn", header: h, width: 90 },
+                { id: "col1",         name: "c1", field: "c1", sortable: true, headerCssClass: "c1", header: h, width: 91 },
+                { id: "col2",         name: "c2", field: "c2", sortable: true, headerCssClass: "c2", header: h, width: 92 },
+                { id: "col3",         name: "c3", field: "c3", sortable: true, headerCssClass: "c3", header: h, width: 93 },
+                { id: "col4",         name: "c4", field: "c4", sortable: true, headerCssClass: "c4", header: h, width: 94 }
+            ]
+            columnMenu = [
+                { title: "hide",   command: "hide"   },
+                { title: "show",   command: "show"   },
+                { title: "lock",   command: "lock"   },
+                { title: "unlock", command: "unlock" }
+            ]
+            data = [
+                { id: 1, sn: "s1", c1: "foo",  groups: [1,2] },
+                { id: 2, sn: "s2", c1: "apa",  groups: [1]   },
+                { id: 3, sn: "s3", c1: "bepa", groups: [2]   }
+            ]
+
+            table = new Digilys.ColorTable(container, columns, data, columnMenu)
+
+            expect(container.find(".slick-header-column-sorted")).toHaveClass("sn")
+            expect(container.find(".slick-header-column-sorted .slick-sort-indicator")).toHaveClass("slick-sort-indicator-asc")
+            expect(container.find(".slick-header-column")).toHaveText("snc1c2c3c4")
+
+            expect(container.find(".sn")).toHaveCss(width: "90px")
+            expect(container.find(".c1")).toHaveCss(width: "91px")
+            expect(container.find(".c2")).toHaveCss(width: "92px")
+            expect(container.find(".c3")).toHaveCss(width: "93px")
+            expect(container.find(".c4")).toHaveCss(width: "94px")
+
+            expect(container.find(".slick-header-column")).toHaveLength(5)
+            expect(container.find(".slick-row")).toHaveLength(3)
+
+            expect(container.find(".slick-header-columns-left .slick-header-column")).toHaveLength(5)
+
+        describe "sorting", ->
+            it "is applied", ->
+                table.setState(sort: [ { columnId: "col1", sortAsc: true } ])
+                expect(container.find(".slick-header-column-sorted")).toHaveClass("c1")
+                expect(container.find(".slick-header-column-sorted .slick-sort-indicator"))
+                    .toHaveClass("slick-sort-indicator-asc")
+
+                table.setState(sort: [ { columnId: "col1", sortAsc: false } ])
+                expect(container.find(".slick-header-column-sorted")).toHaveClass("c1")
+                expect(container.find(".slick-header-column-sorted .slick-sort-indicator"))
+                    .toHaveClass("slick-sort-indicator-desc")
+
+            it "handles invalid sorting columns", ->
+                table.setState(sort: [ { columnId: "does not exist", sortAsc: false } ])
+                expect(container.find(".slick-header-column-sorted")).toHaveClass("sn")
+                expect(container.find(".slick-header-column-sorted .slick-sort-indicator"))
+                    .toHaveClass("slick-sort-indicator-asc")
+
+        describe "column order", ->
+            it "is applied", ->
+                table.setState(columnOrder: [ "student-name", "col4", "col3", "col2", "col1" ])
+                expect(container.find(".slick-header-column"))
+                    .toHaveText("snc4c3c2c1")
+
+            it "handles invalid column ids", ->
+                table.setState(columnOrder: [ "student-name", "col4", "does not exist", "col3", "col2", "col1" ])
+                expect(container.find(".slick-header-column"))
+                    .toHaveText("snc4c3c2c1")
+
+            it "puts columns not included after all specified", ->
+                table.setState(columnOrder: [ "student-name", "col2", "col1" ])
+                txt = container.find(".slick-header-column").text()
+                expect(txt).toMatch(/^snc2c1c[34]c[34]$/)
+
+        describe "column widths", ->
+            it "is applied", ->
+                table.setState(columnWidths: { "student-name": 91, col1: 92, col2: 93, col3: 94, col4: 95 })
+                expect(container.find(".sn")).toHaveCss(width: "91px")
+                expect(container.find(".c1")).toHaveCss(width: "92px")
+                expect(container.find(".c2")).toHaveCss(width: "93px")
+                expect(container.find(".c3")).toHaveCss(width: "94px")
+                expect(container.find(".c4")).toHaveCss(width: "95px")
+
+            it "handles invalid and missing", ->
+                table.setState(columnWidths: { "student-name": 91, unknown: 92, col2: 93, col3: 94, col4: 95 })
+                expect(container.find(".sn")).toHaveCss(width: "91px")
+                expect(container.find(".c1")).toHaveCss(width: "91px")
+                expect(container.find(".c2")).toHaveCss(width: "93px")
+                expect(container.find(".c3")).toHaveCss(width: "94px")
+                expect(container.find(".c4")).toHaveCss(width: "95px")
+
+        describe "filters", ->
+            it "is applied", ->
+                table.setState(filters: { col1: "pa" })
+                expect(container.find(".slick-row").length).toBe(2)
+                expect(container.find(".slick-row")).toHaveText("s2apas3bepa")
+                expect(container.find(".slick-headerrow-column.l1.r1 :text")).toHaveValue("pa")
+
+                table.setState(filters: { col1: "pa", groups: [1] })
+                expect(container.find(".slick-row").length).toBe(1)
+                expect(container.find(".slick-row")).toHaveText("s2apa")
+
+            it "replaces the previous filters", ->
+                table.setState(filters: { col1: "pa" })
+                expect(container.find(".slick-row").length).toBe(2)
+                expect(container.find(".slick-row")).toHaveText("s2apas3bepa")
+
+                table.setState(filters: { groups: [1] })
+                expect(container.find(".slick-row").length).toBe(2)
+                expect(container.find(".slick-row")).toHaveText("s1foos2apa")
+
+        describe "locked columns", ->
+            it "is applied", ->
+                table.setState(lockedColumns: 2)
+                expect(container.find(".slick-header-columns-left .slick-header-column")).toHaveLength(2)
+                expect(container.find(".slick-header-columns-right .slick-header-column")).toHaveLength(3)
+
+        describe "hidden columns", ->
+            it "is applied", ->
+                table.setState(hiddenColumns: [ "col1", "col3" ])
+                expect(container.find(".slick-header-column.c1")).toHaveLength(0)
+                expect(container.find(".slick-header-column.c3")).toHaveLength(0)
+                table.showColumn("col1", columns[0])
+                expect(container.find(".slick-header-column.c1")).toHaveLength(1)
+
+            it "handles invalid columns", ->
+                table.setState(hiddenColumns: [ "col1", "unknown" ])
+                expect(container.find(".slick-header-column")).toHaveLength(4)
+
+        describe "complete workflow", ->
+            it "handles all state items working together", ->
+                table.setState(
+                    sort:          [ { columnId: "col1", sortAsc: true } ]
+                    columnOrder:   [ "student-name", "col4", "col3", "col2", "col1" ]
+                    columnWidths:  { "student-name": 91, col1: 92, col2: 93, col3: 94, col4: 95 }
+                    filters:       { col1: "pa", groups: [1] }
+                    lockedColumns: 1
+                    hiddenColumns: [ "col3" ]
+                )
+
+                # Sorting
+                expect(container.find(".slick-header-column-sorted")).toHaveClass("c1")
+                expect(container.find(".slick-header-column-sorted .slick-sort-indicator"))
+                    .toHaveClass("slick-sort-indicator-asc")
+
+                # Column order
+                expect(container.find(".slick-header-column")).toHaveText("snc4c2c1")
+
+                # Column widths
+                expect(container.find(".sn")).toHaveCss(width: "91px")
+                expect(container.find(".c1")).toHaveCss(width: "92px")
+                expect(container.find(".c2")).toHaveCss(width: "93px")
+                expect(container.find(".c4")).toHaveCss(width: "95px")
+
+                # Filters
+                expect(container.find(".slick-row").length).toBe(1 * 2) #Locked columns
+                expect(container.find(".slick-row")).toHaveText("s2apa")
+
+                # Locked columns
+                expect(container.find(".slick-header-columns-left .slick-header-column")).toHaveLength(1)
+                expect(container.find(".slick-header-columns-right .slick-header-column")).toHaveLength(3)
+
+                # Hidden columns
+                expect(container.find(".slick-header-column.c3")).toHaveLength(0)
+
+
 describe "ColorTableFormatters", ->
     F = Digilys.ColorTableFormatters
 

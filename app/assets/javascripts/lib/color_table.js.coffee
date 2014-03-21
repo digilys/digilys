@@ -312,6 +312,93 @@ class ColorTable
             list.append $("<li/>").append(button)
 
 
+    getState: () ->
+        state = {}
+
+        # Sort column
+        state.sort = @grid.getSortColumns()
+
+        # Column order and widths
+        columns = @grid.getColumns()
+        state.columnOrder = []
+        state.columnWidths = {}
+
+        for c in columns
+            state.columnOrder.push(c.id)
+            state.columnWidths[c.id] = c.width
+
+        # Filters
+        state.filters = @filters
+
+        # Locked columns
+        state.lockedColumns = @grid.getOptions().frozenColumn + 1
+
+        # Hidden columns
+        state.hiddenColumns = (c.id for c in @hiddenColumns)
+
+        return state
+
+    setState: (state) ->
+        return unless state
+
+        # Sorting
+        @sortBy(state.sort[0].columnId, state.sort[0].sortAsc) if state.sort
+
+        columns = @grid.getColumns()
+
+        # Hidden columns (perform before any other column operations)
+        if state.hiddenColumns
+            @hiddenColumns = []
+
+            for columnId in state.hiddenColumns
+                idx = (i for c, i in columns when c.id == columnId)[0]
+
+                if idx != undefined
+                    col = columns.splice(idx, 1)
+                    @hiddenColumns.push(col[0]) if col.length > 0
+
+        # Column order
+        if state.columnOrder
+            ordered   = []
+            compacted = []
+            missing   = []
+
+            for column in columns
+                idx = state.columnOrder.indexOf(column.id)
+
+                if idx > -1
+                    ordered[idx] = column
+                else
+                    missing.push(column)
+
+            compacted.push(e) for e in ordered when e != undefined
+            columns = compacted.concat(missing)
+
+        # Column widths
+        for c in columns when state.columnWidths
+            w = state.columnWidths[c.id]
+            c.width = w if w != undefined
+
+        @grid.setColumns(columns)
+
+        # Locked columns
+        @grid.setOptions(frozenColumn: state.lockedColumns - 1) if state.lockedColumns
+
+
+        # Filters
+        if state.filters
+            delete @filters[k] for k, v of @filters
+
+            inputs = @colorTable.find(".slick-headerrow-column :text")
+
+            for k, v of state.filters
+                @filters[k] = v
+                idx = @grid.getColumnIndex(k)
+                if idx != undefined
+                    $(inputs[idx]).val(v)
+
+            @dataView.refresh()
+
 window.Digilys ?= {}
 window.Digilys.ColorTable = ColorTable
 
