@@ -35,17 +35,6 @@ module SuitesHelper
     end
   end
 
-  def result_color_image(result_or_value, evaluation = nil)
-    case result_or_value
-    when Result
-      return result_or_value.absent ? "" : image_tag("#{result_or_value.color}.png")
-    when Numeric
-      return image_tag("#{evaluation.color_for(result_or_value)}.png")
-    else
-      return ""
-    end
-  end
-
   def format_range(range)
     case range
     when Range

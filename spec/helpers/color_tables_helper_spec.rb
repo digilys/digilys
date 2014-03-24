@@ -127,5 +127,16 @@ describe ColorTablesHelper do
         }.stringify_keys)
       end
     end
+    context "for evaluation series" do
+      let(:series)      { create(:series) }
+      let(:evaluation)  { create(:suite_evaluation, series: series, is_series_current: false) }
+      let(:evaluation2) { create(:suite_evaluation, series: series, is_series_current: true)  }
+      
+      it "displays the latest result in the series for the student" do
+        result
+        data = JSON.parse(result_rows([student], %w(foo bar\ baz), [evaluation2]).first)
+        expect(data["evaluation_#{evaluation2.id}"]).to include("value" => result.value)
+      end
+    end
   end
 end

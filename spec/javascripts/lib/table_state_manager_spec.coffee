@@ -28,7 +28,7 @@ describe "Digilys.TableStateManager", ->
         saveButton = $("<button/>")
             .addClass("btn")
             .data("url", "save-url")
-            .data("datatable", $("<div/>").data("color-table", { getState: -> {current: "state"} }))
+            .data("table", $("<div/>").data("color-table", { getState: -> {current: "state"} }))
 
         manager = new Digilys.TableStateManager(list, selector, name, saveButton)
 

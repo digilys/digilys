@@ -184,7 +184,7 @@ describe ColorTablesController do
       before(:each) do
         logged_in_user.settings.create(customizable: color_table, data: { "color_table_state" => { "bar" => "baz" }, "zomg" => "lol" })
       end
-      it "overrides the datatable state, and leaves the other data alone" do
+      it "overrides the color table state, and leaves the other data alone" do
         put :save_state, id: color_table.id, state: '{"foo": "bar"}'
         expect(response).to be_success
 
@@ -199,7 +199,7 @@ describe ColorTablesController do
     before(:each) do
       logged_in_user.settings.create(customizable: color_table, data: { "color_table_state" => { "bar" => "baz" }, "zomg" => "lol" })
     end
-    it "removes the datatable setting" do
+    it "removes the color table setting" do
       get :clear_state, id: color_table.id
       expect(response).to redirect_to(color_table)
 

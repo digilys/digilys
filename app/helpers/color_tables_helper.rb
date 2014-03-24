@@ -58,7 +58,13 @@ module ColorTablesHelper
       end
 
       evaluations.each do |evaluation|
-        next unless result = evaluation.result_for(student)
+        result = if evaluation.series_id
+                   evaluation.series.result_for(student)
+                 else
+                   evaluation.result_for(student)
+                 end
+
+        next unless result
 
         if result.value
           values[evaluation.id] ||= []

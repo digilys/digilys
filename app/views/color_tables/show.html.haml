@@ -33,7 +33,7 @@
 
 
 
-- evaluations = @color_table.generic_evaluations + @color_table.suite_evaluations
+- evaluations = @color_table.generic_evaluations + @color_table.suite_evaluations.only_series_currents
 
 :javascript
   window.Digilys = window.Digilys || {}
@@ -90,7 +90,7 @@
       = text_field_tag "table-state-name",
         nil,
         placeholder: TableState.human_attribute_name(:name)
-      %button#save-table-state.btn{data: { datatable: "#color-table", url: color_table_table_states_path(@color_table) }}
+      %button#save-table-state.btn{data: { table: "#color-table", url: color_table_table_states_path(@color_table) }}
         = t(:".save_current_state")
       %small.help-block= t(:".edit_table_state_notice")
     %table#table-states.table.table-striped.table-hover{"data-delete-action-name" => t(:".destroy_action")}
@@ -109,4 +109,3 @@
               remote: true,
               class:  "btn btn-small btn-danger"
 
-/= render partial: "color_table", locals: { color_table: @color_table, user_settings: @user_settings, can_change: true }
