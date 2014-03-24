@@ -211,9 +211,8 @@ sv:
       all_groups: Visar alla grupper
       change_state: Byt utseende
       clear_state: Kronologisk ordning
-    color_table:
+      table_states: Utseenden
       save_current_state: Spara nuvarande utseende
-      tools: Verktyg
       edit_table_state_notice: Om du skriver samma namn som ett befintligt utseende uppdateras det utseendet
     clear_state:
       success: Använder utseendet "Kronologisk ordning"

@@ -40,7 +40,7 @@ class TableStateManager
         @saveButton.button("loading")
 
         url   = @saveButton.data("url")
-        state = $(@saveButton.data("datatable")).data("current-state")
+        state = $(@saveButton.data("datatable")).data("color-table").getState()
 
         $.ajax(
             url: url

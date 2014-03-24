@@ -72,6 +72,8 @@ class ColorTable
         loadData.call(this, data)
         @sortBy("student-name", true)
 
+        @colorTable.data("color-table", this)
+
 
     setTableHeight = ->
         offset = @colorTable.offset()

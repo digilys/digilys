@@ -70,6 +70,9 @@ describe "Digilys.ColorTable", ->
             container.find(".slick-header-column:not(.slick-header-column-sorted)").trigger("click")
             expect(container.find(".slick-header-column-sorted .slick-column-name")).toHaveText("Col 1")
 
+        it "adds itself to the color table's data", ->
+            expect(container).toHaveData("color-table", table)
+
     describe "event subscriptions", ->
         beforeEach ->
             table = new Digilys.ColorTable(container, columns, data, columnMenu)
