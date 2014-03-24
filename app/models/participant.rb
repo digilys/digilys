@@ -19,6 +19,7 @@ class Participant < ActiveRecord::Base
 
   validate :student_and_suite_must_have_the_same_instance
 
+  after_create  :add_absent_results_for_passed_evaluations
   after_create  :add_group_users_to_suite
   after_create  :update_evaluation_statuses!
   after_destroy :update_evaluation_statuses!
@@ -45,6 +46,17 @@ class Participant < ActiveRecord::Base
 
 
   private
+
+  def add_absent_results_for_passed_evaluations
+    return unless self.suite
+
+    self.suite.evaluations
+    .with_target(:all, self.student.gender)
+    .where("date < ?", Date.today)
+    .each do |evaluation|
+      evaluation.results.create(student_id: self.student_id, absent: true) if evaluation.evaluation_participants.blank?
+    end
+  end
 
   def add_group_users_to_suite
     if self.group && self.suite
