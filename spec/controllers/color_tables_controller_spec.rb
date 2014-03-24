@@ -45,6 +45,7 @@ describe ColorTablesController do
 
       before(:each) do
         logged_in_user.add_role :reader,  regular.first
+        logged_in_user.add_role :reader,  edited
         logged_in_user.add_role :editor,  edited
         logged_in_user.add_role :manager, managed
       end

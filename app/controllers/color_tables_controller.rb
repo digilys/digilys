@@ -8,7 +8,7 @@ class ColorTablesController < ApplicationController
   
   def index
     if !current_user.has_role?(:admin)
-      @color_tables = @color_tables.with_role([:manager, :editor, :reader], current_user)
+      @color_tables = @color_tables.with_role([:manager, :editor, :reader], current_user).uniq
     end
 
     @color_tables = @color_tables.regular
