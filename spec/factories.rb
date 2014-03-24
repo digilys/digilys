@@ -1,4 +1,9 @@
 FactoryGirl.define do
+  if !ENV["debug_versioning"].blank?
+    before(:create) { PaperTrail.enabled = false }
+    after(:create)  { PaperTrail.enabled = true  }
+  end
+
   factory :user do
     sequence(:name)       { |i| "User %09d" % i }
     sequence(:email)      { |i| "user%09d@example.com" % i }
@@ -59,6 +64,18 @@ FactoryGirl.define do
     status              :open
 
     factory :invalid_suite do
+      name nil
+    end
+  end
+
+  factory :color_table do
+    instance        { Instance.order(:id).first || create(:instance) }
+    suite           nil
+
+    sequence(:name) { |i| "Color Table %09d" % i }
+    student_data    []
+
+    factory :invalid_color_table do
       name nil
     end
   end

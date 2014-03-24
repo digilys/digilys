@@ -177,7 +177,7 @@ describe Evaluation do
     end
   end
   context "associations" do
-    let(:suite) { create(:suite) }
+    let(:suite)       { create(:suite) }
 
     it "touches the suite" do
       updated_at = suite.updated_at
@@ -185,6 +185,28 @@ describe Evaluation do
         participant = create(:suite_evaluation, suite: suite)
         updated_at.should < suite.reload.updated_at
       end
+    end
+
+    it "adds the evaluation to the suite's color table" do
+      evaluation = create(:suite_evaluation, suite: suite)
+      suite.color_table.evaluations(true).should include(evaluation)
+    end
+    it "does not add multiple entries for the evaluation to the suite's color table" do
+      evaluation = create(:suite_evaluation, suite: suite)
+      suite.color_table.evaluations(true).length.should == 1
+
+      evaluation.name = "#{evaluation.name} updated"
+      evaluation.save
+      suite.color_table.evaluations(true).length.should == 1
+    end
+  end
+  context "versioning", versioning: true do
+    it { should be_versioned }
+    it "stores the new suite id as metadata" do
+      evaluation = create(:suite_evaluation)
+      evaluation.suite = create(:suite)
+      evaluation.save
+      evaluation.versions.last.suite_id.should == evaluation.suite_id
     end
   end
 
@@ -239,10 +261,24 @@ describe Evaluation do
     context "for boolean value type" do
       subject { create(:boolean_evaluation) }
       its(:value_aliases) { should == Evaluation::BOOLEAN_ALIASES }
+
+      it "does not change the identity of the persisted object if no changes have occurred" do
+        evaluation = build(:boolean_evaluation, value_aliases: Evaluation::BOOLEAN_ALIASES.clone)
+        evaluation.send(:set_aliases_from_value_type)
+        evaluation.value_aliases.should == Evaluation::BOOLEAN_ALIASES
+        evaluation.value_aliases.should_not equal(Evaluation::BOOLEAN_ALIASES)
+      end
     end
     context "for grade value type" do
       subject { create(:grade_evaluation) }
       its(:value_aliases) { should == Evaluation::GRADE_ALIASES }
+
+      it "does not change the identity of the persisted object if no changes have occurred" do
+        evaluation = build(:grade_evaluation, value_aliases: Evaluation::GRADE_ALIASES.clone)
+        evaluation.send(:set_aliases_from_value_type)
+        evaluation.value_aliases.should == Evaluation::GRADE_ALIASES
+        evaluation.value_aliases.should_not equal(Evaluation::GRADE_ALIASES)
+      end
     end
   end
   
@@ -259,6 +295,15 @@ describe Evaluation do
       it "correctly maps the colors" do
         evaluation.colors.should include("1" => "red")
         evaluation.colors.should include("0" => "green")
+      end
+
+      it "does not change the identity of the object if no changes have occurred" do
+        old = evaluation.colors
+
+        evaluation.color_for_true  = :red
+        evaluation.color_for_false = :green
+        evaluation.send(:persist_colors_and_stanines)
+        evaluation.colors.should equal(old)
       end
 
       context "with explicitly set colors" do
@@ -288,6 +333,30 @@ describe Evaluation do
         evaluation.stanines.should include("3" => 6)
         evaluation.stanines.should include("4" => 7)
         evaluation.stanines.should include("5" => 9)
+      end
+
+      it "does not change the identity of the object if no changes have occurred" do
+        old_colors = evaluation.colors
+        old_stanines = evaluation.stanines
+
+        evaluation.color_for_grade_a = 3
+        evaluation.color_for_grade_b = 3
+        evaluation.color_for_grade_c = 2
+        evaluation.color_for_grade_d = 2
+        evaluation.color_for_grade_e = 1
+        evaluation.color_for_grade_f = 1
+
+        evaluation.stanine_for_grade_a = 9
+        evaluation.stanine_for_grade_b = 7
+        evaluation.stanine_for_grade_c = 6
+        evaluation.stanine_for_grade_d = 5
+        evaluation.stanine_for_grade_e = 3
+        evaluation.stanine_for_grade_f = 2
+
+        evaluation.send(:persist_colors_and_stanines)
+
+        evaluation.colors.should equal(old_colors)
+        evaluation.stanines.should equal(old_stanines)
       end
 
       context "with explicitly set colors and stanines" do
@@ -344,6 +413,42 @@ describe Evaluation do
           evaluation.stanines.should include("7" => { "min" => 19, "max" => 21 } )
           evaluation.stanines.should include("8" => { "min" => 22, "max" => 30 } )
         end
+      end
+
+      it "does not change the identity of the object if no changes have occurred" do
+        old_colors = evaluation.colors
+        old_stanines = evaluation.stanines
+
+        evaluation.red_min    = 0
+        evaluation.red_max    = 9
+        evaluation.yellow_min = 10
+        evaluation.yellow_max = 20
+        evaluation.green_min  = 21
+        evaluation.green_max  = 30
+
+        evaluation.stanine1_min = 0
+        evaluation.stanine1_max = 3
+        evaluation.stanine2_min = 4
+        evaluation.stanine2_max = 6
+        evaluation.stanine3_min = 7
+        evaluation.stanine3_max = 7
+        evaluation.stanine4_min = 8
+        evaluation.stanine4_max = 12
+        evaluation.stanine5_min = 13
+        evaluation.stanine5_max = 15
+        evaluation.stanine6_min = 16
+        evaluation.stanine6_max = 18
+        evaluation.stanine7_min = 19
+        evaluation.stanine7_max = 21
+        evaluation.stanine8_min = 22
+        evaluation.stanine8_max = 24
+        evaluation.stanine9_min = 25
+        evaluation.stanine9_max = 30
+
+        evaluation.send(:persist_colors_and_stanines)
+
+        evaluation.colors.should equal(old_colors)
+        evaluation.stanines.should equal(old_stanines)
       end
 
       context "with explicitly set colors and stanines" do
@@ -1011,6 +1116,24 @@ describe Evaluation do
     subject { Evaluation.in_instance(suite1.instance_id).all }
     it      { should match_array([ evaluation1 ])}
   end
+  describe "#search_in_instance" do
+    let(:suite1)       { create(:suite, name: "suite 1") }
+    let(:suite2)       { create(:suite, name: "suite 2", instance: create(:instance)) }
+    let!(:generic)     { create(:generic_evaluation, name: "evaluation 1", instance: suite1.instance) }
+    let!(:evaluation1) { create(:suite_evaluation, suite: suite1, name: "evaluation 1") }
+    let!(:evaluation2) { create(:suite_evaluation, suite: suite1, name: "evaluation 2") }
+    let!(:evaluation3) { create(:suite_evaluation, suite: suite2, name: "evaluation 1") }
+
+    it "searches in an instance" do
+      result = Evaluation.search_in_instance(suite1.instance_id, name_cont: "1")
+      result.should match_array([ evaluation1, generic ])
+    end
+    it "handles when the search automatically joins the suite table" do
+      result = Evaluation.search_in_instance(suite1.instance_id, suite_name_cont: "1")
+      result.should match_array([ evaluation1, evaluation2 ])
+    end
+  end
+
   describe "#overdue" do
     let(:suite)                  { create(:suite) }
     let!(:participants)          { create_list(:participant, 2, suite: suite) }

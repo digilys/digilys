@@ -1,0 +1,33 @@
+sv:
+  events:
+    suite:
+      created: Planeringen skapades.
+      name_changed: Planeringens rubrik ändrades från "%{from}" till "%{to}".
+    evaluation:
+      created: Lades till i planeringen.
+      name_changed: Rubriken ändrades från "%{from}" till "%{to}".
+      max_result_changed: Maxresultatet ändrades från %{from} till %{to}.
+      date_changed: Datumet ändrades från %{from} till %{to}.
+      description_changed: Beskrivningen ändrades från "%{from}" till "%{to}".
+      target_changed: Målgruppen ändrades från %{from} till %{to}.
+      colors_changed: Färgintervallen uppdaterades.
+      stanines_changed: Stanineintervallen uppdaterades.
+      status_empty: Testresultatet raderades.
+      status_partial: Testresultatet rapporterades delvis.
+      status_complete: Testresultatet rapporterades.
+    meeting:
+      created: Lades till i planeringen
+      name_changed: Rubriken ändrades från "%{from}" till "%{to}".
+      date_changed: Datumet ändrades från %{from} till %{to}.
+      completed: Protokollfördes
+      uncompleted: Återfördes till att inte vara protokollfört
+    activity:
+      created: Lades till i planeringen
+      name_changed: Rubriken ändrades från "%{from}" till "%{to}".
+      start_date_changed: Startdatumet ändrades från %{from} till %{to}.
+      end_date_changed: Slutdatumet ändrades från %{from} till %{to}.
+      closed: Stängdes.
+      open: Öppnades.
+    participant:
+      created: Lades till i planeringen
+      destroyed: Togs bort från planeringen

@@ -1,6 +1,8 @@
 class Evaluation < ActiveRecord::Base
   extend Enumerize
 
+  has_paper_trail meta: { suite_id: ->(s) { s.suite_id } }
+
   # Column name "type" is not used for inheritance
   self.inheritance_column = :disable_inheritance
 
@@ -15,6 +17,7 @@ class Evaluation < ActiveRecord::Base
 
   has_and_belongs_to_many :evaluation_participants, class_name: "Participant", include: :student
   has_and_belongs_to_many :users
+  has_and_belongs_to_many :color_tables
 
   belongs_to :suite,              touch:      true,         inverse_of: :evaluations
   belongs_to :series
@@ -25,7 +28,7 @@ class Evaluation < ActiveRecord::Base
   acts_as_taggable_on :categories
 
   enumerize :type,       in: [ :generic, :template, :suite ], predicates: { prefix: true }, scope: true
-  enumerize :target,     in: [ :all, :male, :female ],        predicates: { prefix: true }, default: :all
+  enumerize :target,     in: [ :all, :male, :female ],        predicates: { prefix: true }, scope: true, default: :all
   enumerize :value_type, in: [ :numeric, :boolean, :grade ],  predicates: { prefix: true }, default: :numeric
   enumerize :status,     in: [ :empty, :partial, :complete ], predicates: { prefix: true }, scope: true, default: :empty
 
@@ -188,10 +191,11 @@ class Evaluation < ActiveRecord::Base
 
   before_validation :parse_students_and_groups
   before_validation :set_default_values_for_value_type
-  after_update      :touch_results
   before_save       :set_aliases_from_value_type
   before_save       :persist_colors_and_stanines
   before_save       :create_series_from_name
+  after_create      :add_to_suite_color_table
+  after_update      :touch_results
   after_save        :update_series_current!
   after_save        :destroy_empty_series!
   after_destroy     :destroy_empty_series!
@@ -477,6 +481,18 @@ class Evaluation < ActiveRecord::Base
     self.joins(:suite).where("suites.instance_id" => instance_id)
   end
 
+  def self.search_in_instance(instance_id, search_params)
+    q = where([ "suites.instance_id = :instance_id or evaluations.instance_id = :instance_id", instance_id: instance_id ])
+
+    # Ransack joins the suites table if the search params contains
+    # parameters like suite_name
+    unless search_params.keys.any? { |k| k =~ /suite_/ }
+      q = q.joins("left join suites on suites.id = evaluations.suite_id")
+    end
+
+    q.search(search_params).result
+  end
+
   def self.overdue
     with_status(:empty, :partial).where([ "date < ?", Date.today ])
   end
@@ -581,8 +597,15 @@ class Evaluation < ActiveRecord::Base
     return nil
   end
 
+
   def touch_results
     self.results(true).map(&:save) if self.colors_changed? || self.stanines_changed?
+  end
+
+  def add_to_suite_color_table
+    if self.type.suite? && self.suite.color_table
+      self.suite.color_table.evaluations << self
+    end
   end
 
 
@@ -639,21 +662,23 @@ class Evaluation < ActiveRecord::Base
   }
 
   def set_aliases_from_value_type
-    case self.value_type
-    when "grade"
+    if self.value_type == "grade" && self.value_aliases != GRADE_ALIASES
       self.value_aliases = GRADE_ALIASES
-    when "boolean"
+    elsif self.value_type == "boolean" && self.value_aliases != BOOLEAN_ALIASES
       self.value_aliases = BOOLEAN_ALIASES
     end
   end
 
   def persist_colors_and_stanines
+    new_colors   = nil
+    new_stanines = nil
+
     case self.value_type
     when "boolean"
-      self.colors = { "0" => self.color_for_false, "1" => self.color_for_true } unless self.colors_changed?
+      new_colors = { "0" => self.color_for_false.to_s, "1" => self.color_for_true.to_s } unless self.colors_changed?
     when "grade"
       unless self.colors_changed?
-        self.colors = {
+        new_colors = {
           "0" => self.color_for_grade_f,
           "1" => self.color_for_grade_e,
           "2" => self.color_for_grade_d,
@@ -663,7 +688,7 @@ class Evaluation < ActiveRecord::Base
         }
       end
       unless self.stanines_changed?
-        self.stanines = {
+        new_stanines = {
           "0" => self.stanine_for_grade_f,
           "1" => self.stanine_for_grade_e,
           "2" => self.stanine_for_grade_d,
@@ -675,27 +700,58 @@ class Evaluation < ActiveRecord::Base
     when "numeric"
       unless self.colors_changed?
         colors = {}
-        colors["red"]    = { min: self.red_min.to_i,    max: self.red_max.to_i }    if self.red_min    && self.red_max
-        colors["yellow"] = { min: self.yellow_min.to_i, max: self.yellow_max.to_i } if self.yellow_min && self.yellow_max
-        colors["green"]  = { min: self.green_min.to_i,  max: self.green_max.to_i }  if self.green_min  && self.green_max
-        self.colors = !colors.blank? ? colors : nil
+        colors["red"]    = { "min" => self.red_min.to_i,    "max" => self.red_max.to_i }    if self.red_min    && self.red_max
+        colors["yellow"] = { "min" => self.yellow_min.to_i, "max" => self.yellow_max.to_i } if self.yellow_min && self.yellow_max
+        colors["green"]  = { "min" => self.green_min.to_i,  "max" => self.green_max.to_i }  if self.green_min  && self.green_max
+        new_colors = !colors.blank? ? colors : nil
       end
 
       unless self.stanines_changed?
         stanines = {}
-        stanines[1] = { min: self.stanine1_min.to_i, max: self.stanine1_max.to_i } if self.stanine1_min && self.stanine1_max
-        stanines[2] = { min: self.stanine2_min.to_i, max: self.stanine2_max.to_i } if self.stanine2_min && self.stanine2_max
-        stanines[3] = { min: self.stanine3_min.to_i, max: self.stanine3_max.to_i } if self.stanine3_min && self.stanine3_max
-        stanines[4] = { min: self.stanine4_min.to_i, max: self.stanine4_max.to_i } if self.stanine4_min && self.stanine4_max
-        stanines[5] = { min: self.stanine5_min.to_i, max: self.stanine5_max.to_i } if self.stanine5_min && self.stanine5_max
-        stanines[6] = { min: self.stanine6_min.to_i, max: self.stanine6_max.to_i } if self.stanine6_min && self.stanine6_max
-        stanines[7] = { min: self.stanine7_min.to_i, max: self.stanine7_max.to_i } if self.stanine7_min && self.stanine7_max
-        stanines[8] = { min: self.stanine8_min.to_i, max: self.stanine8_max.to_i } if self.stanine8_min && self.stanine8_max
-        stanines[9] = { min: self.stanine9_min.to_i, max: self.stanine9_max.to_i } if self.stanine9_min && self.stanine9_max
 
-        self.stanines = !stanines.blank? ? stanines : nil
+        stanines["1"] = {
+          "min" => self.stanine1_min.to_i,
+          "max" => self.stanine1_max.to_i
+        } if self.stanine1_min && self.stanine1_max
+        stanines["2"] = {
+          "min" => self.stanine2_min.to_i,
+          "max" => self.stanine2_max.to_i
+        } if self.stanine2_min && self.stanine2_max
+        stanines["3"] = {
+          "min" => self.stanine3_min.to_i,
+          "max" => self.stanine3_max.to_i
+        } if self.stanine3_min && self.stanine3_max
+        stanines["4"] = {
+          "min" => self.stanine4_min.to_i,
+          "max" => self.stanine4_max.to_i
+        } if self.stanine4_min && self.stanine4_max
+        stanines["5"] = {
+          "min" => self.stanine5_min.to_i,
+          "max" => self.stanine5_max.to_i
+        } if self.stanine5_min && self.stanine5_max
+        stanines["6"] = {
+          "min" => self.stanine6_min.to_i,
+          "max" => self.stanine6_max.to_i
+        } if self.stanine6_min && self.stanine6_max
+        stanines["7"] = {
+          "min" => self.stanine7_min.to_i,
+          "max" => self.stanine7_max.to_i
+        } if self.stanine7_min && self.stanine7_max
+        stanines["8"] = {
+          "min" => self.stanine8_min.to_i,
+          "max" => self.stanine8_max.to_i
+        } if self.stanine8_min && self.stanine8_max
+        stanines["9"] = {
+          "min" => self.stanine9_min.to_i,
+          "max" => self.stanine9_max.to_i
+        } if self.stanine9_min && self.stanine9_max
+
+        new_stanines = !stanines.blank? ? stanines : nil
       end
     end
+
+    self.colors   = new_colors   if new_colors   && self.colors   != new_colors
+    self.stanines = new_stanines if new_stanines && self.stanines != new_stanines
   end
 
   def parse_students_and_groups

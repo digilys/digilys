@@ -7,6 +7,27 @@ class EvaluationsController < ApplicationController
   before_filter :instance_filter
 
 
+  def search
+    search_params = Hash[
+      params[:q].collect do |k, v|
+        [k, v.include?(",") ? v.split(/\s*,\s*/) : v ]
+      end
+    ]
+
+    @evaluations = @evaluations.
+      select("evaluations.id, evaluations.name, suites.name as suite_name").
+      search_in_instance(current_instance_id, search_params).
+      where([ "(suites.is_template is null or suites.is_template = ?)", false ]).
+      with_type(:generic, :suite).order("evaluations.name").
+      page(params[:page])
+
+    json           = {}
+    json[:results] = @evaluations.collect { |e| { id: e.id, text: "#{e.name}#{", #{e.suite_name}" if e.suite_name}" } }
+    json[:more]    = !@evaluations.last_page?
+
+    render json: json.to_json
+  end
+
   def show
   end
 
@@ -75,6 +96,30 @@ class EvaluationsController < ApplicationController
 
     @evaluation.results.sort_by! { |r| r.student.send(first) + r.student.send(second) }
   end
+  def report_all
+    if params[:ids].blank?
+      redirect_to @suite
+    elsif params[:ids].length == 1
+      redirect_to report_evaluation_url(params[:ids].first)
+    else
+      @evaluations = Evaluation.order(:date).find(params[:ids])
+
+      @participants = {}
+
+      @evaluations.each do |evaluation|
+        evaluation.participants.each do |participant|
+          unless evaluation.results.detect { |r| r.student_id == participant.student_id }
+            evaluation.results.build(student_id: participant.student_id)
+          end
+
+          @participants[participant.id] = participant unless @participants.has_key?(participant.id)
+        end
+      end
+
+      @participants = @participants.values
+      @participants.sort_by!(&:name)
+    end
+  end
 
   def submit_report
     @suite        = @evaluation.suite
@@ -86,6 +131,31 @@ class EvaluationsController < ApplicationController
     else
       render action: "report"
     end
+  end
+  def submit_report_all
+    params[:results].each do |evaluation_id, students|
+      evaluation = Evaluation.find(evaluation_id)
+
+      students.each do |student_id, value|
+        result = evaluation.results.detect { |r| r.student_id == student_id.to_i }
+        result ||= evaluation.results.build(student_id: student_id.to_i)
+
+        if value.blank? && !result.new_record?
+          result.destroy
+        elsif value == "absent"
+          result.absent = true
+          result.value = nil
+          result.save
+        else
+          result.absent = false
+          result.value = value
+          result.save
+        end
+      end
+    end
+
+    flash[:success] = t(:"evaluations.submit_report.success")
+    redirect_to(@suite)
   end
 
   def destroy_report

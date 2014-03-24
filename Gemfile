@@ -12,6 +12,8 @@ gem "config_spartan",      "~> 1.0.1"
 gem "ransack",             "~> 0.7.2"
 gem "acts-as-taggable-on", "~> 2.4.1"
 gem "enumerize",           "~> 0.6.1"
+gem "paper_trail",         "~> 3.0.0"
+gem "jbuilder",            "~> 2.0.4"
 
 gem "yubikey_database_authenticatable",
   git: "https://github.com/mort666/yubikey_database_authenticatable",
@@ -51,8 +53,7 @@ group :test, :development do
   gem "pry",                "~> 0.9.12"
   gem "pry-remote",         "~> 0.1.7"
   gem "rspec-rails",        "~> 2.0"
-  gem "factory_girl",       "~> 4.2.0"
-  gem "factory_girl_rails", "~> 4.2.1"
+  gem "factory_girl_rails", "~> 4.4.1"
   gem "capybara",           "~> 2.1.0"
   gem "jasmine-rails",      "~> 0.4.6"
 end

@@ -64,7 +64,7 @@
 
   .span6
     - if !@student.generic_results.blank? || !@student.suite_results.blank?
-      %table.table.table-bordered.table-hover.evaluation-results.results-table
+      %table.table.table-bordered.table-hover.student-results.results-table
         %tbody
           - if !@student.generic_results.blank?
             %tr
@@ -90,7 +90,8 @@
               %th= t(:".stanines")
             - @student.suite_results.each do |result|
               %tr
-                %td= link_to_if show_link, result.evaluation.name, result.evaluation
+                %td{title: evaluation_info(result.evaluation)}
+                  = link_to_if show_link, result.evaluation.name, result.evaluation
                 %td.result{class: result_color_class(result)}
                   %div= result.display_value
                 - if result.evaluation.stanines?

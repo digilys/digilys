@@ -2,6 +2,7 @@ class Suite < ActiveRecord::Base
   extend Enumerize
 
   resourcify
+  has_paper_trail skip: [ :generic_evaluations, :student_data ], meta: { suite_id: ->(s) { s.id } }
 
   belongs_to :instance
   belongs_to :template,  class_name: "Suite"
@@ -50,10 +51,14 @@ class Suite < ActiveRecord::Base
     order: "name asc",
     dependent: :destroy
 
+  has_one :color_table,
+    dependent: :destroy
+
   has_many :table_states,
     as: :base,
     order: "name asc",
     dependent: :destroy
+
 
   accepts_nested_attributes_for :evaluations,
     :meetings,
@@ -70,7 +75,8 @@ class Suite < ActiveRecord::Base
 
   enumerize :status, in: [ :open, :closed ], predicates: true, scope: true, default: :open
 
-  before_save :ensure_unique_student_data
+  before_save  :ensure_unique_student_data
+  after_create :ensure_color_table
 
   validates :name,     presence: true
   validates :instance, presence: true
@@ -96,21 +102,24 @@ class Suite < ActiveRecord::Base
       return ids
     end
   end
+  def add_generic_evaluations(*evaluation_ids)
+    self.generic_evaluations += evaluation_ids
+  end
+  def remove_generic_evaluations(*evaluation_ids)
+    self.generic_evaluations -= evaluation_ids
+  end
+
   def student_data
     if read_attribute(:student_data).nil?
       write_attribute(:student_data, [])
     end
     return read_attribute(:student_data)
   end
-
-  def group_hierarchy
-    partition = self.groups.group_by(&:parent_id)
-
-    sorted_groups = []
-
-    # The top level has parent_id == nil
-    sort_partitioned_groups(sorted_groups, partition, nil)
-    return sorted_groups
+  def add_student_data(*keys)
+    self.student_data += keys
+  end
+  def remove_student_data(*keys)
+    self.student_data -= keys
   end
 
   def update_evaluation_statuses!
@@ -144,16 +153,17 @@ class Suite < ActiveRecord::Base
 
   private
 
-  def sort_partitioned_groups(sorted_groups, partition, key)
-    return if partition[key].blank?
-
-    partition[key].each do |group|
-      sorted_groups << group
-      sort_partitioned_groups(sorted_groups, partition, group.id)
-    end
-  end
-
   def ensure_unique_student_data
     self.student_data.uniq!
+  end
+
+  def ensure_color_table
+    return if self.is_template
+
+    if !self.color_table
+      self.create_color_table!(name: self.name)
+    elsif self.color_table.new_record?
+      self.color_table.save!
+    end
   end
 end

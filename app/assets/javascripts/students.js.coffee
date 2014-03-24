@@ -10,3 +10,11 @@ $ ->
             inputs:        ".generic-results-inputs :input[id^=student_generic_results_attributes_][id$=_value]"
             triggerSuffix: "_value"
             booleanSuffix: "_absent"
+
+    # Evaluation info popup
+    $(".student-results td[title]").tooltip(
+        html:      true
+        placement: "left"
+        delay:     { show: 300, hide: 100 }
+        container: "body"
+    )

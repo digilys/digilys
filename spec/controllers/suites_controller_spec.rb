@@ -1,6 +1,8 @@
 require 'spec_helper'
 
-describe SuitesController do
+describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
+  debug_versioning(ENV["debug_versioning"]) if ENV["debug_versioning"]
+
   login_user(:admin)
 
   let(:instance)    { create(:instance) }
@@ -114,65 +116,19 @@ describe SuitesController do
     end
   end
 
-  describe "GET #color_table" do
-    it "is successful" do
-      get :color_table, id: suite.id
+  describe "GET #log", versioning: true do
+    it "displays paper_trail versions related to the suite" do
+      dummy   = create(:meeting)
+      meeting = build(:meeting, suite: suite)
+      meeting.save
+
+      get :log, id: suite.id
       response.should be_success
-      response.should render_template("layouts/fullpage")
+
+      assigns(:versions).collect(&:id).uniq.should match_array((meeting.versions + suite.versions).collect(&:id))
     end
     it "gives a 404 if the instance does not match" do
-      get :color_table, id: other_suite.id
-      response.status.should == 404
-    end
-  end
-
-  describe "PUT #save_color_table_state" do
-    it "sets the requested table state as the current user's setting for the suite" do
-
-     updated_at = suite.updated_at
-     put :save_color_table_state, id: suite.id, state: '{"foo": "bar"}'
-
-     response.should be_success
-     logged_in_user.settings.for(suite).first.data["datatable_state"].should == { "foo" => "bar" }
-
-     Timecop.freeze(Time.now + 5.minutes) do
-       updated_at.should < suite.reload.updated_at 
-     end
-    end
-    it "gives a 404 if the instance does not match" do
-      put :save_color_table_state, id: other_suite.id, state: '{"foo": "bar"}'
-      response.status.should == 404
-    end
-
-    context "with existing data" do
-      before(:each) do
-        logged_in_user.settings.create(customizable: suite, data: { "datatable_state" => { "bar" => "baz" }, "zomg" => "lol" })
-      end
-      it "overrides the datatable state, and leaves the other data alone" do
-        put :save_color_table_state, id: suite.id, state: '{"foo": "bar"}'
-        response.should be_success
-
-        data = logged_in_user.settings.for(suite).first.data
-        data["datatable_state"].should == { "foo" => "bar" }
-        data["zomg"].should            == "lol"
-      end
-    end
-  end
-
-  describe "GET #clear_color_table_state" do
-    before(:each) do
-      logged_in_user.settings.create(customizable: suite, data: { "datatable_state" => { "bar" => "baz" }, "zomg" => "lol" })
-    end
-    it "removes the datatable setting" do
-      get :clear_color_table_state, id: suite.id
-      response.should redirect_to(color_table_suite_url(suite))
-
-      data = logged_in_user.settings.for(suite).first.data
-      data["datatable_state"].should be_nil
-      data["zomg"].should            == "lol"
-    end
-    it "gives a 404 if the instance does not match" do
-      get :clear_color_table_state, id: other_suite.id
+      get :log, id: other_suite.id
       response.status.should == 404
     end
   end
@@ -501,74 +457,6 @@ describe SuitesController do
     end
     it "gives a 404 if the instance does not match" do
       delete :remove_contributors, id: other_suite.id, user_ids: users.collect(&:id).join(",")
-      response.status.should == 404
-    end
-  end
-
-  describe "PUT #add_generic_evaluations" do
-    let(:evaluation)       { create(:generic_evaluation) }
-    let(:other_evaluation) { create(:generic_evaluation, instance: instance) }
-
-    it "adds the generic evaluations to the suite" do
-      put :add_generic_evaluations, id: suite.id, suite: { generic_evaluations: evaluation.id }
-      response.should redirect_to(color_table_suite_url(suite))
-      suite.reload.generic_evaluations.should include(evaluation.id)
-    end
-    it "gives a 404 if the instance does not match" do
-      put :add_generic_evaluations, id: other_suite.id, suite: { generic_evaluations: evaluation.id }
-      response.status.should == 404
-    end
-    it "gives a 404 if the evaluation's instance does not match" do
-      put :add_generic_evaluations, id: suite.id, suite: { generic_evaluations: other_evaluation.id }
-      response.status.should == 404
-    end
-  end
-  describe "DELETE #remove_generic_evaluations" do
-    let(:evaluation)       { create(:generic_evaluation) }
-    let(:other_evaluation) { create(:generic_evaluation, instance: instance) }
-
-    it "removes the generic evaluations from the suite" do
-      suite.generic_evaluations << evaluation.id
-      suite.save
-
-      delete :remove_generic_evaluations, id: suite.id, evaluation_id: evaluation.id
-      response.should redirect_to(color_table_suite_url(suite))
-      suite.reload.generic_evaluations.should_not include(evaluation.id)
-    end
-    it "gives a 404 if the instance does not match" do
-      delete :remove_generic_evaluations, id: other_suite.id, evaluation_id: evaluation.id
-      response.status.should == 404
-    end
-    it "gives a 404 if the evaluation's instance does not match" do
-      delete :remove_generic_evaluations, id: suite.id, evaluation_id: other_evaluation.id
-      response.status.should == 404
-    end
-  end
-
-  describe "PUT #add_student_data" do
-    it "adds a student data key to the suite" do
-      suite.student_data.should be_blank
-
-      put :add_student_data, id: suite.id, key: "foo"
-      response.should redirect_to(color_table_suite_url(suite))
-      suite.reload.student_data.should include("foo")
-    end
-    it "gives a 404 if the instance does not match" do
-      put :add_student_data, id: other_suite.id, key: "foo"
-      response.status.should == 404
-    end
-  end
-  describe "PUT #add_student_data" do
-    it "removes a student data key from the suite" do
-      suite.student_data << "foo"
-      suite.save
-
-      delete :remove_student_data, id: suite.id, key: "foo"
-      response.should redirect_to(color_table_suite_url(suite))
-      suite.reload.student_data.should_not include("foo")
-    end
-    it "gives a 404 if the instance does not match" do
-      delete :remove_student_data, id: other_suite.id, key: "foo"
       response.status.should == 404
     end
   end

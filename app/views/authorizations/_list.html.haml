@@ -1,0 +1,17 @@
+= label_tag "authorization-add", t(:".add_user")
+= hidden_field_tag(:user, nil,
+  id: "authorization-add",
+  class: "authorization-autocomplete-field input-block-level",
+  data: { url: search_users_path(format: :json),
+    "base-url" => base_url,
+    list: "#authorization-list",
+    placeholder: t(:".user_placeholder") })
+
+%table#authorization-list.table.table-striped.authorization-table{data: { base: { url: base_url } }}
+  %thead
+    %tr
+      %th.name= User.human_attribute_name(:name)
+      %th.actions
+  %tbody
+    - subject.users.each do |user|
+      = render partial: "authorizations/row", locals: { user: user, subject: subject }

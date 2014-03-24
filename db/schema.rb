@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140205125649) do
+ActiveRecord::Schema.define(:version => 20140310140021) do
 
   create_table "activities", :force => true do |t|
     t.integer  "suite_id"
@@ -48,6 +48,22 @@ ActiveRecord::Schema.define(:version => 20140205125649) do
 
   add_index "activities_users", ["activity_id", "user_id"], :name => "index_activities_users_on_activity_id_and_user_id"
 
+  create_table "color_tables", :force => true do |t|
+    t.string   "name"
+    t.text     "student_data", :default => "[]"
+    t.integer  "instance_id"
+    t.integer  "suite_id"
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
+  end
+
+  create_table "color_tables_evaluations", :id => false, :force => true do |t|
+    t.integer "color_table_id"
+    t.integer "evaluation_id"
+  end
+
+  add_index "color_tables_evaluations", ["color_table_id", "evaluation_id"], :name => "index_colortab_eval_on_ids"
+
   create_table "evaluations", :force => true do |t|
     t.integer  "suite_id"
     t.string   "name"
@@ -65,9 +81,9 @@ ActiveRecord::Schema.define(:version => 20140205125649) do
     t.text     "stanines"
     t.string   "status",                            :default => "empty"
     t.integer  "instance_id"
+    t.boolean  "imported",                          :default => false
     t.integer  "series_id"
     t.boolean  "is_series_current",                 :default => false
-    t.boolean  "imported",                          :default => false
   end
 
   add_index "evaluations", ["status"], :name => "index_evaluations_on_status"
@@ -276,5 +292,18 @@ ActiveRecord::Schema.define(:version => 20140205125649) do
   end
 
   add_index "users_roles", ["user_id", "role_id"], :name => "index_users_roles_on_user_id_and_role_id"
+
+  create_table "versions", :force => true do |t|
+    t.string   "item_type",      :null => false
+    t.integer  "item_id",        :null => false
+    t.string   "event",          :null => false
+    t.string   "whodunnit"
+    t.text     "object"
+    t.text     "object_changes"
+    t.datetime "created_at"
+    t.integer  "suite_id"
+  end
+
+  add_index "versions", ["item_type", "item_id"], :name => "index_versions_on_item_type_and_item_id"
 
 end

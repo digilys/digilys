@@ -16,6 +16,9 @@ sv:
       suite:
         one: Planering
         other: Planeringar
+      color_table:
+        one: Färgkarta
+        other: Färgkartor
       result:
         one: Resultat
         other: Resultat
@@ -110,6 +113,11 @@ sv:
         template_id: Mall
         template: Mall
         is_template: Använd som mall
+      color_table:
+        name: Rubrik
+        suite_id: Planering
+        suite: Planering
+        evaluation_ids: Tester och elevdata
       meeting:
         suite: Planering
         suite_id: Planering

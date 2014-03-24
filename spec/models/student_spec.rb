@@ -26,6 +26,7 @@ describe Student do
     it { should validate_presence_of(:last_name) }
     it { should validate_presence_of(:instance) }
     it { should ensure_inclusion_of(:gender).in_array(%w(male female)) }
+    it { should_not allow_value(nil).for(:gender)}
   end
   context ".validate_data_text" do
     it { should allow_value(nil).for(:data_text) }
@@ -222,6 +223,16 @@ describe Student do
       student.add_to_groups(create_list(:group, 2, instance: create(:instance)))
       student.groups(true).should be_empty
     end
+
+    context "automatic participation" do
+      let!(:suite)       { create(:suite) }
+      let!(:participant) { create(:participant, suite: suite, group: groups.first) }
+
+      it "adds the students as participants to any suite the groups are associated with" do
+        student.add_to_groups(groups.first)
+        suite.participants.where(student_id: student.id).should have(1).items
+      end
+    end
   end
   context ".remove_from_groups" do
     let(:parent1) { create(:group) }
@@ -254,6 +265,16 @@ describe Student do
       student.remove_from_groups(groups.collect(&:id).collect(&:to_s))
       student.groups.should_not include(groups.first)
       student.groups.should_not include(groups.second)
+    end
+
+    context "automatic departicipation" do
+      let!(:suite)       { create(:suite) }
+      let!(:participant) { create(:participant, suite: suite, group: groups.first, student: student) }
+
+      it "adds the students as participants to any suite the groups are associated with" do
+        student.remove_from_groups(groups)
+        suite.participants.where(student_id: student.id).should be_blank
+      end
     end
   end
 

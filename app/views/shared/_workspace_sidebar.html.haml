@@ -4,6 +4,9 @@
 - if can? :list, Suite
   %li{class: active_if(working_with_suite?(suite, evaluation))}
     %a{href: suites_path()}= Suite.model_name.human(count: 2)
+- if can? :list, ColorTable
+  %li{class: active_if(params?(controller: "color_tables"))}
+    %a{href: color_tables_path()}= ColorTable.model_name.human(count: 2)
 - if can? :manage, Student
   %li{class: active_if(params?(controller: "students"))}
     %a{href: students_path()}= Student.model_name.human(count: 2)

@@ -52,25 +52,24 @@ Digilys::Application.routes.draw do
       post :new_from_template
     end
     member do
+      get    :log
       get    :confirm_status_change
       put    :change_status
       get    :search_participants
-      get    :color_table
-      put    :save_color_table_state
-      delete :clear_color_table_state
       get    :confirm_destroy
       get    :select_users
       put    :add_users
       delete :remove_users
       put    :add_contributors
       delete :remove_contributors
-      put    :add_generic_evaluations
-      delete :remove_generic_evaluations
-      put    :add_student_data
-      delete :remove_student_data
     end
 
-    resources :evaluations,  only: :new
+    resources :evaluations,  only: :new do
+      collection do
+        post :report_all
+        post :submit_report_all
+      end
+    end
     resources :participants, only: :new
     resources :meetings,     only: :new
     resources :students,     only: :show
@@ -85,6 +84,17 @@ Digilys::Application.routes.draw do
     end
   end
 
+  resources :color_tables do
+    member do
+      get    :confirm_destroy
+      put    :save_state
+      delete :clear_state
+      put    :add_student_data
+    end
+    resources :table_states,  only: :create
+    resource  :authorization, only: [ :create, :update, :destroy ]
+  end
+
   resources :participants, only: [ :create, :destroy ] do
     member do
       get :confirm_destroy
@@ -93,6 +103,7 @@ Digilys::Application.routes.draw do
 
   resources :evaluations, except: [ :index, :new ] do
     collection do
+      get  :search
       post :new_from_template
     end
     member do

@@ -1,6 +1,8 @@
 class Activity < ActiveRecord::Base
   extend Enumerize
 
+  has_paper_trail skip: [ :description, :notes ], meta: { suite_id: ->(s) { s.suite_id } }
+
   # Column name "type" is not used for inheritance
   self.inheritance_column = :disable_inheritance
 

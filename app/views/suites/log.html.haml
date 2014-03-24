@@ -1,0 +1,24 @@
+%h1
+  = @suite.name
+  %small= @suite.is_template? ? t(:".template_title") : Suite.model_name.human
+
+= render partial: "navigation", locals: { suite: @suite, active: :log }
+
+%table.table.table-bordered.table-striped.table-hover.log-table
+  %thead
+    %tr
+      %th.when= t(:".when")
+      %th.who=  t(:".who")
+      %th.what(colspan="2")= t(:".what")
+  %tbody
+    - @versions.each do |version|
+      %tr
+        %td.when= l version.created_at, format: :long
+        %td.who= User.find(version.whodunnit).name
+        %td.subject
+          = version_item_link(version)
+          %small= version.item_type.constantize.model_name.human
+        %td.what
+          = listify(version_events(version))
+
+= paginate(@versions)
