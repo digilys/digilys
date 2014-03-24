@@ -1,45 +1,43 @@
-%h1
-  = @suite.name
-  %small= @suite.is_template? ? t(:".template_title") : Suite.model_name.human
+- user_settings ||= nil
 
-- can_change = can?(:change, @suite)
+- cache_key  = [ color_table, Evaluation.generic_cache_key ]
+- can_change = can?(:update, color_table)
 
-- cache_key = [ @suite, "color_table", Evaluation.generic_cache_key ]
+.row-fluid
+  .span2
+    .btn-group.result-toggles
+      %button.btn.active(data-value="value") Resultat
+      %button.btn(data-value="stanine") Stanine
 
-= render partial: "navigation", locals: { suite: @suite, active: :color_table }
-
-- cache [ *cache_key, "tools" ] do
-
-  .row-fluid
-    .span2
-      .btn-group.result-toggles
-        %button.btn.active(data-value="value") Resultat
-        %button.btn(data-value="stanine") Stanine
+  - cache [ *cache_key, "tools" ] do
     .span3
-      %select#color-table-group-selector{multiple: true, data: { placeholder: "Visar alla grupper" }}
-        = options_for_select(@suite.group_hierarchy.collect { |g| [[g.name, g.parent.try(:name)].compact.join(", "), g.id]})
+      %select#color-table-group-selector{multiple: true, data: { placeholder: t(:".all_groups") }}
+        = options_for_select(color_table.group_hierarchy.collect { |g| [[g.name, g.parent.try(:name)].compact.join(", "), g.id]})
     .span3.form-inline
       %select#table-state-selector{data: { url: select_table_state_path(":id"),
-        "clear-url" => clear_color_table_state_suite_path(@suite) }}
-        = options_for_select([[t(:".change_state"), ""], [t(:".clear_state"), "0"]]) + options_from_collection_for_select(@suite.table_states, "id", "name")
-    .span2
+        "clear-url" => clear_state_color_table_path(color_table) }}
+        = options_for_select([[t(:".change_state"), ""], [t(:".clear_state"), "0"]]) + options_from_collection_for_select(color_table.table_states, "id", "name")
+
+  .span2
+    - if can_change
       %a.btn{href:"#tools-modal", data: { toggle: "modal" }}
         %i.icon-wrench
         = t(:".tools")
 
-- table_state = @user_settings ? @user_settings["datatable_state"] : nil
+- table_state = user_settings ? user_settings["datatable_state"] : nil
 
-.color-table.color-table-show-value{class: "#{can_change ? "" : "no-column-menu"}", data: { "save-local-state-path" => save_color_table_state_suite_path(@suite), "table-state" => JSON.dump(table_state) }}
+.color-table.color-table-show-value{class: "#{can_change ? "" : "no-column-menu"}",
+  data: { "save-local-state-path" => save_state_color_table_path(color_table), "table-state" => JSON.dump(table_state) }}
 
-  - cache [ *cache_key, "table" ] do
+  %table.table.table-bordered.table-hover.data-table.results-table
 
-    %table.table.table-bordered.table-hover.data-table.results-table.results-fixed-table
+    - cache [ *cache_key, "table" ] do
 
       -# Track values and stanines for averages
       - values = {}
       - stanines = {}
 
-      - evaluations = @suite.generic_evaluations(true) + @suite.evaluations
+      - evaluations = color_table.generic_evaluations + color_table.suite_evaluations
 
       %thead
         %tr
@@ -47,7 +45,7 @@
             = student_name = Student.human_attribute_name(:name)
             = link_to "", "#", class: "icon-cog column-menu-action",
               data: { type: "column-menu", toggle: "single-popover", title: student_name }
-          - @suite.student_data.each do |key|
+          - color_table.student_data.each do |key|
             %th.student-data{id: "datatable-column-student-data-#{key.parameterize}"}
               = key
               = link_to "", "#", class: "icon-cog column-menu-action",
@@ -63,12 +61,12 @@
             - stanines[evaluation.id] = []
 
         %tr.filter-row
-          - 1.upto(@suite.student_data.length + evaluations.length + 1) do
+          - 1.upto(color_table.student_data.length + evaluations.length + 1) do
             %td.filter
               %input{type: "text", placeholder: t(:".search_action")}
 
       %tbody
-        - @suite.students.order(current_name_order).each do |student|
+        - color_table.students.order(current_name_order).each do |student|
           %tr
             %th.student
               - name = student_name(student)
@@ -81,7 +79,7 @@
                 = name
               = render partial: "students/details_table", locals: { student: student }
 
-            - @suite.student_data.each do |key|
+            - color_table.student_data.each do |key|
               %td.result
                 - d = student.data_humanized[key] || "-"
                 %div{"data-sort-key" => d}= d
@@ -105,8 +103,8 @@
       %tfoot
         %tr.averages
           %th= t(:".averages")
-          - unless @suite.student_data.blank?
-            - 1.upto(@suite.student_data.length) do
+          - unless color_table.student_data.blank?
+            - 1.upto(color_table.student_data.length) do
               %td &nbsp;
 
           - evaluations.each do |evaluation|
@@ -131,7 +129,6 @@
                 = result_color_image(average_value, evaluation)
 
 - cache [ *cache_key, "dialogs" ] do
-
   %ul#color-table-column-popup.color-table-column-popup.nav.nav-pills.nav-stacked.hide(aria-hidden="true")
     /%li.locked
     /  %a(href="#" data-action="unlock-column")= t(:".unlock_column_action")
@@ -155,20 +152,11 @@
       %button.close{type: "button", data: { dismiss: "modal" }, aria: { hidden: "true" }} &times;
       %h3= t(:".tools")
     .modal-body
-      - missing_generics = Evaluation.missing_generics_for(@suite)
-      - unless missing_generics.blank?
-        = semantic_form_for @suite,
-          url: add_generic_evaluations_suite_path(@suite),
-          html: { class: "form-inline add-generic-evaluations-form" } do |f|
-          = f.select :generic_evaluations,
-            options_from_collection_for_select(missing_generics, :id, :name)
-          = f.action :submit,
-            label: t(:".add_generic_evaluation_action")
       .form-inline
         = text_field_tag "table-state-name",
           nil,
           placeholder: TableState.human_attribute_name(:name)
-        %button#save-table-state.btn{data: { datatable: ".color-table", url: suite_table_states_path(@suite) }}
+        %button#save-table-state.btn{data: { datatable: ".color-table", url: color_table_table_states_path(color_table) }}
           = t(:".save_current_state")
         %small.help-block= t(:".edit_table_state_notice")
       %table#table-states.table.table-striped.table-hover{"data-delete-action-name" => t(:".destroy_action")}
@@ -177,7 +165,7 @@
             %th= TableState.model_name.human
             %th.actions &nbsp;
         %tbody
-          - @suite.table_states.each do |table_state|
+          - @color_table.table_states.each do |table_state|
             %tr{data: { id: table_state.id }}
               %td= link_to table_state.name,
                 select_table_state_path(table_state)

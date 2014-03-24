@@ -1,0 +1,15 @@
+- manager = user.has_role?(:manager, subject)
+
+%tr{data: { id: user.id }}
+  %td.name
+    = user.name
+    - unless manager
+      .fieldset.form-inline
+        %label.checkbox
+          = check_box_tag "authorization-editor-toggler-#{user.id}",
+            user.id,
+            user.has_role?(:editor, subject)
+          %small= t(:".can_change")
+  %td.actions
+    - unless manager
+      %button.btn.btn-mini.remove-action= t(:".remove_user")

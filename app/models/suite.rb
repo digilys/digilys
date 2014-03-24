@@ -47,10 +47,14 @@ class Suite < ActiveRecord::Base
 
   has_many :results, through: :evaluations
 
+  has_one :color_table,
+    dependent: :destroy
+
   has_many :table_states,
     as: :base,
     order: "name asc",
     dependent: :destroy
+
 
   accepts_nested_attributes_for :evaluations,
     :meetings,
@@ -67,7 +71,8 @@ class Suite < ActiveRecord::Base
 
   enumerize :status, in: [ :open, :closed ], predicates: true, scope: true, default: :open
 
-  before_save :ensure_unique_student_data
+  before_save  :ensure_unique_student_data
+  after_create :ensure_color_table
 
   validates :name,     presence: true
   validates :instance, presence: true
@@ -113,16 +118,6 @@ class Suite < ActiveRecord::Base
     self.student_data -= keys
   end
 
-  def group_hierarchy
-    partition = self.groups.group_by(&:parent_id)
-
-    sorted_groups = []
-
-    # The top level has parent_id == nil
-    sort_partitioned_groups(sorted_groups, partition, nil)
-    return sorted_groups
-  end
-
   def update_evaluation_statuses!
     self.evaluations(true).each { |e| e.update_status! }
   end
@@ -154,16 +149,17 @@ class Suite < ActiveRecord::Base
 
   private
 
-  def sort_partitioned_groups(sorted_groups, partition, key)
-    return if partition[key].blank?
-
-    partition[key].each do |group|
-      sorted_groups << group
-      sort_partitioned_groups(sorted_groups, partition, group.id)
-    end
-  end
-
   def ensure_unique_student_data
     self.student_data.uniq!
+  end
+
+  def ensure_color_table
+    return if self.is_template
+
+    if !self.color_table
+      self.create_color_table!(name: self.name)
+    elsif self.color_table.new_record?
+      self.color_table.save!
+    end
   end
 end

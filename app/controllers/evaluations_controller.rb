@@ -7,6 +7,27 @@ class EvaluationsController < ApplicationController
   before_filter :instance_filter
 
 
+  def search
+    search_params = Hash[
+      params[:q].collect do |k, v|
+        [k, v.include?(",") ? v.split(/\s*,\s*/) : v ]
+      end
+    ]
+
+    @evaluations = @evaluations.
+      select("evaluations.id, evaluations.name, suites.name as suite_name").
+      search_in_instance(current_instance_id, search_params).
+      where([ "(suites.is_template is null or suites.is_template = ?)", false ]).
+      with_type(:generic, :suite).order("evaluations.name").
+      page(params[:page])
+
+    json           = {}
+    json[:results] = @evaluations.collect { |e| { id: e.id, text: "#{e.name}#{", #{e.suite_name}" if e.suite_name}" } }
+    json[:more]    = !@evaluations.last_page?
+
+    render json: json.to_json
+  end
+
   def show
   end
 

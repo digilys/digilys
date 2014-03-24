@@ -17,6 +17,7 @@ class Evaluation < ActiveRecord::Base
 
   has_and_belongs_to_many :evaluation_participants, class_name: "Participant", include: :student
   has_and_belongs_to_many :users
+  has_and_belongs_to_many :color_tables
 
   belongs_to :suite,              touch:      true,         inverse_of: :evaluations
   has_many   :suite_participants, through:    :suite,       source: :participants
@@ -186,9 +187,10 @@ class Evaluation < ActiveRecord::Base
 
   before_validation :parse_students_and_groups
   before_validation :set_default_values_for_value_type
-  after_update      :touch_results
   before_save       :set_aliases_from_value_type
   before_save       :persist_colors_and_stanines
+  after_create      :add_to_suite_color_table
+  after_update      :touch_results
 
 
   def colors_serialized
@@ -470,6 +472,18 @@ class Evaluation < ActiveRecord::Base
     self.joins(:suite).where("suites.instance_id" => instance_id)
   end
 
+  def self.search_in_instance(instance_id, search_params)
+    q = where([ "suites.instance_id = :instance_id or evaluations.instance_id = :instance_id", instance_id: instance_id ])
+
+    # Ransack joins the suites table if the search params contains
+    # parameters like suite_name
+    unless search_params.keys.any? { |k| k =~ /suite_/ }
+      q = q.joins("left join suites on suites.id = evaluations.suite_id")
+    end
+
+    q.search(search_params).result
+  end
+
   def self.overdue
     with_status(:empty, :partial).where([ "date < ?", Date.today ])
   end
@@ -567,8 +581,15 @@ class Evaluation < ActiveRecord::Base
     return nil
   end
 
+
   def touch_results
     self.results(true).map(&:save) if self.colors_changed? || self.stanines_changed?
+  end
+
+  def add_to_suite_color_table
+    if self.type.suite? && self.suite.color_table
+      self.suite.color_table.evaluations << self
+    end
   end
 
 

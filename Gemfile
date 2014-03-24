@@ -13,6 +13,7 @@ gem "ransack",             "~> 0.7.2"
 gem "acts-as-taggable-on", "~> 2.4.1"
 gem "enumerize",           "~> 0.6.1"
 gem "paper_trail",         "~> 3.0.0"
+gem "jbuilder",            "~> 2.0.4"
 
 gem "yubikey_database_authenticatable",
   git: "https://github.com/mort666/yubikey_database_authenticatable",

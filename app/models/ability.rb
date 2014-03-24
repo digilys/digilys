@@ -17,25 +17,12 @@ class Ability
                  :select_users,
       to: :associate_users
 
-    alias_action :add_generic_evaluations,
-                 :remove_generic_evaluations,
-      to: :associate_generic_evaluations
-
-    alias_action :add_student_data,
-                 :remove_student_data,
-      to: :associate_student_data
-
-    alias_action :save_color_table_state,
-                 :clear_color_table_state,
-      to: :associate_table_state
-
     alias_action :show,
                  :select,
-                 :color_table,
                  :search_participants,
-                 :associate_generic_evaluations,
-                 :associate_student_data,
-                 :associate_table_state,
+                 :save_state,
+                 :clear_state,
+                 :add_student_data,
       to: :view
 
     alias_action :update,
@@ -71,6 +58,9 @@ class Ability
       cannot [ :view, :change, :destroy ], Evaluation do |evaluation|
         evaluation.type_suite?
       end
+
+      # Color tables
+      can :create, ColorTable
     end
 
     can :list,    Suite
@@ -95,27 +85,13 @@ class Ability
     ]
 
     can :view, readonly_associations do |e|
-      e.suite &&
-        user.has_role?(:suite_manager,     e.suite) ||
-        user.has_role?(:suite_member,      e.suite) ||
-        user.has_role?(:suite_contributor, e.suite)
+      e.suite && can?(:view, e.suite)
     end
-    can [ :create, :change, :destroy ], readonly_associations do |e|
-      e.suite &&
-        user.has_role?(:suite_manager,     e.suite) ||
-        user.has_role?(:suite_contributor, e.suite)
-    end
-    can [ :view, :create, :change, :destroy ], TableState do |s|
-      s.base &&
-        user.has_role?(:suite_manager,     s.base) ||
-        user.has_role?(:suite_member,      s.base) ||
-        user.has_role?(:suite_contributor, s.base)
+    can [ :view, :create, :change, :destroy ], readonly_associations do |e|
+      e.suite && can?(:change, e.suite)
     end
     can :report, Evaluation do |e|
-      e.suite &&
-        user.has_role?(:suite_manager,     e.suite) ||
-        user.has_role?(:suite_member,      e.suite) ||
-        user.has_role?(:suite_contributor, e.suite)
+      e.suite && can?(:view, e.suite)
     end
     can :report, Activity do |activity|
       activity.users.include?(user)
@@ -123,6 +99,26 @@ class Ability
 
     can :search, [ User, Student, Group, Evaluation ]
     can :view,   [ Student, Group ]
+
+    can :list, ColorTable
+    can :view, ColorTable do |c|
+      c.suite && can?(:view, c.suite) ||
+        user.has_role?(:reader, c) ||
+        user.has_role?(:editor, c) ||
+        user.has_role?(:manager, c)
+    end
+    can :change, ColorTable do |c|
+      c.suite && can?(:change, c.suite) ||
+        user.has_role?(:editor, c) ||
+        user.has_role?(:manager, c)
+    end
+
+    can :view, TableState do |s|
+      can?(:view, s.base)
+    end
+    can :manage, TableState do |s|
+      can?(:change, s.base)
+    end
 
     can :list,   Instance
     can :select, Instance do |instance|

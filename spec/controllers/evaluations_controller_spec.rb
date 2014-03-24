@@ -19,6 +19,45 @@ describe EvaluationsController, versioning: !ENV["debug_versioning"].blank? do
     end
   end
 
+  describe "GET #search" do
+    let(:suite)                     { create(:suite, name: "foo")}
+    let(:suite_template)            { create(:suite, name: "foo", is_template: true)}
+
+    let(:generic)                   { create(:generic_evaluation, name: "bar 1") }
+    let(:suite_evaluation)          { create(:suite_evaluation, name: "bar 2") }
+    let(:suite_template_evaluation) { create(:suite_evaluation, name: "bar 2", suite: suite_template) }
+    let(:template)                  { create(:evaluation_template) }
+
+    let!(:evaluations)              { [ generic, suite_evaluation, suite_template_evaluation ] }
+    let!(:non_instance)             { other_evaluation }
+
+    it "lists generic and non-template suite evaluations from the correct instance" do
+      get :search, q: {}
+      response.should be_success
+      assigns(:evaluations).should match_array([generic, suite_evaluation])
+    end
+    it "returns the result as json" do
+      get :search, q: { name_cont: generic.name }
+
+      json = JSON.parse(response.body)
+
+      json["more"].should be_false
+
+      json["results"].should have(1).items
+      json["results"].first.should include("id"   => generic.id)
+      json["results"].first.should include("text" => generic.name)
+    end
+    it "supports searching for suite names" do
+      get :search, q: { suite_name_cont: suite_evaluation.suite.name }
+      assigns(:evaluations).should match_array([suite_evaluation])
+    end
+
+    it "considers comma signs multiple terms" do
+      get :search, q: { name_cont_any: "bar 1,bar 2" }
+      assigns(:evaluations).should match_array([generic, suite_evaluation])
+    end
+  end
+
   describe "GET #show" do
     it "is successful" do
       get :show, id: evaluation.id

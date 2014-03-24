@@ -1,0 +1,16 @@
+= semantic_form_for color_table, html: { id: "color-table-form" } do |f|
+  = f.inputs do
+    = f.input :name, required: true, input_html: { required: true, autofocus: true }
+
+    = f.input :evaluation_ids,
+      as: :hidden,
+      input_html: { class: "evaluation-autocomplete-field input-block-level",
+        value: nil,
+        data: { url: search_evaluations_path(format: :json),
+          data: color_table.evaluations_select2_data.to_json,
+          multiple: true,
+          placeholder: t(:".evaluations_placeholder") } }
+
+  = f.actions do
+    = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
+    %a.btn{href:f.object.new_record? ? color_tables_path() : color_table_path(f.object)}= t(:".cancel_action")

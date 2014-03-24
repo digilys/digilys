@@ -109,6 +109,9 @@ GEM
       rails (>= 3.1.0)
       sprockets-rails
     jasny_bootstrap_extension_rails (0.0.1)
+    jbuilder (2.0.4)
+      activesupport (>= 3.0.0)
+      multi_json (>= 1.2.0)
     journey (1.0.4)
     jquery-datatables-rails (1.11.2)
       jquery-rails
@@ -272,6 +275,7 @@ DEPENDENCIES
   haml-rails (~> 0.4)
   jasmine-rails (~> 0.4.6)
   jasny_bootstrap_extension_rails (~> 0.0.1)
+  jbuilder (~> 2.0.4)
   jquery-datatables-rails (~> 1.11.2)
   jquery-rails (~> 2.2.1)
   kaminari (~> 0.14.1)

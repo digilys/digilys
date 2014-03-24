@@ -245,3 +245,102 @@ describe "Digilys.StudentGroupAutocomplete", ->
             expect(result.sq).toEqual   first_name_or_last_name_cont: "term"
             expect(result.gq).toEqual   name_cont:                    "term"
             expect(result.page).toEqual "page"
+
+
+describe "Digilys.EvaluationAutocomplete", ->
+    elem         = null
+    autocomplete = null
+
+    beforeEach ->
+        elem         = $('<input type="hidden" />')
+        autocomplete = new Digilys.EvaluationAutocomplete(elem)
+
+    describe ".requestData()", ->
+        it "uses name_or_suite_name_cont when a single search term is given", ->
+            result = autocomplete.requestData("term", "page")
+            expect(result.q).toEqual name_or_suite_name_cont: "term"
+
+        it "uses both name_cont_any and suite_name_cont_any when multiple search terms are given", ->
+            result = autocomplete.requestData("term1,term2", "page")
+            expect(result.q).toEqual(
+                name_cont_any: "term1,term2"
+                suite_name_cont_any: "term1,term2"
+            )
+
+        it "removes any empty comma signs at the start and end of the term", ->
+            result = autocomplete.requestData(" ,, ,term, ,", "page")
+            expect(result.q).toEqual name_or_suite_name_cont: "term"
+
+
+describe "Digilys.AuthorizationAutocomplete", ->
+    elem         = null
+    autocomplete = null
+    list         = null
+
+    beforeEach ->
+        elem = $('<input type="hidden"/>').attr("data-base-url", "/foo/bar")
+        list = $("<div/>")
+
+        elem.data("list", list.get(0))
+
+        autocomplete = new Digilys.AuthorizationAutocomplete(elem)
+        jasmine.Ajax.useMock()
+
+    describe ".constructor", ->
+        it "stores the base url from the element", ->
+            expect(autocomplete.url).toEqual("/foo/bar")
+
+        it "stores a jQuery reference to the list referenced by data-list", ->
+            expect(autocomplete.list.get(0)).toEqual(list.get(0))
+
+    describe ".select()", ->
+        beforeEach ->
+            elem.val("123")
+
+        it "is bound to the change event on the element", ->
+            spyOn(autocomplete, "select")
+            elem.trigger("change")
+            expect(autocomplete.select).toHaveBeenCalled()
+            expect(autocomplete.select.mostRecentCall.object).toBe(autocomplete)
+
+        it "clears the select2 element", ->
+            spyOn(elem.data("select2"), "clear")
+            autocomplete.select()
+            expect(elem.data("select2").clear).toHaveBeenCalled()
+
+        it "calls the base url with the selection", ->
+            autocomplete.select()
+
+            request = mostRecentAjaxRequest()
+            expect(request.url).toEqual    "/foo/bar"
+            expect(request.method).toEqual "POST"
+            expect(request.params).toMatch "user_id=123"
+            expect(request.params).toMatch "roles=reader"
+
+        it "does nothing if the select was not a valid id", ->
+            elem.val("")
+            spyOn(elem.data("select2"), "clear")
+            autocomplete.select()
+            expect(elem.data("select2").clear).not.toHaveBeenCalled()
+
+    describe ".added()", ->
+        beforeEach ->
+            elem.val("123")
+
+        it "is called if the select request was successful", ->
+            spyOn(autocomplete, "added")
+
+            autocomplete.select()
+
+            request = mostRecentAjaxRequest()
+            request.response(status: 200, responseText: '{"foo":"bar"}')
+
+            expect(autocomplete.added).toHaveBeenCalledWith(foo: "bar")
+            expect(autocomplete.added.mostRecentCall.object).toBe(autocomplete)
+
+        it "triggers an authorization-added event on the list", ->
+            spy = jasmine.createSpy()
+            list.on "authorization-added", spy
+            autocomplete.added(foo: "bar")
+
+            expect(spy).toHaveBeenCalledWith(jasmine.any(Object), { foo: "bar" })

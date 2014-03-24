@@ -1,0 +1,30 @@
+#color-table-form {
+    .hidden {
+        visibility: visible;
+        display: block;
+    }
+
+    .select2-search-choice, .select2-search-field {
+        clear: left;
+    }
+}
+
+.color-table .data-table {
+    table-layout: fixed;
+    width: 1%;
+
+    thead {
+        th {
+            width: 7em;
+            word-wrap: break-word;
+        }
+        th:first-child {
+            width: 15em;
+            word-wrap: break-word;
+        }
+    }
+
+    tbody th, tfoot th {
+        text-align: right;
+    }
+}

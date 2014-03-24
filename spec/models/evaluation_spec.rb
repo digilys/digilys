@@ -169,7 +169,7 @@ describe Evaluation do
     end
   end
   context "associations" do
-    let(:suite) { create(:suite) }
+    let(:suite)       { create(:suite) }
 
     it "touches the suite" do
       updated_at = suite.updated_at
@@ -177,6 +177,19 @@ describe Evaluation do
         participant = create(:suite_evaluation, suite: suite)
         updated_at.should < suite.reload.updated_at
       end
+    end
+
+    it "adds the evaluation to the suite's color table" do
+      evaluation = create(:suite_evaluation, suite: suite)
+      suite.color_table.evaluations(true).should include(evaluation)
+    end
+    it "does not add multiple entries for the evaluation to the suite's color table" do
+      evaluation = create(:suite_evaluation, suite: suite)
+      suite.color_table.evaluations(true).length.should == 1
+
+      evaluation.name = "#{evaluation.name} updated"
+      evaluation.save
+      suite.color_table.evaluations(true).length.should == 1
     end
   end
   context "versioning", versioning: true do
@@ -1034,6 +1047,24 @@ describe Evaluation do
     subject { Evaluation.in_instance(suite1.instance_id).all }
     it      { should match_array([ evaluation1 ])}
   end
+  describe "#search_in_instance" do
+    let(:suite1)       { create(:suite, name: "suite 1") }
+    let(:suite2)       { create(:suite, name: "suite 2", instance: create(:instance)) }
+    let!(:generic)     { create(:generic_evaluation, name: "evaluation 1", instance: suite1.instance) }
+    let!(:evaluation1) { create(:suite_evaluation, suite: suite1, name: "evaluation 1") }
+    let!(:evaluation2) { create(:suite_evaluation, suite: suite1, name: "evaluation 2") }
+    let!(:evaluation3) { create(:suite_evaluation, suite: suite2, name: "evaluation 1") }
+
+    it "searches in an instance" do
+      result = Evaluation.search_in_instance(suite1.instance_id, name_cont: "1")
+      result.should match_array([ evaluation1, generic ])
+    end
+    it "handles when the search automatically joins the suite table" do
+      result = Evaluation.search_in_instance(suite1.instance_id, suite_name_cont: "1")
+      result.should match_array([ evaluation1, evaluation2 ])
+    end
+  end
+
   describe "#overdue" do
     let(:suite)                  { create(:suite) }
     let!(:participants)          { create_list(:participant, 2, suite: suite) }

@@ -31,6 +31,21 @@ describe Suite do
       suite.versions.last.suite_id.should == suite.id
     end
   end
+  context "associations" do
+    context "color table" do
+      let(:color_table) { build(:color_table, instance: nil) }
+      it "creates a color table when creating a suite" do
+        create(:suite, color_table: nil).color_table.should_not be_blank
+      end
+      it "does not create a color table for templates" do
+        create(:suite, color_table: nil, is_template: true).color_table.should be_blank
+      end
+      it "does not overwrite an existing color table" do
+        suite = create(:suite, color_table: color_table)
+        color_table.reload.suite.should == suite
+      end
+    end
+  end
 
   describe ".generic_evaluations" do
     subject { build(:suite, generic_evaluations: nil) }
@@ -134,41 +149,6 @@ describe Suite do
       old = suite.student_data
       suite.remove_student_data("foo", "bar")
       suite.student_data.should_not equal(old)
-    end
-  end
-
-  describe ".group_hierarchy" do
-    let!(:l1_group1) { create(:group) }
-    let!(:l1_group2) { create(:group) }
-    let!(:l2_group1) { create(:group, parent: l1_group1) }
-    let!(:l2_group2) { create(:group, parent: l1_group1) }
-    let!(:l3_group1) { create(:group, parent: l2_group1) }
-    let!(:l3_group2) { create(:group, parent: l2_group1) }
-    let!(:l3_group3) { create(:group, parent: l2_group2) }
-
-    let!(:student1)  { create(:student) }
-    let!(:student2)  { create(:student) }
-
-    let(:suite)      { create(:suite) }
-
-    before(:each) do
-      student1.add_to_groups(l3_group1)
-      student2.add_to_groups(l3_group3)
-
-      create(:participant, suite: suite, student: student1)
-      create(:participant, suite: suite, student: student2)
-    end
-
-    subject(:groups) { suite.group_hierarchy }
-
-    it "orders the suite's associated groups by its hierarchy" do
-      groups.should == [
-        l1_group1,
-          l2_group1,
-            l3_group1,
-          l2_group2,
-            l3_group3
-      ]
     end
   end
 

@@ -1,0 +1,16 @@
+%h1= ColorTable.model_name.human(count: 2)
+
+= render partial: "navigation", locals: { active: :index }
+
+= simple_search_form(:name_cont)
+
+%table.table.table-striped.color-tables-table
+  %thead
+    %tr
+      %th.name= ColorTable.human_attribute_name(:name)
+  %tbody
+    - @color_tables.each do |color_table|
+      %tr
+        %td.name= link_to(color_table.name, color_table)
+
+= paginate(@color_tables)

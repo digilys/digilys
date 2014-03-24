@@ -113,3 +113,55 @@ class StudentGroupAutocomplete extends Autocomplete
         page: page
 
 window.Digilys.StudentGroupAutocomplete = StudentGroupAutocomplete
+
+
+###
+Creates an autocomplete for searching for evaluations, both by
+their name or by the suite's name
+###
+
+class EvaluationAutocomplete extends Autocomplete
+    constructor: (elem) ->
+        super elem
+
+    requestData: (term, page) ->
+        term = term.replace(/^[\s,]*(.*?)[\s,]*$/, "$1")
+
+        q = {}
+
+        if term.indexOf(",") > -1
+            q["name_cont_any"] = term
+            q["suite_name_cont_any"] = term
+        else
+            q["name_or_suite_name_cont"] = term
+
+        return { q: q, page: page }
+
+window.Digilys.EvaluationAutocomplete = EvaluationAutocomplete
+
+
+###
+Creates an autocomplete for adding users to an authorization list
+###
+
+class AuthorizationAutocomplete extends Autocomplete
+    constructor: (elem, query_keys...) ->
+        super elem, query_keys...
+
+        @url  = @elem.data("base-url")
+        @list = $(@elem.data("list"))
+
+        @elem.on "change", => @select()
+
+    select: ->
+        userId = @elem.val()
+
+        if userId.match(/^\d+$/)
+            @elem.data("select2").clear()
+            $.post @url, { user_id: userId, roles: "reader" }, (json) => @added(json)
+
+    added: (userData) ->
+        @list.trigger("authorization-added", userData)
+
+
+window.Digilys.AuthorizationAutocomplete = AuthorizationAutocomplete

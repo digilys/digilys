@@ -42,23 +42,6 @@ class SuitesController < ApplicationController
     @versions = @versions.order("created_at desc").page(params[:page])
   end
 
-  layout "fullpage", only: :color_table
-  def color_table
-    @user_settings = current_user.settings.for(@suite).first.try(:data)
-  end
-
-  def save_color_table_state
-    current_user.save_setting!(@suite, "datatable_state" => JSON.parse(params[:state]))
-    @suite.touch
-
-    render json: { result: "OK" }
-  end
-  def clear_color_table_state
-    flash[:notice] = t(:"suites.clear_color_table_state.success")
-    current_user.save_setting!(@suite, "datatable_state" => nil)
-    redirect_to color_table_suite_url(@suite)
-  end
-
   def new
     @suite.participants.build
   end
@@ -175,39 +158,6 @@ class SuitesController < ApplicationController
     render json: {status: "ok"}
   end
 
-  def add_generic_evaluations
-    evaluation = Evaluation.
-      with_type(:generic).
-      where(instance_id: current_instance_id).
-      find(params[:suite][:generic_evaluations])
-
-    @suite.add_generic_evaluations(evaluation.id)
-    @suite.save
-
-    redirect_to color_table_suite_url(@suite)
-  end
-  def remove_generic_evaluations
-    evaluation = Evaluation.
-      with_type(:generic).
-      where(instance_id: current_instance_id).
-      find(params[:evaluation_id])
-
-    @suite.remove_generic_evaluations(evaluation.id)
-    @suite.save
-
-    redirect_to color_table_suite_url(@suite)
-  end
-
-  def add_student_data
-    @suite.add_student_data(params[:key])
-    @suite.save
-    redirect_to color_table_suite_url(@suite)
-  end
-  def remove_student_data
-    @suite.remove_student_data(params[:key])
-    @suite.save
-    redirect_to color_table_suite_url(@suite)
-  end
 
   private
 
