@@ -78,7 +78,7 @@ module ColorTablesHelper
 
     averages = {
       id: 0,
-      name: t(:"color_tables.averages"),
+      name: t(:"color_tables.show.averages"),
     }
 
     values.each do |evaluation_id, values|

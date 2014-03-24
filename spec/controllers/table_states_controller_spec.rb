@@ -46,8 +46,7 @@ describe TableStatesController, versioning: !ENV["debug_versioning"].blank? do
     it "sets the requested table state as the current user's setting for the base" do
       get :select, id: table_state.id
       expect(response).to redirect_to(color_table)
-
-      expect(logged_in_user.settings.for(color_table).first.data["datatable_state"]).to eq({ "foo" => "bar" })
+      expect(logged_in_user.settings.for(color_table).first.data["color_table_state"]).to eq({ "foo" => "bar" })
     end
     it "gives a 404 if the base's instance does not match" do
       get :select, id: other_table_state.id
@@ -58,7 +57,7 @@ describe TableStatesController, versioning: !ENV["debug_versioning"].blank? do
       before(:each) do
         logged_in_user.settings.create(
           customizable: color_table,
-          data: { "datatable_state" => { "bar" => "baz" }, "zomg" => "lol" }
+          data: { "color_table_state" => { "bar" => "baz" }, "zomg" => "lol" }
         )
       end
       it "overrides the datatable state, and leaves the other data alone" do
@@ -66,7 +65,7 @@ describe TableStatesController, versioning: !ENV["debug_versioning"].blank? do
         expect(response).to redirect_to(color_table)
 
         data = logged_in_user.settings.for(color_table).first.data
-        expect(data["datatable_state"]).to eq({ "foo" => "bar" })
+        expect(data["color_table_state"]).to eq({ "foo" => "bar" })
         expect(data["zomg"]).to            eq "lol"
       end
     end

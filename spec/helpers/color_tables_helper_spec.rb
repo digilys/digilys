@@ -122,7 +122,7 @@ describe ColorTablesHelper do
 
         expect(JSON.parse(data.last)).to eq({
           id:   0,
-          name: t(:"color_tables.averages"),
+          name: t(:"color_tables.show.averages"),
           "evaluation_#{evaluation.id}" => 7.5
         }.stringify_keys)
       end
