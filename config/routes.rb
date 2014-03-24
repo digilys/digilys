@@ -52,6 +52,7 @@ Digilys::Application.routes.draw do
       post :new_from_template
     end
     member do
+      get    :log
       get    :confirm_status_change
       put    :change_status
       get    :search_participants

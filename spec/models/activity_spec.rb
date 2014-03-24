@@ -52,6 +52,15 @@ describe Activity do
       end
     end
   end
+  context "versioning", versioning: true do
+    it { should be_versioned }
+    it "stores the new suite id as metadata" do
+      activity = create(:activity)
+      activity.suite = create(:suite)
+      activity.save
+      activity.versions.last.suite_id.should == activity.suite_id
+    end
+  end
 
   describe ".set_suite_from_meeting" do
     let(:suite)        { nil }

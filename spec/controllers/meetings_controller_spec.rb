@@ -1,6 +1,8 @@
 require 'spec_helper'
 
-describe MeetingsController do
+describe MeetingsController, versioning: !ENV["debug_versioning"].blank? do
+  debug_versioning(ENV["debug_versioning"]) if ENV["debug_versioning"]
+
   login_user(:admin)
 
   let(:meeting)       { create(:meeting) }

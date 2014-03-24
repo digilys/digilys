@@ -45,6 +45,16 @@ describe Participant do
     end
   end
 
+  context "versioning", versioning: true do
+    it { should be_versioned }
+    it "stores the new suite id as metadata" do
+      participant = create(:participant)
+      participant.suite = create(:suite)
+      participant.save
+      participant.versions.last.suite_id.should == participant.suite_id
+    end
+  end
+
   describe ".name" do
     let(:student) { create(:student) }
     subject { create(:participant, student: student).name }

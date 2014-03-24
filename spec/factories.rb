@@ -1,4 +1,9 @@
 FactoryGirl.define do
+  if !ENV["debug_versioning"].blank?
+    before(:create) { PaperTrail.enabled = false }
+    after(:create)  { PaperTrail.enabled = true  }
+  end
+
   factory :user do
     sequence(:name)       { |i| "User %09d" % i }
     sequence(:email)      { |i| "user%09d@example.com" % i }

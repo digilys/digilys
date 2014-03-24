@@ -2,6 +2,7 @@ class Suite < ActiveRecord::Base
   extend Enumerize
 
   resourcify
+  has_paper_trail skip: [ :generic_evaluations, :student_data ], meta: { suite_id: ->(s) { s.id } }
 
   belongs_to :instance
   belongs_to :template,  class_name: "Suite"
@@ -92,11 +93,24 @@ class Suite < ActiveRecord::Base
       return ids
     end
   end
+  def add_generic_evaluations(*evaluation_ids)
+    self.generic_evaluations += evaluation_ids
+  end
+  def remove_generic_evaluations(*evaluation_ids)
+    self.generic_evaluations -= evaluation_ids
+  end
+
   def student_data
     if read_attribute(:student_data).nil?
       write_attribute(:student_data, [])
     end
     return read_attribute(:student_data)
+  end
+  def add_student_data(*keys)
+    self.student_data += keys
+  end
+  def remove_student_data(*keys)
+    self.student_data -= keys
   end
 
   def group_hierarchy

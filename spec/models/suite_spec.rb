@@ -24,6 +24,13 @@ describe Suite do
     it { should validate_presence_of(:instance) }
     it { should ensure_inclusion_of(:status).in_array(%w(open closed)) }
   end
+  context "versioning", versioning: true do
+    it { should be_versioned }
+    it "stores the id as suite_id metadata" do
+      suite = create(:suite)
+      suite.versions.last.suite_id.should == suite.id
+    end
+  end
 
   describe ".generic_evaluations" do
     subject { build(:suite, generic_evaluations: nil) }
@@ -53,6 +60,33 @@ describe Suite do
       end
     end
   end
+  describe ".add_generic_evaluations" do
+    subject(:suite) { build(:suite, generic_evaluations: nil) }
+
+    it "adds all generic evaluations to the suite" do
+      suite.add_generic_evaluations(123, 456)
+      suite.generic_evaluations.should match_array([123,456])
+    end
+    it "builds a new object when adding evaluations" do
+      old = suite.generic_evaluations
+      suite.add_generic_evaluations(123, 456)
+      suite.generic_evaluations.should_not equal(old)
+    end
+  end
+  describe ".remove_generic_evaluations" do
+    subject(:suite) { build(:suite, generic_evaluations: [123,456,789]) }
+
+    it "removes all generic evaluations from the suite" do
+      suite.remove_generic_evaluations(123, 456)
+      suite.generic_evaluations.should match_array([789])
+    end
+    it "builds a new object when removing evaluations" do
+      old = suite.generic_evaluations
+      suite.remove_generic_evaluations(123, 456)
+      suite.generic_evaluations.should_not equal(old)
+    end
+  end
+
   describe ".student_data" do
     subject(:suite)    { create(:suite, student_data: nil) }
     its(:student_data) { should == [] }
@@ -74,6 +108,32 @@ describe Suite do
         suite.save
         suite.reload.student_data.should match_array(%w(foo bar baz))
       end
+    end
+  end
+  describe ".add_student_data" do
+    subject(:suite) { build(:suite, student_data: nil) }
+
+    it "adds all student data to the suite" do
+      suite.add_student_data("foo", "bar")
+      suite.student_data.should match_array(%w(foo bar))
+    end
+    it "builds a new object when adding student data" do
+      old = suite.student_data
+      suite.add_student_data("foo", "bar")
+      suite.student_data.should_not equal(old)
+    end
+  end
+  describe ".remove_student_data" do
+    subject(:suite) { build(:suite, student_data: %w(foo bar baz)) }
+
+    it "removes all student data from the suite" do
+      suite.remove_student_data("foo", "bar")
+      suite.student_data.should match_array(%w(baz))
+    end
+    it "builds a new object when removing student data" do
+      old = suite.student_data
+      suite.remove_student_data("foo", "bar")
+      suite.student_data.should_not equal(old)
     end
   end
 

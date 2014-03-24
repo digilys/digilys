@@ -18,6 +18,9 @@
 
     %li.secondaries
       %ul.nav.nav-tabs.nav-split
+        - if can? :log, suite
+          %li{class: active_if(active == :log)}
+            %a{href:log_suite_path(suite)}= t(:".log_action")
         - if can? :edit, suite
           %li{class: active_if(active == :edit)}
             %a{href:edit_suite_path(suite)}= t(:".edit_action")

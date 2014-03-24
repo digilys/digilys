@@ -1,6 +1,8 @@
 require 'spec_helper'
 
-describe Import::StudentDataController do
+describe Import::StudentDataController, versioning: !ENV["debug_versioning"].blank? do
+  debug_versioning(ENV["debug_versioning"]) if ENV["debug_versioning"]
+
   login_user(:admin)
 
   describe "GET #new" do

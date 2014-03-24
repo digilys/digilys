@@ -1,6 +1,8 @@
 require 'spec_helper'
 
-describe Template::EvaluationsController do
+describe Template::EvaluationsController, versioning: !ENV["debug_versioning"].blank? do
+  debug_versioning(ENV["debug_versioning"]) if ENV["debug_versioning"]
+
   login_user(:admin)
 
   let(:instance) { create(:instance) }

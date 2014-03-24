@@ -1,6 +1,8 @@
 require 'spec_helper'
 
-describe SuitesController do
+describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
+  debug_versioning(ENV["debug_versioning"]) if ENV["debug_versioning"]
+
   login_user(:admin)
 
   let(:instance)    { create(:instance) }
@@ -110,6 +112,23 @@ describe SuitesController do
     end
     it "gives a 404 if the instance does not match" do
       get :show, id: other_suite.id
+      response.status.should == 404
+    end
+  end
+
+  describe "GET #log", versioning: true do
+    it "displays paper_trail versions related to the suite" do
+      dummy   = create(:meeting)
+      meeting = build(:meeting, suite: suite)
+      meeting.save
+
+      get :log, id: suite.id
+      response.should be_success
+
+      assigns(:versions).collect(&:id).uniq.should match_array((meeting.versions + suite.versions).collect(&:id))
+    end
+    it "gives a 404 if the instance does not match" do
+      get :log, id: other_suite.id
       response.status.should == 404
     end
   end

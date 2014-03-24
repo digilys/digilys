@@ -41,6 +41,15 @@ describe Meeting do
       end
     end
   end
+  context "versioning", versioning: true do
+    it { should be_versioned }
+    it "stores the new suite id as metadata" do
+      meeting = create(:meeting)
+      meeting.suite = create(:suite)
+      meeting.save
+      meeting.versions.last.suite_id.should == meeting.suite_id
+    end
+  end
 
   context ".has_regular_suite?" do
     context "with no suite" do

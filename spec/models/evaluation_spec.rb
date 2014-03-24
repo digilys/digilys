@@ -179,6 +179,15 @@ describe Evaluation do
       end
     end
   end
+  context "versioning", versioning: true do
+    it { should be_versioned }
+    it "stores the new suite id as metadata" do
+      evaluation = create(:suite_evaluation)
+      evaluation.suite = create(:suite)
+      evaluation.save
+      evaluation.versions.last.suite_id.should == evaluation.suite_id
+    end
+  end
 
 
   describe ".parse_students_and_groups" do
@@ -231,10 +240,24 @@ describe Evaluation do
     context "for boolean value type" do
       subject { create(:boolean_evaluation) }
       its(:value_aliases) { should == Evaluation::BOOLEAN_ALIASES }
+
+      it "does not change the identity of the persisted object if no changes have occurred" do
+        evaluation = build(:boolean_evaluation, value_aliases: Evaluation::BOOLEAN_ALIASES.clone)
+        evaluation.send(:set_aliases_from_value_type)
+        evaluation.value_aliases.should == Evaluation::BOOLEAN_ALIASES
+        evaluation.value_aliases.should_not equal(Evaluation::BOOLEAN_ALIASES)
+      end
     end
     context "for grade value type" do
       subject { create(:grade_evaluation) }
       its(:value_aliases) { should == Evaluation::GRADE_ALIASES }
+
+      it "does not change the identity of the persisted object if no changes have occurred" do
+        evaluation = build(:grade_evaluation, value_aliases: Evaluation::GRADE_ALIASES.clone)
+        evaluation.send(:set_aliases_from_value_type)
+        evaluation.value_aliases.should == Evaluation::GRADE_ALIASES
+        evaluation.value_aliases.should_not equal(Evaluation::GRADE_ALIASES)
+      end
     end
   end
   
@@ -251,6 +274,15 @@ describe Evaluation do
       it "correctly maps the colors" do
         evaluation.colors.should include("1" => "red")
         evaluation.colors.should include("0" => "green")
+      end
+
+      it "does not change the identity of the object if no changes have occurred" do
+        old = evaluation.colors
+
+        evaluation.color_for_true  = :red
+        evaluation.color_for_false = :green
+        evaluation.send(:persist_colors_and_stanines)
+        evaluation.colors.should equal(old)
       end
 
       context "with explicitly set colors" do
@@ -280,6 +312,30 @@ describe Evaluation do
         evaluation.stanines.should include("3" => 6)
         evaluation.stanines.should include("4" => 7)
         evaluation.stanines.should include("5" => 9)
+      end
+
+      it "does not change the identity of the object if no changes have occurred" do
+        old_colors = evaluation.colors
+        old_stanines = evaluation.stanines
+
+        evaluation.color_for_grade_a = 3
+        evaluation.color_for_grade_b = 3
+        evaluation.color_for_grade_c = 2
+        evaluation.color_for_grade_d = 2
+        evaluation.color_for_grade_e = 1
+        evaluation.color_for_grade_f = 1
+
+        evaluation.stanine_for_grade_a = 9
+        evaluation.stanine_for_grade_b = 7
+        evaluation.stanine_for_grade_c = 6
+        evaluation.stanine_for_grade_d = 5
+        evaluation.stanine_for_grade_e = 3
+        evaluation.stanine_for_grade_f = 2
+
+        evaluation.send(:persist_colors_and_stanines)
+
+        evaluation.colors.should equal(old_colors)
+        evaluation.stanines.should equal(old_stanines)
       end
 
       context "with explicitly set colors and stanines" do
@@ -336,6 +392,42 @@ describe Evaluation do
           evaluation.stanines.should include("7" => { "min" => 19, "max" => 21 } )
           evaluation.stanines.should include("8" => { "min" => 22, "max" => 30 } )
         end
+      end
+
+      it "does not change the identity of the object if no changes have occurred" do
+        old_colors = evaluation.colors
+        old_stanines = evaluation.stanines
+
+        evaluation.red_min    = 0
+        evaluation.red_max    = 9
+        evaluation.yellow_min = 10
+        evaluation.yellow_max = 20
+        evaluation.green_min  = 21
+        evaluation.green_max  = 30
+
+        evaluation.stanine1_min = 0
+        evaluation.stanine1_max = 3
+        evaluation.stanine2_min = 4
+        evaluation.stanine2_max = 6
+        evaluation.stanine3_min = 7
+        evaluation.stanine3_max = 7
+        evaluation.stanine4_min = 8
+        evaluation.stanine4_max = 12
+        evaluation.stanine5_min = 13
+        evaluation.stanine5_max = 15
+        evaluation.stanine6_min = 16
+        evaluation.stanine6_max = 18
+        evaluation.stanine7_min = 19
+        evaluation.stanine7_max = 21
+        evaluation.stanine8_min = 22
+        evaluation.stanine8_max = 24
+        evaluation.stanine9_min = 25
+        evaluation.stanine9_max = 30
+
+        evaluation.send(:persist_colors_and_stanines)
+
+        evaluation.colors.should equal(old_colors)
+        evaluation.stanines.should equal(old_stanines)
       end
 
       context "with explicitly set colors and stanines" do
