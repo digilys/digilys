@@ -57,3 +57,23 @@ form.evaluation .hidden {
     visibility: visible;
     display: block;
 }
+
+#multiple-result-entry-form {
+    table {
+        width: 1%;
+    }
+
+    td {
+        padding-left: 1em;
+        padding-right: 1em;
+    }
+
+    .name, .absent {
+        white-space: nowrap;
+    }
+    .name {
+        width: 100%;
+        text-align: right;
+        vertical-align: middle;
+    }
+}

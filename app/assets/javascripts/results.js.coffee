@@ -45,3 +45,22 @@ $ ->
 
             updateDestroyFlag(idBase)
 
+    $("#multiple-result-entry-form").on "change", "input:not(:checkbox)", ->
+        field = $(this)
+
+        index = field.closest("td").index() + 1
+        maxValue = $(".max-results td:nth-child(#{index}) .max-result").val()
+
+        try
+            value = parseInt(field.val())
+            max   = parseInt(maxValue)
+
+            if isNaN(value) || value > max || value < 0
+                field.closest(".control-group").addClass("error")
+                field.parent().append($("<span/>").addClass("help-inline").text(field.data("error-message")))
+            else
+                field.closest(".control-group").removeClass("error")
+                field.siblings("span.help-inline").remove()
+        catch err
+            field.closest(".control-group").addClass("error")
+            field.parent().append($("<span/>").addClass("help-inline").text(field.data("error-message")))

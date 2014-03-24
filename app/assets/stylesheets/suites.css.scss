@@ -11,6 +11,15 @@
     }
 }
 
+.report-all-evaluations {
+    float: right;
+}
+@media (max-width: 979px) {
+    .report-all-evaluations, .report-all-checkbox {
+        display: none;
+    }
+}
+
 .suite-actions {
     margin-bottom: 20px;
 }
