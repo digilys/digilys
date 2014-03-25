@@ -83,8 +83,14 @@
               %td.result
                 - d = student.data_humanized[key] || "-"
                 %div{"data-sort-key" => d}= d
+
             - evaluations.each do |evaluation|
-              - result = evaluation.result_for(student)
+
+              - if evaluation.series_id
+                - result = evaluation.series.result_for(student)
+              - else
+                - result = evaluation.result_for(student)
+
               %td.result{class: result_color_class(result)}
                 %div{"data-sort-key" => result.try(:display_value) || "-"}
                   - if result && result.stanine

@@ -94,4 +94,27 @@ describe Series do
       series.should_not be_destroyed
     end
   end
+
+
+  describe ".result_for" do
+    let(:series)      { create(:series) }
+    let(:suite)       { series.suite }
+
+    let(:evaluation1) { create(:suite_evaluation, suite: suite, series: series, date: Date.today) }
+    let(:evaluation2) { create(:suite_evaluation, suite: suite, series: series, date: Date.today + 1) }
+    let(:evaluation3) { create(:suite_evaluation, suite: suite, series: series, date: Date.today + 2) }
+
+    let(:student)     { create(:student) }
+
+    let!(:result1)    { create(:result, evaluation: evaluation1, student: student, value: 1) }
+    let!(:result2)    { create(:result, evaluation: evaluation2, student: student, value: nil, absent: true) }
+    let!(:result3)    { create(:result, evaluation: evaluation3, value: 1) } # Other student
+
+    it "returns the newest non-absent result from the evaluations in the series" do
+      evaluation3.reload.is_series_current.should be_true
+
+      # result2 is absent, no result for the student in evaluation 3
+      series.result_for(student).should == result1
+    end
+  end
 end

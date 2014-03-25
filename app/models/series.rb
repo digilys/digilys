@@ -1,6 +1,7 @@
 class Series < ActiveRecord::Base
   belongs_to :suite
   has_many   :evaluations, order: "date asc", dependent: :nullify
+  has_many   :results, through: :evaluations
 
   attr_accessible :name,
     :suite,
@@ -21,5 +22,10 @@ class Series < ActiveRecord::Base
 
   def destroy_on_empty!
     destroy if self.evaluations.empty?
+  end
+
+
+  def result_for(student)
+    results.where(student_id: student, absent: false).order("evaluations.date desc").first
   end
 end
