@@ -460,6 +460,27 @@ describe Evaluation do
     end
   end
 
+  describe ".touch_color_tables" do
+    let!(:evaluation)  { create(:suite_evaluation) }
+    let(:suite)        { evaluation.suite }
+    let!(:result)      { create(:result, evaluation: evaluation) }
+    let!(:color_table) { create(:color_table, evaluations: [ evaluation ])}
+
+    it "touches associated color tables after saving" do
+      updated_at       = color_table.updated_at
+      suite_updated_at = suite.color_table.updated_at
+
+      Timecop.freeze(Time.now + 5.minutes) do
+        evaluation.name << " updated"
+        evaluation.save
+
+        updated_at.should       < color_table.reload.updated_at
+        suite_updated_at.should < suite.color_table.reload.updated_at
+      end
+    end
+  end
+
+
   describe ".colors_serialized" do
     subject                 { create(:evaluation, colors: colors, _yellow: nil) }
 

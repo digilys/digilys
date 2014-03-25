@@ -45,6 +45,7 @@ describe ColorTablesController do
 
       before(:each) do
         logged_in_user.add_role :reader,  regular.first
+        logged_in_user.add_role :reader,  edited
         logged_in_user.add_role :editor,  edited
         logged_in_user.add_role :manager, managed
       end
@@ -170,15 +171,9 @@ describe ColorTablesController do
 
   describe "PUT #save_state" do
     it "sets the requested table state as the current user's setting for the color_table" do
-     updated_at = color_table.updated_at
      put :save_state, id: color_table.id, state: '{"foo": "bar"}'
-
      response.should be_success
      logged_in_user.settings.for(color_table).first.data["datatable_state"].should == { "foo" => "bar" }
-
-     Timecop.freeze(Time.now + 5.minutes) do
-       updated_at.should < color_table.reload.updated_at 
-     end
     end
     it "gives a 404 if the instance does not match" do
       put :save_state, id: other_instance.id, state: '{"foo": "bar"}'

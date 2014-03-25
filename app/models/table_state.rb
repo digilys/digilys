@@ -1,5 +1,5 @@
 class TableState < ActiveRecord::Base
-  belongs_to :base, polymorphic: true
+  belongs_to :base, polymorphic: true, touch: true
 
   attr_accessible :data,
     :name,

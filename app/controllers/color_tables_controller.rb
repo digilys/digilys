@@ -8,7 +8,7 @@ class ColorTablesController < ApplicationController
   
   def index
     if !current_user.has_role?(:admin)
-      @color_tables = @color_tables.with_role([:manager, :editor, :reader], current_user)
+      @color_tables = @color_tables.with_role([:manager, :editor, :reader], current_user).uniq
     end
 
     @color_tables = @color_tables.regular
@@ -62,8 +62,6 @@ class ColorTablesController < ApplicationController
 
   def save_state
     current_user.save_setting!(@color_table, "datatable_state" => JSON.parse(params[:state]))
-    @color_table.touch
-
     render json: { result: "OK" }
   end
 
