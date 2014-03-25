@@ -16,7 +16,7 @@ suite = Suite.new do |s|
 end
 
 puts "Evaluations"
-evaluations = ((Date.today - 39.days)..(Date.today)).collect do |date|
+evaluations = ((Date.today)..(Date.today + 39.days)).collect do |date|
   print "."
   Evaluation.create!({
     suite:         suite,
