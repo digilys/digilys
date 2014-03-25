@@ -128,6 +128,6 @@ class ApplicationController < ActionController::Base
   end
 
   def skip_authorization?
-    devise_controller? || self.is_a?(RailsAdmin::ApplicationController)
+    devise_controller?
   end
 end
