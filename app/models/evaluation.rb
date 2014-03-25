@@ -189,6 +189,7 @@ class Evaluation < ActiveRecord::Base
   before_validation :set_default_values_for_value_type
   before_save       :set_aliases_from_value_type
   before_save       :persist_colors_and_stanines
+  after_save        :touch_color_tables
   after_create      :add_to_suite_color_table
   after_update      :touch_results
 
@@ -579,6 +580,13 @@ class Evaluation < ActiveRecord::Base
       end
     end
     return nil
+  end
+
+
+  def touch_color_tables
+    # See ActiveRecord#current_time_from_proper_timezone
+    timestamp = self.class.default_timezone == :utc ? Time.now.utc : Time.now
+    self.color_tables.update_all(updated_at: timestamp)
   end
 
 

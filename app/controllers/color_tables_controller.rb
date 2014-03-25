@@ -62,8 +62,6 @@ class ColorTablesController < ApplicationController
 
   def save_state
     current_user.save_setting!(@color_table, "datatable_state" => JSON.parse(params[:state]))
-    @color_table.touch
-
     render json: { result: "OK" }
   end
 
