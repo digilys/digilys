@@ -8,7 +8,7 @@ describe Digilys::Importer do
   describe ".mappings=" do
     it "sets the default value of an assigned map to a new hash" do
       importer.mappings = {}
-      importer.mappings[:foo].should == {}
+      expect(importer.mappings[:foo]).to eq({})
     end
   end
 
@@ -135,8 +135,8 @@ describe Digilys::Importer do
         child  = group1.parent ? group1 : group2
         parent = group1.parent ? group2 : group1
 
-        parent.parent.should be_nil
-        child.parent.should  == parent
+        expect(parent.parent).to be_nil
+        expect(child.parent).to  eq parent
       end
 
       context "mappings" do
@@ -199,8 +199,8 @@ describe Digilys::Importer do
         child          = suite1.template ? suite1 : suite2
         template       = suite1.template ? suite2 : suite1
 
-        template.template.should be_nil
-        child.template.should  == template
+        expect(template.template).to be_nil
+        expect(child.template).to    eq template
       end
 
       context "mappings" do
@@ -440,8 +440,8 @@ describe Digilys::Importer do
         child          = evaluation1.template ? evaluation1 : evaluation2
         template       = evaluation1.template ? evaluation2 : evaluation1
 
-        template.template.should be_nil
-        child.template.should  == template
+        expect(template.template).to be_nil
+        expect(child.template).to    eq template
       end
 
       context "mappings" do
@@ -684,8 +684,8 @@ describe Digilys::Importer do
           importer.mappings["instances"]["export-123"] = instance.id
         end
         it "does not create a new object" do
-          result.should be_nil
-          Instance.count(:all).should == 1
+          expect(result).to be_nil
+          expect(Instance.count(:all)).to eq 1
         end
       end
     end
@@ -716,8 +716,8 @@ describe Digilys::Importer do
           importer.mappings["users"]["export-123"] = user.id
         end
         it "does not create a new object" do
-          result.should be_nil
-          User.count(:all).should == 1
+          expect(result).to be_nil
+          expect(User.count(:all)).to eq 1
         end
       end
       context "with existing user email" do
@@ -758,8 +758,8 @@ describe Digilys::Importer do
           importer.mappings["students"]["export-123"] = student.id
         end
         it "does not create a new object" do
-          result.should be_nil
-          Student.count(:all).should == 1
+          expect(result).to be_nil
+          expect(Student.count(:all)).to eq 1
         end
       end
       context "with existing student personal id" do
@@ -801,8 +801,8 @@ describe Digilys::Importer do
           importer.mappings["groups"]["export-123"] = group.id
         end
         it "does not create a new object" do
-          result.should be_nil
-          Group.count(:all).should == 1
+          expect(result).to be_nil
+          expect(Group.count(:all)).to eq 1
         end
       end
       context "with users" do
@@ -880,15 +880,15 @@ describe Digilys::Importer do
           importer.mappings["instructions"]["export-123"] = instruction.id
         end
         it "does not create a new object" do
-          result.should be_nil
-          Instruction.count(:all).should == 1
+          expect(result).to be_nil
+          expect(Instruction.count(:all)).to eq 1
         end
       end
       context "with existing instruction for a page" do
         let!(:instruction) { create(:instruction, for_page: object[:for_page]) }
         it "does not create a new object" do
-          result.should                  == instruction
-          Instruction.count(:all).should == 1
+          expect(result).to                  eq instruction
+          expect(Instruction.count(:all)).to eq 1
         end
       end
     end
@@ -929,8 +929,8 @@ describe Digilys::Importer do
           importer.mappings["suites"]["export-123"] = suite.id
         end
         it "does not create a new object" do
-          result.should be_nil
-          Suite.count(:all).should == 1
+          expect(result).to be_nil
+          expect(Suite.count(:all)).to eq 1
         end
       end
     end
@@ -1029,15 +1029,15 @@ describe Digilys::Importer do
           importer.mappings["participants"]["export-123"] = participant.id
         end
         it "does not create a new object" do
-          result.should be_nil
-          Participant.count(:all).should == 1
+          expect(result).to be_nil
+          expect(Participant.count(:all)).to eq 1
         end
       end
       context "with existing participant" do
         let!(:participant) { create(:participant, suite: suite, student: student) }
         it "does not create a new object" do
-          result.should == participant
-          Participant.count(:all).should == 1
+          expect(result).to eq participant
+          expect(Participant.count(:all)).to eq 1
         end
       end
     end
@@ -1077,8 +1077,8 @@ describe Digilys::Importer do
           importer.mappings["meetings"]["export-123"] = meeting.id
         end
         it "does not create a new object" do
-          result.should be_nil
-          Meeting.count(:all).should == 1
+          expect(result).to be_nil
+          expect(Meeting.count(:all)).to eq 1
         end
       end
     end
@@ -1138,8 +1138,8 @@ describe Digilys::Importer do
           importer.mappings["activities"]["export-123"] = activity.id
         end
         it "does not create a new object" do
-          result.should be_nil
-          Activity.count(:all).should == 1
+          expect(result).to be_nil
+          expect(Activity.count(:all)).to eq 1
         end
       end
     end
@@ -1198,8 +1198,8 @@ describe Digilys::Importer do
           importer.mappings["generic_evaluations"]["export-123"] = generic_evaluation.id
         end
         it "does not create a new object" do
-          result.should be_nil
-          Evaluation.count(:all).should == 1
+          expect(result).to be_nil
+          expect(Evaluation.count(:all)).to eq 1
         end
       end
     end
@@ -1258,8 +1258,8 @@ describe Digilys::Importer do
           importer.mappings["evaluation_templates"]["export-123"] = evaluation_template.id
         end
         it "does not create a new object" do
-          result.should be_nil
-          Evaluation.count(:all).should == 1
+          expect(result).to be_nil
+          expect(Evaluation.count(:all)).to eq 1
         end
       end
     end
@@ -1362,8 +1362,8 @@ describe Digilys::Importer do
           importer.mappings["suite_evaluations"]["export-123"] = suite_evaluation.id
         end
         it "does not create a new object" do
-          result.should be_nil
-          Evaluation.with_type(:suite).count(:all).should == 1
+          expect(result).to be_nil
+          expect(Evaluation.with_type(:suite).count(:all)).to eq 1
         end
       end
     end
@@ -1440,8 +1440,8 @@ describe Digilys::Importer do
           importer.mappings["results"]["export-123"] = result.id
         end
         it "does not create a new object" do
-          result.should be_nil
-          Result.count(:all).should == 1
+          expect(result).to be_nil
+          expect(Result.count(:all)).to eq 1
         end
       end
     end
@@ -1501,8 +1501,8 @@ describe Digilys::Importer do
           importer.mappings["settings"]["export-123"] = create(:setting).id
         end
         it "does not create a new object" do
-          setting.should be_nil
-          Setting.count(:all).should == 1
+          expect(setting).to be_nil
+          expect(Setting.count(:all)).to eq 1
         end
       end
     end
@@ -1546,8 +1546,8 @@ describe Digilys::Importer do
           importer.mappings["table_states"]["export-123"] = create(:table_state).id
         end
         it "does not create a new object" do
-          table_state.should be_nil
-          TableState.count(:all).should == 1
+          expect(table_state).to be_nil
+          expect(TableState.count(:all)).to eq 1
         end
       end
     end
@@ -1576,7 +1576,7 @@ describe Digilys::Importer do
 
         users.each_with_index do |u, i|
           importer.mappings["users"][user_ids[i]] = u.id
-          u.should_not have_role(:admin)
+          expect(u).not_to have_role(:admin)
         end
       end
 
@@ -1592,7 +1592,7 @@ describe Digilys::Importer do
         let(:name)          { "manager" }
 
         before(:each) do
-          users.each { |u| u.should_not have_role(:manager, Suite) }
+          users.each { |u| expect(u).not_to have_role(:manager, Suite) }
         end
 
         its(:first)  { should     have_role(:manager, Suite) }
@@ -1606,7 +1606,7 @@ describe Digilys::Importer do
         let(:name)          { "member" }
 
         before(:each) do
-          users.each { |u| u.should_not have_role(:member, suite) }
+          users.each { |u| expect(u).not_to have_role(:member, suite) }
         end
 
         its(:first)  { should     have_role(:member, suite) }

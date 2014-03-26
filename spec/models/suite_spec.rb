@@ -28,21 +28,21 @@ describe Suite do
     it { should be_versioned }
     it "stores the id as suite_id metadata" do
       suite = create(:suite)
-      suite.versions.last.suite_id.should == suite.id
+      expect(suite.versions.last.suite_id).to eq suite.id
     end
   end
   context "associations" do
     context "color table" do
       let(:color_table) { build(:color_table, instance: nil) }
       it "creates a color table when creating a suite" do
-        create(:suite, color_table: nil).color_table.should_not be_blank
+        expect(create(:suite, color_table: nil).color_table).not_to be_blank
       end
       it "does not create a color table for templates" do
-        create(:suite, color_table: nil, is_template: true).color_table.should be_blank
+        expect(create(:suite, color_table: nil, is_template: true).color_table).to be_blank
       end
       it "does not overwrite an existing color table" do
         suite = create(:suite, color_table: color_table)
-        color_table.reload.suite.should == suite
+        expect(color_table.reload.suite).to eq suite
       end
     end
   end
@@ -63,15 +63,15 @@ describe Suite do
 
       it "returns evaluations fetched from the database" do
         suite = build(:suite, generic_evaluations: generics.collect(&:id))
-        suite.generic_evaluations(true).should match_array(generics)
+        expect(suite.generic_evaluations(true)).to match_array(generics)
       end
       it "only returns generic evaluations" do
         suite = build(:suite, generic_evaluations: generics.collect(&:id) + [wrong_type.id])
-        suite.generic_evaluations(true).should match_array(generics)
+        expect(suite.generic_evaluations(true)).to match_array(generics)
       end
       it "only returns evaluations from the same instance as the suite" do
         suite = build(:suite, generic_evaluations: generics.collect(&:id) + [wrong_instance.id])
-        suite.generic_evaluations(true).should match_array(generics)
+        expect(suite.generic_evaluations(true)).to match_array(generics)
       end
     end
   end
@@ -80,12 +80,12 @@ describe Suite do
 
     it "adds all generic evaluations to the suite" do
       suite.add_generic_evaluations(123, 456)
-      suite.generic_evaluations.should match_array([123,456])
+      expect(suite.generic_evaluations).to match_array([123,456])
     end
     it "builds a new object when adding evaluations" do
       old = suite.generic_evaluations
       suite.add_generic_evaluations(123, 456)
-      suite.generic_evaluations.should_not equal(old)
+      expect(suite.generic_evaluations).not_to be old
     end
   end
   describe ".remove_generic_evaluations" do
@@ -93,12 +93,12 @@ describe Suite do
 
     it "removes all generic evaluations from the suite" do
       suite.remove_generic_evaluations(123, 456)
-      suite.generic_evaluations.should match_array([789])
+      expect(suite.generic_evaluations).to match_array([789])
     end
     it "builds a new object when removing evaluations" do
       old = suite.generic_evaluations
       suite.remove_generic_evaluations(123, 456)
-      suite.generic_evaluations.should_not equal(old)
+      expect(suite.generic_evaluations).not_to be old
     end
   end
 
@@ -111,7 +111,7 @@ describe Suite do
       suite.student_data << "foo"
       suite.student_data << "bar"
       suite.save
-      suite.reload.student_data.should match_array(%w(foo bar))
+      expect(suite.reload.student_data).to match_array(%w(foo bar))
     end
 
     context "with existing data" do
@@ -121,7 +121,7 @@ describe Suite do
       it "only allows unique entries" do
         suite.student_data << "foo"
         suite.save
-        suite.reload.student_data.should match_array(%w(foo bar baz))
+        expect(suite.reload.student_data).to match_array(%w(foo bar baz))
       end
     end
   end
@@ -130,12 +130,12 @@ describe Suite do
 
     it "adds all student data to the suite" do
       suite.add_student_data("foo", "bar")
-      suite.student_data.should match_array(%w(foo bar))
+      expect(suite.student_data).to match_array(%w(foo bar))
     end
     it "builds a new object when adding student data" do
       old = suite.student_data
       suite.add_student_data("foo", "bar")
-      suite.student_data.should_not equal(old)
+      expect(suite.student_data).not_to be old
     end
   end
   describe ".remove_student_data" do
@@ -143,12 +143,12 @@ describe Suite do
 
     it "removes all student data from the suite" do
       suite.remove_student_data("foo", "bar")
-      suite.student_data.should match_array(%w(baz))
+      expect(suite.student_data).to match_array(%w(baz))
     end
     it "builds a new object when removing student data" do
       old = suite.student_data
       suite.remove_student_data("foo", "bar")
-      suite.student_data.should_not equal(old)
+      expect(suite.student_data).not_to be old
     end
   end
 
@@ -165,21 +165,21 @@ describe Suite do
 
     it "copies the template's evaluations" do
       # Names should be equal...
-      suite.evaluations.collect(&:name).should match_array(evaluations.collect(&:name))
+      expect(suite.evaluations.collect(&:name)).to match_array(evaluations.collect(&:name))
 
       # ... but none of the ids, see Evaluation#new_from_template
       ids = suite.evaluations.collect(&:id)
-      (ids - evaluations.collect(&:id)).should match_array(ids)
+      expect((ids - evaluations.collect(&:id))).to match_array(ids)
     end
 
     it "copies the template's meetings" do
       # Names and agendas should be equal...
-      suite.meetings.collect(&:name).should match_array(meetings.collect(&:name))
-      suite.meetings.collect(&:agenda).should match_array(meetings.collect(&:agenda))
+      expect(suite.meetings.collect(&:name)).to match_array(meetings.collect(&:name))
+      expect(suite.meetings.collect(&:agenda)).to match_array(meetings.collect(&:agenda))
 
       # ... but none of the ids
       ids = suite.meetings.collect(&:id)
-      (ids - meetings.collect(&:id)).should match_array(ids)
+      expect((ids - meetings.collect(&:id))).to match_array(ids)
     end
 
     context "with attrs" do
@@ -192,14 +192,14 @@ describe Suite do
     let!(:templates) { create_list(:suite, 3, is_template: true) }
     let!(:regular)   { create_list(:suite, 3, is_template: false) }
     it "restricts the query to templates only" do
-      Suite.template.all.should match_array(templates)
+      expect(Suite.template.all).to match_array(templates)
     end
   end
   describe "#regular" do
     let!(:templates) { create_list(:suite, 3, is_template: true) }
     let!(:regular)   { create_list(:suite, 3, is_template: false) }
     it "restricts the query to regular suites only" do
-      Suite.regular.all.should match_array(regular)
+      expect(Suite.regular.all).to match_array(regular)
     end
   end
 end

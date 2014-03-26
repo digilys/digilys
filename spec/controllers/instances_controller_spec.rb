@@ -12,14 +12,14 @@ describe InstancesController, versioning: !ENV["debug_versioning"].blank? do
 
     it "lists instances" do
       get :index
-      response.should be_successful
-      assigns(:instances).should match_array(instances + [ logged_in_user.active_instance ])
+      expect(response).to be_successful
+      expect(assigns(:instances)).to match_array(instances + [ logged_in_user.active_instance ])
     end
 
     it "lists instances via xhr" do
       xhr :get, :index
-      response.should be_successful
-      response.should render_template("_list")
+      expect(response).to be_successful
+      expect(response).to render_template("_list")
     end
 
     context "with a regular user" do
@@ -27,62 +27,62 @@ describe InstancesController, versioning: !ENV["debug_versioning"].blank? do
       
       it "limits the instances to those the user can access" do
         get :index
-        response.should            be_successful
-        assigns(:instances).should match_array([ logged_in_user.active_instance ])
+        expect(response).to            be_successful
+        expect(assigns(:instances)).to match_array([ logged_in_user.active_instance ])
       end
     end
   end
 
   describe "POST #select" do
     it "sets the current user's active instance" do
-      logged_in_user.active_instance.should_not == instance
+      expect(logged_in_user.active_instance).not_to eq instance
       post :select, id: instance.id
 
-      response.should redirect_to(root_url())
-      logged_in_user.reload.active_instance.should == instance
+      expect(response).to redirect_to(root_url())
+      expect(logged_in_user.reload.active_instance).to eq instance
     end
   end
 
   describe "GET #show" do
     it "is successful" do
       get :show, id: instance.id
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
   describe "GET #new" do
     it "is successful" do
       get :new
-      response.should be_success
+      expect(response).to be_success
     end
   end
   describe "POST #create" do
     it "redirects to the instance when successful" do
       post :create, instance: valid_parameters_for(:instance)
-      response.should redirect_to(assigns(:instance))
+      expect(response).to redirect_to(assigns(:instance))
     end
     it "renders the new view when validation fails" do
       post :create, instance: invalid_parameters_for(:instance)
-      response.should render_template("new")
+      expect(response).to render_template("new")
     end
   end
 
   describe "GET #edit" do
     it "is successful" do
       get :edit, id: instance.id
-      response.should be_success
+      expect(response).to be_success
     end
   end
   describe "PUT #update" do
     it "redirects to the instance when successful" do
       new_name = "#{instance.name} updated" 
       put :update, id: instance.id, instance: { name: new_name }
-      response.should redirect_to(instance)
-      instance.reload.name.should == new_name
+      expect(response).to redirect_to(instance)
+      expect(instance.reload.name).to eq new_name
     end
     it "renders the edit view when validation fails" do
       put :update, id: instance.id, instance: invalid_parameters_for(:instance)
-      response.should render_template("edit")
+      expect(response).to render_template("edit")
     end
   end
 end

@@ -36,7 +36,7 @@ describe Meeting do
       meeting = create(:meeting)
       meeting.suite = create(:suite)
       meeting.save
-      meeting.versions.last.suite_id.should == meeting.suite_id
+      expect(meeting.versions.last.suite_id).to eq meeting.suite_id
     end
   end
 
@@ -57,16 +57,16 @@ describe Meeting do
 
   context ".overdue?" do
     it "returns true for past meetings that are not completed" do
-      create(:meeting, date: Date.today - 1, completed: false).should     be_overdue
+      expect(create(:meeting, date: Date.today - 1, completed: false)).to be_overdue
     end
     it "returns false for future meetings" do
-      create(:meeting, date: Date.today + 1, completed: false).should_not be_overdue
+      expect(create(:meeting, date: Date.today + 1, completed: false)).not_to be_overdue
     end
     it "returns false for past meetings that are completed" do
-      create(:meeting, date: Date.today - 1, completed: true ).should_not be_overdue
+      expect(create(:meeting, date: Date.today - 1, completed: true)).not_to be_overdue
     end
     it "considers today's date to be a future meeting" do
-      create(:meeting, date: Date.today    , completed: false).should_not be_overdue
+      expect(create(:meeting, date: Date.today, completed: false)).not_to be_overdue
     end
   end
 

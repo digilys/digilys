@@ -48,7 +48,7 @@ describe ColorTable do
       color_table.student_data << "foo"
       color_table.student_data << "bar"
       color_table.save
-      color_table.reload.student_data.should match_array(%w(foo bar))
+      expect(color_table.reload.student_data).to match_array(%w(foo bar))
     end
 
     context "with existing data" do
@@ -58,7 +58,7 @@ describe ColorTable do
       it "only allows unique entries" do
         color_table.student_data << "foo"
         color_table.save
-        color_table.reload.student_data.should match_array(%w(foo bar baz))
+        expect(color_table.reload.student_data).to match_array(%w(foo bar baz))
       end
     end
   end
@@ -93,7 +93,7 @@ describe ColorTable do
     subject(:groups) { color_table.group_hierarchy }
 
     it "orders the suite's associated groups by its hierarchy" do
-      groups.should == [
+      expect(groups).to eq [
         l1_group1,
           l2_group1,
             l3_group1,

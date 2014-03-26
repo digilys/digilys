@@ -11,6 +11,6 @@ describe "shared/_simple_search_form" do
   it "renders a clear link if parameters are set" do
     view.stub(:params).and_return(q: { name_cont: "name" })
     render
-    rendered.should have_selector("a[href='/form/target']")
+    expect(rendered).to have_selector("a[href='/form/target']")
   end
 end

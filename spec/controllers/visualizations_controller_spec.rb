@@ -12,43 +12,43 @@ describe VisualizationsController, versioning: !ENV["debug_versioning"].blank? d
   describe "GET #color_area_chart" do
     it "is successful" do
       get :color_area_chart, suite_id: suite.id
-      response.should be_success
+      expect(response).to be_success
     end
     it "gives a 404 if the suite's instance does not match" do
       get :color_area_chart, suite_id: other_suite.id
-      response.status.should == 404
+      expect(response.status).to eq 404
     end
   end
   describe "GET #stanine_column_chart" do
     it "is successful" do
       get :stanine_column_chart, suite_id: suite.id
-      response.should be_success
+      expect(response).to be_success
     end
     it "gives a 404 if the suite's instance does not match" do
       get :stanine_column_chart, suite_id: other_suite.id
-      response.status.should == 404
+      expect(response.status).to eq 404
     end
   end
   describe "GET #result_line_chart" do
     it "is successful" do
       get :result_line_chart, suite_id: suite.id
-      response.should be_success
+      expect(response).to be_success
     end
     it "gives a 404 if the suite's instance does not match" do
       get :result_line_chart, suite_id: other_suite.id
-      response.status.should == 404
+      expect(response.status).to eq 404
     end
   end
 
   describe "POST #filter" do
     it "sets a visualization filter" do
       post :filter, type: "type", filter_categories: "foo,bar", return_to: "/foo/bar"
-      response.should redirect_to("/foo/bar")
-      session[:visualization_filter][:type][:categories].should == "foo,bar"
+      expect(response).to redirect_to("/foo/bar")
+      expect(session[:visualization_filter][:type][:categories]).to eq "foo,bar"
     end
     it "redirects to the root url if no return parameter is set" do
       post :filter, type: "type", filter_categories: "foo,bar"
-      response.should redirect_to(root_url())
+      expect(response).to redirect_to(root_url())
     end
   end
 
@@ -63,25 +63,25 @@ describe VisualizationsController, versioning: !ENV["debug_versioning"].blank? d
     subject(:table) { controller.send(:results_to_datatable, evaluations) }
 
     it "generates the correct format" do
-      table.should have(3).items
+      expect(table).to have(3).items
 
       # Title row
-      table.first.should have(3).items
-      table.first[0].should == Evaluation.model_name.human(count: 2)
-      table.first[1].should == students.first.name
-      table.first[2].should == students.second.name
+      expect(table.first).to have(3).items
+      expect(table.first[0]).to eq Evaluation.model_name.human(count: 2)
+      expect(table.first[1]).to eq students.first.name
+      expect(table.first[2]).to eq students.second.name
 
       # Row for evaluation 1
-      table.second.should have(3).items
-      table.second[0].should == evaluations.first.name
-      table.second[1].should == result_s1_e1.value.to_f / 10.0
-      table.second[2].should == result_s2_e1.value.to_f / 10.0
+      expect(table.second).to have(3).items
+      expect(table.second[0]).to eq evaluations.first.name
+      expect(table.second[1]).to eq result_s1_e1.value.to_f / 10.0
+      expect(table.second[2]).to eq result_s2_e1.value.to_f / 10.0
 
       # Row for evaluation 2
-      table.third.should have(3).items
-      table.third[0].should == evaluations.second.name
-      table.third[1].should == result_s1_e2.value.to_f / 10.0
-      table.third[2].should be_nil
+      expect(table.third).to have(3).items
+      expect(table.third[0]).to eq evaluations.second.name
+      expect(table.third[1]).to eq result_s1_e2.value.to_f / 10.0
+      expect(table.third[2]).to be_nil
     end
 
 
@@ -89,22 +89,22 @@ describe VisualizationsController, versioning: !ENV["debug_versioning"].blank? d
       let(:table) { controller.send(:results_to_datatable, evaluations, students.first) }
 
       it "generates the correct format" do
-        table.should have(3).items
+        expect(table).to have(3).items
 
         # Title row
-        table.first.should have(2).items
-        table.first[0].should == Evaluation.model_name.human(count: 2)
-        table.first[1].should == students.first.name
+        expect(table.first).to have(2).items
+        expect(table.first[0]).to eq Evaluation.model_name.human(count: 2)
+        expect(table.first[1]).to eq students.first.name
 
         # Row for evaluation 1
-        table.second.should have(2).items
-        table.second[0].should == evaluations.first.name
-        table.second[1].should == result_s1_e1.value.to_f / 10.0
+        expect(table.second).to have(2).items
+        expect(table.second[0]).to eq evaluations.first.name
+        expect(table.second[1]).to eq result_s1_e1.value.to_f / 10.0
 
         # Row for evaluation 2
-        table.third.should have(2).items
-        table.third[0].should == evaluations.second.name
-        table.third[1].should == result_s1_e2.value.to_f / 10.0
+        expect(table.third).to have(2).items
+        expect(table.third[0]).to eq evaluations.second.name
+        expect(table.third[1]).to eq result_s1_e2.value.to_f / 10.0
       end
     end
   end
@@ -121,35 +121,35 @@ describe VisualizationsController, versioning: !ENV["debug_versioning"].blank? d
     subject(:table) { controller.send(:result_colors_to_datatable, evaluations) }
 
     it "generates the correct format" do
-      table.should have(4).items
+      expect(table).to have(4).items
 
       # Title row
-      table.first.should have(4).items
-      table.first[0].should == Evaluation.model_name.human(count: 2)
-      table.first[1].should == I18n.t(:red)
-      table.first[2].should == I18n.t(:yellow)
-      table.first[3].should == I18n.t(:green)
+      expect(table.first).to have(4).items
+      expect(table.first[0]).to eq Evaluation.model_name.human(count: 2)
+      expect(table.first[1]).to eq I18n.t(:red)
+      expect(table.first[2]).to eq I18n.t(:yellow)
+      expect(table.first[3]).to eq I18n.t(:green)
 
       # Row for evaluation 1
-      table.second.should have(4).items
-      table.second[0].should == evaluations.first.name
-      table.second[1].should == evaluations.first.result_distribution[:red]
-      table.second[2].should == evaluations.first.result_distribution[:yellow]
-      table.second[3].should == evaluations.first.result_distribution[:green]
+      expect(table.second).to have(4).items
+      expect(table.second[0]).to eq evaluations.first.name
+      expect(table.second[1]).to eq evaluations.first.result_distribution[:red]
+      expect(table.second[2]).to eq evaluations.first.result_distribution[:yellow]
+      expect(table.second[3]).to eq evaluations.first.result_distribution[:green]
 
       # Row for evaluation 2
-      table.third.should have(4).items
-      table.third[0].should == evaluations.second.name
-      table.third[1].should == evaluations.second.result_distribution[:red]
-      table.third[2].should == evaluations.second.result_distribution[:yellow]
-      table.third[3].should == evaluations.second.result_distribution[:green]
+      expect(table.third).to have(4).items
+      expect(table.third[0]).to eq evaluations.second.name
+      expect(table.third[1]).to eq evaluations.second.result_distribution[:red]
+      expect(table.third[2]).to eq evaluations.second.result_distribution[:yellow]
+      expect(table.third[3]).to eq evaluations.second.result_distribution[:green]
 
       # Row for evaluation 3
-      table.fourth.should have(4).items
-      table.fourth[0].should == evaluations.third.name
-      table.fourth[1].should == 0
-      table.fourth[2].should == 0
-      table.fourth[3].should == 0
+      expect(table.fourth).to have(4).items
+      expect(table.fourth[0]).to eq evaluations.third.name
+      expect(table.fourth[1]).to eq 0
+      expect(table.fourth[2]).to eq 0
+      expect(table.fourth[3]).to eq 0
     end
   end
 
@@ -175,14 +175,14 @@ describe VisualizationsController, versioning: !ENV["debug_versioning"].blank? d
     subject(:table) { controller.send(:result_stanines_to_datatable, evaluations) }
 
     it "generates the correct format" do
-      table.should have(10).items
+      expect(table).to have(10).items
 
       # Title row
-      table.first.should have(4).items
-      table.first[0].should == I18n.t(:stanine)
-      table.first[1].should == I18n.t(:normal_distribution)
-      table.first[2].should == evaluations.first.name
-      table.first[3].should == evaluations.second.name
+      expect(table.first).to have(4).items
+      expect(table.first[0]).to eq I18n.t(:stanine)
+      expect(table.first[1]).to eq I18n.t(:normal_distribution)
+      expect(table.first[2]).to eq evaluations.first.name
+      expect(table.first[3]).to eq evaluations.second.name
 
       # Stanine rows
       [
@@ -196,11 +196,11 @@ describe VisualizationsController, versioning: !ENV["debug_versioning"].blank? d
         [8, 0.07 * 3.0, 0, 0],
         [9, 0.04 * 3.0, 0, 0],
       ].each do |row, expected_second, expected_third, expected_fourth|
-        table[row].should have(4).items
-        table[row][0].should == row.to_s
-        table[row][1].should == expected_second
-        table[row][2].should == expected_third
-        table[row][3].should == expected_fourth
+        expect(table[row]).to have(4).items
+        expect(table[row][0]).to eq row.to_s
+        expect(table[row][1]).to eq expected_second
+        expect(table[row][2]).to eq expected_third
+        expect(table[row][3]).to eq expected_fourth
       end
     end
 
@@ -226,15 +226,15 @@ describe VisualizationsController, versioning: !ENV["debug_versioning"].blank? d
     subject(:table) { controller.send(:result_stanines_by_color_to_datatable, evaluation) }
 
     it "generates the correct format" do
-      table.should have(10).items
+      expect(table).to have(10).items
 
       # Title row
-      table.first.should have(5).items
-      table.first[0].should == I18n.t(:stanine)
-      table.first[1].should == I18n.t(:normal_distribution)
-      table.first[2].should == I18n.t(:red)
-      table.first[3].should == I18n.t(:yellow)
-      table.first[4].should == I18n.t(:green)
+      expect(table.first).to have(5).items
+      expect(table.first[0]).to eq I18n.t(:stanine)
+      expect(table.first[1]).to eq I18n.t(:normal_distribution)
+      expect(table.first[2]).to eq I18n.t(:red)
+      expect(table.first[3]).to eq I18n.t(:yellow)
+      expect(table.first[4]).to eq I18n.t(:green)
 
       # Stanine rows
       [
@@ -248,12 +248,12 @@ describe VisualizationsController, versioning: !ENV["debug_versioning"].blank? d
         [8, 0.07 * 3.0, 0, 0, 1],
         [9, 0.04 * 3.0, 0, 0, 0],
       ].each do |row, expected_second, expected_third, expected_fourth, expected_fifth|
-        table[row].should have(5).items
-        table[row][0].should == row.to_s
-        table[row][1].should == expected_second
-        table[row][2].should == expected_third
-        table[row][3].should == expected_fourth
-        table[row][4].should == expected_fifth
+        expect(table[row]).to have(5).items
+        expect(table[row][0]).to eq row.to_s
+        expect(table[row][1]).to eq expected_second
+        expect(table[row][2]).to eq expected_third
+        expect(table[row][3]).to eq expected_fourth
+        expect(table[row][4]).to eq expected_fifth
       end
     end
   end

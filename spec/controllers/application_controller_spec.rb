@@ -8,7 +8,7 @@ describe ApplicationController do
     let(:user)            { create(:user, active_instance: active_instance) }
     before(:each)         { controller.stub(:current_user).and_return(user) }
     subject               { controller.send(:current_instance) }
-    it                    { should == instances.second }
+    it                    { should eq instances.second }
   end
 
   describe "#current_name_order" do
@@ -16,17 +16,17 @@ describe ApplicationController do
     let(:user)          { build(:user, name_ordering: name_ordering) }
     before(:each)       { controller.stub(:current_user).and_return(user) }
     subject             { controller.send(:current_name_order) }
-    it                  { should == "first_name, last_name" }
+    it                  { should eq "first_name, last_name" }
 
     context "by last_name" do
       let(:name_ordering) { :last_name }
-      it                  { should == "last_name, first_name" }
+      it                  { should eq "last_name, first_name" }
     end
 
     context "with prefix" do
       let(:name_ordering) { :last_name }
       subject             { controller.send(:current_name_order, :students) }
-      it                  { should == "students.last_name, students.first_name" }
+      it                  { should eq "students.last_name, students.first_name" }
     end
   end
 

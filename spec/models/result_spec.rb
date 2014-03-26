@@ -64,10 +64,10 @@ describe Result do
     end
 
     it "updates the color when the evaluation changes" do
-      result.color.should == :yellow
+      expect(result.color).to eq :yellow
       evaluation.update_attributes(red_max: 6, yellow_min: 7)
       result.reload
-      result.color.should == :red
+      expect(result.color).to eq :red
     end
   end
 
@@ -118,10 +118,10 @@ describe Result do
     end
 
     it "updates the stanine when the evaluation changes" do
-      result.stanine.should == 4
+      expect(result.stanine).to eq 4
       evaluation.update_attributes(stanine3_max: 38, stanine4_min: 39)
       result.reload
-      result.stanine.should == 3
+      expect(result.stanine).to eq 3
     end
   end
 
@@ -150,13 +150,13 @@ describe Result do
     it "updates the suite's evaluations' statuses" do
       evaluation.update_status!
       evaluation.reload
-      evaluation.status.should == "partial"
+      expect(evaluation.status).to eq "partial"
       result = create(:result, evaluation: evaluation, student: participants.second.student)
       evaluation.reload
-      evaluation.status.should == "complete"
+      expect(evaluation.status).to eq "complete"
       result.destroy
       evaluation.reload
-      evaluation.status.should == "partial"
+      expect(evaluation.status).to eq "partial"
     end
   end
 
@@ -164,16 +164,16 @@ describe Result do
     it "sets the value to nil if absent flag is set" do
       result = build(:result, value: 1, absent: true)
 
-      result.value.should  == 1
-      result.valid?.should be_true
-      result.value.should  be_nil
+      expect(result.value).to  eq 1
+      expect(result.valid?).to be_true
+      expect(result.value).to  be_nil
     end
     it "does not touch the value if absent flag is not set" do
       result = build(:result, value: 1, absent: false)
 
-      result.value.should  == 1
-      result.valid?.should be_true
-      result.value.should  == 1
+      expect(result.value).to  eq 1
+      expect(result.valid?).to be_true
+      expect(result.value).to  eq 1
     end
   end
 end

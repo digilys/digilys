@@ -46,24 +46,24 @@ describe IndexController, versioning: !ENV["debug_versioning"].blank? do
 
     it "is successful" do
       get :index
-      response.should be_success
+      expect(response).to be_success
     end
     it "lists open, accessible suites" do
       get :index
-      assigns(:suites).should == [suite]
+      expect(assigns(:suites)).to eq [suite]
     end
     it "lists upcoming and overdue accessible evaluations" do
       get :index
-      assigns(:evaluations)[:overdue].should  == [overdue_evaluation, overdue_evaluation_for_user]
-      assigns(:evaluations)[:upcoming].should == [upcoming_evaluation]
+      expect(assigns(:evaluations)[:overdue]).to  eq [overdue_evaluation, overdue_evaluation_for_user]
+      expect(assigns(:evaluations)[:upcoming]).to eq [upcoming_evaluation]
     end
     it "lists upcoming accessible meetings" do
       get :index
-      assigns(:meetings).should == [upcoming_meeting]
+      expect(assigns(:meetings)).to eq [upcoming_meeting]
     end
     it "lists the user's open activities" do
       get :index
-      assigns(:activities).should == [open_activity]
+      expect(assigns(:activities)).to eq [open_activity]
     end
   end
 end

@@ -17,24 +17,24 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
 
     it "lists top level groups" do
       get :index
-      response.should be_successful
-      assigns(:groups).should match_array(top_level)
+      expect(response).to be_successful
+      expect(assigns(:groups)).to match_array(top_level)
     end
     it "filters all groups" do
       get :index, q: { name_cont: children.first.name }
-      response.should be_successful
-      assigns(:groups).should == [children.first]
+      expect(response).to be_successful
+      expect(assigns(:groups)).to eq [children.first]
     end
   end
 
   describe "GET #show" do
     it "is successful" do
       get :show, id: group.id
-      response.should be_success
+      expect(response).to be_success
     end
     it "gives a 404 if the instance does not match" do
       get :show, id: other_group.id
-      response.status.should == 404
+      expect(response.status).to be 404
     end
   end
 
@@ -48,113 +48,113 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
     it "returns the result as json" do
       get :search, q: { name_cont: group.name }
 
-      response.should be_success
+      expect(response).to be_success
       json = JSON.parse(response.body)
 
-      json["more"].should be_false
+      expect(json["more"]).to be_false
 
-      json["results"].should have(1).items
-      json["results"].first.should include("id"          => group.id)
-      json["results"].first.should include("text"        => "#{group.name}, #{parent.name}, #{grandparent.name}")
+      expect(json["results"]).to have(1).items
+      expect(json["results"].first).to include("id"   => group.id)
+      expect(json["results"].first).to include("text" => "#{group.name}, #{parent.name}, #{grandparent.name}")
     end
   end
 
   describe "GET #new" do
     it "is successful" do
       get :new
-      response.should be_success
+      expect(response).to be_success
     end
   end
   describe "POST #create" do
     it "redirects to the group when successful" do
       post :create, group: valid_parameters_for(:group)
-      response.should redirect_to(assigns(:group))
+      expect(response).to redirect_to(assigns(:group))
     end
     it "renders the new view when validation fails" do
       post :create, group: invalid_parameters_for(:group)
-      response.should render_template("new")
+      expect(response).to render_template("new")
     end
     it "sets the instance from the current user's active instance" do
       post :create, group: valid_parameters_for(:group).merge(instance_id: instance.id)
 
-      assigns(:group).instance.should_not == instance
-      assigns(:group).instance.should     == logged_in_user.active_instance
+      expect(assigns(:group).instance).not_to eq instance
+      expect(assigns(:group).instance).to     eq logged_in_user.active_instance
     end
   end
 
   describe "GET #edit" do
     it "is successful" do
       get :edit, id: group.id
-      response.should be_success
+      expect(response).to be_success
     end
     it "gives a 404 if the instance does not match" do
       get :edit, id: other_group.id
-      response.status.should == 404
+      expect(response.status).to be 404
     end
   end
   describe "PUT #update" do
     it "redirects to the group when successful" do
       new_name = "#{group.name} updated" 
       put :update, id: group.id, group: { name: new_name }
-      response.should redirect_to(group)
-      group.reload.name.should == new_name
+      expect(response).to redirect_to(group)
+      expect(group.reload.name).to eq new_name
     end
     it "renders the edit view when validation fails" do
       put :update, id: group.id, group: invalid_parameters_for(:group)
-      response.should render_template("edit")
+      expect(response).to render_template("edit")
     end
     it "gives a 404 if the instance does not match" do
       put :update, id: other_group.id, group: {}
-      response.status.should == 404
+      expect(response.status).to be 404
     end
     it "prevents changing the instance" do
       put :update, id: group.id, group: { instance_id: instance.id }
-      group.reload.instance.should_not == instance
+      expect(group.reload.instance).not_to eq instance
     end
   end
 
   describe "GET #confirm_destroy" do
     it "is successful" do
       get :confirm_destroy, id: group.id
-      response.should be_success
+      expect(response).to be_success
     end
     it "gives a 404 if the instance does not match" do
       get :confirm_destroy, id: other_group.id
-      response.status.should == 404
+      expect(response.status).to be 404
     end
   end
   describe "DELETE #destroy" do
     it "redirects to the group list page" do
       delete :destroy, id: group.id
-      response.should redirect_to(groups_url())
-      Group.exists?(group.id).should be_false
+      expect(response).to redirect_to(groups_url())
+      expect(Group.exists?(group.id)).to be_false
     end
     it "gives a 404 if the instance does not match" do
       delete :destroy, id: other_group.id
-      response.status.should == 404
+      expect(response.status).to be 404
     end
   end
 
   describe "GET #select_students" do
     it "is successful" do
       get :select_students, id: group.id
-      response.should be_success
+      expect(response).to be_success
     end
   end
   describe "PUT #add_students" do
     let(:students) { create_list(:student, 2) }
 
     it "adds students and redirects back to the group" do
-      group.students(true).should be_blank
+      expect(group.students(true)).to be_blank
       put :add_students, id: group.id, group: { students: students.collect(&:id).join(",") }
-      response.should redirect_to(group)
-      group.students(true).should match_array(students)
+      expect(response).to redirect_to(group)
+      expect(group.students(true)).to match_array(students)
     end
   end
   describe "GET #move_students" do
     it "is successful" do
       get :move_students, id: group.id
-      response.should be_success
+      expect(response).to be_success
     end
   end
   describe "PUT #move_students" do
@@ -166,26 +166,26 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
 
     it "moves students from a group to another" do
       put :move_students, id: group.id, group: { group: destination.id }, student_ids: students_moved.collect(&:id)
-      response.should redirect_to(group)
+      expect(response).to redirect_to(group)
 
-      group.students(true).should       match_array(students)
-      destination.students(true).should match_array(students_moved)
+      expect(group.students(true)).to       match_array(students)
+      expect(destination.students(true)).to match_array(students_moved)
     end
 
     it "produces an error when no group has been selected" do
       put :move_students, id: group.id, group: { group: "" }, student_ids: students_moved.collect(&:id)
-      response.should redirect_to(action: "move_students")
+      expect(response).to redirect_to(action: "move_students")
 
-      group.students(true).should match_array(students + students_moved)
+      expect(group.students(true)).to match_array(students + students_moved)
     end
 
     it "gives a 404 if the instance does not match" do
       put :move_students, id: other_group.id, group: { group: destination.id }, student_ids: students_moved.collect(&:id)
-      response.status.should == 404
+      expect(response.status).to be 404
     end
     it "gives a 404 if the destination's instance does not match" do
       put :move_students, id: group.id, group: { group: other_group.id }, student_ids: students_moved.collect(&:id)
-      response.status.should == 404
+      expect(response.status).to be 404
     end
   end
   describe "DELETE #remove_students" do
@@ -194,37 +194,37 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
     it "removes students and redirects back to the group" do
       group.students = students
       delete :remove_students, id: group.id, student_ids: students.collect(&:id)
-      response.should redirect_to(group)
-      group.students(true).should be_blank
+      expect(response).to redirect_to(group)
+      expect(group.students(true)).to be_blank
     end
     it "gives a 404 if the instance does not match" do
       delete :remove_students, id: other_group.id, student_ids: students.collect(&:id)
-      response.status.should == 404
+      expect(response.status).to be 404
     end
   end
 
   describe "GET #select_users" do
     it "is successful" do
       get :select_users, id: group.id
-      response.should be_success
+      expect(response).to be_success
     end
     it "gives a 404 if the instance does not match" do
       get :select_users, id: other_group.id
-      response.status.should == 404
+      expect(response.status).to be 404
     end
   end
   describe "PUT #add_users" do
     let(:users) { create_list(:user, 2) }
 
     it "adds users and redirects back to the group" do
-      group.users(true).should be_blank
+      expect(group.users(true)).to be_blank
       put :add_users, id: group.id, group: { users: users.collect(&:id).join(",") }
-      response.should redirect_to(group)
-      group.users(true).should match_array(users)
+      expect(response).to redirect_to(group)
+      expect(group.users(true)).to match_array(users)
     end
     it "gives a 404 if the instance does not match" do
       put :add_users, id: other_group.id, group: { users: users.collect(&:id).join(",") }
-      response.status.should == 404
+      expect(response.status).to be 404
     end
   end
   describe "DELETE #remove_users" do
@@ -233,12 +233,12 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
     it "removes users and redirects back to the group" do
       group.users = users
       delete :remove_users, id: group.id, user_ids: users.collect(&:id)
-      response.should redirect_to(group)
-      group.users(true).should be_blank
+      expect(response).to redirect_to(group)
+      expect(group.users(true)).to be_blank
     end
     it "gives a 404 if the instance does not match" do
       delete :remove_users, id: other_group.id, user_ids: users.collect(&:id)
-      response.status.should == 404
+      expect(response.status).to be 404
     end
   end
 end

@@ -8,7 +8,7 @@ describe Import::EvaluationTemplatesController, versioning: !ENV["debug_versioni
   describe "GET #new" do
     it "is successful" do
       get :new
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
@@ -27,14 +27,14 @@ describe Import::EvaluationTemplatesController, versioning: !ENV["debug_versioni
         post :confirm, csv_file: uploaded_file
       end
 
-      assigns(:filename).should == filename
-      assigns(:importer).should be_a(Digilys::EvaluationTemplateImporter)
-      File.exist?(expected_file).should be_true
+      expect(assigns(:filename)).to eq filename
+      expect(assigns(:importer)).to be_a(Digilys::EvaluationTemplateImporter)
+      expect(File.exist?(expected_file)).to be_true
     end
     it "handles errors" do
       post :confirm, csv_file: nil
-      flash[:error].should_not be_empty
-      response.should redirect_to(new_import_evaluation_template_url())
+      expect(flash[:error]).not_to be_empty
+      expect(response).to redirect_to(new_import_evaluation_template_url())
     end
   end
 
@@ -49,19 +49,19 @@ describe Import::EvaluationTemplatesController, versioning: !ENV["debug_versioni
       )
 
       it "imports data from the file" do
-        Evaluation.count.should == 0
+        expect(Evaluation.count).to eq 0
         post :create, filename: File.basename(temp_file)
-        response.should redirect_to(template_evaluations_url())
-        Evaluation.count.should == 1
+        expect(response).to redirect_to(template_evaluations_url())
+        expect(Evaluation.count).to eq 1
       end
     end
     context "without an uploaded file" do
       let(:filename) { File.join(Rails.root, "tmp/uploads", "does-not-exist") }
 
       it "renders a 404" do
-        File.exist?(filename).should be_false
+        expect(File.exist?(filename)).to be_false
         post :create, filename: filename
-        response.status.should == 404
+        expect(response.status).to be 404
       end
     end
     context "with an incorrect file" do
@@ -75,8 +75,8 @@ describe Import::EvaluationTemplatesController, versioning: !ENV["debug_versioni
 
       it "redirects to the upload form with an error" do
         post :create, filename: File.basename(temp_file)
-        flash[:error].should_not be_empty
-        response.should redirect_to(new_import_evaluation_template_url())
+        expect(flash[:error]).not_to be_empty
+        expect(response).to redirect_to(new_import_evaluation_template_url())
       end
     end
 
@@ -106,12 +106,12 @@ describe Import::EvaluationTemplatesController, versioning: !ENV["debug_versioni
 
       it "should update existing if required" do
         post :create, filename: File.basename(temp_file), update: "1"
-        Evaluation.count.should == 1
-        existing.reload.max_result.should == 50
+        expect(Evaluation.count).to eq 1
+        expect(existing.reload.max_result).to eq 50
       end
       it "should not update existing by default" do
         post :create, filename: File.basename(temp_file)
-        Evaluation.count.should == 2
+        expect(Evaluation.count).to eq 2
       end
     end
   end

@@ -128,46 +128,46 @@ describe Digilys::StudentDataImporter do
     }
 
     it "saves students in a group hierarchy" do
-      Group.count.should   == 0
-      Student.count.should == 0
+      expect(Group.count).to   eq 0
+      expect(Student.count).to eq 0
 
       importer.import!
 
-      Group.count.should   == 2
-      Student.count.should == 2
+      expect(Group.count).to   eq 2
+      expect(Student.count).to eq 2
 
       girl = Student.where(personal_id: "20000101-1234").first
 
-      girl.instance.should    == instance
-      girl.personal_id.should == "20000101-1234"
-      girl.first_name.should  == "Firstname"
-      girl.last_name.should   == "Lastname"
-      girl.gender.should      == "female"
+      expect(girl.instance).to    eq instance
+      expect(girl.personal_id).to eq "20000101-1234"
+      expect(girl.first_name).to  eq "Firstname"
+      expect(girl.last_name).to   eq "Lastname"
+      expect(girl.gender).to      eq "female"
 
       boy = Student.where(personal_id: "20000101-1235").first
 
-      boy.instance.should    == instance
-      boy.personal_id.should == "20000101-1235"
-      boy.first_name.should  == "Firstname"
-      boy.last_name.should   == "Lastname"
-      boy.gender.should      == "male"
+      expect(boy.instance).to    eq instance
+      expect(boy.personal_id).to eq "20000101-1235"
+      expect(boy.first_name).to  eq "Firstname"
+      expect(boy.last_name).to   eq "Lastname"
+      expect(boy.gender).to      eq "male"
 
       school = Group.where(name: "School1").first
 
-      school.imported.should be_true
-      school.instance.should == instance
-      school.name.should     == "School1"
-      school.students.should include(girl)
-      school.students.should include(boy)
+      expect(school.imported).to be_true
+      expect(school.instance).to eq instance
+      expect(school.name).to     eq "School1"
+      expect(school.students).to include(girl)
+      expect(school.students).to include(boy)
 
       grade = Group.where(name: "Grade1").first
 
-      grade.imported.should be_true
-      grade.instance.should == instance
-      grade.name.should     == "Grade1"
-      grade.parent.should   == school
-      grade.students.should include(girl)
-      grade.students.should include(boy)
+      expect(grade.imported).to be_true
+      expect(grade.instance).to eq instance
+      expect(grade.name).to     eq "Grade1"
+      expect(grade.parent).to   eq school
+      expect(grade.students).to include(girl)
+      expect(grade.students).to include(boy)
     end
 
     context "without a grade" do
@@ -178,10 +178,10 @@ describe Digilys::StudentDataImporter do
       }
 
       it "does not create a grade group" do
-        Group.count.should                == 0
+        expect(Group.count).to                eq 0
         importer.import!
-        Group.count.should                == 1
-        Group.first.students.count.should == 1
+        expect(Group.count).to                eq 1
+        expect(Group.first.students.count).to eq 1
       end
     end
 
@@ -193,9 +193,9 @@ describe Digilys::StudentDataImporter do
       }
 
       it "does not create a grade group" do
-        Group.count.should   == 0
+        expect(Group.count).to eq 0
         importer.import!
-        Group.count.should   == 0
+        expect(Group.count).to eq 0
       end
     end
   end

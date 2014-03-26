@@ -8,7 +8,7 @@ describe Import::InstructionsController, versioning: !ENV["debug_versioning"].bl
   describe "GET #new" do
     it "is successful" do
       get :new
-      response.should be_success
+      expect(response).to be_success
     end
   end
   describe "POST #confirm" do
@@ -18,9 +18,9 @@ describe Import::InstructionsController, versioning: !ENV["debug_versioning"].bl
 
     it "parses JSON data from the incoming file" do
       post :confirm, export_file: export_file_io
-      response.should be_success
-      assigns(:uploaded_instructions).should include(first_object)
-      assigns(:uploaded_instructions).should include(second_object)
+      expect(response).to be_success
+      expect(assigns(:uploaded_instructions)).to include(first_object)
+      expect(assigns(:uploaded_instructions)).to include(second_object)
     end
   end
   describe "POST #create" do
@@ -29,31 +29,31 @@ describe Import::InstructionsController, versioning: !ENV["debug_versioning"].bl
 
     it "redirects to the instruction index url" do
       post :create, instructions: []
-      response.should redirect_to(instructions_url())
+      expect(response).to redirect_to(instructions_url())
     end
     it "creates new instructions from incoming data" do
-      Instruction.count.should == 0
+      expect(Instruction.count).to eq 0
 
       post :create, instructions: { 0 => new_instruction1, 1 => new_instruction2 }
 
-      Instruction.count.should == 2
+      expect(Instruction.count).to eq 2
 
       instruction = Instruction.where(for_page: new_instruction1[:for_page]).first
-      instruction.for_page.should    == new_instruction1[:for_page]
-      instruction.title.should       == new_instruction1[:title]
-      instruction.film.should        == new_instruction1[:film]
-      instruction.description.should == new_instruction1[:description]
+      expect(instruction.for_page).to    eq new_instruction1[:for_page]
+      expect(instruction.title).to       eq new_instruction1[:title]
+      expect(instruction.film).to        eq new_instruction1[:film]
+      expect(instruction.description).to eq new_instruction1[:description]
 
       instruction = Instruction.where(for_page: new_instruction2[:for_page]).first
-      instruction.for_page.should    == new_instruction2[:for_page]
-      instruction.title.should       == new_instruction2[:title]
-      instruction.film.should        == new_instruction2[:film]
-      instruction.description.should == new_instruction2[:description]
+      expect(instruction.for_page).to    eq new_instruction2[:for_page]
+      expect(instruction.title).to       eq new_instruction2[:title]
+      expect(instruction.film).to        eq new_instruction2[:film]
+      expect(instruction.description).to eq new_instruction2[:description]
     end
     it "skips instructions that don't have an import flag set" do
-      Instruction.count.should == 0
+      expect(Instruction.count).to eq 0
       post :create, instructions: { 0 => new_instruction1.merge(import: false) }
-      Instruction.count.should == 0
+      expect(Instruction.count).to eq 0
     end
     it "updates existing instructions" do
       existing = create(:instruction)
@@ -62,8 +62,8 @@ describe Import::InstructionsController, versioning: !ENV["debug_versioning"].bl
 
       existing.reload
 
-      existing.for_page.should == new_instruction1[:for_page]
-      existing.title.should    == new_instruction1[:title]
+      expect(existing.for_page).to eq new_instruction1[:for_page]
+      expect(existing.title).to    eq new_instruction1[:title]
     end
   end
 end

@@ -56,7 +56,7 @@ describe Digilys::Exporter do
       it             { should include(student.attributes.reject { |k,v| k =~ /^(id|.*_id|created_at|updated_at)$/ }) }
 
       it "deserializes serialized fields" do
-        result["data"].should be_instance_of(Hash)
+        expect(result["data"]).to be_instance_of(Hash)
       end
     end
     context "multiple" do
@@ -157,7 +157,7 @@ describe Digilys::Exporter do
       it             { should include("_suite_id" => "export-#{meeting.suite_id}") }
       it             { should include(meeting.attributes.reject { |k,v| k =~ /^(id|.*_id|created_at|updated_at|date)$/ }) }
       it "should have the correct date" do
-        result["date"].should == meeting.date.to_s
+        expect(result["date"]).to eq meeting.date.to_s
       end
     end
     context "multiple" do
@@ -176,8 +176,8 @@ describe Digilys::Exporter do
       it              { should include("_meeting_id" => "export-#{activity.meeting_id}") }
       it              { should include(activity.attributes.reject { |k,v| k =~ /^(id|.*_id|created_at|updated_at|.*_date)$/ }) }
       it "should have the correct dates" do
-        result["start_date"].should == activity.start_date.to_s
-        result["end_date"].should   == activity.end_date.to_s
+        expect(result["start_date"]).to eq activity.start_date.to_s
+        expect(result["end_date"]).to   eq activity.end_date.to_s
       end
 
       context "with groups" do
@@ -226,7 +226,7 @@ describe Digilys::Exporter do
       it                        { should include("date" => nil) }
       it                        { should include(generic_evaluation.attributes.reject { |k,v| k =~ /^(id|.*_id|created_at|updated_at|date)$/ }) }
       it "should include the categories" do
-        result["category_list"].should match_array(%w(foo bar baz))
+        expect(result["category_list"]).to match_array(%w(foo bar baz))
       end
     end
     context "multiple" do
@@ -247,7 +247,7 @@ describe Digilys::Exporter do
       it                         { should include("date" => nil) }
       it                         { should include(evaluation_template.attributes.reject { |k,v| k =~ /^(id|.*_id|created_at|updated_at|date)$/ }) }
       it "should include the categories" do
-        result["category_list"].should match_array(%w(foo bar baz))
+        expect(result["category_list"]).to match_array(%w(foo bar baz))
       end
     end
     context "multiple" do
@@ -268,7 +268,7 @@ describe Digilys::Exporter do
       it                      { should include("date" => suite_evaluation.date.to_s) }
       it                      { should include(suite_evaluation.attributes.reject { |k,v| k =~ /^(id|.*_id|created_at|updated_at|date)$/ }) }
       it "should include the categories" do
-        result["category_list"].should match_array(%w(foo bar baz))
+        expect(result["category_list"]).to match_array(%w(foo bar baz))
       end
 
       context "with participants" do

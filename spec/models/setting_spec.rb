@@ -16,7 +16,7 @@ describe Setting do
   context "#for" do
     let(:settings) { create_list(:setting, 5) }
     it "filters on customizables" do
-      Setting.for(settings.first.customizable).should match_array([ settings.first ])
+      expect(Setting.for(settings.first.customizable)).to match_array([ settings.first ])
     end
   end
 end

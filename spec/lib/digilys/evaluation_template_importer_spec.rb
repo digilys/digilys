@@ -194,83 +194,83 @@ describe Digilys::EvaluationTemplateImporter do
     }
 
     it "saves evaluation templates" do
-      Evaluation.count.should == 0
+      expect(Evaluation.count).to eq 0
 
       importer.import!
 
-      Evaluation.count.should == 2
+      expect(Evaluation.count).to eq 2
 
       # First
       e = Evaluation.where(name: "Template1").first
 
-      e.instance_id.should   == instance.id
-      e.imported.should      be_true
-      e.value_type.should    == "numeric"
-      e.target.should        == "all"
-      e.type.should          == "template"
-      e.description.should   == "Template1 desc"
-      e.category_list.should match_array(%w(foo bar))
-      e.max_result.should    == 50
-      e.red_min.should       == 0
-      e.red_max.should       == 24
-      e.yellow_min.should    == 25
-      e.yellow_max.should    == 39
-      e.green_min.should     == 40
-      e.green_max.should     == 50
-      e.stanine1_min.should  == 0
-      e.stanine1_max.should  == 0
-      e.stanine2_min.should  == 0
-      e.stanine2_max.should  == 0
-      e.stanine3_min.should  == 0
-      e.stanine3_max.should  == 0
-      e.stanine4_min.should  == 1
-      e.stanine4_max.should  == 9
-      e.stanine5_min.should  == 10
-      e.stanine5_max.should  == 19
-      e.stanine6_min.should  == 20
-      e.stanine6_max.should  == 29
-      e.stanine7_min.should  == 30
-      e.stanine7_max.should  == 39
-      e.stanine8_min.should  == 40
-      e.stanine8_max.should  == 44
-      e.stanine9_min.should  == 45
-      e.stanine9_max.should  == 50
+      expect(e.instance_id).to   eq instance.id
+      expect(e.imported).to      be_true
+      expect(e.value_type).to    eq "numeric"
+      expect(e.target).to        eq "all"
+      expect(e.type).to          eq "template"
+      expect(e.description).to   eq "Template1 desc"
+      expect(e.category_list).to match_array(%w(foo bar))
+      expect(e.max_result).to    eq 50
+      expect(e.red_min).to       eq 0
+      expect(e.red_max).to       eq 24
+      expect(e.yellow_min).to    eq 25
+      expect(e.yellow_max).to    eq 39
+      expect(e.green_min).to     eq 40
+      expect(e.green_max).to     eq 50
+      expect(e.stanine1_min).to  eq 0
+      expect(e.stanine1_max).to  eq 0
+      expect(e.stanine2_min).to  eq 0
+      expect(e.stanine2_max).to  eq 0
+      expect(e.stanine3_min).to  eq 0
+      expect(e.stanine3_max).to  eq 0
+      expect(e.stanine4_min).to  eq 1
+      expect(e.stanine4_max).to  eq 9
+      expect(e.stanine5_min).to  eq 10
+      expect(e.stanine5_max).to  eq 19
+      expect(e.stanine6_min).to  eq 20
+      expect(e.stanine6_max).to  eq 29
+      expect(e.stanine7_min).to  eq 30
+      expect(e.stanine7_max).to  eq 39
+      expect(e.stanine8_min).to  eq 40
+      expect(e.stanine8_max).to  eq 44
+      expect(e.stanine9_min).to  eq 45
+      expect(e.stanine9_max).to  eq 50
 
       # Second
       e = Evaluation.where(name: "Template2").first
 
-      e.instance_id.should   == instance.id
-      e.imported.should      be_true
-      e.value_type.should    == "numeric"
-      e.target.should        == "all"
-      e.type.should          == "template"
-      e.description.should   == "Template2 desc"
-      e.category_list.should match_array(%w(foo bar))
-      e.max_result.should    == 50
-      e.red_min.should       == 0
-      e.red_max.should       == 24
-      e.yellow_min.should    == 25
-      e.yellow_max.should    == 39
-      e.green_min.should     == 40
-      e.green_max.should     == 50
-      e.stanine1_min.should  be_nil
-      e.stanine1_max.should  be_nil
-      e.stanine2_min.should  be_nil
-      e.stanine2_max.should  be_nil
-      e.stanine3_min.should  be_nil
-      e.stanine3_max.should  be_nil
-      e.stanine4_min.should  be_nil
-      e.stanine4_max.should  be_nil
-      e.stanine5_min.should  be_nil
-      e.stanine5_max.should  be_nil
-      e.stanine6_min.should  be_nil
-      e.stanine6_max.should  be_nil
-      e.stanine7_min.should  be_nil
-      e.stanine7_max.should  be_nil
-      e.stanine8_min.should  be_nil
-      e.stanine8_max.should  be_nil
-      e.stanine9_min.should  be_nil
-      e.stanine9_max.should  be_nil
+      expect(e.instance_id).to   eq instance.id
+      expect(e.imported).to      be_true
+      expect(e.value_type).to    eq "numeric"
+      expect(e.target).to        eq "all"
+      expect(e.type).to          eq "template"
+      expect(e.description).to   eq "Template2 desc"
+      expect(e.category_list).to match_array(%w(foo bar))
+      expect(e.max_result).to    eq 50
+      expect(e.red_min).to       eq 0
+      expect(e.red_max).to       eq 24
+      expect(e.yellow_min).to    eq 25
+      expect(e.yellow_max).to    eq 39
+      expect(e.green_min).to     eq 40
+      expect(e.green_max).to     eq 50
+      expect(e.stanine1_min).to  be_nil
+      expect(e.stanine1_max).to  be_nil
+      expect(e.stanine2_min).to  be_nil
+      expect(e.stanine2_max).to  be_nil
+      expect(e.stanine3_min).to  be_nil
+      expect(e.stanine3_max).to  be_nil
+      expect(e.stanine4_min).to  be_nil
+      expect(e.stanine4_max).to  be_nil
+      expect(e.stanine5_min).to  be_nil
+      expect(e.stanine5_max).to  be_nil
+      expect(e.stanine6_min).to  be_nil
+      expect(e.stanine6_max).to  be_nil
+      expect(e.stanine7_min).to  be_nil
+      expect(e.stanine7_max).to  be_nil
+      expect(e.stanine8_min).to  be_nil
+      expect(e.stanine8_max).to  be_nil
+      expect(e.stanine9_min).to  be_nil
+      expect(e.stanine9_max).to  be_nil
     end
 
     context "with existing" do
@@ -289,47 +289,47 @@ describe Digilys::EvaluationTemplateImporter do
       end
 
       it "saves evaluation templates" do
-        Evaluation.count.should == 1
+        expect(Evaluation.count).to eq 1
 
         importer.import!
 
-        Evaluation.count.should == 2
+        expect(Evaluation.count).to eq 2
 
         # First
         e = Evaluation.where(name: "Template1").first
 
-        e.instance_id.should   == instance.id
-        e.imported.should      be_true
-        e.value_type.should    == "numeric"
-        e.target.should        == "all"
-        e.type.should          == "template"
-        e.description.should   == "Template1 desc"
-        e.category_list.should match_array(%w(foo bar))
-        e.max_result.should    == 50
-        e.red_min.should       == 0
-        e.red_max.should       == 24
-        e.yellow_min.should    == 25
-        e.yellow_max.should    == 39
-        e.green_min.should     == 40
-        e.green_max.should     == 50
-        e.stanine1_min.should  == 0
-        e.stanine1_max.should  == 0
-        e.stanine2_min.should  == 0
-        e.stanine2_max.should  == 0
-        e.stanine3_min.should  == 0
-        e.stanine3_max.should  == 0
-        e.stanine4_min.should  == 1
-        e.stanine4_max.should  == 9
-        e.stanine5_min.should  == 10
-        e.stanine5_max.should  == 19
-        e.stanine6_min.should  == 20
-        e.stanine6_max.should  == 29
-        e.stanine7_min.should  == 30
-        e.stanine7_max.should  == 39
-        e.stanine8_min.should  == 40
-        e.stanine8_max.should  == 44
-        e.stanine9_min.should  == 45
-        e.stanine9_max.should  == 50
+        expect(e.instance_id).to   eq instance.id
+        expect(e.imported).to      be_true
+        expect(e.value_type).to    eq "numeric"
+        expect(e.target).to        eq "all"
+        expect(e.type).to          eq "template"
+        expect(e.description).to   eq "Template1 desc"
+        expect(e.category_list).to match_array(%w(foo bar))
+        expect(e.max_result).to    eq 50
+        expect(e.red_min).to       eq 0
+        expect(e.red_max).to       eq 24
+        expect(e.yellow_min).to    eq 25
+        expect(e.yellow_max).to    eq 39
+        expect(e.green_min).to     eq 40
+        expect(e.green_max).to     eq 50
+        expect(e.stanine1_min).to  eq 0
+        expect(e.stanine1_max).to  eq 0
+        expect(e.stanine2_min).to  eq 0
+        expect(e.stanine2_max).to  eq 0
+        expect(e.stanine3_min).to  eq 0
+        expect(e.stanine3_max).to  eq 0
+        expect(e.stanine4_min).to  eq 1
+        expect(e.stanine4_max).to  eq 9
+        expect(e.stanine5_min).to  eq 10
+        expect(e.stanine5_max).to  eq 19
+        expect(e.stanine6_min).to  eq 20
+        expect(e.stanine6_max).to  eq 29
+        expect(e.stanine7_min).to  eq 30
+        expect(e.stanine7_max).to  eq 39
+        expect(e.stanine8_min).to  eq 40
+        expect(e.stanine8_max).to  eq 44
+        expect(e.stanine9_min).to  eq 45
+        expect(e.stanine9_max).to  eq 50
       end
 
       context "matching existing" do
@@ -359,19 +359,19 @@ describe Digilys::EvaluationTemplateImporter do
         end
 
         it "matches first by name, then by description if multiple share the same name" do
-          Evaluation.count.should == 3
+          expect(Evaluation.count).to eq 3
 
           importer.import!
 
-          Evaluation.count.should == 3
+          expect(Evaluation.count).to eq 3
 
           # By name
           e = Evaluation.where(name: "Template1").first
-          e.max_result.should == 50
+          expect(e.max_result).to eq 50
 
           # By name and description
           e = Evaluation.where(name: "Template2", description: "Template2 desc").first
-          e.max_result.should == 50
+          expect(e.max_result).to eq 50
         end
       end
     end

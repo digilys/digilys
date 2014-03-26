@@ -14,13 +14,13 @@ describe Template::EvaluationsController, versioning: !ENV["debug_versioning"].b
 
     it "gives a list of generic evaluations" do
       get :index
-      response.should be_success
-      assigns(:evaluations).should match_array(templates)
+      expect(response).to be_success
+      expect(assigns(:evaluations)).to match_array(templates)
     end
     it "is filterable" do
       get :index, q: { name_cont: templates.first.name }
-      response.should be_success
-      assigns(:evaluations).should == [templates.first]
+      expect(response).to be_success
+      expect(assigns(:evaluations)).to eq [templates.first]
     end
   end
 
@@ -35,23 +35,23 @@ describe Template::EvaluationsController, versioning: !ENV["debug_versioning"].b
     it "returns matching template evaluations as json" do
       get :search, q: { name_cont: template.name }
 
-      response.should be_success
+      expect(response).to be_success
       json = JSON.parse(response.body)
 
-      json["more"].should be_false
+      expect(json["more"]).to be_false
 
-      json["results"].should have(1).items
-      json["results"].first.should include("id" =>          template.id)
-      json["results"].first.should include("name" =>        template.name)
-      json["results"].first.should include("description" => template.description)
+      expect(json["results"]).to have(1).items
+      expect(json["results"].first).to include("id" =>          template.id)
+      expect(json["results"].first).to include("name" =>        template.name)
+      expect(json["results"].first).to include("description" => template.description)
     end
   end
 
   describe "GET #new" do
     it "builds a template evaluation" do
       get :new
-      response.should be_success
-      assigns(:evaluation).type.to_sym.should == :template
+      expect(response).to be_success
+      expect(assigns(:evaluation).type.to_sym).to eq :template
     end
   end
 end

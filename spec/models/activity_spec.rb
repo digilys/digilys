@@ -47,7 +47,7 @@ describe Activity do
       activity = create(:activity)
       activity.suite = create(:suite)
       activity.save
-      activity.versions.last.suite_id.should == activity.suite_id
+      expect(activity.versions.last.suite_id).to eq activity.suite_id
     end
   end
 
@@ -67,19 +67,19 @@ describe Activity do
 
   context ".overdue?" do
     it "returns true for past activities that are not completed" do
-      create(:activity, end_date: Date.today - 1, status: :open).should     be_overdue
+      expect(create(:activity, end_date: Date.today - 1, status: :open)).to be_overdue
     end
     it "returns false for future activities" do
-      create(:activity, end_date: Date.today + 1, status: :open).should_not be_overdue
+      expect(create(:activity, end_date: Date.today + 1, status: :open)).not_to be_overdue
     end
     it "returns false for past activities that are completed" do
-      create(:activity, end_date: Date.today - 1, status: :closed).should_not be_overdue
+      expect(create(:activity, end_date: Date.today - 1, status: :closed)).not_to be_overdue
     end
     it "considers today's date to be a future activity" do
-      create(:activity, end_date: Date.today    , status: :open).should_not be_overdue
+      expect(create(:activity, end_date: Date.today , status: :open)).not_to be_overdue
     end
     it "handle's nil dates" do
-      create(:activity, end_date: nil           , status: :open).should_not be_overdue
+      expect(create(:activity, end_date: nil , status: :open)).not_to be_overdue
     end
   end
 
@@ -87,24 +87,24 @@ describe Activity do
     let(:users)        { create_list(:user, 2) }
     subject(:activity) { create(:activity) }
     it "supports normal ids" do
-      activity.users.should be_blank
+      expect(activity.users).to be_blank
       activity.user_ids = users.collect(&:id)
-      activity.users(true).should match_array(users)
+      expect(activity.users(true)).to match_array(users)
     end
     it "supports strings in arrays" do
-      activity.users.should be_blank
+      expect(activity.users).to be_blank
       activity.user_ids = users.collect(&:id).collect(&:to_s)
-      activity.users(true).should match_array(users)
+      expect(activity.users(true)).to match_array(users)
     end
     it "supports single ids" do
-      activity.users.should be_blank
+      expect(activity.users).to be_blank
       activity.user_ids = users.first.id
-      activity.users(true).should match_array([users.first])
+      expect(activity.users(true)).to match_array([users.first])
     end
     it "supports comma separated ids" do
-      activity.users.should be_blank
+      expect(activity.users).to be_blank
       activity.user_ids = "#{users.first.id},#{users.second.id}"
-      activity.users(true).should match_array(users)
+      expect(activity.users(true)).to match_array(users)
     end
   end
 

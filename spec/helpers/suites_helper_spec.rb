@@ -26,13 +26,13 @@ describe SuitesHelper do
       end
 
       it "partitions the entities by open/closed and sorts them in date order" do
-        entries[:open].should   match_array(open)
-        entries[:closed].should match_array(closed)
+        expect(entries[:open]).to   match_array(open)
+        expect(entries[:closed]).to match_array(closed)
 
         entries.each_value do |coll|
           prev = nil
           coll.each do |e|
-            e.date.should >= prev.date unless prev.nil?
+            expect(e.date).to be >= prev.date unless prev.nil?
             prev = e
           end
         end
@@ -106,7 +106,7 @@ describe SuitesHelper do
 
   describe ".result_color_class" do
     it "handles nil results" do
-      helper.result_color_class(nil).should be_blank
+      expect(helper.result_color_class(nil)).to be_blank
     end
 
     let(:evaluation) { create(:evaluation, max_result: 20, _yellow: 10..15) }
@@ -115,49 +115,49 @@ describe SuitesHelper do
       context "for red result" do
         let(:result) { create(:result, value: 5, evaluation: evaluation) }
         it "returns red" do
-          helper.result_color_class(result).should == "result-red"
+          expect(helper.result_color_class(result)).to eq "result-red"
         end
       end
       context "for yellow result" do
         let(:result) { create(:result, value: 12, evaluation: evaluation) }
         it "returns yellow" do
-          helper.result_color_class(result).should == "result-yellow"
+          expect(helper.result_color_class(result)).to eq "result-yellow"
         end
       end
       context "for green result" do
         let(:result) { create(:result, value: 18, evaluation: evaluation) }
         it "returns green" do
-          helper.result_color_class(result).should == "result-green"
+          expect(helper.result_color_class(result)).to eq "result-green"
         end
       end
       context "for absent result" do
         let(:result) { create(:result, value: 18, evaluation: evaluation, absent: true) }
         it "returns a blank string" do
-          helper.result_color_class(result).should be_blank
+          expect(helper.result_color_class(result)).to be_blank
         end
       end
     end
     context "value and evaluation" do
       context "for red result" do
         it "returns red" do
-          helper.result_color_class(5, evaluation).should == "result-red"
+          expect(helper.result_color_class(5, evaluation)).to eq "result-red"
         end
       end
       context "for yellow result" do
         it "returns yellow" do
-          helper.result_color_class(12, evaluation).should == "result-yellow"
+          expect(helper.result_color_class(12, evaluation)).to eq "result-yellow"
         end
       end
       context "for green result" do
         it "returns green" do
-          helper.result_color_class(18, evaluation).should == "result-green"
+          expect(helper.result_color_class(18, evaluation)).to eq "result-green"
         end
       end
     end
   end
   describe ".result_color_image" do
     it "handles nil results" do
-      helper.result_color_image(nil).should be_blank
+      expect(helper.result_color_image(nil)).to be_blank
     end
 
     let(:evaluation) { create(:evaluation, max_result: 20, _yellow: 10..15) }
@@ -219,13 +219,13 @@ describe SuitesHelper do
 
   describe ".format_range" do
     it "joins ranges with a html ndash" do
-      helper.format_range(10..20).should == "10 &ndash; 20"
+      expect(helper.format_range(10..20)).to eq "10 &ndash; 20"
     end
     it "handles single values" do
-      helper.format_range(10).should == 10
+      expect(helper.format_range(10)).to eq 10
     end
     it "handles single value ranges" do
-      helper.format_range(10..10).should == 10
+      expect(helper.format_range(10..10)).to eq 10
     end
   end
 
