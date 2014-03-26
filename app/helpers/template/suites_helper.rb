@@ -1,2 +1,0 @@
-module Template::SuitesHelper
-end
