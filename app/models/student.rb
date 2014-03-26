@@ -57,8 +57,6 @@ class Student < ActiveRecord::Base
   validate    :validate_data_text
 
   before_save   :convert_data_text_to_data
-  after_update  :touch_suites_and_color_tables
-  after_destroy :touch_suites_and_color_tables
 
   def name
     "#{self.first_name} #{self.last_name}"
@@ -182,13 +180,5 @@ class Student < ActiveRecord::Base
     end
 
     return value
-  end
-
-
-  def touch_suites_and_color_tables
-    # See ActiveRecord#current_time_from_proper_timezone
-    timestamp = self.class.default_timezone == :utc ? Time.now.utc : Time.now
-    self.suites.update_all(updated_at: timestamp)
-    self.color_tables.update_all(updated_at: timestamp)
   end
 end

@@ -6,7 +6,7 @@ class Activity < ActiveRecord::Base
   # Column name "type" is not used for inheritance
   self.inheritance_column = :disable_inheritance
 
-  belongs_to :suite,   inverse_of: :activities, touch: true
+  belongs_to :suite,   inverse_of: :activities
   belongs_to :meeting, inverse_of: :activities
 
   has_and_belongs_to_many :students

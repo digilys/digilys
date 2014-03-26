@@ -171,14 +171,6 @@ describe Evaluation do
   context "associations" do
     let(:suite)       { create(:suite) }
 
-    it "touches the suite" do
-      updated_at = suite.updated_at
-      Timecop.freeze(Time.now + 5.minutes) do
-        participant = create(:suite_evaluation, suite: suite)
-        updated_at.should < suite.reload.updated_at
-      end
-    end
-
     it "adds the evaluation to the suite's color table" do
       evaluation = create(:suite_evaluation, suite: suite)
       suite.color_table.evaluations(true).should include(evaluation)
@@ -448,26 +440,6 @@ describe Evaluation do
         let(:stanines) { { "explicit" => 2 } }
         its(:colors)   { should == { "explicit" => 1 } }
         its(:stanines) { should == { "explicit" => 2 } }
-      end
-    end
-  end
-
-  describe ".touch_color_tables" do
-    let!(:evaluation)  { create(:suite_evaluation) }
-    let(:suite)        { evaluation.suite }
-    let!(:result)      { create(:result, evaluation: evaluation) }
-    let!(:color_table) { create(:color_table, evaluations: [ evaluation ])}
-
-    it "touches associated color tables after saving" do
-      updated_at       = color_table.updated_at
-      suite_updated_at = suite.color_table.updated_at
-
-      Timecop.freeze(Time.now + 5.minutes) do
-        evaluation.name << " updated"
-        evaluation.save
-
-        updated_at.should       < color_table.reload.updated_at
-        suite_updated_at.should < suite.color_table.reload.updated_at
       end
     end
   end

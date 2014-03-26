@@ -34,23 +34,6 @@ describe Group do
     end
   end
 
-  context ".touch_suites" do
-    let!(:group)        { create(:group, students: [student]) }
-    let!(:suite)       { create(:suite) }
-    let!(:student)     { create(:student) }
-    let!(:participant) { create(:participant, student: student, suite: suite) }
-
-    it "touches the suites the student is a participant of" do
-      updated_at = suite.updated_at
-      Timecop.freeze(Time.now + 5.minutes) do
-        group.name << " updated"
-        group.save
-
-        updated_at.should < suite.reload.updated_at
-      end
-    end
-  end
-
   context "#with_parents" do
     let(:parent1) { create(:group, name: "parent1") }
     let(:parent2) { create(:group, name: "parent2", parent: parent1) }

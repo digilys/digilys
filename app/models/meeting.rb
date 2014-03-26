@@ -2,7 +2,7 @@ class Meeting < ActiveRecord::Base
 
   has_paper_trail skip: [ :notes, :agenda ], meta: { suite_id: ->(s) { s.suite_id } }
 
-  belongs_to :suite,      inverse_of: :meetings, touch: true
+  belongs_to :suite,      inverse_of: :meetings
   has_many   :activities, inverse_of: :meeting,  order: "start_date asc nulls last, end_date asc nulls last, name asc"
 
   accepts_nested_attributes_for :activities,

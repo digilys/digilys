@@ -33,18 +33,6 @@ describe Participant do
     end
   end
 
-  context "associations" do
-    let(:suite) { create(:suite) }
-
-    it "touches the suite" do
-      updated_at = suite.updated_at
-      Timecop.freeze(Time.now + 5.minutes) do
-        participant = create(:participant, suite: suite)
-        updated_at.should < suite.reload.updated_at
-      end
-    end
-  end
-
   context "versioning", versioning: true do
     it { should be_versioned }
     it "stores the new suite id as metadata" do

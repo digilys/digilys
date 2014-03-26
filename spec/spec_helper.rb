@@ -62,4 +62,10 @@ RSpec.configure do |config|
 
   # View utilities
   config.include ViewUtils,           type: :view
+
+
+  config.before do
+    # Disable observers
+    ActiveRecord::Base.observers.disable :all
+  end
 end

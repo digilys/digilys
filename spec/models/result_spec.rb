@@ -33,26 +33,6 @@ describe Result do
       end
     end
   end
-  context "associations" do
-    let(:student)    { create(:student) }
-    let(:suite)      { create(:suite) }
-    let(:evaluation) { create(:suite_evaluation, suite: suite) }
-
-    it "touches the suite" do
-      updated_at = suite.updated_at
-      Timecop.freeze(Time.now + 5.minutes) do
-        participant = create(:result, evaluation: evaluation)
-        updated_at.should < suite.reload.updated_at
-      end
-    end
-    it "touches the student" do
-      updated_at = student.updated_at
-      Timecop.freeze(Time.now + 5.minutes) do
-        participant = create(:result, student: student)
-        updated_at.should < student.reload.updated_at
-      end
-    end
-  end
 
   context "color filter" do
     let(:evaluation) { create(:numeric_evaluation, max_result: 10, _yellow: 4..7) }
