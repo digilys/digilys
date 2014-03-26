@@ -32,8 +32,8 @@ describe Ability do
 
       it "allows users to report activites they are assigned to" do
         activity.users << user
-        ability.should     be_able_to(:report, activity)
-        ability.should_not be_able_to(:report, other)
+        expect(ability).to     be_able_to(:report, activity)
+        expect(ability).not_to be_able_to(:report, other)
       end
     end
 
@@ -116,97 +116,97 @@ describe Ability do
     it "gives full privileges to their own suites to managers" do
       user.add_role :suite_manager, suite
 
-      ability.should     be_able_to(:view,    suite)
-      ability.should     be_able_to(:change,  suite)
-      ability.should     be_able_to(:control, suite)
+      expect(ability).to     be_able_to(:view,    suite)
+      expect(ability).to     be_able_to(:change,  suite)
+      expect(ability).to     be_able_to(:control, suite)
 
-      ability.should_not be_able_to(:view,    other)
-      ability.should_not be_able_to(:change,  other)
-      ability.should_not be_able_to(:control, other)
+      expect(ability).not_to be_able_to(:view,    other)
+      expect(ability).not_to be_able_to(:change,  other)
+      expect(ability).not_to be_able_to(:control, other)
 
       associations.each do |association|
-        ability.should     be_able_to(:create,  association)
-        ability.should     be_able_to(:view,    association)
-        ability.should     be_able_to(:change,  association)
-        ability.should     be_able_to(:destroy, association)
+        expect(ability).to     be_able_to(:create,  association)
+        expect(ability).to     be_able_to(:view,    association)
+        expect(ability).to     be_able_to(:change,  association)
+        expect(ability).to     be_able_to(:destroy, association)
       end
 
       other_associations.each do |association|
-        ability.should_not be_able_to(:create,  association)
-        ability.should_not be_able_to(:view,    association)
-        ability.should_not be_able_to(:change,  association)
-        ability.should_not be_able_to(:destroy, association)
+        expect(ability).not_to be_able_to(:create,  association)
+        expect(ability).not_to be_able_to(:view,    association)
+        expect(ability).not_to be_able_to(:change,  association)
+        expect(ability).not_to be_able_to(:destroy, association)
       end
     end
     it "gives all but destroy privilieges on their own suites to contributors" do
       user.add_role :suite_contributor, suite
 
-      ability.should     be_able_to(:view,    suite)
-      ability.should     be_able_to(:change,  suite)
-      ability.should_not be_able_to(:control, suite)
+      expect(ability).to     be_able_to(:view,    suite)
+      expect(ability).to     be_able_to(:change,  suite)
+      expect(ability).not_to be_able_to(:control, suite)
 
-      ability.should_not be_able_to(:view,    other)
-      ability.should_not be_able_to(:change,  other)
-      ability.should_not be_able_to(:control, other)
+      expect(ability).not_to be_able_to(:view,    other)
+      expect(ability).not_to be_able_to(:change,  other)
+      expect(ability).not_to be_able_to(:control, other)
 
       associations.each do |association|
-        ability.should     be_able_to(:create,  association)
-        ability.should     be_able_to(:view,    association)
-        ability.should     be_able_to(:change,  association)
-        ability.should     be_able_to(:destroy, association)
+        expect(ability).to be_able_to(:create,  association)
+        expect(ability).to be_able_to(:view,    association)
+        expect(ability).to be_able_to(:change,  association)
+        expect(ability).to be_able_to(:destroy, association)
       end
 
       other_associations.each do |association|
-        ability.should_not be_able_to(:create,  association)
-        ability.should_not be_able_to(:view,    association)
-        ability.should_not be_able_to(:change,  association)
-        ability.should_not be_able_to(:destroy, association)
+        expect(ability).not_to be_able_to(:create,  association)
+        expect(ability).not_to be_able_to(:view,    association)
+        expect(ability).not_to be_able_to(:change,  association)
+        expect(ability).not_to be_able_to(:destroy, association)
       end
     end
     it "gives readonly privileges on their own suites to members" do
       user.add_role :suite_member, suite
 
-      ability.should     be_able_to(:view,    suite)
-      ability.should_not be_able_to(:change,  suite)
-      ability.should_not be_able_to(:control, suite)
+      expect(ability).to     be_able_to(:view,    suite)
+      expect(ability).not_to be_able_to(:change,  suite)
+      expect(ability).not_to be_able_to(:control, suite)
 
-      ability.should_not be_able_to(:view,    other)
-      ability.should_not be_able_to(:change,  other)
-      ability.should_not be_able_to(:control, other)
+      expect(ability).not_to be_able_to(:view,    other)
+      expect(ability).not_to be_able_to(:change,  other)
+      expect(ability).not_to be_able_to(:control, other)
 
       associations.each do |association|
-        ability.should_not be_able_to(:create,  association)
-        ability.should     be_able_to(:view,    association)
-        ability.should_not be_able_to(:change,  association)
-        ability.should_not be_able_to(:destroy, association)
+        expect(ability).not_to be_able_to(:create,  association)
+        expect(ability).to     be_able_to(:view,    association)
+        expect(ability).not_to be_able_to(:change,  association)
+        expect(ability).not_to be_able_to(:destroy, association)
       end
 
       other_associations.each do |association|
-        ability.should_not be_able_to(:create,  association)
-        ability.should_not be_able_to(:view,    association)
-        ability.should_not be_able_to(:change,  association)
-        ability.should_not be_able_to(:destroy, association)
+        expect(ability).not_to be_able_to(:create,  association)
+        expect(ability).not_to be_able_to(:view,    association)
+        expect(ability).not_to be_able_to(:change,  association)
+        expect(ability).not_to be_able_to(:destroy, association)
       end
     end
     it "allows suite members to report results" do
       user.add_role :suite_member, suite
-      ability.should be_able_to(:report, build(:suite_evaluation, suite: suite))
+      expect(ability).to be_able_to(:report, build(:suite_evaluation, suite: suite))
     end
 
     context "for color color table" do
       let(:color_table) { suite.color_table }
 
       it "gives view and change privileges to the color table" do
-        ability.should_not be_able_to(:view, color_table)
-        ability.should_not be_able_to(:edit, color_table)
+        expect(ability).not_to be_able_to(:view, color_table)
+        expect(ability).not_to be_able_to(:edit, color_table)
 
         user.add_role(:suite_member, suite)
-        ability.should     be_able_to(:view, color_table)
-        ability.should_not be_able_to(:edit, color_table)
+        expect(ability).to     be_able_to(:view, color_table)
+        expect(ability).not_to be_able_to(:edit, color_table)
 
         user.add_role(:suite_contributor, suite)
-        ability.should     be_able_to(:view, color_table)
-        ability.should     be_able_to(:edit, color_table)
+        expect(ability).to     be_able_to(:view, color_table)
+        expect(ability).to     be_able_to(:edit, color_table)
       end
     end
   end
@@ -216,16 +216,16 @@ describe Ability do
     let(:suite_color_table) { create(:suite).color_table }
 
     it "delegates privileges to the suite" do
-      ability.should_not be_able_to(:view, suite_color_table)
-      ability.should_not be_able_to(:change, suite_color_table)
+      expect(ability).not_to be_able_to(:view, suite_color_table)
+      expect(ability).not_to be_able_to(:change, suite_color_table)
 
       user.add_role(:suite_member, suite_color_table.suite)
-      ability.should     be_able_to(:view, suite_color_table)
-      ability.should_not be_able_to(:change, suite_color_table)
+      expect(ability).to     be_able_to(:view, suite_color_table)
+      expect(ability).not_to be_able_to(:change, suite_color_table)
 
       user.add_role(:suite_contributor, suite_color_table.suite)
-      ability.should     be_able_to(:view, suite_color_table)
-      ability.should     be_able_to(:change, suite_color_table)
+      expect(ability).to     be_able_to(:view, suite_color_table)
+      expect(ability).to     be_able_to(:change, suite_color_table)
     end
   end
 
@@ -235,16 +235,16 @@ describe Ability do
     let(:suite_table_state) { create(:table_state, base: suite_color_table) }
 
     it "delegates to change privileges on the base" do
-      ability.should_not be_able_to(:view,   suite_table_state)
-      ability.should_not be_able_to(:change, suite_table_state)
+      expect(ability).not_to be_able_to(:view,   suite_table_state)
+      expect(ability).not_to be_able_to(:change, suite_table_state)
 
       user.add_role(:suite_member, suite_color_table.suite)
-      ability.should     be_able_to(:view,   suite_table_state)
-      ability.should_not be_able_to(:change, suite_table_state)
+      expect(ability).to     be_able_to(:view,   suite_table_state)
+      expect(ability).not_to be_able_to(:change, suite_table_state)
 
       user.add_role(:suite_contributor, suite_color_table.suite)
-      ability.should     be_able_to(:view,   suite_table_state)
-      ability.should     be_able_to(:change, suite_table_state)
+      expect(ability).to     be_able_to(:view,   suite_table_state)
+      expect(ability).to     be_able_to(:change, suite_table_state)
     end
   end
 end

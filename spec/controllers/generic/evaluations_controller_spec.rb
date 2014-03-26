@@ -14,21 +14,21 @@ describe Generic::EvaluationsController, versioning: !ENV["debug_versioning"].bl
 
     it "gives a list of generic evaluations" do
       get :index
-      response.should be_success
-      assigns(:evaluations).should match_array(generics)
+      expect(response).to be_success
+      expect(assigns(:evaluations)).to match_array(generics)
     end
     it "is filterable" do
       get :index, q: { name_cont: generics.first.name }
-      response.should be_success
-      assigns(:evaluations).should == [generics.first]
+      expect(response).to be_success
+      expect(assigns(:evaluations)).to eq [generics.first]
     end
   end
 
   describe "GET #new" do
     it "builds a generic evaluation" do
       get :new
-      response.should be_success
-      assigns(:evaluation).type.to_sym.should == :generic
+      expect(response).to be_success
+      expect(assigns(:evaluation).type.to_sym).to eq :generic
     end
   end
 end

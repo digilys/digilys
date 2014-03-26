@@ -70,19 +70,19 @@ describe User do
     let(:suite) { create(:suite) }
 
     it "creates a new setting for the user if none exists" do
-      user.settings.should be_blank
+      expect(user.settings).to be_blank
       user.save_setting!(suite, foo: "bar")
 
-      user.settings(true).should      have(1).items
-      user.settings.first.data.should == { "foo" => "bar" }
+      expect(user.settings(true)).to      have(1).items
+      expect(user.settings.first.data).to eq({ "foo" => "bar" })
     end
     it "overrides existing settings, leaving existing keys untouched" do
       user.settings.create(customizable: suite, data: { "foo" => "baz", "zomg" => "lol" })
       user.save_setting!(suite, foo: "bar")
 
-      user.settings(true).should      have(1).items
-      user.settings.first.data.should include("foo"  => "bar")
-      user.settings.first.data.should include("zomg" => "lol")
+      expect(user.settings(true)).to      have(1).items
+      expect(user.settings.first.data).to include("foo"  => "bar")
+      expect(user.settings.first.data).to include("zomg" => "lol")
     end
   end
 

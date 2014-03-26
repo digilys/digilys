@@ -15,14 +15,14 @@ describe TableStatesController, versioning: !ENV["debug_versioning"].blank? do
     it "is successful" do
       get :show, id: table_state.id
 
-      response.should    be_success
+      expect(response).to be_success
 
-      json               = JSON.parse(response.body)
-      json["foo"].should == "bar"
+      json = JSON.parse(response.body)
+      expect(json["foo"]).to eq "bar"
     end
     it "gives a 404 if the base's instance does not match" do
       get :show, id: other_table_state.id
-      response.status.should == 404
+      expect(response.status).to be 404
     end
 
     context "with suite color table" do
@@ -33,11 +33,11 @@ describe TableStatesController, versioning: !ENV["debug_versioning"].blank? do
 
       it "is successful when the suite's instance matches" do
         get :show, id: table_state.id
-        response.should be_success
+        expect(response).to be_success
       end
       it "gives a 404 if the suite's instance does not match" do
         get :show, id: other_table_state.id
-        response.status.should == 404
+        expect(response.status).to be 404
       end
     end
   end
@@ -45,13 +45,13 @@ describe TableStatesController, versioning: !ENV["debug_versioning"].blank? do
   describe "GET #select" do
     it "sets the requested table state as the current user's setting for the base" do
       get :select, id: table_state.id
-      response.should redirect_to(color_table)
+      expect(response).to redirect_to(color_table)
 
-      logged_in_user.settings.for(color_table).first.data["datatable_state"].should == { "foo" => "bar" }
+      expect(logged_in_user.settings.for(color_table).first.data["datatable_state"]).to eq({ "foo" => "bar" })
     end
     it "gives a 404 if the base's instance does not match" do
       get :select, id: other_table_state.id
-      response.status.should == 404
+      expect(response.status).to be 404
     end
 
     context "with existing data" do
@@ -63,11 +63,11 @@ describe TableStatesController, versioning: !ENV["debug_versioning"].blank? do
       end
       it "overrides the datatable state, and leaves the other data alone" do
         get :select, id: table_state.id
-        response.should redirect_to(color_table)
+        expect(response).to redirect_to(color_table)
 
         data = logged_in_user.settings.for(color_table).first.data
-        data["datatable_state"].should == { "foo" => "bar" }
-        data["zomg"].should            == "lol"
+        expect(data["datatable_state"]).to eq({ "foo" => "bar" })
+        expect(data["zomg"]).to            eq "lol"
       end
     end
   end
@@ -76,35 +76,35 @@ describe TableStatesController, versioning: !ENV["debug_versioning"].blank? do
     it "is successful when valid" do
       post :create, color_table_id: color_table.id, table_state: valid_parameters_for(:table_state)
 
-      response.should   be_success
+      expect(response).to be_success
 
       json  = JSON.parse(response.body)
       state = TableState.find(TableState.maximum("id"))
 
-      json["id"].should              == state.id
-      json["name"].should            == state.name
-      json["urls"]["default"].should == table_state_path(state)
-      json["urls"]["select"].should  == select_table_state_path(state)
+      expect(json["id"]).to              eq state.id
+      expect(json["name"]).to            eq state.name
+      expect(json["urls"]["default"]).to eq table_state_path(state)
+      expect(json["urls"]["select"]).to  eq select_table_state_path(state)
 
-      state.base_id.should == color_table.id
+      expect(state.base_id).to eq color_table.id
     end
     it "is returns an error when invalid" do
       post :create, color_table_id: color_table.id, table_state: invalid_parameters_for(:table_state)
 
-      response.status.should    == 400
+      expect(response.status).to be 400
 
-      json                      = JSON.parse(response.body)
-      json["errors"].should_not be_blank
+      json = JSON.parse(response.body)
+      expect(json["errors"]).not_to be_blank
     end
     it "updates an existing state if the name and base already exists" do
       post :create, color_table_id: color_table.id, table_state: { name: table_state.name, data: '{"zomg":"lol"}' }
-      response.should be_success
+      expect(response).to be_success
 
-      table_state.reload.data.should == { "zomg" => "lol" }
+      expect(table_state.reload.data).to eq({ "zomg" => "lol" })
     end
     it "gives a 404 if the base's instance does not match" do
       post :create, color_table_id: other_color_table.id, table_state: valid_parameters_for(:table_state)
-      response.status.should == 404
+      expect(response.status).to be 404
     end
   end
 
@@ -113,36 +113,36 @@ describe TableStatesController, versioning: !ENV["debug_versioning"].blank? do
       new_name = "#{table_state.name} updated"
       put :update, id: table_state.id, table_state: { name: new_name }
 
-      response.should                be_success
+      expect(response).to be_success
 
-      json                           = JSON.parse(response.body)
-      json["id"].should              == table_state.id
-      json["name"].should            == new_name
-      table_state.reload.name.should == new_name
+      json = JSON.parse(response.body)
+      expect(json["id"]).to              eq table_state.id
+      expect(json["name"]).to            eq new_name
+      expect(table_state.reload.name).to eq new_name
     end
     it "is returns an error when invalid" do
       put :update, id: table_state.id, table_state: { name: "" }
 
-      response.status.should    == 400
+      expect(response.status).to be 400
 
-      json                      = JSON.parse(response.body)
-      json["errors"].should_not be_blank
+      json = JSON.parse(response.body)
+      expect(json["errors"]).not_to be_blank
     end
     it "gives a 404 if the base's instance does not match" do
       put :update, id: other_table_state.id, table_state: {}
-      response.status.should == 404
+      expect(response.status).to be 404
     end
   end
 
   describe "DELETE #destroy" do
     it "destroys the object" do
       delete :destroy, id: table_state.id
-      response.should be_success
-      TableState.where(id: table_state.id).first.should be_nil
+      expect(response).to be_success
+      expect(TableState.where(id: table_state.id).first).to be_nil
     end
     it "gives a 404 if the base's instance does not match" do
       delete :destroy, id: other_table_state.id
-      response.status.should == 404
+      expect(response.status).to be 404
     end
   end
 end

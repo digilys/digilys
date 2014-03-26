@@ -17,6 +17,11 @@ require 'cancan/matchers'
 Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
 RSpec.configure do |config|
+  # Use expect syntax
+  config.expect_with :rspec do |c|
+    c.syntax = :expect
+  end
+
   # ## Mock Framework
   #
   # If you prefer to use mocha, flexmock or RR, uncomment the appropriate line:
@@ -62,4 +67,10 @@ RSpec.configure do |config|
 
   # View utilities
   config.include ViewUtils,           type: :view
+
+
+  config.before do
+    # Disable observers
+    ActiveRecord::Base.observers.disable :all
+  end
 end

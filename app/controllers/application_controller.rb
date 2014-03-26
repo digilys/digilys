@@ -5,6 +5,8 @@ class ApplicationController < ActionController::Base
 
   check_authorization unless: :skip_authorization?
 
+  cache_sweeper :cache_observer
+
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
   rescue_from CanCan::AccessDenied,         with: :access_denied
 
@@ -128,6 +130,6 @@ class ApplicationController < ActionController::Base
   end
 
   def skip_authorization?
-    devise_controller? || self.is_a?(RailsAdmin::ApplicationController)
+    devise_controller?
   end
 end

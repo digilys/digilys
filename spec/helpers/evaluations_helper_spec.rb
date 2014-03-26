@@ -98,8 +98,8 @@ describe EvaluationsHelper do
     end
 
     it "has no bars when there is no result" do
-      output.should     have_selector(".progress.evaluation-status-progress")
-      output.should_not have_selector(".progress .bar")
+      expect(output).to     have_selector(".progress.evaluation-status-progress")
+      expect(output).not_to have_selector(".progress .bar")
     end
     it "has a bar for each type of result" do
       create_result(0, 1) # red
@@ -107,23 +107,23 @@ describe EvaluationsHelper do
       create_result(2, 6) # yellow
       create_result(3, 8) # green
 
-      output.should have_selector(".progress.evaluation-status-progress")
-      output.should have_selector(".progress .bar", count: 4)
-      output.should have_selector(".progress .bar-success[style=\"width: 20.0%\"]")
-      output.should have_selector(".progress .bar-yellow[style=\"width: 40.0%\"]")
-      output.should have_selector(".progress .bar-danger[style=\"width: 20.0%\"]")
-      output.should have_selector(".progress .bar-disabled[style=\"width: 0.0%\"]")
+      expect(output).to have_selector(".progress.evaluation-status-progress")
+      expect(output).to have_selector(".progress .bar", count: 4)
+      expect(output).to have_selector(".progress .bar-success[style=\"width: 20.0%\"]")
+      expect(output).to have_selector(".progress .bar-yellow[style=\"width: 40.0%\"]")
+      expect(output).to have_selector(".progress .bar-danger[style=\"width: 20.0%\"]")
+      expect(output).to have_selector(".progress .bar-disabled[style=\"width: 0.0%\"]")
     end
     it "has zero percent width bars for missing types" do
       create_result(1, 5) # yellow
       create_result(2, 6) # yellow
 
-      output.should have_selector(".progress.evaluation-status-progress")
-      output.should have_selector(".progress .bar", count: 4)
-      output.should have_selector(".progress .bar-success[style=\"width: 0.0%\"]")
-      output.should have_selector(".progress .bar-yellow[style=\"width: 40.0%\"]")
-      output.should have_selector(".progress .bar-danger[style=\"width: 0.0%\"]")
-      output.should have_selector(".progress .bar-disabled[style=\"width: 0.0%\"]")
+      expect(output).to have_selector(".progress.evaluation-status-progress")
+      expect(output).to have_selector(".progress .bar", count: 4)
+      expect(output).to have_selector(".progress .bar-success[style=\"width: 0.0%\"]")
+      expect(output).to have_selector(".progress .bar-yellow[style=\"width: 40.0%\"]")
+      expect(output).to have_selector(".progress .bar-danger[style=\"width: 0.0%\"]")
+      expect(output).to have_selector(".progress .bar-disabled[style=\"width: 0.0%\"]")
     end
     it "adds a disabled bar for absent results" do
       create_result(0, 1) # red
@@ -132,12 +132,12 @@ describe EvaluationsHelper do
       create_result(3, 8) # green
       create_result(4, nil) # absent
 
-      output.should have_selector(".progress.evaluation-status-progress")
-      output.should have_selector(".progress .bar", count: 4)
-      output.should have_selector(".progress .bar-success[style=\"width: 20.0%\"]")
-      output.should have_selector(".progress .bar-yellow[style=\"width: 40.0%\"]")
-      output.should have_selector(".progress .bar-danger[style=\"width: 20.0%\"]")
-      output.should have_selector(".progress .bar-disabled[style=\"width: 20.0%\"]")
+      expect(output).to have_selector(".progress.evaluation-status-progress")
+      expect(output).to have_selector(".progress .bar", count: 4)
+      expect(output).to have_selector(".progress .bar-success[style=\"width: 20.0%\"]")
+      expect(output).to have_selector(".progress .bar-yellow[style=\"width: 40.0%\"]")
+      expect(output).to have_selector(".progress .bar-danger[style=\"width: 20.0%\"]")
+      expect(output).to have_selector(".progress .bar-disabled[style=\"width: 20.0%\"]")
     end
 
     it "includes percentages in the title" do
@@ -147,8 +147,9 @@ describe EvaluationsHelper do
       create_result(3, 8) # green
       create_result(4, nil) # absent
 
-      output.find(".evaluation-status-progress[title]")["title"].should ==
+      expect(output.find(".evaluation-status-progress[title]")["title"]).to eq(
         "#{t(:red)}: 20%<br>#{t(:yellow)}: 40%<br>#{t(:green)}: 20%<br>#{t(:absent)}: 20%"
+      )
     end
 
     context "rounding" do
@@ -163,12 +164,12 @@ describe EvaluationsHelper do
         create_result(5, 6) # yellow
         create_result(6, 6) # yellow
 
-        output.should have_selector(".progress.evaluation-status-progress")
-        output.should have_selector(".progress .bar", count: 4)
-        output.should have_selector(".progress .bar-success[style=\"width: 0.0%\"]")
-        output.should have_selector(".progress .bar-yellow[style=\"width: 71.4%\"]") # 5.0/7.0 = 0.71428...
-        output.should have_selector(".progress .bar-danger[style=\"width: 28.5%\"]") # 2.0/7.0 = 0.28571...
-        output.should have_selector(".progress .bar-disabled[style=\"width: 0.0%\"]")
+        expect(output).to have_selector(".progress.evaluation-status-progress")
+        expect(output).to have_selector(".progress .bar", count: 4)
+        expect(output).to have_selector(".progress .bar-success[style=\"width: 0.0%\"]")
+        expect(output).to have_selector(".progress .bar-yellow[style=\"width: 71.4%\"]") # 5.0/7.0 = 0.71428...
+        expect(output).to have_selector(".progress .bar-danger[style=\"width: 28.5%\"]") # 2.0/7.0 = 0.28571...
+        expect(output).to have_selector(".progress .bar-disabled[style=\"width: 0.0%\"]")
       end
     end
   end
@@ -198,28 +199,26 @@ describe EvaluationsHelper do
     end
 
     it "includes percentages by color" do
-      output.should(
-        include(
-          "#{t(:red)}: 20%<br>#{t(:yellow)}: 40%<br>#{t(:green)}: 20%<br>#{t(:absent)}: 20%"
-        )
+      expect(output).to include(
+        "#{t(:red)}: 20%<br>#{t(:yellow)}: 40%<br>#{t(:green)}: 20%<br>#{t(:absent)}: 20%"
       )
     end
     it "includes the evaluation's date" do
-      output.should include("<strong class=\"date\">#{evaluation.date}</strong>")
+      expect(output).to include("<strong class=\"date\">#{evaluation.date}</strong>")
     end
     it "includes an overdue class for overdue evaluations" do
       evaluation.status = :partial
       evaluation.date = Date.yesterday
       output = helper.evaluation_info(evaluation)
-      output.should include("<strong class=\"date overdue\">#{evaluation.date}</strong>")
+      expect(output).to include("<strong class=\"date overdue\">#{evaluation.date}</strong>")
     end
     it "outputs nothing if the evaluation is not a suite evaluation" do
-      helper.evaluation_info(create(:evaluation_template)).should be_nil
+      expect(helper.evaluation_info(create(:evaluation_template))).to be_nil
     end
 
     it "handles evaluations without results" do
       evaluation = create(:suite_evaluation)
-      helper.evaluation_info(evaluation).should_not include("%")
+      expect(helper.evaluation_info(evaluation)).not_to include("%")
     end
   end
 end

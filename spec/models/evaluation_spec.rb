@@ -179,25 +179,17 @@ describe Evaluation do
   context "associations" do
     let(:suite)       { create(:suite) }
 
-    it "touches the suite" do
-      updated_at = suite.updated_at
-      Timecop.freeze(Time.now + 5.minutes) do
-        participant = create(:suite_evaluation, suite: suite)
-        updated_at.should < suite.reload.updated_at
-      end
-    end
-
     it "adds the evaluation to the suite's color table" do
       evaluation = create(:suite_evaluation, suite: suite)
-      suite.color_table.evaluations(true).should include(evaluation)
+      expect(suite.color_table.evaluations(true)).to include(evaluation)
     end
     it "does not add multiple entries for the evaluation to the suite's color table" do
       evaluation = create(:suite_evaluation, suite: suite)
-      suite.color_table.evaluations(true).length.should == 1
+      expect(suite.color_table.evaluations(true).length).to eq 1
 
       evaluation.name = "#{evaluation.name} updated"
       evaluation.save
-      suite.color_table.evaluations(true).length.should == 1
+      expect(suite.color_table.evaluations(true).length).to eq 1
     end
   end
   context "versioning", versioning: true do
@@ -206,7 +198,7 @@ describe Evaluation do
       evaluation = create(:suite_evaluation)
       evaluation.suite = create(:suite)
       evaluation.save
-      evaluation.versions.last.suite_id.should == evaluation.suite_id
+      expect(evaluation.versions.last.suite_id).to eq evaluation.suite_id
     end
   end
 
@@ -223,22 +215,22 @@ describe Evaluation do
 
     it "sets evaluation_participant_ids from student and group ids" do
       evaluation = build(:suite_evaluation, suite: suite, students_and_groups: "[],,s-#{students.third.id},g-#{group.id}")
-      evaluation.valid?.should be_true
-      evaluation.evaluation_participant_ids.should match_array(participants.collect(&:id))
+      expect(evaluation.valid?).to be_true
+      expect(evaluation.evaluation_participant_ids).to match_array(participants.collect(&:id))
     end
 
     it "clears evaluation_participants if students and groups are cleared" do
       evaluation = create(:suite_evaluation, suite: suite, students_and_groups: "[],,s-#{students.third.id},g-#{group.id}")
       evaluation.students_and_groups = nil
-      evaluation.valid?.should be_true
-      evaluation.evaluation_participants.should be_blank
+      expect(evaluation.valid?).to be_true
+      expect(evaluation.evaluation_participants).to be_blank
     end
 
     it "does not touch evaluation_participants if the students and groups have not been explicitly cleared" do
       evaluation = create(:suite_evaluation, suite: suite, students_and_groups: "[],,s-#{students.third.id},g-#{group.id}")
       evaluation = Evaluation.find(evaluation.id)
-      evaluation.valid?.should be_true
-      evaluation.evaluation_participant_ids.should_not be_blank
+      expect(evaluation.valid?).to be_true
+      expect(evaluation.evaluation_participant_ids).not_to be_blank
     end
   end
 
@@ -265,8 +257,8 @@ describe Evaluation do
       it "does not change the identity of the persisted object if no changes have occurred" do
         evaluation = build(:boolean_evaluation, value_aliases: Evaluation::BOOLEAN_ALIASES.clone)
         evaluation.send(:set_aliases_from_value_type)
-        evaluation.value_aliases.should == Evaluation::BOOLEAN_ALIASES
-        evaluation.value_aliases.should_not equal(Evaluation::BOOLEAN_ALIASES)
+        expect(evaluation.value_aliases).to eq Evaluation::BOOLEAN_ALIASES
+        expect(evaluation.value_aliases).not_to be Evaluation::BOOLEAN_ALIASES
       end
     end
     context "for grade value type" do
@@ -276,8 +268,8 @@ describe Evaluation do
       it "does not change the identity of the persisted object if no changes have occurred" do
         evaluation = build(:grade_evaluation, value_aliases: Evaluation::GRADE_ALIASES.clone)
         evaluation.send(:set_aliases_from_value_type)
-        evaluation.value_aliases.should == Evaluation::GRADE_ALIASES
-        evaluation.value_aliases.should_not equal(Evaluation::GRADE_ALIASES)
+        expect(evaluation.value_aliases).to eq Evaluation::GRADE_ALIASES
+        expect(evaluation.value_aliases).not_to be Evaluation::GRADE_ALIASES
       end
     end
   end
@@ -293,8 +285,8 @@ describe Evaluation do
       ) }
 
       it "correctly maps the colors" do
-        evaluation.colors.should include("1" => "red")
-        evaluation.colors.should include("0" => "green")
+        expect(evaluation.colors).to include("1" => "red")
+        expect(evaluation.colors).to include("0" => "green")
       end
 
       it "does not change the identity of the object if no changes have occurred" do
@@ -303,7 +295,7 @@ describe Evaluation do
         evaluation.color_for_true  = :red
         evaluation.color_for_false = :green
         evaluation.send(:persist_colors_and_stanines)
-        evaluation.colors.should equal(old)
+        expect(evaluation.colors).to be old
       end
 
       context "with explicitly set colors" do
@@ -320,19 +312,19 @@ describe Evaluation do
         _grade_stanines: [ 2, 3, 5, 6, 7, 9 ]
       ) }
       it "correctly maps the grade colors and stanines" do
-        evaluation.colors.should   include("0" => 1)
-        evaluation.colors.should   include("1" => 1)
-        evaluation.colors.should   include("2" => 2)
-        evaluation.colors.should   include("3" => 2)
-        evaluation.colors.should   include("4" => 3)
-        evaluation.colors.should   include("5" => 3)
+        expect(evaluation.colors).to   include("0" => 1)
+        expect(evaluation.colors).to   include("1" => 1)
+        expect(evaluation.colors).to   include("2" => 2)
+        expect(evaluation.colors).to   include("3" => 2)
+        expect(evaluation.colors).to   include("4" => 3)
+        expect(evaluation.colors).to   include("5" => 3)
 
-        evaluation.stanines.should include("0" => 2)
-        evaluation.stanines.should include("1" => 3)
-        evaluation.stanines.should include("2" => 5)
-        evaluation.stanines.should include("3" => 6)
-        evaluation.stanines.should include("4" => 7)
-        evaluation.stanines.should include("5" => 9)
+        expect(evaluation.stanines).to include("0" => 2)
+        expect(evaluation.stanines).to include("1" => 3)
+        expect(evaluation.stanines).to include("2" => 5)
+        expect(evaluation.stanines).to include("3" => 6)
+        expect(evaluation.stanines).to include("4" => 7)
+        expect(evaluation.stanines).to include("5" => 9)
       end
 
       it "does not change the identity of the object if no changes have occurred" do
@@ -355,8 +347,8 @@ describe Evaluation do
 
         evaluation.send(:persist_colors_and_stanines)
 
-        evaluation.colors.should equal(old_colors)
-        evaluation.stanines.should equal(old_stanines)
+        expect(evaluation.colors).to be old_colors
+        expect(evaluation.stanines).to be old_stanines
       end
 
       context "with explicitly set colors and stanines" do
@@ -378,40 +370,40 @@ describe Evaluation do
       ) }
 
       it "correctly maps the colors and stanines" do
-        evaluation.colors.should   include("red"    => { "min" => 0,  "max" => 9 })
-        evaluation.colors.should   include("yellow" => { "min" => 10, "max" => 20 })
-        evaluation.colors.should   include("green"  => { "min" => 21, "max" => 30 })
+        expect(evaluation.colors).to   include("red"    => { "min" => 0,  "max" => 9 })
+        expect(evaluation.colors).to   include("yellow" => { "min" => 10, "max" => 20 })
+        expect(evaluation.colors).to   include("green"  => { "min" => 21, "max" => 30 })
 
-        evaluation.stanines.should include("1"      => { "min" => 0,  "max" => 3 })
-        evaluation.stanines.should include("2"      => { "min" => 4,  "max" => 6 })
-        evaluation.stanines.should include("3"      => { "min" => 7,  "max" => 7 })
-        evaluation.stanines.should include("4"      => { "min" => 8,  "max" => 12 })
-        evaluation.stanines.should include("5"      => { "min" => 13, "max" => 15 })
-        evaluation.stanines.should include("6"      => { "min" => 16, "max" => 18 })
-        evaluation.stanines.should include("7"      => { "min" => 19, "max" => 21 })
-        evaluation.stanines.should include("8"      => { "min" => 22, "max" => 24 })
-        evaluation.stanines.should include("9"      => { "min" => 25, "max" => 30 })
+        expect(evaluation.stanines).to include("1"      => { "min" => 0,  "max" => 3 })
+        expect(evaluation.stanines).to include("2"      => { "min" => 4,  "max" => 6 })
+        expect(evaluation.stanines).to include("3"      => { "min" => 7,  "max" => 7 })
+        expect(evaluation.stanines).to include("4"      => { "min" => 8,  "max" => 12 })
+        expect(evaluation.stanines).to include("5"      => { "min" => 13, "max" => 15 })
+        expect(evaluation.stanines).to include("6"      => { "min" => 16, "max" => 18 })
+        expect(evaluation.stanines).to include("7"      => { "min" => 19, "max" => 21 })
+        expect(evaluation.stanines).to include("8"      => { "min" => 22, "max" => 24 })
+        expect(evaluation.stanines).to include("9"      => { "min" => 25, "max" => 30 })
       end
 
       context "with only a yellow range" do
         let(:_yellow) { 0..30 }
         it "correctly maps the colors" do
-          evaluation.colors.should     include("yellow" => { "min" => 0, "max" => 30 })
-          evaluation.colors.should_not have_key("red")
-          evaluation.colors.should_not have_key("green")
+          expect(evaluation.colors).to     include("yellow" => { "min" => 0, "max" => 30 })
+          expect(evaluation.colors).not_to have_key("red")
+          expect(evaluation.colors).not_to have_key("green")
         end
       end
       context "with overlapping stanines" do
         let(:_stanines) { [ 0..3, 4..6, 7..9, 9..9, 9..9, 10..18, 19..21, 22..30 ] }
         it "correctly maps the stanines" do
-          evaluation.stanines.should include("1" => { "min" => 0,  "max" => 3 } )
-          evaluation.stanines.should include("2" => { "min" => 4,  "max" => 6 } )
-          evaluation.stanines.should include("3" => { "min" => 7,  "max" => 9 } )
-          evaluation.stanines.should include("4" => { "min" => 9,  "max" => 9 } )
-          evaluation.stanines.should include("5" => { "min" => 9,  "max" => 9 } )
-          evaluation.stanines.should include("6" => { "min" => 10, "max" => 18 } )
-          evaluation.stanines.should include("7" => { "min" => 19, "max" => 21 } )
-          evaluation.stanines.should include("8" => { "min" => 22, "max" => 30 } )
+          expect(evaluation.stanines).to include("1" => { "min" => 0,  "max" => 3 })
+          expect(evaluation.stanines).to include("2" => { "min" => 4,  "max" => 6 })
+          expect(evaluation.stanines).to include("3" => { "min" => 7,  "max" => 9 })
+          expect(evaluation.stanines).to include("4" => { "min" => 9,  "max" => 9 })
+          expect(evaluation.stanines).to include("5" => { "min" => 9,  "max" => 9 })
+          expect(evaluation.stanines).to include("6" => { "min" => 10, "max" => 18 })
+          expect(evaluation.stanines).to include("7" => { "min" => 19, "max" => 21 })
+          expect(evaluation.stanines).to include("8" => { "min" => 22, "max" => 30 })
         end
       end
 
@@ -447,8 +439,8 @@ describe Evaluation do
 
         evaluation.send(:persist_colors_and_stanines)
 
-        evaluation.colors.should equal(old_colors)
-        evaluation.stanines.should equal(old_stanines)
+        expect(evaluation.colors).to be old_colors
+        expect(evaluation.stanines).to be old_stanines
       end
 
       context "with explicitly set colors and stanines" do
@@ -456,26 +448,6 @@ describe Evaluation do
         let(:stanines) { { "explicit" => 2 } }
         its(:colors)   { should == { "explicit" => 1 } }
         its(:stanines) { should == { "explicit" => 2 } }
-      end
-    end
-  end
-
-  describe ".touch_color_tables" do
-    let!(:evaluation)  { create(:suite_evaluation) }
-    let(:suite)        { evaluation.suite }
-    let!(:result)      { create(:result, evaluation: evaluation) }
-    let!(:color_table) { create(:color_table, evaluations: [ evaluation ])}
-
-    it "touches associated color tables after saving" do
-      updated_at       = color_table.updated_at
-      suite_updated_at = suite.color_table.updated_at
-
-      Timecop.freeze(Time.now + 5.minutes) do
-        evaluation.name << " updated"
-        evaluation.save
-
-        updated_at.should       < color_table.reload.updated_at
-        suite_updated_at.should < suite.color_table.reload.updated_at
       end
     end
   end
@@ -539,21 +511,21 @@ describe Evaluation do
   describe ".overdue?" do
     it "is true when the evaluation is not completed and the date has passed" do
       evaluation = build(:suite_evaluation, date: Date.yesterday, status: :partial)
-      evaluation.overdue?.should be_true
+      expect(evaluation.overdue?).to be_true
     end
     it "is false when the evaluation is completed and the date has passed" do
       evaluation = build(:suite_evaluation, date: Date.yesterday, status: :complete)
-      evaluation.overdue?.should be_false
+      expect(evaluation.overdue?).to be_false
     end
     it "is false when the evaluation is not completed and the date has not passed" do
       evaluation = build(:suite_evaluation, date: Date.today, status: :partial)
-      evaluation.overdue?.should be_false
+      expect(evaluation.overdue?).to be_false
     end
   end
   describe ".completed?" do
     it "matches the status" do
-      build(:suite_evaluation, status: :complete).should    be_completed
-      build(:suite_evaluation, status: :partial).should_not be_completed
+      expect(build(:suite_evaluation, status: :complete)).to    be_completed
+      expect(build(:suite_evaluation, status: :partial)).not_to be_completed
     end
   end
 
@@ -748,19 +720,19 @@ describe Evaluation do
     before           { students.each_with_index { |student, i| create(:result, evaluation: evaluation, student: student, value: (i+1)*10) } }
 
     it "returns the correct result" do
-      evaluation.result_for(student).value.should == 20
+      expect(evaluation.result_for(student).value).to eq 20
     end
     it "returns nil when the result cannot be found" do
-      evaluation.result_for(create(:student)).should be_nil
+      expect(evaluation.result_for(create(:student))).to be_nil
     end
   end
 
   describe ".stanines?" do
     it "returns true if there are any stanine values set" do
-      create(:evaluation, _stanines: Array.new(9, 1..1)).stanines?.should be_true
+      expect(create(:evaluation, _stanines: Array.new(9, 1..1)).stanines?).to be_true
     end
     it "returns false if no stanine values are set" do
-      create(:evaluation, _stanines: Array.new(9)).stanines?.should be_false
+      expect(create(:evaluation, _stanines: Array.new(9)).stanines?).to be_false
     end
   end
 
@@ -834,10 +806,10 @@ describe Evaluation do
     subject(:objects) { evaluation.students_and_groups_select2_data }
 
     it "returns select2 entries for all participants, with escaped ids" do
-      objects.should have(3).items
-      objects.should include({ id: "s-#{participants.first.student_id}",  text: participants.first.student.name })
-      objects.should include({ id: "s-#{participants.second.student_id}", text: participants.second.student.name })
-      objects.should include({ id: "s-#{participants.third.student_id}",  text: participants.third.student.name })
+      expect(objects).to have(3).items
+      expect(objects).to include({ id: "s-#{participants.first.student_id}",  text: participants.first.student.name })
+      expect(objects).to include({ id: "s-#{participants.second.student_id}", text: participants.second.student.name })
+      expect(objects).to include({ id: "s-#{participants.third.student_id}",  text: participants.third.student.name })
     end
   end
 
@@ -847,9 +819,9 @@ describe Evaluation do
     subject(:objects) { evaluation.users_select2_data }
 
     it "returns select2 entries for all users, with the text containing name and email" do
-      objects.should have(2).items
-      objects.should include(id: users.first.id,  text: "#{users.first.name}, #{users.first.email}")
-      objects.should include(id: users.second.id, text: "#{users.second.name}, #{users.second.email}")
+      expect(objects).to have(2).items
+      expect(objects).to include(id: users.first.id,  text: "#{users.first.name}, #{users.first.email}")
+      expect(objects).to include(id: users.second.id, text: "#{users.second.name}, #{users.second.email}")
     end
   end
 
@@ -878,11 +850,11 @@ describe Evaluation do
 
       result = evaluation.result_distribution
 
-      result.should include(not_reported: 20.0)
-      result.should include(red:          20.0)
-      result.should include(yellow:       40.0)
-      result.should include(green:        20.0)
-      result.should include(absent:       0)
+      expect(result).to include(not_reported: 20.0)
+      expect(result).to include(red:          20.0)
+      expect(result).to include(yellow:       40.0)
+      expect(result).to include(green:        20.0)
+      expect(result).to include(absent:       0)
     end
 
     it "returns zero for missing colors" do
@@ -893,11 +865,11 @@ describe Evaluation do
 
       result = evaluation.result_distribution
 
-      result.should include(not_reported: 20.0)
-      result.should include(red:          0)
-      result.should include(yellow:       40.0)
-      result.should include(green:        40.0)
-      result.should include(absent:       0)
+      expect(result).to include(not_reported: 20.0)
+      expect(result).to include(red:          0)
+      expect(result).to include(yellow:       40.0)
+      expect(result).to include(green:        40.0)
+      expect(result).to include(absent:       0)
     end
 
     context "without results" do
@@ -924,11 +896,11 @@ describe Evaluation do
 
         result = evaluation.result_distribution
 
-        result.should include(not_reported: 0)
-        result.should include(red:          25.0)
-        result.should include(yellow:       25.0)
-        result.should include(green:        50.0)
-        result.should include(absent:       0)
+        expect(result).to include(not_reported: 0)
+        expect(result).to include(red:          25.0)
+        expect(result).to include(yellow:       25.0)
+        expect(result).to include(green:        50.0)
+        expect(result).to include(absent:       0)
       end
     end
 
@@ -940,11 +912,11 @@ describe Evaluation do
 
       result = evaluation.result_distribution
 
-      result.should include(not_reported: 20.0)
-      result.should include(red:          0)
-      result.should include(yellow:       40.0)
-      result.should include(green:        20.0)
-      result.should include(absent:       20.0)
+      expect(result).to include(not_reported: 20.0)
+      expect(result).to include(red:          0)
+      expect(result).to include(yellow:       40.0)
+      expect(result).to include(green:        20.0)
+      expect(result).to include(absent:       20.0)
     end
 
     it "handles results from students that are not participants" do
@@ -961,11 +933,11 @@ describe Evaluation do
 
       result = evaluation.result_distribution
 
-      result.should include(not_reported: 10.0)
-      result.should include(red:          40.0)
-      result.should include(yellow:       20.0)
-      result.should include(green:        20.0)
-      result.should include(absent:       10.0)
+      expect(result).to include(not_reported: 10.0)
+      expect(result).to include(red:          40.0)
+      expect(result).to include(yellow:       20.0)
+      expect(result).to include(green:        20.0)
+      expect(result).to include(absent:       10.0)
     end
   end
 
@@ -984,16 +956,16 @@ describe Evaluation do
 
       result = evaluation.stanine_distribution
 
-      result.should have(8).items
-      result.should include(1 => 1)
-      result.should include(2 => 1)
-      result.should include(3 => 1)
-      result.should include(4 => 2)
-      result.should include(6 => 1)
-      result.should include(7 => 1)
-      result.should include(8 => 1)
-      result.should include(9 => 1)
-      result.should_not have_key(5)
+      expect(result).to have(8).items
+      expect(result).to include(1 => 1)
+      expect(result).to include(2 => 1)
+      expect(result).to include(3 => 1)
+      expect(result).to include(4 => 2)
+      expect(result).to include(6 => 1)
+      expect(result).to include(7 => 1)
+      expect(result).to include(8 => 1)
+      expect(result).to include(9 => 1)
+      expect(result).not_to have_key(5)
     end
   end
 
@@ -1002,15 +974,15 @@ describe Evaluation do
     let(:evaluation) { create(:evaluation, value_aliases: aliases) }
 
     it "converts a raw value to its alias" do
-      evaluation.alias_for(1).should == "foo"
+      expect(evaluation.alias_for(1)).to eq "foo"
     end
     it "returns the raw value if there is no alias" do
-      evaluation.alias_for(3).should == 3
+      expect(evaluation.alias_for(3)).to eq 3
     end
     context "without aliases" do
       let(:aliases) { nil }
       it "returns the raw value" do
-        evaluation.alias_for(1).should == 1
+        expect(evaluation.alias_for(1)).to eq 1
       end
     end
   end
@@ -1147,11 +1119,11 @@ describe Evaluation do
 
     it "searches in an instance" do
       result = Evaluation.search_in_instance(suite1.instance_id, name_cont: "1")
-      result.should match_array([ evaluation1, generic ])
+      expect(result).to match_array([ evaluation1, generic ])
     end
     it "handles when the search automatically joins the suite table" do
       result = Evaluation.search_in_instance(suite1.instance_id, suite_name_cont: "1")
-      result.should match_array([ evaluation1, evaluation2 ])
+      expect(result).to match_array([ evaluation1, evaluation2 ])
     end
   end
 
@@ -1253,18 +1225,18 @@ describe Evaluation do
 
     it "returns all generic evaluations which are not associated to the given object" do
       obj = build(:suite, generic_evaluations: [generics.first])
-      Evaluation.missing_generics_for(obj).should == [generics.second]
+      expect(Evaluation.missing_generics_for(obj)).to eq [generics.second]
     end
     it "handles empty arrays on the object" do
       generics
       obj = build(:suite, generic_evaluations: nil)
-      Evaluation.missing_generics_for(obj).should == generics
+      expect(Evaluation.missing_generics_for(obj)).to eq generics
     end
     it "only includes generics from the same instance" do
       wrong_type
       wrong_instance
       obj = build(:suite, generic_evaluations: [generics.first])
-      Evaluation.missing_generics_for(obj).should == [generics.second]
+      expect(Evaluation.missing_generics_for(obj)).to eq [generics.second]
     end
   end
 

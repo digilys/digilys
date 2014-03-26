@@ -13,12 +13,12 @@ describe ParticipantsController, versioning: !ENV["debug_versioning"].blank? do
   describe "GET #new" do
     it "assigns the participant's suite" do
       get "new", suite_id: participant.suite_id
-      response.should be_success
-      assigns(:participant).suite.should == participant.suite
+      expect(response).to be_success
+      expect(assigns(:participant).suite).to eq participant.suite
     end
     it "gives a 404 if the suite instance does not match" do
       get "new", suite_id: other_suite.id
-      response.status.should == 404
+      expect(response.status).to be 404
     end
   end
   describe "POST #create" do
@@ -35,75 +35,85 @@ describe ParticipantsController, versioning: !ENV["debug_versioning"].blank? do
     end
 
     it "creates multiple participants from multiple users" do
-      post :create,
+      post(
+        :create,
         participant: {
           suite_id:   suite.id,
           student_id: student_ids,
           group_id:   ""
         }
-      response.should redirect_to(suite)
-      suite.participants(true).map(&:student).should match_array(students)
+      )
+      expect(response).to redirect_to(suite)
+      expect(suite.participants(true).map(&:student)).to match_array(students)
     end
     it "creates multiple participants from one or more groups" do
-      post :create,
+      post(
+        :create,
         participant: {
           suite_id:   suite.id,
           student_id: "",
           group_id:   group_ids
         }
-      response.should redirect_to(suite)
-      suite.participants(true).map(&:student).should match_array([students.first, students.second])
+      )
+      expect(response).to redirect_to(suite)
+      expect(suite.participants(true).map(&:student)).to match_array([students.first, students.second])
     end
     it "assigns the group id to participants assigned from groups" do
-      post :create,
+      post(
+        :create,
         participant: {
           suite_id:   suite.id,
           student_id: "",
           group_id:   groups.first.id.to_s
         }
-      response.should redirect_to(suite)
-      suite.participants.first.group.should == groups.first
+      )
+      expect(response).to redirect_to(suite)
+      expect(suite.participants.first.group).to eq groups.first
     end
     it "does not create duplicate participants" do
-      post :create,
+      post(
+        :create,
         participant: {
           suite_id:   suite.id,
           student_id: "#{student_ids},#{student_ids}",
           group_id:   group_ids
         }
-      response.should redirect_to(suite)
-      suite.participants(true).map(&:student).should match_array(students)
+      )
+      expect(response).to redirect_to(suite)
+      expect(suite.participants(true).map(&:student)).to match_array(students)
     end
     it "gives a 404 if the suite instance does not match" do
-      post :create,
+      post(
+        :create,
         participant: {
           suite_id:   other_suite.id,
           student_id: student_ids,
           group_id:   group_ids
         }
-      response.status.should == 404
+      )
+      expect(response.status).to be 404
     end
   end
 
   describe "GET #confirm_destroy" do
     it "is successful" do
       get :confirm_destroy, id: participant.id
-      response.should be_success
+      expect(response).to be_success
     end
     it "gives a 404 if the suite instance does not match" do
       get :confirm_destroy, id: other_participant.id
-      response.status.should == 404
+      expect(response.status).to be 404
     end
   end
   describe "DELETE #destroy" do
     it "redirects to the participant list page" do
       delete :destroy, id: participant.id
-      response.should redirect_to(participant.suite)
-      Participant.exists?(participant.id).should be_false
+      expect(response).to redirect_to(participant.suite)
+      expect(Participant.exists?(participant.id)).to be_false
     end
     it "gives a 404 if the suite instance does not match" do
       delete :destroy, id: other_participant.id
-      response.status.should == 404
+      expect(response.status).to be 404
     end
   end
 end

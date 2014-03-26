@@ -27,9 +27,6 @@ class Group < ActiveRecord::Base
 
   validate :must_belong_to_parent_instance
 
-  after_update  :touch_suites
-  after_destroy :touch_suites
-
 
   # Adds students to this group and all the parents
   def add_students(students)
@@ -118,12 +115,6 @@ class Group < ActiveRecord::Base
   
 
   private
-
-  def touch_suites
-    # See ActiveRecord#current_time_from_proper_timezone
-    timestamp = self.class.default_timezone == :utc ? Time.now.utc : Time.now
-    self.indirect_suites.update_all(updated_at: timestamp)
-  end
 
   def remove_students_from_all(students, groups)
     groups.each do |group|

@@ -29,25 +29,25 @@ describe Digilys::ExcelConverter do
     end
     it "converts the source file to a tsv file" do
       converter.convert_student_data_file(source_file, target_file.path)
-      result_rows.should        have(3).items
-      result_rows.first.should  have(6).items
-      result_rows.second.should have(6).items
-      result_rows.third.should  have(6).items
+      expect(result_rows).to        have(3).items
+      expect(result_rows.first).to  have(6).items
+      expect(result_rows.second).to have(6).items
+      expect(result_rows.third).to  have(6).items
     end
     it "supports an explicit extension" do
       converter.convert_student_data_file(source_file, target_file.path, ".xlsx")
-      result_rows.should have(3).items
+      expect(result_rows).to have(3).items
     end
 
     it "converts person id floats to proper person ids" do
       converter.convert_student_data_file(source_file, target_file.path)
-      result_rows.second[2].should == "20010101-1234"
-      result_rows.third[2].should  == "010101-1235"
+      expect(result_rows.second[2]).to eq "20010101-1234"
+      expect(result_rows.third[2]).to  eq "010101-1235"
     end
     it "converts grade floats to integers" do
       converter.convert_student_data_file(source_file, target_file.path)
-      result_rows.second[1].should == "1"
-      result_rows.third[1].should  == "2"
+      expect(result_rows.second[1]).to eq "1"
+      expect(result_rows.third[1]).to  eq "2"
     end
   end
 end

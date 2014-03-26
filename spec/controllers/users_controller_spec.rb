@@ -13,13 +13,13 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
 
     it "lists users in the current instance" do
       get :index
-      response.should be_successful
-      assigns(:users).should match_array(users + [ logged_in_user ])
+      expect(response).to be_successful
+      expect(assigns(:users)).to match_array(users + [ logged_in_user ])
     end
     it "is filterable" do
       get :index, q: { name_cont: users.first.name }
-      response.should be_successful
-      assigns(:users).should == [users.first]
+      expect(response).to be_successful
+      expect(assigns(:users)).to eq [users.first]
     end
   end
 
@@ -31,40 +31,40 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
     it "lists users" do
       get :search, q: {}
 
-      response.should be_success
+      expect(response).to be_success
       json = JSON.parse(response.body)
 
-      json["results"].should have(users.length + 1).items
+      expect(json["results"]).to have(users.length + 1).items
     end
     it "returns the result as json" do
       get :search, q: { name_cont: users.first.name }
 
       json = JSON.parse(response.body)
 
-      json["more"].should be_false
+      expect(json["more"]).to be_false
 
-      json["results"].should have(1).items
-      json["results"].first.should include("id"   => users.first.id)
-      json["results"].first.should include("text" => "#{users.first.name}, #{users.first.email}")
+      expect(json["results"]).to have(1).items
+      expect(json["results"].first).to include("id"   => users.first.id)
+      expect(json["results"].first).to include("text" => "#{users.first.name}, #{users.first.email}")
     end
   end
 
   describe "GET #edit" do
     it "is successful" do
       get :edit, id: user.id
-      response.should be_success
+      expect(response).to be_success
     end
   end
   describe "PUT #update" do
     it "redirects to the user edit page when successful" do
       new_name = "#{user.name} updated"
       put :update, id: user.id, user: { name: new_name }
-      response.should redirect_to(edit_user_path(user))
-      user.reload.name.should == new_name
+      expect(response).to redirect_to(edit_user_path(user))
+      expect(user.reload.name).to eq new_name
     end
     it "renders the edit view when validation fails" do
       put :update, id: user.id, user: invalid_parameters_for(:user)
-      response.should render_template("edit")
+      expect(response).to render_template("edit")
     end
     it "changes roles when applicable" do
       user.add_role :superuser
@@ -72,8 +72,8 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
 
       put :update, id: user.id, user: { role_ids: [Role.find_by_name("admin").id] }
 
-      user.has_role?(:superuser).should be_false
-      user.has_role?(:admin).should     be_true
+      expect(user.has_role?(:superuser)).to be_false
+      expect(user.has_role?(:admin)).to     be_true
     end
     it "only touches global roles, not instance roles" do
       user.add_role :superuser
@@ -82,11 +82,11 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
 
       put :update, id: user.id, user: { role_ids: [Role.find_by_name("admin").id] }
 
-      user.should_not have_role(:superuser)
-      user.should     have_role(:admin)
-      user.should     have_role(:resource, Instance)
-      user.should     have_role(:instance, Instance.first)
-      Role.where(name: "superuser").exists?.should be_true
+      expect(user).not_to have_role(:superuser)
+      expect(user).to     have_role(:admin)
+      expect(user).to     have_role(:resource, Instance)
+      expect(user).to     have_role(:instance, Instance.first)
+      expect(Role.where(name: "superuser").exists?).to be_true
     end
 
     context "instances" do
@@ -95,16 +95,16 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
 
       it "changes instances for the user" do
         put :update, id: user.id, user: { instances: [instances.second.id] }
-        user.should have_role(:member, instances.second)
-        user.should_not have_role(:member, instances.first)
+        expect(user).to have_role(:member, instances.second)
+        expect(user).not_to have_role(:member, instances.first)
       end
       it "changes the active instance if the active instance is removed" do
         put :update, id: user.id, user: { instances: [instances.second.id] }
-        user.reload.active_instance.should == instances.second
+        expect(user.reload.active_instance).to eq instances.second
       end
       it "removes the active instance if all instances are removed" do
         put :update, id: user.id, user: { instances: [] }
-        user.reload.active_instance.should be_nil
+        expect(user.reload.active_instance).to be_nil
       end
 
       context "without previous" do
@@ -117,15 +117,15 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
         end
         it "changes instances for the user" do
           put :update, id: user.id, user: { instances: [instances.second.id] }
-          user.should have_role(:member, instances.second)
+          expect(user).to have_role(:member, instances.second)
         end
         it "changes the active instance if the active instance is removed" do
           put :update, id: user.id, user: { instances: [instances.second.id] }
-          user.reload.active_instance.should == instances.second
+          expect(user.reload.active_instance).to eq instances.second
         end
         it "removes the active instance if all instances are removed" do
           put :update, id: user.id, user: { instances: [] }
-          user.reload.active_instance.should be_nil
+          expect(user.reload.active_instance).to be_nil
         end
       end
     end
@@ -134,14 +134,14 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
   describe "GET #confirm_destroy" do
     it "is successful" do
       get :confirm_destroy, id: user.id
-      response.should be_success
+      expect(response).to be_success
     end
   end
   describe "DELETE #destroy" do
     it "redirects to the user list page" do
       delete :destroy, id: user.id
-      response.should redirect_to(users_url())
-      User.exists?(user.id).should be_false
+      expect(response).to redirect_to(users_url())
+      expect(User.exists?(user.id)).to be_false
     end
   end
 end

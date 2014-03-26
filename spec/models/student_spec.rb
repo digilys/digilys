@@ -38,42 +38,6 @@ describe Student do
     it { should_not allow_value("foo\nbar: baz: foo").for(:data_text).with_message(/rad 1,2/i) }
   end
 
-  context ".touch_suites_and_color_tables" do
-    let!(:suite)       { create(:suite) }
-    let!(:student)     { create(:student) }
-    let!(:participant) { create(:participant, student: student, suite: suite) }
-
-    it "touches the suites the student is a participant of" do
-      updated_at = suite.updated_at
-      Timecop.freeze(Time.now + 5.minutes) do
-        student.name << " updated"
-        student.save
-
-        updated_at.should < suite.reload.updated_at
-      end
-    end
-    context do
-      let!(:suite_evaluation)   { create(:suite_evaluation, suite: suite) }
-      let!(:suite_result)       { create(:result, student: student, evaluation: suite_evaluation) }
-      let!(:generic_evaluation) { create(:generic_evaluation) }
-      let!(:generic_result)     { create(:result, student: student, evaluation: generic_evaluation) }
-      let!(:color_table)        { create(:color_table, evaluations: [ generic_evaluation ]) }
-
-      it "touches the color tables the student belongs to" do
-        updated_at       = color_table.updated_at
-        suite_updated_at = suite.color_table.updated_at
-
-        Timecop.freeze(Time.now + 5.minutes) do
-          student.name << " updated"
-          student.save
-
-          updated_at.should       < color_table.reload.updated_at
-          suite_updated_at.should < suite.color_table.reload.updated_at
-        end
-      end
-    end
-  end
-
   context ".name" do
     subject { create(:student, first_name: "Foo", last_name: "Bar") }
     its(:name) { should == "Foo Bar" }
@@ -101,7 +65,7 @@ describe Student do
       let(:text) { "foo: 2010" }
       its(:data) { should == { "foo" => 2010 } }
       it "returns an integer" do
-        student.data["foo"].should be_an_instance_of(Fixnum)
+        expect(student.data["foo"]).to be_an_instance_of(Fixnum)
       end
     end
     context "with a float" do
@@ -216,32 +180,32 @@ describe Student do
 
     it "adds the student to all groups" do
       student.add_to_groups(groups)
-      student.groups.should include(groups.first)
-      student.groups.should include(groups.second)
+      expect(student.groups).to include(groups.first)
+      expect(student.groups).to include(groups.second)
     end
     it "adds the student to the parents of all groups as well" do
       student.add_to_groups(groups)
-      student.groups.should include(parent1)
-      student.groups.should include(parent2)
+      expect(student.groups).to include(parent1)
+      expect(student.groups).to include(parent2)
     end
     it "handles a single group" do
       student.add_to_groups(groups.first)
-      student.groups.should include(groups.first)
+      expect(student.groups).to include(groups.first)
     end
     it "handles a string with comma separated group ids" do
       student.add_to_groups("#{groups.first.id}, #{groups.second.id}")
-      student.groups.should include(groups.first)
-      student.groups.should include(groups.second)
+      expect(student.groups).to include(groups.first)
+      expect(student.groups).to include(groups.second)
     end
     it "does not add duplicates" do
       student.add_to_groups(groups)
       student.add_to_groups(groups.first)
       student.add_to_groups([parent1, parent2])
-      student.groups(true).should match_array(groups + [parent1, parent2])
+      expect(student.groups(true)).to match_array(groups + [parent1, parent2])
     end
     it "does not add groups from other instances" do
       student.add_to_groups(create_list(:group, 2, instance: create(:instance)))
-      student.groups(true).should be_empty
+      expect(student.groups(true)).to be_empty
     end
 
     context "automatic participation" do
@@ -250,7 +214,7 @@ describe Student do
 
       it "adds the students as participants to any suite the groups are associated with" do
         student.add_to_groups(groups.first)
-        suite.participants.where(student_id: student.id).should have(1).items
+        expect(suite.participants.where(student_id: student.id)).to have(1).items
       end
     end
   end
@@ -263,28 +227,28 @@ describe Student do
 
     it "removes the student from all groups" do
       student.remove_from_groups(groups)
-      student.groups.should_not include(groups.first)
-      student.groups.should_not include(groups.second)
+      expect(student.groups).not_to include(groups.first)
+      expect(student.groups).not_to include(groups.second)
     end
     it "removes the student from all groups' parents as well" do
       student.remove_from_groups(groups)
-      student.groups.should_not include(parent1)
-      student.groups.should_not include(parent2)
+      expect(student.groups).not_to include(parent1)
+      expect(student.groups).not_to include(parent2)
     end
     it "removes the student from all groups' children as well" do
       student.remove_from_groups(parent1)
-      student.groups.should_not include(parent2)
-      student.groups.should_not include(groups.first)
-      student.groups.should_not include(groups.second)
+      expect(student.groups).not_to include(parent2)
+      expect(student.groups).not_to include(groups.first)
+      expect(student.groups).not_to include(groups.second)
     end
     it "handles a single group" do
       student.remove_from_groups(groups.first)
-      student.groups.should_not include(groups.first)
+      expect(student.groups).not_to include(groups.first)
     end
     it "handles an array of group ids" do
       student.remove_from_groups(groups.collect(&:id).collect(&:to_s))
-      student.groups.should_not include(groups.first)
-      student.groups.should_not include(groups.second)
+      expect(student.groups).not_to include(groups.first)
+      expect(student.groups).not_to include(groups.second)
     end
 
     context "automatic departicipation" do
@@ -293,7 +257,7 @@ describe Student do
 
       it "adds the students as participants to any suite the groups are associated with" do
         student.remove_from_groups(groups)
-        suite.participants.where(student_id: student.id).should be_blank
+        expect(suite.participants.where(student_id: student.id)).to be_blank
       end
     end
   end
@@ -326,10 +290,10 @@ describe Student do
     it { should have(3).items }
 
     it "has records for all generic evaluations" do
-      results.collect(&:evaluation).should match_array(generic_evaluations)
+      expect(results.collect(&:evaluation)).to match_array(generic_evaluations)
     end
     it "has only unsaved records" do
-      results.collect(&:new_record?).should match_array([true, true, true])
+      expect(results.collect(&:new_record?)).to match_array([true, true, true])
     end
 
     context "with partial existing results" do
@@ -338,10 +302,10 @@ describe Student do
       it { should have(3).items }
 
       it "has records for all generic evaluations" do
-        results.collect(&:evaluation).should match_array(generic_evaluations)
+        expect(results.collect(&:evaluation)).to match_array(generic_evaluations)
       end
       it "has partially unsaved records" do
-        results.collect(&:new_record?).should match_array([false, true, true])
+        expect(results.collect(&:new_record?)).to match_array([false, true, true])
       end
     end
     context "with complete existing results" do
@@ -354,10 +318,10 @@ describe Student do
       it { should have(3).items }
 
       it "has records for all generic evaluations" do
-        results.collect(&:evaluation).should match_array(generic_evaluations)
+        expect(results.collect(&:evaluation)).to match_array(generic_evaluations)
       end
       it "has partially unsaved records" do
-        results.collect(&:new_record?).should match_array([false, false, false])
+        expect(results.collect(&:new_record?)).to match_array([false, false, false])
       end
     end
   end

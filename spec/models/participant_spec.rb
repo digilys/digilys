@@ -33,25 +33,13 @@ describe Participant do
     end
   end
 
-  context "associations" do
-    let(:suite) { create(:suite) }
-
-    it "touches the suite" do
-      updated_at = suite.updated_at
-      Timecop.freeze(Time.now + 5.minutes) do
-        participant = create(:participant, suite: suite)
-        updated_at.should < suite.reload.updated_at
-      end
-    end
-  end
-
   context "versioning", versioning: true do
     it { should be_versioned }
     it "stores the new suite id as metadata" do
       participant = create(:participant)
       participant.suite = create(:suite)
       participant.save
-      participant.versions.last.suite_id.should == participant.suite_id
+      expect(participant.versions.last.suite_id).to eq participant.suite_id
     end
   end
 
@@ -75,19 +63,19 @@ describe Participant do
     let!(:new_evaluation)  { create(     :suite_evaluation,    suite: suite, date: Date.today) }
 
     it "adds absent results for passed evaluations" do
-      old_evaluations.each { |e| e.results.should be_blank }
-      new_evaluation.results.should be_blank
+      old_evaluations.each { |e| expect(e.results).to be_blank }
+      expect(new_evaluation.results).to be_blank
 
       participant = create(:participant, suite: suite)
 
       old_evaluations.each do |e|
-        e.results(true).should have(1).items
+        expect(e.results(true)).to have(1).items
         result = e.results.first
-        result.student.should == participant.student
-        result.absent?.should be_true
+        expect(result.student).to eq participant.student
+        expect(result.absent?).to be_true
       end
 
-      new_evaluation.results(true).should be_blank
+      expect(new_evaluation.results(true)).to be_blank
     end
 
     context "with evaluations targeted at gender" do
@@ -95,11 +83,11 @@ describe Participant do
       let!(:female_evaluation) { create(:suite_evaluation, suite: suite, date: Date.yesterday, target: :female) }
 
       it "does not add results to the wrong gender" do
-        male_evaluation.results.should be_blank
-        female_evaluation.results.should be_blank
+        expect(male_evaluation.results).to be_blank
+        expect(female_evaluation.results).to be_blank
         participant = create(:participant, suite: suite, student: create(:student, gender: :female))
-        male_evaluation.results(true).should be_blank
-        female_evaluation.results(true).first.student.should == participant.student
+        expect(male_evaluation.results(true)).to be_blank
+        expect(female_evaluation.results(true).first.student).to eq participant.student
       end
     end
     context "with evaluations targeted at specific students" do
@@ -112,9 +100,9 @@ describe Participant do
         )
       }
       it "does not add results to targeted evaluations" do
-        targeted.results.should be_blank
+        expect(targeted.results).to be_blank
         participant = create(:participant, suite: suite)
-        targeted.results(true).should be_blank
+        expect(targeted.results(true)).to be_blank
       end
     end
   end
@@ -138,13 +126,13 @@ describe Participant do
     it "updates the suite's evaluations' statuses" do
       evaluation.update_status!
       evaluation.reload
-      evaluation.status.should == "complete"
+      expect(evaluation.status).to eq "complete"
       participant = create(:participant, suite: suite)
       evaluation.reload
-      evaluation.status.should == "partial"
+      expect(evaluation.status).to eq "partial"
       participant.destroy
       evaluation.reload
-      evaluation.status.should == "complete"
+      expect(evaluation.status).to eq "complete"
     end
   end
 

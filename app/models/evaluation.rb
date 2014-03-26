@@ -19,7 +19,7 @@ class Evaluation < ActiveRecord::Base
   has_and_belongs_to_many :users
   has_and_belongs_to_many :color_tables
 
-  belongs_to :suite,              touch:      true,         inverse_of: :evaluations
+  belongs_to :suite,              inverse_of: :evaluations
   belongs_to :series
   has_many   :suite_participants, through:    :suite,       source: :participants
   has_many   :results,            include:    :student,     dependent: :destroy
@@ -194,7 +194,6 @@ class Evaluation < ActiveRecord::Base
   before_save       :set_aliases_from_value_type
   before_save       :persist_colors_and_stanines
   before_save       :create_series_from_name
-  after_save        :touch_color_tables
   after_create      :add_to_suite_color_table
   after_update      :touch_results
   after_save        :update_series_current!
@@ -596,13 +595,6 @@ class Evaluation < ActiveRecord::Base
       end
     end
     return nil
-  end
-
-
-  def touch_color_tables
-    # See ActiveRecord#current_time_from_proper_timezone
-    timestamp = self.class.default_timezone == :utc ? Time.now.utc : Time.now
-    self.color_tables.update_all(updated_at: timestamp)
   end
 
 

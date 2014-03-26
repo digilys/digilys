@@ -14,13 +14,13 @@ describe Template::SuitesController, versioning: !ENV["debug_versioning"].blank?
 
     it "lists suite templates" do
       get :index
-      response.should be_success
-      assigns(:suites).should match_array(templates)
+      expect(response).to be_success
+      expect(assigns(:suites)).to match_array(templates)
     end
     it "should be filterable" do
       get :index, q: { name_cont: templates.first.name }
-      response.should be_success
-      assigns(:suites).should == [templates.first]
+      expect(response).to be_success
+      expect(assigns(:suites)).to eq [templates.first]
     end
   end
 
@@ -32,14 +32,14 @@ describe Template::SuitesController, versioning: !ENV["debug_versioning"].blank?
     it "returns matching template evaluations as json" do
       get :search, q: { name_cont: template.name }
 
-      response.should be_success
+      expect(response).to be_success
       json = JSON.parse(response.body)
 
-      json["more"].should be_false
+      expect(json["more"]).to be_false
 
-      json["results"].should have(1).items
-      json["results"].first.should include("id"   => template.id)
-      json["results"].first.should include("text" => template.name)
+      expect(json["results"]).to have(1).items
+      expect(json["results"].first).to include("id"   => template.id)
+      expect(json["results"].first).to include("text" => template.name)
     end
   end
 
@@ -47,10 +47,10 @@ describe Template::SuitesController, versioning: !ENV["debug_versioning"].blank?
     it "initializes a new template suite" do
       get :new
 
-      response.should be_success
-      response.should render_template("suites/new")
+      expect(response).to be_success
+      expect(response).to render_template("suites/new")
 
-      assigns(:suite).is_template.should be_true
+      expect(assigns(:suite).is_template).to be_true
     end
   end
 end

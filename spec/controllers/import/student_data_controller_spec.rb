@@ -8,7 +8,7 @@ describe Import::StudentDataController, versioning: !ENV["debug_versioning"].bla
   describe "GET #new" do
     it "is successful" do
       get :new
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
@@ -30,15 +30,15 @@ describe Import::StudentDataController, versioning: !ENV["debug_versioning"].bla
           )
       end
 
-      assigns(:filename).should == filename
-      assigns(:importer).should be_a(Digilys::StudentDataImporter)
-      File.exist?(expected_file).should be_true
+      expect(assigns(:filename)).to eq filename
+      expect(assigns(:importer)).to be_a(Digilys::StudentDataImporter)
+      expect(File.exist?(expected_file)).to be_true
     end
     
     it "handles errors" do
       post :confirm, excel_file: nil
-      response.should redirect_to(new_import_student_data_url())
-      flash[:error].should_not be_empty
+      expect(response).to redirect_to(new_import_student_data_url())
+      expect(flash[:error]).not_to be_empty
     end
   end
 
@@ -53,21 +53,21 @@ describe Import::StudentDataController, versioning: !ENV["debug_versioning"].bla
       )
 
       it "imports data from the file" do
-        Student.count.should == 0
-        Group.count.should   == 0
+        expect(Student.count).to eq 0
+        expect(Group.count).to   eq 0
         post :create, filename: File.basename(temp_file)
-        response.should redirect_to(students_url())
-        Student.count.should == 1
-        Group.count.should   == 2
+        expect(response).to redirect_to(students_url())
+        expect(Student.count).to eq 1
+        expect(Group.count).to   eq 2
       end
     end
     context "without an uploaded file" do
       let(:filename) { File.join(Rails.root, "tmp/uploads", "does-not-exist") }
 
       it "renders a 404" do
-        File.exist?(filename).should be_false
+        expect(File.exist?(filename)).to be_false
         post :create, filename: filename
-        response.status.should == 404
+        expect(response.status).to be 404
       end
     end
     context "with an incorrect file" do
@@ -81,8 +81,8 @@ describe Import::StudentDataController, versioning: !ENV["debug_versioning"].bla
 
       it "redirects back to the upload form with an error" do
         post :create, filename: File.basename(temp_file)
-        flash[:error].should_not be_empty
-        response.should redirect_to(new_import_student_data_url())
+        expect(flash[:error]).not_to be_empty
+        expect(response).to redirect_to(new_import_student_data_url())
       end
     end
   end

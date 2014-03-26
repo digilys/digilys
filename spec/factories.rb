@@ -270,7 +270,7 @@ FactoryGirl.define do
   end
 
   factory :table_state do
-    association :base, factory: :suite
+    association :base, factory: :color_table
 
     sequence(:name) { |i| "Table state %09d" % i }
     data            nil
