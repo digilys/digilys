@@ -1027,29 +1027,29 @@ describe Evaluation do
       evaluation1.status = :partial
       evaluation1.save
 
-      evaluation1.reload.is_series_current.should be_true
-      evaluation2.reload.is_series_current.should be_false
+      expect(evaluation1.reload.is_series_current).to be_true
+      expect(evaluation2.reload.is_series_current).to be_false
     end
   end
 
   describe ".create_series_from_name" do
     it "creates a new series if series_id is a string" do
-      Series.exists?.should be_false
+      expect(Series.exists?).to be_false
       evaluation = build(:suite_evaluation, series_id: "My series")
-      evaluation.save.should         be_true
-      evaluation.series.name.should  == "My series"
-      evaluation.series.suite.should == evaluation.suite
+      expect(evaluation.save).to         be_true
+      expect(evaluation.series.name).to  eq "My series"
+      expect(evaluation.series.suite).to eq evaluation.suite
     end
     it "associates the event with an existing series if a series with the name exists" do
       series = create(:series, name: "my series")
       evaluation = build(:suite_evaluation, suite: series.suite, series_id: "MY SERIES")
-      evaluation.save.should   be_true
-      evaluation.series.should == series
+      expect(evaluation.save).to   be_true
+      expect(evaluation.series).to eq series
     end
     it "does not create a series when no name is given" do
       evaluation = build(:suite_evaluation, series_id: "")
-      evaluation.save.should   be_true
-      evaluation.series.should be_nil
+      expect(evaluation.save).to   be_true
+      expect(evaluation.series).to be_nil
     end
   end
 
@@ -1062,13 +1062,13 @@ describe Evaluation do
       evaluation.series = nil
       evaluation.save!
 
-      Series.where(id: series.id).exists?.should be_false
+      expect(Series.where(id: series.id).exists?).to be_false
     end
     it "destroys a series after evaluation destroy if the series has no other evaluations" do
       evaluation = create(:suite_evaluation, suite: suite, series: series)
       evaluation.destroy
 
-      Series.where(id: series.id).exists?.should be_false
+      expect(Series.where(id: series.id).exists?).to be_false
     end
   end
 
@@ -1206,7 +1206,7 @@ describe Evaluation do
       create           :suite_evaluation, series: series,          date: Date.tomorrow,  status: :empty
       create           :suite_evaluation, series: create(:series), date: Date.today,     status: :empty
 
-      Evaluation.only_series_currents.all.should == [current]
+      expect(Evaluation.only_series_currents.all).to eq [current]
     end
     it "returns all non-series evaluations" do
       evaluations = [
@@ -1214,7 +1214,7 @@ describe Evaluation do
         create(:evaluation_template, status: :empty), # other types
         create(:generic_evaluation,  status: :empty)
       ]
-      Evaluation.only_series_currents.all.should match_array(evaluations)
+      expect(Evaluation.only_series_currents.all).to match_array(evaluations)
     end
   end
 

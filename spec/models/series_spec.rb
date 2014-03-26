@@ -42,14 +42,14 @@ describe Series do
 
       series.update_current!
 
-      new_current.reload.is_series_current.should be_true
-      previous_current.reload.is_series_current.should be_false
+      expect(new_current.reload.is_series_current).to be_true
+      expect(previous_current.reload.is_series_current).to be_false
     end
 
     it "handles when all evaluations are empty" do
       create_evaluation(:empty, Date.today)
       series.update_current!
-      series.evaluations(true).collect(&:is_series_current).should_not include(true)
+      expect(series.evaluations(true).collect(&:is_series_current)).not_to include(true)
     end
   end
 
@@ -63,20 +63,20 @@ describe Series do
     it "returns the evaluation with the latest date" do
       expected = build_evaluation(:complete, Date.today)
       build_evaluation(:complete, Date.yesterday)
-      series.current_evaluation.should == expected
+      expect(series.current_evaluation).to eq expected
     end
     it "does not return empty evaluations" do
       expected = build_evaluation(:complete, Date.yesterday)
       build_evaluation(:empty, Date.today)
-      series.current_evaluation.should == expected
+      expect(series.current_evaluation).to eq expected
     end
     it "returns partial or complete evaluations" do
       expected = build_evaluation(:partial, Date.today)
       build_evaluation(:complete, Date.yesterday)
-      series.current_evaluation.should == expected
+      expect(series.current_evaluation).to eq expected
 
       expected = build_evaluation(:complete, Date.tomorrow)
-      series.current_evaluation.should == expected
+      expect(series.current_evaluation).to eq expected
     end
   end
 
@@ -86,12 +86,12 @@ describe Series do
 
     it "destroys the series if it has no evaluations" do
       series.destroy_on_empty!
-      series.should be_destroyed
+      expect(series).to be_destroyed
     end
     it "does nothing if the series has evaluations" do
       evaluation
       series.destroy_on_empty!
-      series.should_not be_destroyed
+      expect(series).not_to be_destroyed
     end
   end
 
@@ -111,10 +111,10 @@ describe Series do
     let!(:result3)    { create(:result, evaluation: evaluation3, value: 1) } # Other student
 
     it "returns the newest non-absent result from the evaluations in the series" do
-      evaluation3.reload.is_series_current.should be_true
+      expect(evaluation3.reload.is_series_current).to be_true
 
       # result2 is absent, no result for the student in evaluation 3
-      series.result_for(student).should == result1
+      expect(series.result_for(student)).to eq result1
     end
   end
 end
