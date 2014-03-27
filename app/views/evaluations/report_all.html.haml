@@ -30,6 +30,8 @@
               - if result = evaluation.results.detect { |r| r.student_id == participant.student_id }
                 %input.input-mini{name: "results[#{evaluation.id}][#{participant.student_id}]",
                   type: "number",
+                  min: 0,
+                  max: evaluation.max_result,
                   value: result.value || "",
                   data: { "error-message" => t(:".result_error_message") }}
                 .absent
