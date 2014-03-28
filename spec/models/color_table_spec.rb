@@ -29,14 +29,38 @@ describe ColorTable do
   end
 
   context "associations" do
-    let(:suites)   { create_list(:suite_evaluation,   2) }
-    let(:generics) { create_list(:generic_evaluation, 2) }
-    subject {
-      create(:color_table, evaluations: suites + generics)
-    }
+    context "evaluations" do
+      let(:suites)   { create_list(:suite_evaluation,   2) }
+      let(:generics) { create_list(:generic_evaluation, 2) }
+      subject {
+        create(:color_table, evaluations: suites + generics)
+      }
 
-    its(:generic_evaluations) { should match_array(generics) }
-    its(:suite_evaluations)   { should match_array(suites) }
+      its(:generic_evaluations) { should match_array(generics) }
+      its(:suite_evaluations)   { should match_array(suites) }
+    end
+    context "students" do
+      let(:suite)              { create(:suite) }
+      let(:suite_evaluation)   { create(:suite_evaluation, suite: suite) }
+      let(:generic_evaluation) { create(:generic_evaluation) }
+      let(:participant)        { create(:participant, suite: suite) }
+      let(:student1)           { participant.student }
+      let(:student2)           { create(:student) }
+      let!(:suite_result)      { create(:result, student: student1, evaluation: suite_evaluation)}
+      let!(:generic_result)    { create(:result, student: student2, evaluation: generic_evaluation)}
+      let(:color_table)        { create(:color_table, evaluations: [ suite_evaluation, generic_evaluation ]) }
+
+      before(:each) do
+        suite.color_table.evaluations << generic_evaluation
+      end
+
+      it "returns all students with results in the evaluations connected to the color table" do
+        expect(color_table.students).to match_array([student1, student2])
+      end
+      it "returns only the students from the suite for suite color tables" do
+        expect(suite.color_table.students).to match_array([student1])
+      end
+    end
   end
 
   describe ".student_data" do
@@ -81,7 +105,7 @@ describe ColorTable do
     let!(:result1)     { create(:result, student: student1, evaluation: evaluation1) }
     let!(:result2)     { create(:result, student: student2, evaluation: evaluation2) }
 
-    let!(:color_table) { create(:color_table) }
+    let(:color_table) { create(:color_table) }
 
     before(:each) do
       student1.add_to_groups(l3_group1)
@@ -92,7 +116,7 @@ describe ColorTable do
 
     subject(:groups) { color_table.group_hierarchy }
 
-    it "orders the suite's associated groups by its hierarchy" do
+    it "orders the color table's associated groups by its hierarchy" do
       expect(groups).to eq [
         l1_group1,
           l2_group1,
@@ -100,6 +124,20 @@ describe ColorTable do
           l2_group2,
             l3_group3
       ]
+    end
+
+    context "for suite color table" do
+      let(:suite)        { create(:suite) }
+      let!(:participant) { create(:participant, suite: suite, student: student1) }
+      subject(:groups)   { suite.color_table.group_hierarchy }
+
+      it "orders the suite's associated groups by its hierarchy" do
+        expect(groups).to eq [
+          l1_group1,
+            l2_group1,
+              l3_group1
+        ]
+      end
     end
   end
 
