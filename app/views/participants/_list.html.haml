@@ -1,13 +1,14 @@
 - can_change ||= false
+- participants = participants.order("groups.name nulls first, #{current_name_order(:students)}")
 
 %table.table.table-striped.participants-table
-  %thead
-    %tr
-      %th.name=   Student.human_attribute_name(:name)
-      %th.actions &nbsp;
-
   %tbody
+    - previous_group = nil
     - participants.each do |participant|
+      - if participant.group != previous_group
+        - previous_group = participant.group
+        %tr
+          %th.group(colspan="2")= participant.group.name
       %tr
         %td.name
           = link_to(student_name(participant.student), suite_student_path(participant.suite, participant.student))

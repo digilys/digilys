@@ -3,10 +3,6 @@
 
 %table.table.table-striped.users-table.suite-users-table{"data-on-url" => add_contributors_suite_path(),
    "data-off-url" => remove_contributors_suite_path() }
-  %thead
-    %tr
-      %th.name=   User.human_attribute_name(:name)
-      %th.actions &nbsp;
   %tbody
     - suite.users.each do |user|
       %tr
