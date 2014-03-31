@@ -43,6 +43,9 @@ sv:
       instance:
         one: Instans
         other: Instanser
+      series:
+        one: Testserie
+        other: Testserier
     attributes:
       evaluation:
         template: Mall
@@ -75,6 +78,8 @@ sv:
         students_and_groups: Elever/grupper
         users: Deltagare
         user_ids: Deltagare
+        series: Testserie
+        series_id: Testserie
       result:
         evaluation: Test
         student: Elev
@@ -170,6 +175,10 @@ sv:
         owner_id: Tillhör
       instance:
         name: Namn
+      series:
+        name: Namn
+        suite: Planering
+        suite_id: Planering
 
     errors:
       models:

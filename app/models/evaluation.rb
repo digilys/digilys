@@ -20,6 +20,7 @@ class Evaluation < ActiveRecord::Base
   has_and_belongs_to_many :color_tables
 
   belongs_to :suite,              inverse_of: :evaluations
+  belongs_to :series
   has_many   :suite_participants, through:    :suite,       source: :participants
   has_many   :results,            include:    :student,     dependent: :destroy
   has_many   :students,           through:    :results
@@ -90,7 +91,9 @@ class Evaluation < ActiveRecord::Base
     :stanine_for_grade_f,
     :results_attributes,
     :students_and_groups,
-    :user_ids
+    :user_ids,
+    :series,
+    :series_id
 
   serialize :value_aliases, JSON
   serialize :colors,        JSON
@@ -99,6 +102,7 @@ class Evaluation < ActiveRecord::Base
 
   validate  :validate_instance
   validate  :validate_suite
+  validate  :validate_series
   validate  :validate_date
 
   validates :name, presence: true
@@ -189,8 +193,12 @@ class Evaluation < ActiveRecord::Base
   before_validation :set_default_values_for_value_type
   before_save       :set_aliases_from_value_type
   before_save       :persist_colors_and_stanines
+  before_save       :create_series_from_name
   after_create      :add_to_suite_color_table
   after_update      :touch_results
+  after_save        :update_series_current!
+  after_save        :destroy_empty_series!
+  after_destroy     :destroy_empty_series!
 
 
   def colors_serialized
@@ -462,6 +470,7 @@ class Evaluation < ActiveRecord::Base
       e.target        = template.target
       e.type          = template.type
       e.value_type    = template.value_type
+      e.series        = template.series        if template.series_id
 
       e.assign_attributes(attrs)
     end
@@ -517,6 +526,13 @@ class Evaluation < ActiveRecord::Base
 
   def self.without_explicit_users
     where("evaluations.id not in (select evaluation_id from evaluations_users)")
+  end
+
+  # For all evaluations belonging to series, remove all but
+  # the current evaluation for each series. This does not touch
+  # evaluations not belonging to a series.
+  def self.only_series_currents
+    where([ "series_id is null or is_series_current = ?", true ])
   end
 
   # Returns missing generic evalutions for a specific object
@@ -607,6 +623,10 @@ class Evaluation < ActiveRecord::Base
     else
       errors.add(:suite, :not_nil) if !self.suite.blank?
     end
+  end
+
+  def validate_series
+    errors.add(:series, :not_nil) if !self.type.try(:suite?) && !self.series.blank?
   end
 
   def validate_date
@@ -756,6 +776,39 @@ class Evaluation < ActiveRecord::Base
         self.suite_participants.with_implicit_group_ids(group_ids)
 
       self.evaluation_participant_ids = participants.collect(&:id)
+    end
+  end
+
+  def update_series_current!
+    if (self.status_changed? || self.series_id_changed?) && self.series
+      self.series.update_current!
+    end
+  end
+
+  def create_series_from_name
+    if self.type.try(:suite?) && self.series_id == 0
+      series_name = self.attributes_before_type_cast["series_id"]
+
+      if !series_name.blank?
+        series = Series.where([
+          "suite_id = ? and name ilike ?",
+          self.suite_id,
+          series_name
+        ]).first
+
+        if series
+          self.series_id = series.id
+          self.series = series
+        else
+          self.create_series(name: series_name, suite_id: self.suite_id)
+        end
+      end
+    end
+  end
+
+  def destroy_empty_series!
+    if self.series_id_changed? && !self.series_id_was.nil? || self.destroyed?
+      Series.where(id: self.series_id_was).first.try(:destroy_on_empty!)
     end
   end
 end

@@ -13,6 +13,8 @@ $ ->
 
     $("input.tag-field").each ->
         new Digilys.TagField($(this))
+    $("input.editable-select").each ->
+        new Digilys.EditableSelect($(this))
 
     $("form:not(.prevent-navigation-confirmation)").each ->
         new Digilys.WarnableForm($(this), Digilys.navigationConfirmation)

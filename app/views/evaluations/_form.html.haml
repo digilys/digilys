@@ -50,6 +50,14 @@
           hint: t(:".category_help"),
           input_html: { class: "tag-field span12",
           data: { "existing-tags" => Evaluation.all_tags(on: :categories).collect(&:name).to_json } }
+        - if evaluation.type.suite?
+          - series = evaluation.suite.series.collect { |s| { id: s.id, text: s.name } }
+          = f.input :series_id,
+            as: :string,
+            hint: t(:".series_help"),
+            input_html: { class: "editable-select span12",
+            data: { placeholder: t(:".series_placeholder"),
+            data: series.to_json } }
 
     .row-fluid
       .control-group

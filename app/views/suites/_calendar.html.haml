@@ -23,7 +23,11 @@
                       %i.icon-time
                   %td.date{class: entity.is_a?(Evaluation) && entity.overdue? ? "overdue" : ""}
                     = link_to(entity.date, entity)
-                  %td.name= link_to(entity.name, entity)
+                  %td.name
+                    = link_to(entity.name, entity)
+                    - if entity.is_a?(Evaluation) && entity.series_id
+                      %div
+                        %span.badge= entity.series.name
                   %td.actions
                     - case entity
                     - when Evaluation
@@ -36,6 +40,7 @@
                       - if can_change
                         %a.btn.btn-mini{href: report_meeting_path(entity)}= t(:".meeting_report_action")
           = submit_tag(t(:".report_all"), class: "btn btn-mini btn-primary report-all-evaluations")
+
       - else
         .alert.alert-block.alert-info= t(:".no_#{state}_entities")
 

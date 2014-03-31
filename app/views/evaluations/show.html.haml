@@ -12,6 +12,11 @@
     %tr.description
       %th= Evaluation.human_attribute_name(:description)
       %td= @evaluation.description
+    - if @evaluation.series_id
+      %tr.series
+        %th= Evaluation.human_attribute_name(:series)
+        %td
+          %span.badge= @evaluation.series.name
     %tr.categories
       %th= Evaluation.human_attribute_name(:category_list)
       %td

@@ -67,6 +67,10 @@ describe Evaluation do
       it { should allow_mass_assignment_of(:"stanine_for_grade_#{grade}") }
     end
 
+    it { should     allow_mass_assignment_of(:series)}
+    it { should     allow_mass_assignment_of(:series_id)}
+    it { should_not allow_mass_assignment_of(:is_series_current)}
+
     it { should_not allow_mass_assignment_of(:imported) }
   end
   context "validation" do
@@ -142,6 +146,8 @@ describe Evaluation do
         it { should     allow_value("2013-04-29").for(:date) }
         it { should_not allow_value("201304-29").for(:date) }
         it { should_not validate_presence_of(:instance) }
+        it { should     allow_value(build(:series)).for(:series) }
+        it { should     allow_value(nil).for(:series) }
 
         context "and with suite template" do
           subject { build(:suite_evaluation, suite: create(:suite, is_template: true)) }
@@ -157,6 +163,7 @@ describe Evaluation do
         it { should_not validate_presence_of(:suite) }
         it { should_not allow_value("2013-04-29").for(:date) }
         it { should     validate_presence_of(:instance) }
+        it { should_not allow_value(build(:series)).for(:series) }
       end
       context "generic" do
         subject { build(:generic_evaluation) }
@@ -165,6 +172,7 @@ describe Evaluation do
         it { should_not validate_presence_of(:suite) }
         it { should_not allow_value("2013-04-29").for(:date) }
         it { should     validate_presence_of(:instance) }
+        it { should_not allow_value(build(:series)).for(:series) }
       end
     end
   end
@@ -1010,6 +1018,67 @@ describe Evaluation do
     end
   end
 
+  describe ".update_series_current!" do
+    let(:series)       { create(:series) }
+    let!(:evaluation1) { create(:suite_evaluation, series: series, date: Date.today,     status: :empty) }
+    let!(:evaluation2) { create(:suite_evaluation, series: series, date: Date.yesterday, status: :partial, is_series_current: true) }
+    let!(:evaluation3) { create(:suite_evaluation, date: Date.tomorrow, status: :complete) }
+
+    it "changes the series current when the status of an evaluation changes to not empty" do
+      evaluation1.status = :partial
+      evaluation1.save
+
+      expect(evaluation1.reload.is_series_current).to be_true
+      expect(evaluation2.reload.is_series_current).to be_false
+    end
+    it "changes the series current when adding a suite to a series" do
+      evaluation3.series = series
+      evaluation3.save
+      expect(evaluation3.reload.is_series_current).to be_true
+      expect(evaluation2.reload.is_series_current).to be_false
+    end
+  end
+
+  describe ".create_series_from_name" do
+    it "creates a new series if series_id is a string" do
+      expect(Series.exists?).to be_false
+      evaluation = build(:suite_evaluation, series_id: "My series")
+      expect(evaluation.save).to         be_true
+      expect(evaluation.series.name).to  eq "My series"
+      expect(evaluation.series.suite).to eq evaluation.suite
+    end
+    it "associates the event with an existing series if a series with the name exists" do
+      series = create(:series, name: "my series")
+      evaluation = build(:suite_evaluation, suite: series.suite, series_id: "MY SERIES")
+      expect(evaluation.save).to   be_true
+      expect(evaluation.series).to eq series
+    end
+    it "does not create a series when no name is given" do
+      evaluation = build(:suite_evaluation, series_id: "")
+      expect(evaluation.save).to   be_true
+      expect(evaluation.series).to be_nil
+    end
+  end
+
+  describe ".destroy_empty_series!" do
+    let(:series) { create(:series) }
+    let(:suite)  { series.suite }
+
+    it "destroys a series after disassociation if the series has no other evaluations" do
+      evaluation = create(:suite_evaluation, suite: suite, series: series)
+      evaluation.series = nil
+      evaluation.save!
+
+      expect(Series.where(id: series.id).exists?).to be_false
+    end
+    it "destroys a series after evaluation destroy if the series has no other evaluations" do
+      evaluation = create(:suite_evaluation, suite: suite, series: series)
+      evaluation.destroy
+
+      expect(Series.where(id: series.id).exists?).to be_false
+    end
+  end
+
   describe "#new_from_template" do
     let(:template) { create(:evaluation_template, category_list: "foo, bar, baz", target: :male) }
     subject        { Evaluation.new_from_template(template) }
@@ -1023,11 +1092,18 @@ describe Evaluation do
     its(:category_list) { should == template.category_list }
     its(:target)        { should == template.target }
     its(:type)          { should == template.type }
+    its(:series_id)     { should be_nil }
 
     context "with attrs" do
       subject { Evaluation.new_from_template(template, { suite_id: 1, name: "Overridden" }) }
       its(:suite_id) { should == 1 }
       its(:name)     { should == "Overridden" }
+    end
+    context "with series" do
+      let(:suite)     { create(:suite) }
+      let(:series)    { create(:series, suite: suite) }
+      let(:template)  { create(:suite_evaluation, series: series, suite: suite) }
+      its(:series_id) { should == series.id }
     end
   end
 
@@ -1126,6 +1202,27 @@ describe Evaluation do
     subject { Evaluation.without_explicit_users.all }
 
     it { should match_array(without_explicit_users) }
+  end
+
+  describe "#only_series_currents" do
+    it "returns all evaluations that is the current one of a series" do
+      series = create(:series)
+
+      current = create :suite_evaluation, series: series,          date: Date.today,     status: :partial
+      create           :suite_evaluation, series: series,          date: Date.yesterday, status: :complete
+      create           :suite_evaluation, series: series,          date: Date.tomorrow,  status: :empty
+      create           :suite_evaluation, series: create(:series), date: Date.today,     status: :empty
+
+      expect(Evaluation.only_series_currents.all).to eq [current]
+    end
+    it "returns all non-series evaluations" do
+      evaluations = [
+        create(:suite_evaluation,    status: :empty), # no series
+        create(:evaluation_template, status: :empty), # other types
+        create(:generic_evaluation,  status: :empty)
+      ]
+      expect(Evaluation.only_series_currents.all).to match_array(evaluations)
+    end
   end
 
   describe "#missing_generics_for" do

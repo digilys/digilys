@@ -47,6 +47,10 @@ class Suite < ActiveRecord::Base
 
   has_many :results, through: :evaluations
 
+  has_many :series,
+    order: "name asc",
+    dependent: :destroy
+
   has_one :color_table,
     dependent: :destroy
 

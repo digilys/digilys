@@ -25,6 +25,7 @@
             = ef.hidden_field :max_result
             = ef.hidden_field :colors_serialized
             = ef.hidden_field :stanines_serialized
+            = ef.hidden_field :series_id, value: ef.object.series.name if ef.object.series_id
 
             = ef.input :name,                              input_html: { readonly: true }
             = ef.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }

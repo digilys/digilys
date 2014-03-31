@@ -93,21 +93,22 @@ FactoryGirl.define do
   end
 
   factory :evaluation do
-    instance        { Instance.order(:id).first || create(:instance) }
-    template        nil
-    suite           nil
-    type            :generic
-    sequence(:name) { |i| "Evaluation %09d" % i }
-    description     "Description"
-    date            nil
-    max_result      50
-    target          :all
-    value_aliases   nil
-    value_type      :numeric
-    colors          nil
-    stanines        nil
-    status          :empty
-    imported        false
+    instance          { Instance.order(:id).first || create(:instance) }
+    template          nil
+    suite             nil
+    type              :generic
+    sequence(:name)   { |i| "Evaluation %09d" % i }
+    description       "Description"
+    date              nil
+    max_result        50
+    target            :all
+    value_aliases     nil
+    value_type        :numeric
+    colors            nil
+    stanines          nil
+    status            :empty
+    is_series_current false
+    imported          false
 
     ignore do
       _yellow   15..35
@@ -194,6 +195,15 @@ FactoryGirl.define do
       stanine_for_grade_f { _grade_stanines ? _grade_stanines[0] : nil }
     end
     factory :invalid_evaluation do
+      name nil
+    end
+  end
+
+  factory :series do
+    suite
+    sequence(:name) { |i| "Series %09d" %i }
+
+    factory :invalid_series do
       name nil
     end
   end
