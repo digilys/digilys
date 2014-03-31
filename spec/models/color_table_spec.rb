@@ -42,19 +42,22 @@ describe ColorTable do
     context "students" do
       let(:suite)              { create(:suite) }
       let(:suite_evaluation)   { create(:suite_evaluation, suite: suite) }
+      let(:other_evaluation)   { create(:suite_evaluation) }
       let(:generic_evaluation) { create(:generic_evaluation) }
       let(:participant)        { create(:participant, suite: suite) }
       let(:student1)           { participant.student }
       let(:student2)           { create(:student) }
+      let(:student3)           { create(:student) }
       let!(:suite_result)      { create(:result, student: student1, evaluation: suite_evaluation)}
-      let!(:generic_result)    { create(:result, student: student2, evaluation: generic_evaluation)}
-      let(:color_table)        { create(:color_table, evaluations: [ suite_evaluation, generic_evaluation ]) }
+      let!(:other_result)      { create(:result, student: student2, evaluation: other_evaluation)}
+      let!(:generic_result)    { create(:result, student: student3, evaluation: generic_evaluation)}
+      let(:color_table)        { create(:color_table, evaluations: [ suite_evaluation, other_evaluation, generic_evaluation ]) }
 
       before(:each) do
         suite.color_table.evaluations << generic_evaluation
       end
 
-      it "returns all students with results in the evaluations connected to the color table" do
+      it "returns all students with results in non-generic evaluations connected to the color table" do
         expect(color_table.students).to match_array([student1, student2])
       end
       it "returns only the students from the suite for suite color tables" do

@@ -1,17 +1,62 @@
 class ColorTable < ActiveRecord::Base
   resourcify
 
-  belongs_to              :instance
-  belongs_to              :suite
+  belongs_to :instance
+  belongs_to :suite
+  has_many   :participants, through: :suite
+
+  has_many :results,
+    through: :evaluations
+  has_many :non_generic_results,
+    through: :evaluations,
+    conditions: "evaluations.type != 'generic'",
+    source: :results
+
   has_and_belongs_to_many :evaluations
-  has_many                :table_states,    as: :base, order: "name asc", dependent: :destroy
-  has_many                :participants,    through: :suite
-  has_many                :results,         through: :evaluations
-  has_many                :result_students, through: :results,         uniq: true, source: :student
-  has_many                :suite_students,  through: :participants,    uniq: true, source: :student
-  has_many                :result_groups,   through: :result_students, uniq: true, source: :groups
-  has_many                :suite_groups,    through: :suite_students,  uniq: true, source: :groups
-  has_many                :users,           through: :roles,           uniq: true, order: "name asc, email asc"
+  has_and_belongs_to_many :generic_evaluations,
+    conditions: { type: "generic" },
+    class_name: "Evaluation",
+    order: "id asc"
+  has_and_belongs_to_many :suite_evaluations,
+    conditions: { type: "suite" },
+    class_name: "Evaluation",
+    order: "date asc, id asc"
+
+  has_many :table_states,
+    as: :base,
+    order: "name asc",
+    dependent: :destroy
+
+  has_many :result_students,
+    through: :results,
+    uniq: true,
+    source: :student
+
+  has_many :non_generic_students,
+    through: :non_generic_results,
+    uniq: true,
+    source: :student
+
+  has_many :suite_students,
+    through: :participants,
+    uniq: true,
+    source: :student
+
+  has_many :result_groups,
+    through: :result_students,
+    uniq: true,
+    source: :groups
+
+  has_many :suite_groups,
+    through: :suite_students,
+    uniq: true,
+    source: :groups
+
+  has_many :users,
+    through: :roles,
+    uniq: true,
+    order: "name asc, email asc"
+
 
   attr_accessible :name,
     :student_data,
@@ -36,13 +81,6 @@ class ColorTable < ActiveRecord::Base
     return read_attribute(:student_data)
   end
 
-  def generic_evaluations
-    self.evaluations.with_type(:generic).order("id asc")
-  end
-  def suite_evaluations
-    self.evaluations.with_type(:suite).order("date asc, id asc")
-  end
-
   def evaluations_select2_data
     self.evaluations.
       includes(:suite).
@@ -54,7 +92,7 @@ class ColorTable < ActiveRecord::Base
     if self.suite_id
       self.suite_students
     else
-      self.result_students
+      self.non_generic_students
     end
   end
 
