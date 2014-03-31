@@ -780,7 +780,7 @@ class Evaluation < ActiveRecord::Base
   end
 
   def update_series_current!
-    if self.status_changed? && self.series
+    if (self.status_changed? || self.series_id_changed?) && self.series
       self.series.update_current!
     end
   end

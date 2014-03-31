@@ -1022,12 +1022,19 @@ describe Evaluation do
     let(:series)       { create(:series) }
     let!(:evaluation1) { create(:suite_evaluation, series: series, date: Date.today,     status: :empty) }
     let!(:evaluation2) { create(:suite_evaluation, series: series, date: Date.yesterday, status: :partial, is_series_current: true) }
+    let!(:evaluation3) { create(:suite_evaluation, date: Date.tomorrow, status: :complete) }
 
     it "changes the series current when the status of an evaluation changes to not empty" do
       evaluation1.status = :partial
       evaluation1.save
 
       expect(evaluation1.reload.is_series_current).to be_true
+      expect(evaluation2.reload.is_series_current).to be_false
+    end
+    it "changes the series current when adding a suite to a series" do
+      evaluation3.series = series
+      evaluation3.save
+      expect(evaluation3.reload.is_series_current).to be_true
       expect(evaluation2.reload.is_series_current).to be_false
     end
   end
