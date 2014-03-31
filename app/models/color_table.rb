@@ -4,11 +4,14 @@ class ColorTable < ActiveRecord::Base
   belongs_to              :instance
   belongs_to              :suite
   has_and_belongs_to_many :evaluations
-  has_many                :results,      through: :evaluations
-  has_many                :students,     through: :results,  uniq: true
-  has_many                :groups,       through: :students, uniq: true
-  has_many                :table_states, as: :base, order: "name asc", dependent: :destroy
-  has_many                :users,        through: :roles,    uniq: true, order: "name asc, email asc"
+  has_many                :table_states,    as: :base, order: "name asc", dependent: :destroy
+  has_many                :participants,    through: :suite
+  has_many                :results,         through: :evaluations
+  has_many                :result_students, through: :results,         uniq: true, source: :student
+  has_many                :suite_students,  through: :participants,    uniq: true, source: :student
+  has_many                :result_groups,   through: :result_students, uniq: true, source: :groups
+  has_many                :suite_groups,    through: :suite_students,  uniq: true, source: :groups
+  has_many                :users,           through: :roles,           uniq: true, order: "name asc, email asc"
 
   attr_accessible :name,
     :student_data,
@@ -46,8 +49,23 @@ class ColorTable < ActiveRecord::Base
       collect { |e| { id: e.id, text: "#{e.name}#{", #{e.suite.name}" if e.suite}" } }
   end
 
+
+  def students
+    if self.suite_id
+      self.suite_students
+    else
+      self.result_students
+    end
+  end
+
   def group_hierarchy
-    partition = self.groups.order("groups.parent_id asc, groups.name asc").group_by(&:parent_id)
+    if self.suite_id
+      groups = self.suite_groups
+    else
+      groups = self.result_groups
+    end
+
+    partition = groups.order("groups.parent_id asc, groups.name asc").group_by(&:parent_id)
 
     sorted_groups = []
 
