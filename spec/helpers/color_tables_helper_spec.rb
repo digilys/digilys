@@ -106,11 +106,13 @@ describe ColorTablesHelper do
       expect(results).to have(1).items
 
       expect(JSON.parse(results.first)).to eq({
-        id:    "evaluation-123",
-        name:  evaluation.name,
-        field: "evaluation_123",
-        type:  "evaluation",
-        title: "evaluation_info"
+        id:        "evaluation-123",
+        name:      evaluation.name,
+        field:     "evaluation_123",
+        type:      "evaluation",
+        title:     "evaluation_info",
+        maxResult: evaluation.max_result.to_f,
+        stanines:  evaluation.stanines?
       }.stringify_keys)
     end
   end

@@ -38,11 +38,13 @@ module ColorTablesHelper
 
     evaluations.collect do |evaluation|
       {
-        id:    "evaluation-#{evaluation.id}",
-        name:  evaluation.name,
-        field: "evaluation_#{evaluation.id}",
-        type:  "evaluation",
-        title: evaluation_info(evaluation)
+        id:        "evaluation-#{evaluation.id}",
+        name:      evaluation.name,
+        field:     "evaluation_#{evaluation.id}",
+        type:      "evaluation",
+        title:     evaluation_info(evaluation),
+        maxResult: evaluation.max_result.to_f,
+        stanines:  evaluation.stanines?
       }.to_json
     end
   end
