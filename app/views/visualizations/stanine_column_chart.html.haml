@@ -15,7 +15,7 @@
   type:   :column,
   url:    url_for(params.merge(format: :json)),
   height: 400,
-  vAxes:  [ { title: t(:".amount"), minValue: 0, gridlines: { count: num_participants } } ],
+  vAxes:  [ { title: t(:".amount"), minValue: 0 } ],
   hAxis:  { title: t(:".stanine") },
   series: { 0 => { type: "line" } }
 
@@ -31,7 +31,7 @@
     url:       url_for(params.merge(format: :json, evaluation_id: evaluation.id)),
     height:    400,
     isStacked: true,
-    vAxes:     [ { title: t(:".amount"), minValue: 0, gridlines: { count: num_participants } } ],
+    vAxes:     [ { title: t(:".amount"), minValue: 0 } ],
     hAxis:     { title: t(:".stanine") },
     series:    { 0 => { type: "line" } },
     colors:    ["#000000", "#da4f49", "#f4f809", "#5bb75b"]

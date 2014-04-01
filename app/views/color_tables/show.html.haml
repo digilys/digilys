@@ -30,6 +30,12 @@
       - if can? :edit, @color_table
         %a.btn{href:"#tools-modal", data: { toggle: "modal" }}
           %i.icon-wrench
+    %li.form-inline
+      %select#chart-selector(data-modal="#chart-modal" data-table="#color-table")
+        %option(value="")=       t(:".show_chart")
+        %option(value="area")=   t(:".area_chart")
+        %option(value="line")=   t(:".line_chart")
+        %option(value="column")= t(:".column_chart")
 
 
 - columns_and_data = capture do
@@ -111,4 +117,13 @@
                 method: :delete,
                 remote: true,
                 class:  "btn btn-small btn-danger"
+
+- gchart_init
+
+#chart-modal.modal.container.hide.fade(role="dialog" aria-hidden="true" data-backdrop="true")
+  .modal-header
+    %button.close{type: "button", data: { dismiss: "modal" }, aria: { hidden: "true" }} &times;
+    %h3
+  .modal-body
+    .chart{"data-error-message" => t(:gchart_error)}
 
