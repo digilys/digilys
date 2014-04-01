@@ -387,7 +387,6 @@ sv:
       success: Användaren raderades
 
   visualizations:
-    amount: Antal
     navigation:
       color_area_chart: Färgkodning
       stanine_column_chart: Staninefördelning
