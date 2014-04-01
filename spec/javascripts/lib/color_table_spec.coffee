@@ -880,6 +880,70 @@ describe "Digilys.ColorTable", ->
                 expect(container.find(".slick-header-column.c3")).toHaveLength(0)
 
 
+    describe ".studentRows()", ->
+        array       = null
+        filterInput = null
+
+        beforeEach ->
+            columns = [
+                { id: "student-name", name: "Student name", field: "name" }
+            ]
+
+            data = [
+                { id: 1, name: "apa"     },
+                { id: 2, name: "bar"     },
+                { id: 3, name: "baz"     },
+                { id: 4, name: "foo"     },
+                { id: 0, name: "averages"}
+            ]
+
+            table = new Digilys.ColorTable(container, columns, data, columnMenu)
+
+            # Apply filter
+            filterInput = container.find(".slick-headerrow :text[placeholder=search-placeholder]").first()
+            filterInput.val("ba").trigger("change")
+
+        it "returns all student allowed by the current filter", ->
+            expect(table.studentRows()).toEqual([data[1], data[2]])
+
+        it "returns an empty array when there are no visible students", ->
+            filterInput.val("invalid").trigger("change")
+            expect(table.studentRows()).toEqual([])
+
+        it "returns an empty array when there is no data", ->
+            data = []
+            table = new Digilys.ColorTable(container, columns, data, columnMenu)
+            expect(table.studentRows()).toEqual([])
+
+    describe ".evaluationColumns()", ->
+        beforeEach ->
+            columns = [
+                { id: "student-name",     name: "Student name", field: "name" },
+                { id: "evaluation-1",     name: "Col 1",        field: "c1", maxResult: 4 },
+                { id: "evaluation-2",     name: "Col 2",        field: "c2", maxResult: 6 },
+                { id: "evaluation-3",     name: "Col 3",        field: "c3", maxResult: 8 },
+                { id: "student-data-foo", name: "Col 4",        field: "c4" }
+            ]
+
+            table = new Digilys.ColorTable(container, columns, data, columnMenu)
+
+            # Hide Col 2
+            table.hideColumn(columns[2])
+
+        it "returns all visible columns representing evaluations", ->
+            expect(table.evaluationColumns()).toEqual([columns[1], columns[2]])
+
+        it "returns an empty array when there are no visible columns", ->
+            # The array is modified when hiding, so we always remove
+            # the first element
+            table.hideColumn(columns[0]) for i in [0..3]
+            expect(table.evaluationColumns()).toEqual([])
+
+        it "returns an empty array when there are no columns", ->
+            columns = []
+            table = new Digilys.ColorTable(container, columns, data, columnMenu)
+            expect(table.evaluationColumns()).toEqual([])
+
 describe "ColorTableFormatters", ->
     F = Digilys.ColorTableFormatters
 
