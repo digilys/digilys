@@ -110,7 +110,7 @@ Converters.toResultChart = (evaluations, students) ->
 
     i = 1
     for evaluation in evaluations
-        array[i] = [ evaluation.name ]
+        array[i] = [ "#{evaluation.name} (#{evaluation.date})" ]
 
         for student in students
             value = student[evaluation.field]
@@ -146,7 +146,7 @@ Converters.toColorChart = (evaluations, students) ->
                 colors[field.cssClass]++
 
         array[i] = [
-            evaluation.name,
+            "#{evaluation.name} (#{evaluation.date})",
             colors.red    / total * 100,
             colors.yellow / total * 100,
             colors.green  / total * 100
@@ -168,7 +168,7 @@ Converters.toColumnChart = (evaluations, students) ->
     normalDistribution = [ n * 0.04, n * 0.07, n * 0.12, n * 0.17, n * 0.20, n * 0.17, n * 0.12, n * 0.07, n * 0.04 ]
 
     for evaluation in evaluations when evaluation.stanines
-        array[0].push(evaluation.name)
+        array[0].push("#{evaluation.name} (#{evaluation.date})")
 
         stanines[evaluation.id] = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 }
 

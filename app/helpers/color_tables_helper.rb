@@ -42,6 +42,7 @@ module ColorTablesHelper
         name:      evaluation.name,
         field:     "evaluation_#{evaluation.id}",
         type:      "evaluation",
+        date:      evaluation.date.to_s,
         title:     evaluation_info(evaluation),
         maxResult: evaluation.max_result.to_f,
         stanines:  evaluation.stanines?

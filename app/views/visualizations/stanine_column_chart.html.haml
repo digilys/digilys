@@ -22,7 +22,7 @@
 #main-chart.gchart
 
 - @evaluations.each do |evaluation|
-  %h3= evaluation.name
+  %h3= "#{evaluation.name} (#{evaluation.date})"
   - chart_container_id = "evaluation-#{evaluation.id}-chart"
 
   .gchart{id: chart_container_id}

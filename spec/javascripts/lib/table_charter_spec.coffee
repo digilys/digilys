@@ -183,8 +183,8 @@ describe "Digilys.TableCharterConverters", ->
 
         beforeEach ->
             evaluations = [
-                { id: "evaluation-1", name: "E 1", field: "e1", maxResult: 4 },
-                { id: "evaluation-2", name: "E 2", field: "e2", maxResult: 8 }
+                { id: "evaluation-1", name: "E 1", field: "e1", maxResult: 4, date: "date-1" },
+                { id: "evaluation-2", name: "E 2", field: "e2", maxResult: 8, date: "date-2" }
             ]
             students = [
                 { id: 1, name: "foo", e1: { value: 2 }, e2: { value: 4 } },
@@ -202,8 +202,8 @@ describe "Digilys.TableCharterConverters", ->
             expect(result[0]).toEqual([ "", "foo", "bar", "baz" ])
 
         it "has a data row for each evaluation with the normalized result per student", ->
-            expect(result[1]).toEqual([ "E 1", 2/4, 3/4, undefined ])
-            expect(result[2]).toEqual([ "E 2", 4/8, 5/8, undefined ])
+            expect(result[1]).toEqual([ "E 1 (date-1)", 2/4, 3/4, undefined ])
+            expect(result[2]).toEqual([ "E 2 (date-2)", 4/8, 5/8, undefined ])
 
     describe ".toColorChart()", ->
         beforeEach ->
@@ -213,8 +213,8 @@ describe "Digilys.TableCharterConverters", ->
                 green:  "green-i18n"
 
             evaluations = [
-                { id: "evaluation-1", name: "E 1", field: "e1", maxResult: 4 },
-                { id: "evaluation-2", name: "E 2", field: "e2", maxResult: 8 }
+                { id: "evaluation-1", name: "E 1", field: "e1", maxResult: 4, date: "date-1" },
+                { id: "evaluation-2", name: "E 2", field: "e2", maxResult: 8, date: "date-2" }
             ]
 
             students = [
@@ -235,8 +235,8 @@ describe "Digilys.TableCharterConverters", ->
             expect(result[0]).toEqual(["", "red-i18n", "yellow-i18n", "green-i18n"])
 
         it "has a data row for each evaluation with the color distribution for that evaluation", ->
-            expect(result[1]).toEqual(["E 1", 1/4 * 100, 0, 1/4 * 100])
-            expect(result[2]).toEqual(["E 2", 1/4 * 100, 1/4 * 100, 0])
+            expect(result[1]).toEqual(["E 1 (date-1)", 1/4 * 100, 0, 1/4 * 100])
+            expect(result[2]).toEqual(["E 2 (date-2)", 1/4 * 100, 1/4 * 100, 0])
 
 
     describe ".toColumnChart()", ->
@@ -247,9 +247,9 @@ describe "Digilys.TableCharterConverters", ->
                 amount:             "amount-i18n",
 
             evaluations = [
-                { id: "evaluation-1", name: "E 1", field: "e1", stanines: true },
-                { id: "evaluation-2", name: "E 2", field: "e2", stanines: true },
-                { id: "evaluation-3", name: "E 3", field: "e3", stanines: false }
+                { id: "evaluation-1", name: "E 1", field: "e1", date: "date-1", stanines: true },
+                { id: "evaluation-2", name: "E 2", field: "e2", date: "date-2", stanines: true },
+                { id: "evaluation-3", name: "E 3", field: "e3", date: "date-3", stanines: false }
             ]
 
             students = [
@@ -269,7 +269,7 @@ describe "Digilys.TableCharterConverters", ->
             expect(result.length).toEqual(10) # title row + 9 stanines
 
         it "has a title row with the headers and evaluation names", ->
-            expect(result[0]).toEqual(["stanine-i18n", "normal-distribution-i18n", "E 1", "E 2"])
+            expect(result[0]).toEqual(["stanine-i18n", "normal-distribution-i18n", "E 1 (date-1)", "E 2 (date-2)"])
 
         it "has a row for each stanine value with amounts per evaluation and normal distribution", ->
             expect(result[1]).toEqual([1, 6*0.04, 1, 0])
