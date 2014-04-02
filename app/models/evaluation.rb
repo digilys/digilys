@@ -585,6 +585,14 @@ class Evaluation < ActiveRecord::Base
       !stanine9_max.blank?
   end
 
+  def series_name
+    if self.series_id && self.series_id > 0
+      return self.series.name
+    elsif self.series_id == 0
+      return self.attributes_before_type_cast["series_id"]
+    end
+  end
+
 
   private
 
@@ -787,8 +795,7 @@ class Evaluation < ActiveRecord::Base
 
   def create_series_from_name
     if self.type.try(:suite?) && self.series_id == 0
-      series_name = self.attributes_before_type_cast["series_id"]
-
+      series_name = self.series_name
       if !series_name.blank?
         series = Series.where([
           "suite_id = ? and name ilike ?",

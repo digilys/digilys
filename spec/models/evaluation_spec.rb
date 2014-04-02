@@ -1268,4 +1268,19 @@ describe Evaluation do
       it { should be_nil }
     end
   end
+
+  describe ".series_name" do
+    let(:series) { create(:series) }
+    it "returns the series name" do
+      expect(build(:suite_evaluation, series: series).series_name).to eq series.name
+    end
+    it "is nil if there is no series" do
+      expect(build(:suite_evaluation).series_name).to be_nil
+    end
+    it "returns the raw series id if series_id is 0" do
+      evaluation = build(:suite_evaluation, series_id: "zomg")
+      expect(evaluation.series_id).to eq 0
+      expect(evaluation.series_name).to eq "zomg"
+    end
+  end
 end
