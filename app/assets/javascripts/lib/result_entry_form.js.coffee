@@ -1,14 +1,14 @@
-window.Digilys ?= {}
-
 ###
-Form validator that checks that a result is between the min and the
-max result, showing an error message if not.
+A result entry form validates the result, toggles the destroy flag
+and toggles the disabled state when absent
 ###
 
-class ResultValidator
+class ResultEntryForm
     constructor: (@form) ->
         self = this
         @form.on "change", "input[type=number]", -> self.validate($(this))
+        @form.on "change", ":input",             -> self.updateDestroyFlag($(this))
+        @form.on "change", ":checkbox",          -> self.toggleValueInput($(this))
 
     validate: (field) ->
         min = parseInt(field.attr("min"))
@@ -35,19 +35,6 @@ class ResultValidator
         field.closest(".control-group").removeClass("error")
         field.siblings("span.help-inline").remove()
 
-# Export
-window.Digilys.ResultValidator = ResultValidator
-
-###
-Updates input fields for destroying results when leaving
-the result's values blank
-###
-
-class ResultDestroyer
-    constructor: (@form) ->
-        self = this
-        @form.on "change", ":input", -> self.updateDestroyFlag($(this))
-
     updateDestroyFlag: (field) ->
         id = field.attr("id")
         return if !id || !id.match(/_(value|absent)$/)
@@ -66,6 +53,15 @@ class ResultDestroyer
         else
             destroy.val("1")
 
+    toggleValueInput: (checkbox) ->
+        id = checkbox.attr("id")
+        return if !id || !id.match(/_absent$/)
+
+        id = id.replace(/_absent$/, "_value")
+
+        value = $("##{id}")
+        value.prop("disabled", checkbox.is(":checked"))
 
 # Export
-window.Digilys.ResultDestroyer = ResultDestroyer
+window.Digilys ?= {}
+window.Digilys.ResultEntryForm = ResultEntryForm
