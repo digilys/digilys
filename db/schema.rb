@@ -81,9 +81,9 @@ ActiveRecord::Schema.define(:version => 20140310140021) do
     t.text     "stanines"
     t.string   "status",                            :default => "empty"
     t.integer  "instance_id"
-    t.boolean  "imported",                          :default => false
     t.integer  "series_id"
     t.boolean  "is_series_current",                 :default => false
+    t.boolean  "imported",                          :default => false
   end
 
   add_index "evaluations", ["status"], :name => "index_evaluations_on_status"
