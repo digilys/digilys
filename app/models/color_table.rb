@@ -71,7 +71,8 @@ class ColorTable < ActiveRecord::Base
 
   serialize :student_data, JSON
 
-  before_save :ensure_unique_student_data
+  before_save  :ensure_unique_student_data
+  after_create :add_suite_evaluations
 
 
   def student_data
@@ -134,5 +135,11 @@ class ColorTable < ActiveRecord::Base
 
   def ensure_unique_student_data
     self.student_data.uniq!
+  end
+
+  def add_suite_evaluations
+    if self.suite_id && self.suite_id > 0
+      self.evaluations += self.suite.evaluations
+    end
   end
 end

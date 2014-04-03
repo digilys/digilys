@@ -66,6 +66,26 @@ describe ColorTable do
     end
   end
 
+  describe ".add_suite_evaluations" do
+    let(:instance) { create(:instance) }
+    let(:evaluation)  {
+      {
+        name: "z1",
+        date: Date.today.to_s,
+        type: "suite",
+        max_result: 10
+      }
+    }
+    let(:suite)       { Suite.create!(:name => "z", instance: instance, evaluations_attributes: { "0" => evaluation }) }
+    let(:color_table) { suite.color_table }
+
+    it "adds the suite's evaluations to the color table upon creation" do
+      expect(suite.evaluations).to have(1).items
+      expect(color_table.evaluations).to have(1).items
+      expect(color_table.evaluations).to match_array(suite.evaluations)
+    end
+  end
+
   describe ".student_data" do
     subject(:color_table) { create(:color_table, student_data: nil) }
     its(:student_data)    { should == [] }
