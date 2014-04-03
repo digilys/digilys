@@ -21,19 +21,22 @@
         %button.btn(data-value="stanine") Stanine
     %li
       %select#color-table-group-selector{height: 0, multiple: true, data: { placeholder: t(:".all_groups") }}
-        = options_for_select(@color_table.group_hierarchy.collect { |g| [[g.name, g.parent.try(:name)].compact.join(", "), g.id]},
-          selected_groups)
+        = options_for_select(group_hierarchy_options(@color_table), selected_groups)
     %li.form-inline
-      %select#table-state-selector{data: { url: select_table_state_path(":id"),
-        "clear-url" => clear_state_color_table_path(@color_table) }}
-        = options_for_select([[t(:".change_state"), ""], [t(:".clear_state"), "0"]]) + options_from_collection_for_select(@color_table.table_states, "id", "name")
+      - cache [ @color_table, "table-state-selector"] do
+        %select#table-state-selector{data: { url: select_table_state_path(":id"),
+          "clear-url" => clear_state_color_table_path(@color_table) }}
+          = options_for_select([[t(:".change_state"), ""], [t(:".clear_state"), "0"]]) + options_from_collection_for_select(@color_table.table_states, "id", "name")
       - if can? :edit, @color_table
         %a.btn{href:"#tools-modal", data: { toggle: "modal" }}
           %i.icon-wrench
 
 
-
-- evaluations = @color_table.generic_evaluations + @color_table.suite_evaluations.only_series_currents
+- columns_and_data = capture do
+  - cache [ @color_table, "data" ] do
+    - evaluations = @color_table.generic_evaluations + @color_table.suite_evaluations.only_series_currents
+    = "columns = [#{color_table_columns(@color_table.student_data, evaluations)}];".html_safe
+    = "data = [#{result_rows(@color_table.students.order(current_name_order), @color_table.student_data, evaluations).join(",")}];".html_safe
 
 :javascript
   window.Digilys = window.Digilys || {}
@@ -41,15 +44,14 @@
 
   ;(function(exports) {
 
-    var columns, data, menu, state
+    var columns, data, menu, state;
 
-    columns = [#{color_table_columns(@color_table.student_data, evaluations)}]
-    data = [#{result_rows(@color_table.students.order(current_name_order), @color_table.student_data, evaluations).join(",")}]
+    #{columns_and_data}
 
     for (var i = 0; i < columns.length; i++) {
       columns[i].sortable = true;
       columns[i].minWidth = i == 0 ? 220 : 80;
-      columns[i].header = { menu: { items: [] } }
+      columns[i].header = { menu: { items: [] } };
     }
 
     menu = [
@@ -57,14 +59,14 @@
       { title: "#{t(:".unlock_column_action")}", command: "unlock" },
       { title: "#{t(:".hide_column_action")}",   command: "hide"   },
       { title: "#{t(:".show_column_action")}",   command: "show"   }
-    ]
+    ];
 
     state = #{JSON.dump(table_state)};
 
-    exports.columns    = columns
-    exports.data       = data
-    exports.columnMenu = menu
-    exports.state      = state
+    exports.columns    = columns;
+    exports.data       = data;
+    exports.columnMenu = menu;
+    exports.state      = state;
   })(window.Digilys.colorTable)
 
 #color-table.show-value{style: "width: 100%;",
@@ -81,31 +83,32 @@
     .alert.alert-block.alert-info= t(:".show_column_hint")
     %ul.unstyled
 
-#tools-modal.modal.hide.fade(role="dialog" aria-hidden="true" data-backdrop="true")
-  .modal-header
-    %button.close{type: "button", data: { dismiss: "modal" }, aria: { hidden: "true" }} &times;
-    %h3= t(:".table_states")
-  .modal-body
-    .form-inline
-      = text_field_tag "table-state-name",
-        nil,
-        placeholder: TableState.human_attribute_name(:name)
-      %button#save-table-state.btn{data: { table: "#color-table", url: color_table_table_states_path(@color_table) }}
-        = t(:".save_current_state")
-      %small.help-block= t(:".edit_table_state_notice")
-    %table#table-states.table.table-striped.table-hover{"data-delete-action-name" => t(:".destroy_action")}
-      %thead
-        %tr
-          %th= TableState.model_name.human
-          %th.actions &nbsp;
-      %tbody
-        - @color_table.table_states.each do |table_state|
-          %tr{data: { id: table_state.id }}
-            %td= link_to table_state.name,
-              select_table_state_path(table_state)
-            %td= link_to t(:".destroy_action"),
-              table_state_path(table_state),
-              method: :delete,
-              remote: true,
-              class:  "btn btn-small btn-danger"
+- cache [ @color_table, "table-state-modal" ] do
+  #tools-modal.modal.hide.fade(role="dialog" aria-hidden="true" data-backdrop="true")
+    .modal-header
+      %button.close{type: "button", data: { dismiss: "modal" }, aria: { hidden: "true" }} &times;
+      %h3= t(:".table_states")
+    .modal-body
+      .form-inline
+        = text_field_tag "table-state-name",
+          nil,
+          placeholder: TableState.human_attribute_name(:name)
+        %button#save-table-state.btn{data: { table: "#color-table", url: color_table_table_states_path(@color_table) }}
+          = t(:".save_current_state")
+        %small.help-block= t(:".edit_table_state_notice")
+      %table#table-states.table.table-striped.table-hover{"data-delete-action-name" => t(:".destroy_action")}
+        %thead
+          %tr
+            %th= TableState.model_name.human
+            %th.actions &nbsp;
+        %tbody
+          - @color_table.table_states.each do |table_state|
+            %tr{data: { id: table_state.id }}
+              %td= link_to table_state.name,
+                select_table_state_path(table_state)
+              %td= link_to t(:".destroy_action"),
+                table_state_path(table_state),
+                method: :delete,
+                remote: true,
+                class:  "btn btn-small btn-danger"
 

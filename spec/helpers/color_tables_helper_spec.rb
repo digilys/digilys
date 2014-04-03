@@ -1,6 +1,46 @@
 require 'spec_helper'
 
 describe ColorTablesHelper do
+  describe "#group_hierarchy_options" do
+    let!(:l1_group1)   { create(:group) }
+    let!(:l1_group2)   { create(:group) }
+    let!(:l2_group1)   { create(:group, parent: l1_group1) }
+    let!(:l2_group2)   { create(:group, parent: l1_group1) }
+    let!(:l3_group1)   { create(:group, parent: l2_group1) }
+    let!(:l3_group2)   { create(:group, parent: l2_group1) }
+    let!(:l3_group3)   { create(:group, parent: l2_group2) }
+
+    let!(:student1)    { create(:student) }
+    let!(:student2)    { create(:student) }
+
+    let!(:evaluation1) { create(:generic_evaluation) }
+    let!(:evaluation2) { create(:generic_evaluation) }
+
+    let!(:result1)     { create(:result, student: student1, evaluation: evaluation1) }
+    let!(:result2)     { create(:result, student: student2, evaluation: evaluation2) }
+
+    let(:color_table) { create(:color_table) }
+
+    before(:each) do
+      student1.add_to_groups(l3_group1)
+      student2.add_to_groups(l3_group3)
+
+      color_table.evaluations = [ evaluation1, evaluation2 ]
+    end
+
+    subject(:options) { group_hierarchy_options(color_table) }
+
+    it "collects the groups in the hierarchy for display in a select" do
+      expect(options).to eq [
+        [ l1_group1.name, l1_group1.id ],
+        [ "#{l2_group1.name}, #{l1_group1.name}", l2_group1.id ],
+        [ "#{l3_group1.name}, #{l2_group1.name}", l3_group1.id ],
+        [ "#{l2_group2.name}, #{l1_group1.name}", l2_group2.id ],
+        [ "#{l3_group3.name}, #{l2_group2.name}", l3_group3.id ]
+      ]
+    end
+  end
+
   describe "#color_table_columns" do
     let(:evaluation)  { build(:generic_evaluation, id: 123) }
     let(:name_column) { {

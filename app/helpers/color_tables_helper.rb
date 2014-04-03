@@ -1,4 +1,10 @@
 module ColorTablesHelper
+  def group_hierarchy_options(color_table)
+    Rails.cache.fetch(controller.fragment_cache_key([color_table, "group-hierarchy"])) do
+      color_table.group_hierarchy.collect { |g| [[g.name, g.parent.try(:name)].compact.join(", "), g.id]}
+    end
+  end
+
   def color_table_columns(student_data, evaluations)
     columns = [
       {
