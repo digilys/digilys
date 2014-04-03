@@ -392,9 +392,9 @@ sv:
 
   visualizations:
     navigation:
-      color_area_chart: Färgkodning
-      stanine_column_chart: Staninefördelning
-      result_line_chart: Resultat
+      color_area_chart: Ytdiagram
+      stanine_column_chart: Stapeldiagram - stanine
+      result_line_chart: Linjediagram
 
   instructions:
     navigation:
