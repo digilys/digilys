@@ -57,7 +57,7 @@ describe "Digilys.AuthorizationTable", ->
             request.response(status: 200, responseText: "{}")
 
             expect(table.removed).toHaveBeenCalledWith(container)
-            expect(table.removed.calls.mostRecent().object).toBe(table)
+            expect(table.removed).toHaveBeenCalledOn(table)
 
         it "removes the specified row", ->
             table.removed(container)
@@ -68,7 +68,7 @@ describe "Digilys.AuthorizationTable", ->
             spyOn(table, "added")
             elem.trigger("authorization-added", {foo: "bar"})
             expect(table.added).toHaveBeenCalledWith(foo: "bar")
-            expect(table.added.calls.mostRecent().object).toBe(table)
+            expect(table.added).toHaveBeenCalledOn(table)
 
         it "adds the userData row to the table", ->
             table.added(row: '<tr class="user-data-row"></tr>')
@@ -83,9 +83,8 @@ describe "Digilys.AuthorizationTable", ->
         it "is called when a checkbox is changed", ->
             spyOn(table, "toggleEditor")
             editorToggle.trigger("change")
-            call = table.toggleEditor.calls.mostRecent()
-            expect(call.args[0].get(0)).toEqual(editorToggle.get(0))
-            expect(call.object).toBe(table)
+            expect(table.toggleEditor.calls.mostRecent().args[0][0]).toEqual(editorToggle[0])
+            expect(table.toggleEditor).toHaveBeenCalledOn(table)
 
         it "posts a create request to the base url when the checkbox is checked", ->
             editorToggle.attr("checked", "checked")

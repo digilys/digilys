@@ -82,7 +82,7 @@ describe "Digilys.ColorRangeEntry", ->
             fields.text.yellow.max.trigger("change")
 
             expect(entry.update.calls.count()).toEqual(3)
-            expect(entry.update.calls.mostRecent().object).toBe(entry)
+            expect(entry.update).toHaveBeenCalledOn(entry)
 
         describe "text fields", ->
             setValues = (max, yellowMin, yellowMax) ->
