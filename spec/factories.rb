@@ -63,6 +63,14 @@ FactoryGirl.define do
     generic_evaluations nil
     status              :open
 
+    factory :complete_suite_template do
+      is_template true
+
+      after(:create) do |template|
+        template.evaluations << create(:complete_suite_evaluation, suite: template, status: :partial)
+        template.meetings << create(:complete_meeting, suite: template)
+      end
+    end
     factory :invalid_suite do
       name nil
     end
@@ -143,16 +151,31 @@ FactoryGirl.define do
     stanine9_min { _stanines ? _stanines[8].try(:min) : nil }
     stanine9_max { _stanines ? _stanines[8].try(:max) : nil }
 
+    factory :generic_evaluation do
+    end
     factory :suite_evaluation do
       instance nil
       suite
       type     :suite
       date     { suite.try(:is_template) ? nil : Date.today }
+
+      factory :complete_suite_evaluation do
+        association :template, factory: :complete_evaluation_template
+
+        series            { create(:series, suite: suite) }
+        is_series_current true
+        _stanines         [0..7, 8..12, 13..17, 18..22, 23..27, 28..32, 33..37, 38..42, 43..50]
+        category_list     "foo,bar,baz"
+      end
     end
     factory :evaluation_template do
       type     :template
-    end
-    factory :generic_evaluation do
+
+      factory :complete_evaluation_template do
+        _stanines     [0..7, 8..12, 13..17, 18..22, 23..27, 28..32, 33..37, 38..42, 43..50]
+        imported      true
+        category_list "foo,bar,baz"
+      end
     end
 
     factory :numeric_evaluation do
@@ -225,6 +248,9 @@ FactoryGirl.define do
     completed       false
     notes           nil
 
+    factory :complete_meeting do
+      agenda    "agenda"
+    end
     factory :invalid_meeting do
       name nil
     end
