@@ -37,10 +37,10 @@ describe "Digilys.ActivitiesForm", ->
 
     describe "constructor", ->
         it "correctly assigns the arguments", ->
-            expect(activitiesForm.form).toBe        form
-            expect(activitiesForm.container).toBe   container
-            expect(activitiesForm.activity).toBe    ".activity"
-            expect(activitiesForm.tinymceCode).toBe "window.zomg = 'lol';"
+            expect(activitiesForm.form).toEqual      form
+            expect(activitiesForm.container).toEqual container
+            expect(activitiesForm.activity).toBe     ".activity"
+            expect(activitiesForm.tinymceCode).toBe  "window.zomg = 'lol';"
 
         it "builds a template, replacing indexes in attributes with a placeholder", ->
             tpl = $(activitiesForm.template)
@@ -55,7 +55,7 @@ describe "Digilys.ActivitiesForm", ->
             spyOn(activitiesForm, "addFields")
             trigger.trigger("click")
             template.trigger("click")
-            expect(activitiesForm.addFields.calls.length).toEqual 1
+            expect(activitiesForm.addFields.calls.count()).toEqual 1
 
 
     describe ".addFields()", ->
@@ -71,8 +71,8 @@ describe "Digilys.ActivitiesForm", ->
 
             template.append($('<input class="datepicker"/>'))
 
-            spyOn(Digilys, "StudentGroupAutocomplete").andReturn(null)
-            spyOn(Digilys, "Autocomplete").andReturn(null)
+            spyOn(Digilys, "StudentGroupAutocomplete").and.returnValue(null)
+            spyOn(Digilys, "Autocomplete").and.returnValue(null)
 
             activitiesForm = new Digilys.ActivitiesForm
                 form:      form

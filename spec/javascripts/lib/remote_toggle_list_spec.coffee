@@ -17,7 +17,7 @@ describe "Digilys.RemoteToggleList", ->
 
     describe "constructor", ->
         it "stores a reference to the list and the param name", ->
-            expect(list.list).toBe elem
+            expect(list.list).toEqual elem
             expect(list.param).toEqual "my_param"
 
         it "binds a change listener to the list, filtered by check boxes", ->
@@ -29,7 +29,7 @@ describe "Digilys.RemoteToggleList", ->
             elem.append(input)
             input.trigger("change")
 
-            expect(list.update.calls.length).toEqual 1
+            expect(list.update.calls.count()).toEqual 1
 
 
     describe ".change()", ->
@@ -37,7 +37,7 @@ describe "Digilys.RemoteToggleList", ->
         params = null
 
         beforeEach ->
-            spyOn($, "post").andCallFake (u, p) ->
+            spyOn($, "post").and.callFake (u, p) ->
                 url    = u
                 params = p
                 return true

@@ -5,7 +5,7 @@ describe "Digilys.LazyDropdown", ->
     dropdown = null
 
     beforeEach ->
-        spyOn($, "ajax").andCallFake (options) ->
+        spyOn($, "ajax").and.callFake (options) ->
             options.success("menu-content", "textStatus", {})
 
         elem     = $('<a href="#"/>')
@@ -19,7 +19,7 @@ describe "Digilys.LazyDropdown", ->
         dropdown.toggler.trigger("click")
 
         expect(dropdown.loadDropdown).toHaveBeenCalled()
-        expect(dropdown.loadDropdown.calls.length).toEqual 1
+        expect(dropdown.loadDropdown.calls.count()).toEqual 1
 
     describe "loadMenu()", ->
         it "loads the menu content from the trigger's address via ajax", ->
@@ -32,5 +32,5 @@ describe "Digilys.LazyDropdown", ->
     describe "setMenu()", ->
         it "replaces the load indicator in the dropdown menu by the given content", ->
             dropdown.setMenu("zomglol")
-            expect(menu).not.toContain(".load-indicator")
+            expect(menu).not.toContainElement(".load-indicator")
             expect(menu.html()).toEqual "zomglol"

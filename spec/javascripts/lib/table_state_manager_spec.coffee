@@ -35,9 +35,12 @@ describe "Digilys.TableStateManager", ->
         spyOn(manager, "redirect")
         spyOn($.rails, "handleMethod")
 
-        jasmine.Ajax.useMock()
-        jasmine.Clock.useMock()
-        clearAjaxRequests()
+        jasmine.Ajax.install()
+        jasmine.clock().install()
+
+    afterEach ->
+        jasmine.Ajax.uninstall()
+        jasmine.clock().uninstall()
 
     describe "selecting", ->
         it "redirects to the page for selecting a table state", ->
@@ -67,7 +70,7 @@ describe "Digilys.TableStateManager", ->
             name.val("name")
             saveButton.trigger("click")
 
-            request = mostRecentAjaxRequest()
+            request = jasmine.Ajax.requests.mostRecent()
             expect(request.url).toEqual    "save-url"
             expect(request.method).toEqual "POST"
             expect(request.params).toMatch "table_state%5Bname%5D=name"
@@ -76,8 +79,8 @@ describe "Digilys.TableStateManager", ->
         it "does not save states without a name", ->
             name.val("")
             saveButton.trigger("click")
-            request = mostRecentAjaxRequest()
-            expect(request).toBeNull()
+            request = jasmine.Ajax.requests.mostRecent()
+            expect(request).toBeUndefined()
 
         it "masks the save button during the request", ->
             name.val("name")
@@ -85,24 +88,24 @@ describe "Digilys.TableStateManager", ->
 
             # required since bootstrap-button pushes the disabled state setting
             # to the event loop
-            jasmine.Clock.tick(1)
+            jasmine.clock().tick(1)
 
             expect(saveButton).toBeDisabled()
 
-            request = mostRecentAjaxRequest()
+            request = jasmine.Ajax.requests.mostRecent()
             request.response(
                 status: 200
                 responseText: '{"id":2,"name":"name","urls":{"default":"default-url","select":"select-url"}}'
             )
 
-            jasmine.Clock.tick(1)
+            jasmine.clock().tick(1)
 
             expect(saveButton).not.toBeDisabled()
 
         it "clears the name input", ->
             name.val("name")
             saveButton.trigger("click")
-            request = mostRecentAjaxRequest()
+            request = jasmine.Ajax.requests.mostRecent()
             request.response(
                 status: 200
                 responseText: '{"id":2,"name":"name","urls":{"default":"default-url","select":"select-url"}}'
@@ -114,7 +117,7 @@ describe "Digilys.TableStateManager", ->
                 name.val("name")
                 saveButton.trigger("click")
 
-                request = mostRecentAjaxRequest()
+                request = jasmine.Ajax.requests.mostRecent()
                 request.response(
                     status: 200
                     responseText: '{"id":2,"name":"name","urls":{"default":"default-url","select":"select-url"}}'
@@ -143,7 +146,7 @@ describe "Digilys.TableStateManager", ->
                 name.val("name")
                 saveButton.trigger("click")
 
-                request = mostRecentAjaxRequest()
+                request = jasmine.Ajax.requests.mostRecent()
                 request.response(status: 200, responseText: '{"id":1,"name":"name"}')
 
             it "does not add updated states to the list", ->

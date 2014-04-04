@@ -52,14 +52,14 @@ end
 group :test, :development do
   gem "pry",                "~> 0.9.12"
   gem "pry-remote",         "~> 0.1.7"
-  gem "rspec-rails",        "~> 2.0"
+  gem "rspec-rails",        "~> 2.14.2"
   gem "factory_girl_rails", "~> 4.4.1"
-  gem "capybara",           "~> 2.1.0"
-  gem "jasmine-rails",      "~> 0.4.6"
+  gem "capybara",           "~> 2.2.1"
+  gem "jasmine-rails",      "~> 0.6.0"
 end
 group :test do
-  gem "shoulda-matchers", "~> 2.4.0"
-  gem "timecop",          "~> 0.6.3"
+  gem "shoulda-matchers", "~> 2.5.0"
+  gem "timecop",          "~> 0.7.1"
   gem 'simplecov',        "~> 0.8.2", require: false
 end
 

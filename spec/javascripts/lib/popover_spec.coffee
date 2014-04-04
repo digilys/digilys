@@ -57,7 +57,7 @@ describe "Digilys.SinglePopover", ->
             popover.context.trigger("shown")
 
             expect(popover.hidePrevious).toHaveBeenCalled()
-            expect(popover.hidePrevious.mostRecentCall.object).toBe(popover)
+            expect(popover.hidePrevious.calls.mostRecent().object).toBe(popover)
 
         it "registers the shown event's target as the previous target", ->
             popover.hidePrevious(target: '<div class="previous-target"/>')

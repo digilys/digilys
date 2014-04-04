@@ -10,7 +10,7 @@ describe "Digilys.LoadMask", ->
         expect(elem).toHaveCss position: "relative"
 
     it "adds a load mask element to the element", ->
-        expect(elem).toContain ".load-mask"
+        expect(elem).toContainElement ".load-mask"
 
     it "adds the loadmask instance as a data value to the element", ->
         expect(elem).toHaveData "LoadMask", loadMask
@@ -20,4 +20,4 @@ describe "Digilys.LoadMask", ->
             loadMask.disable()
 
         it "removes the load mask", ->
-            expect(elem).not.toContain ".load-mask"
+            expect(elem).not.toContainElement ".load-mask"

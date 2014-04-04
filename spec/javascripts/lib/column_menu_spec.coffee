@@ -63,7 +63,8 @@ describe "Digilys.ColumnMenu", ->
 
             trigger.trigger("click")
 
-            expect(columnMenu.handleAction).toHaveBeenCalledWith("custom-action", trigger)
+            expect(columnMenu.handleAction).toHaveBeenCalledWith("custom-action", jasmine.any(Object))
+            expect(columnMenu.handleAction.calls.mostRecent().args[1]).toEqual(trigger)
             expect("click").toHaveBeenPreventedOn(trigger)
 
         it "calls .hide() when receiving the event hide-column", ->
@@ -139,8 +140,8 @@ describe "Digilys.ColumnMenu", ->
             modal.trigger("shown")
             modal.trigger("shown")
 
-            expect(columnMenu.populateShowModal.calls.length).toBe 1
-            expect(columnMenu.populateShowModal).toHaveBeenCalledWith(modal)
+            expect(columnMenu.populateShowModal.calls.count()).toBe 1
+            expect(columnMenu.populateShowModal.calls.mostRecent().args[0]).toEqual(modal)
 
         it "binds .show() to the click event of show-column-action elements, once", ->
             columnMenu.showModal(modalTrigger)
@@ -150,7 +151,7 @@ describe "Digilys.ColumnMenu", ->
             showTrigger.trigger("click")
             showTrigger.trigger("click")
 
-            expect(columnMenu.show.calls.length).toBe 1
+            expect(columnMenu.show.calls.count()).toBe 1
             expect(columnMenu.show).toHaveBeenCalledWith(123)
 
         it "does not call the show method for non-matching triggers", ->

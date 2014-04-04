@@ -1251,7 +1251,7 @@ describe Evaluation do
     subject { Evaluation.generic_cache_key }
     context "with generic evaluations" do
       let(:oldest) { Time.now - 10.minutes }
-      let(:newest) { Time.now - 10.minutes }
+      let(:newest) { Time.now + 10.minutes }
 
       before(:each) do
         Timecop.freeze(oldest) do
@@ -1262,7 +1262,7 @@ describe Evaluation do
         end
       end
 
-      it { should == newest.to_s(ActiveRecord::Base.cache_timestamp_format) }
+      it { should == newest.utc.to_s(ActiveRecord::Base.cache_timestamp_format) }
     end
     context "without generic evaluations" do
       it { should be_nil }

@@ -74,7 +74,7 @@ describe "Digilys.Autocomplete", ->
             spyOn(autocomplete, "parseResults")
             select2.opts.ajax.results({ results: "foo", more: "bar" }, 1)
             expect(autocomplete.parseResults).toHaveBeenCalledWith({ results: "foo", more: "bar" }, 1)
-            expect(autocomplete.parseResults.mostRecentCall.object).toBe(autocomplete)
+            expect(autocomplete.parseResults.calls.mostRecent().object).toBe(autocomplete)
 
         it "returns an object with two values parsed from the result", ->
             input =
@@ -94,7 +94,7 @@ describe "Digilys.Autocomplete", ->
             spyOn(autocomplete, "formatResult")
             select2.opts.formatResult(1,2,3)
             expect(autocomplete.formatResult).toHaveBeenCalledWith(1,2,3)
-            expect(autocomplete.formatResult.mostRecentCall.object).toBe(autocomplete)
+            expect(autocomplete.formatResult.calls.mostRecent().object).toBe(autocomplete)
 
         it "defaults to select2's formatResult", ->
             expect(autocomplete.formatResult).toBe $.fn.select2.defaults.formatResult
@@ -109,7 +109,7 @@ describe "Digilys.Autocomplete", ->
             spyOn(autocomplete, "requestData")
             elem.data("select2").opts.ajax.data(1,2,3)
             expect(autocomplete.requestData).toHaveBeenCalledWith(1,2,3)
-            expect(autocomplete.requestData.mostRecentCall.object).toBe(autocomplete)
+            expect(autocomplete.requestData.calls.mostRecent().object).toBe(autocomplete)
 
         it "defaults to a query by name", ->
             autocomplete = new Digilys.Autocomplete(elem)
@@ -175,7 +175,7 @@ describe "Digilys.Autocomplete", ->
             target = $("<div/>")
             autocomplete.enableAutosubmit(target)
             autocomplete.autosubmit()
-            expect(target).toContain(".load-mask")
+            expect(target).toContainElement(".load-mask")
 
 
 describe "Digilys.DescriptionAutocomplete", ->
@@ -284,7 +284,10 @@ describe "Digilys.AuthorizationAutocomplete", ->
         elem.data("list", list.get(0))
 
         autocomplete = new Digilys.AuthorizationAutocomplete(elem)
-        jasmine.Ajax.useMock()
+        jasmine.Ajax.install()
+
+    afterEach ->
+        jasmine.Ajax.uninstall()
 
     describe ".constructor", ->
         it "stores the base url from the element", ->
@@ -301,7 +304,7 @@ describe "Digilys.AuthorizationAutocomplete", ->
             spyOn(autocomplete, "select")
             elem.trigger("change")
             expect(autocomplete.select).toHaveBeenCalled()
-            expect(autocomplete.select.mostRecentCall.object).toBe(autocomplete)
+            expect(autocomplete.select.calls.mostRecent().object).toBe(autocomplete)
 
         it "clears the select2 element", ->
             spyOn(elem.data("select2"), "clear")
@@ -311,7 +314,7 @@ describe "Digilys.AuthorizationAutocomplete", ->
         it "calls the base url with the selection", ->
             autocomplete.select()
 
-            request = mostRecentAjaxRequest()
+            request = jasmine.Ajax.requests.mostRecent()
             expect(request.url).toEqual    "/foo/bar"
             expect(request.method).toEqual "POST"
             expect(request.params).toMatch "user_id=123"
@@ -332,11 +335,11 @@ describe "Digilys.AuthorizationAutocomplete", ->
 
             autocomplete.select()
 
-            request = mostRecentAjaxRequest()
+            request = jasmine.Ajax.requests.mostRecent()
             request.response(status: 200, responseText: '{"foo":"bar"}')
 
             expect(autocomplete.added).toHaveBeenCalledWith(foo: "bar")
-            expect(autocomplete.added.mostRecentCall.object).toBe(autocomplete)
+            expect(autocomplete.added.calls.mostRecent().object).toBe(autocomplete)
 
         it "triggers an authorization-added event on the list", ->
             spy = jasmine.createSpy()

@@ -43,7 +43,7 @@ describe "Digilys.StanineRangeEntry", ->
             minimums[0].trigger("change")
             maximums[0].trigger("change")
 
-            expect(entry.update.calls.length).toEqual 1
+            expect(entry.update.calls.count()).toEqual 1
 
 
     describe ".update()", ->

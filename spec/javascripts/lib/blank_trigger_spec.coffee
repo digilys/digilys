@@ -20,7 +20,7 @@ describe "Digilys.BlankTrigger", ->
 
     describe "constructor", ->
         it "correctly assigns the arguments", ->
-            expect(blankTrigger.form).toBe             form
+            expect(blankTrigger.form).toEqual          form
             expect(blankTrigger.inputs).toEqual        ":input[id=test_value]"
             expect(blankTrigger.triggerSuffix).toEqual "_value"
             expect(blankTrigger.booleanSuffix).toEqual "__destroy"
@@ -31,7 +31,7 @@ describe "Digilys.BlankTrigger", ->
             trigger.trigger("change")
             boolean.trigger("change")
 
-            expect(blankTrigger.change.calls.length).toEqual 1
+            expect(blankTrigger.change.calls.count()).toEqual 1
 
         it "calls the change method with the field that was changed", ->
             theField = null
