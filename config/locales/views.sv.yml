@@ -201,19 +201,19 @@ sv:
   color_tables:
     form:
       evaluations_placeholder: Sök och välj tester och elevdata
-    color_table:
-      all_groups: Visar alla grupper
-      save_current_state: Spara nuvarande utseende
-      change_state: Byt utseende
-      clear_state: Kronologisk ordning
-      tools: Verktyg
-      edit_table_state_notice: Om du skriver samma namn som ett befintligt utseende uppdateras det utseendet
-      lock_column_action: Lås kolumn
-      unlock_column_action: Sluta lås kolumn
+    show:
+      averages: Medelvärde
       hide_column_action: Dölj kolumn
       show_column_action: Visa dold kolumn
+      lock_column_action: Lås kolumn
+      unlock_column_action: Sluta lås kolumn
       show_column_hint: Kolumnen du väljer att visa kommer att hamna efter den kolumn du klickade på.
-      averages: Medelvärde
+      all_groups: Visar alla grupper
+      change_state: Byt utseende
+      clear_state: Kronologisk ordning
+      table_states: Utseenden
+      save_current_state: Spara nuvarande utseende
+      edit_table_state_notice: Om du skriver samma namn som ett befintligt utseende uppdateras det utseendet
     clear_state:
       success: Använder utseendet "Kronologisk ordning"
     create:

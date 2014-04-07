@@ -25,6 +25,15 @@
     }
 }
 
+.popover.ajax-popover.right {
+    .arrow {
+        top: 25px;
+    }
+    .arrow:after {
+        border-right-color: $popoverTitleBackground;
+    }
+}
+
 th .popover {
     font-weight: normal;
 }

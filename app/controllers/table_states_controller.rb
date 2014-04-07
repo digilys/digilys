@@ -9,7 +9,7 @@ class TableStatesController < ApplicationController
   end
 
   def select
-    current_user.save_setting!(@base, "datatable_state" => @table_state.data)
+    current_user.save_setting!(@base, "color_table_state" => @table_state.data)
     flash[:success] = t(:"table_states.select.success", name: @table_state.name)
     redirect_to @base
   end

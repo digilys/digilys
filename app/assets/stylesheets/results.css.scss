@@ -1,70 +1,20 @@
 @import "variables";
 
-.result-toggles {
-    margin-bottom: 10px;
-}
-
 table.results-table {
     .result {
-        padding: 0;
+        padding: 8px;
         text-align: center;
-
-        div {
-            position: relative;
-            padding: 8px;
-        }
-
-        ul, span {
-            position: relative;
-            z-index: 2;
-            margin: 0;
-            padding: 0;
-            list-style-type: none;
-        }
-
-        li { display: none; }
-
-        img {
-            top: 0;
-            left: 0;
-            position: absolute;
-            display: none;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
     }
 
     .result-red    { background-color: $red; }
     .result-yellow { background-color: $yellow; }
     .result-green  { background-color: $green; }
 
-    .averages {
-        th, td, li {
-            line-height: 16px;
-            font-weight: bold;
-        }
-    }
-
-    .icon-trash {
-        float: right;
-    }
-
-    .filter input {
-        width: 85%;
-        margin: 0;
-    }
-
     &.table-hover tbody tr {
         &:hover > .result-red    { background-color: darken($red, 5%); }
         &:hover > .result-yellow { background-color: darken($yellow, 5%); }
         &:hover > .result-green  { background-color: darken($green, 5%); }
     }
-}
-
-.color-table {
-    &.color-table-show-value   .value   { display: block; }
-    &.color-table-show-stanine .stanine { display: block; }
 }
 
 @media print {
@@ -79,7 +29,6 @@ table.results-table {
     }
 
     .result-toggles,
-    .dataTables_filter,
     .add-generic-evaluations-form {
         display: none;
     }

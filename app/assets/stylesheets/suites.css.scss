@@ -33,48 +33,12 @@
     display: block;
 }
 
-.color-table {
-    .data-table {
-        margin-bottom: 0;
+.tooltip {
+    b.name, b.date {
+        display: block;
+        font-size: 1.3em;
     }
-
-    .DTFC_LeftWrapper {
-        z-index: 3;
-
-        .DTFC_LeftHeadWrapper,
-        .DTFC_LeftBodyWrapper,
-        .DTFC_LeftFootWrapper {
-            background: #fff;
-        }
+    b.date.overdue {
+        color: $red;
     }
-
-    .DTFC_LeftHeadWrapper .data-table,
-    .dataTables_scrollHead .data-table {
-        border-bottom: 0;
-    }
-    .DTFC_LeftBodyWrapper .data-table,
-    .dataTables_scrollBody .data-table {
-        border-top: 0;
-    }
-    .DTFC_LeftFootWrapper .data-table,
-    .dataTables_scrollFoot .data-table {
-        border-top: 0;
-        margin-top: 1em;
-    }
-}
-
-.color-table-column-popup {
-    .locked { display: none; }
-
-    &.locked {
-        .locked { display: block; }
-        .unlocked { display: none; }
-    }
-}
-
-.tooltip strong.date {
-    font-size: 1.3em;
-}
-.tooltip strong.date.overdue {
-    color: $red;
 }

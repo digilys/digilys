@@ -19,6 +19,7 @@ class StudentsController < ApplicationController
   end
 
   def show
+    render partial: "details_table", locals: { student: @student } if request.xhr?
   end
 
   def new

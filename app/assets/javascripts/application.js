@@ -16,8 +16,13 @@
 //= require select2
 //= require bootstrap-datepicker/core
 //= require bootstrap-datepicker/locales/bootstrap-datepicker.sv
-//= require dataTables/jquery.dataTables
 //= require jasny-bootstrap
+//= require slickgrid/jquery.event.drag-2.2.js
+//= require slickgrid/jquery-ui-1.10.4.custom.js
+//= require slickgrid/slick.core.js
+//= require slickgrid/slick.dataview.js
+//= require slickgrid/slick.grid.js
+//= require slickgrid/slick.headermenu.js
 //= require_tree ./vendor
 //= require_tree ./defaults
 //= require core

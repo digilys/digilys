@@ -47,6 +47,11 @@ describe StudentsController, versioning: !ENV["debug_versioning"].blank? do
       get :show, id: student.id
       expect(response).to be_success
     end
+    it "renders the details table on ajax" do
+      xhr :get, :show, id: student.id
+      expect(response).to be_success
+      expect(response).to render_template("details_table")
+    end
     it "gives a 404 if the instance does not match" do
       get :show, id: other_student.id
       expect(response.status).to be 404
