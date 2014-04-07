@@ -11,6 +11,7 @@
 // GO AFTER THE REQUIRES BELOW.
 //
 //= require jquery
+//= require error_handling
 //= require jquery_ujs
 //= require bootstrap
 //= require select2

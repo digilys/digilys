@@ -2,6 +2,9 @@ Digilys::Application.routes.draw do
   # Landing page
   get "index/index"
 
+  # Frontend error logging
+  post "error/log"
+
   resources :users, only: [ :index, :edit, :update, :destroy ] do
     collection do
       get :search
