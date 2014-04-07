@@ -130,6 +130,14 @@
     :javascript
       window.Digilys = window.Digilys || {}
       window.Digilys.navigationConfirmation = "#{t(:navigation_confirmation)}";
+      window.Digilys.i18n = {
+        red:                "#{t(:red)}",
+        yellow:             "#{t(:yellow)}",
+        green:              "#{t(:green)}",
+        stanine:            "#{t(:stanine)}",
+        normalDistribution: "#{t(:normal_distribution)}",
+        amount:             "#{t(:amount)}"
+      };
 
     = javascript_include_tag "application"
     = content_for?(:page_end) ? yield(:page_end) : ""

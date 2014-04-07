@@ -57,3 +57,6 @@ $ ->
         # Close popovers when clicking outside a popover
         Digilys.bindPopoverCloser($("body"))
 
+        # Chart display
+        $("#chart-selector").each ->
+            new Digilys.TableCharter($(this))

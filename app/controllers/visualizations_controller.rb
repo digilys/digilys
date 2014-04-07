@@ -95,7 +95,7 @@ class VisualizationsController < ApplicationController
 
     # Rows for results
     evaluations.each do |evaluation|
-      row = [ evaluation.name ]
+      row = [ "#{evaluation.name} (#{evaluation.date})" ]
 
       students.each do |student|
         result = evaluation.result_for(student)
@@ -122,14 +122,14 @@ class VisualizationsController < ApplicationController
 
       if result_distribution.blank?
         rows << [
-          evaluation.name,
+          "#{evaluation.name} (#{evaluation.date})",
           0,
           0,
           0
         ]
       else
         rows << [
-          evaluation.name,
+          "#{evaluation.name} (#{evaluation.date})",
           result_distribution[:red], 
           result_distribution[:yellow],
           result_distribution[:green]
@@ -142,7 +142,7 @@ class VisualizationsController < ApplicationController
 
   def result_stanines_to_datatable(evaluations)
     rows = []
-    rows << [ I18n.t(:stanine), I18n.t(:normal_distribution), *evaluations.collect(&:name) ]
+    rows << [ I18n.t(:stanine), I18n.t(:normal_distribution), *evaluations.collect { |e| "#{e.name} (#{e.date})" } ]
 
     if evaluations.first
       num_participants = evaluations.first.participant_count

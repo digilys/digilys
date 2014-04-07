@@ -401,6 +401,23 @@ class ColorTable
 
             @dataView.refresh()
 
+
+    studentRows: ->
+        students = []
+
+        len = @dataView.getLength()
+        return students if len <= 0
+
+        for i in [0..len-1]
+            item = @dataView.getItem(i)
+            students.push(item) unless item.id == 0
+
+        return students
+
+    evaluationColumns: ->
+        column for column in @grid.getColumns() when column.id.match(/^evaluation-/)
+
+
 window.Digilys ?= {}
 window.Digilys.ColorTable = ColorTable
 

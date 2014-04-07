@@ -73,13 +73,13 @@ describe VisualizationsController, versioning: !ENV["debug_versioning"].blank? d
 
       # Row for evaluation 1
       expect(table.second).to have(3).items
-      expect(table.second[0]).to eq evaluations.first.name
+      expect(table.second[0]).to eq "#{evaluations.first.name} (#{evaluations.first.date})"
       expect(table.second[1]).to eq result_s1_e1.value.to_f / 10.0
       expect(table.second[2]).to eq result_s2_e1.value.to_f / 10.0
 
       # Row for evaluation 2
       expect(table.third).to have(3).items
-      expect(table.third[0]).to eq evaluations.second.name
+      expect(table.third[0]).to eq "#{evaluations.second.name} (#{evaluations.second.date})"
       expect(table.third[1]).to eq result_s1_e2.value.to_f / 10.0
       expect(table.third[2]).to be_nil
     end
@@ -98,12 +98,12 @@ describe VisualizationsController, versioning: !ENV["debug_versioning"].blank? d
 
         # Row for evaluation 1
         expect(table.second).to have(2).items
-        expect(table.second[0]).to eq evaluations.first.name
+        expect(table.second[0]).to eq "#{evaluations.first.name} (#{evaluations.first.date})"
         expect(table.second[1]).to eq result_s1_e1.value.to_f / 10.0
 
         # Row for evaluation 2
         expect(table.third).to have(2).items
-        expect(table.third[0]).to eq evaluations.second.name
+        expect(table.third[0]).to eq "#{evaluations.second.name} (#{evaluations.second.date})"
         expect(table.third[1]).to eq result_s1_e2.value.to_f / 10.0
       end
     end
@@ -132,21 +132,21 @@ describe VisualizationsController, versioning: !ENV["debug_versioning"].blank? d
 
       # Row for evaluation 1
       expect(table.second).to have(4).items
-      expect(table.second[0]).to eq evaluations.first.name
+      expect(table.second[0]).to eq "#{evaluations.first.name} (#{evaluations.first.date})"
       expect(table.second[1]).to eq evaluations.first.result_distribution[:red]
       expect(table.second[2]).to eq evaluations.first.result_distribution[:yellow]
       expect(table.second[3]).to eq evaluations.first.result_distribution[:green]
 
       # Row for evaluation 2
       expect(table.third).to have(4).items
-      expect(table.third[0]).to eq evaluations.second.name
+      expect(table.third[0]).to eq "#{evaluations.second.name} (#{evaluations.second.date})"
       expect(table.third[1]).to eq evaluations.second.result_distribution[:red]
       expect(table.third[2]).to eq evaluations.second.result_distribution[:yellow]
       expect(table.third[3]).to eq evaluations.second.result_distribution[:green]
 
       # Row for evaluation 3
       expect(table.fourth).to have(4).items
-      expect(table.fourth[0]).to eq evaluations.third.name
+      expect(table.fourth[0]).to eq "#{evaluations.third.name} (#{evaluations.third.date})"
       expect(table.fourth[1]).to eq 0
       expect(table.fourth[2]).to eq 0
       expect(table.fourth[3]).to eq 0
@@ -181,8 +181,8 @@ describe VisualizationsController, versioning: !ENV["debug_versioning"].blank? d
       expect(table.first).to have(4).items
       expect(table.first[0]).to eq I18n.t(:stanine)
       expect(table.first[1]).to eq I18n.t(:normal_distribution)
-      expect(table.first[2]).to eq evaluations.first.name
-      expect(table.first[3]).to eq evaluations.second.name
+      expect(table.first[2]).to eq "#{evaluations.first.name} (#{evaluations.first.date})"
+      expect(table.first[3]).to eq "#{evaluations.second.name} (#{evaluations.second.date})"
 
       # Stanine rows
       [

@@ -214,6 +214,10 @@ sv:
       table_states: Utseenden
       save_current_state: Spara nuvarande utseende
       edit_table_state_notice: Om du skriver samma namn som ett befintligt utseende uppdateras det utseendet
+      show_chart: Visa trender
+      area_chart: Ytdiagram
+      line_chart: Linjediagram
+      column_chart: Stapeldiagram
     clear_state:
       success: Använder utseendet "Kronologisk ordning"
     create:
@@ -387,11 +391,10 @@ sv:
       success: Användaren raderades
 
   visualizations:
-    amount: Antal
     navigation:
-      color_area_chart: Färgkodning
-      stanine_column_chart: Staninefördelning
-      result_line_chart: Resultat
+      color_area_chart: Ytdiagram
+      stanine_column_chart: Stapeldiagram - stanine
+      result_line_chart: Linjediagram
 
   instructions:
     navigation:
