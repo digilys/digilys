@@ -10,7 +10,7 @@
 - else
   = semantic_form_for @suite,
     url: new_from_template_suites_path(),
-    html: { class: "form-horizontal select-suite-template-form" } do |f|
+    html: { id: "new_suite_from_template", class: "form-horizontal select-suite-template-form" } do |f|
 
     = f.hidden_field :is_template
 
