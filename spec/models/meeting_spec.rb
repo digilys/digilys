@@ -5,6 +5,18 @@ describe Meeting do
     subject { build(:meeting) }
     it { should be_valid }
 
+    context "complete" do
+      # A complete template should have all possible data set. This factory
+      # is used to test regression when building objects from templates.
+      #
+      # The specs here use a blacklist for elements that should be excluded when
+      # checking for associations. Thus, if a new attribute or association is
+      # added to the model, it will automatically break this test, ensuring
+      # that a decision is made whether the new attribute or association should be
+      # included when creating an object from a template.
+      subject { create(:complete_meeting) }
+      it      { should be_a_complete_meeting }
+    end
     context "invalid" do
       subject { build(:invalid_meeting) }
       it { should_not be_valid }

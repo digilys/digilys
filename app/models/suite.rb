@@ -141,7 +141,7 @@ class Suite < ActiveRecord::Base
       s.assign_attributes(attrs)
 
       template.evaluations.each do |evaluation|
-        s.evaluations << Evaluation.new_from_template(evaluation)
+        s.evaluations << Evaluation.new_from_template(evaluation, template_id: evaluation.template_id)
       end
 
       template.meetings.each do |meeting|

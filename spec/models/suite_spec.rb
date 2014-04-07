@@ -5,6 +5,27 @@ describe Suite do
     subject { build(:suite) }
     it { should be_valid }
 
+    context "complete template" do
+      # A complete template should have all possible data set. This factory
+      # is used to test regression when building objects from templates.
+      #
+      # The specs here use a blacklist for elements that should be excluded when
+      # checking for associations. Thus, if a new attribute or association is
+      # added to the model, it will automatically break this test, ensuring
+      # that a decision is made whether the new attribute or association should be
+      # included when creating an object from a template.
+      subject(:template) { create(:complete_suite_template) }
+      it                 { should be_a_complete_suite_template }
+
+      it "has a complete evaluation" do
+        expect(template.evaluations).not_to be_blank
+        expect(template.evaluations.first).to be_a_complete_suite_evaluation
+      end
+      it "has a complete meeting" do
+        expect(template.meetings).not_to be_blank
+        expect(template.meetings.first).to be_a_complete_meeting
+      end
+    end
     context "invalid" do
       subject { build(:invalid_suite) }
       it { should_not be_valid }
@@ -170,6 +191,9 @@ describe Suite do
       # ... but none of the ids, see Evaluation#new_from_template
       ids = suite.evaluations.collect(&:id)
       expect((ids - evaluations.collect(&:id))).to match_array(ids)
+
+      # The template ids should not be copied
+      expect(suite.evaluations.collect(&:template_id).sort).to_not eq evaluations.collect(&:id).sort
     end
 
     it "copies the template's meetings" do
