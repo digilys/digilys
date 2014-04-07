@@ -191,6 +191,9 @@ describe Suite do
       # ... but none of the ids, see Evaluation#new_from_template
       ids = suite.evaluations.collect(&:id)
       expect((ids - evaluations.collect(&:id))).to match_array(ids)
+
+      # The template ids should not be copied
+      expect(suite.evaluations.collect(&:template_id).sort).to_not eq evaluations.collect(&:id).sort
     end
 
     it "copies the template's meetings" do
