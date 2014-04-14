@@ -53,7 +53,7 @@ describe "Digilys.ColorTable", ->
             expect(options.frozenColumn).toBe(-1)
 
         it "resizes the table container to fit the window", ->
-            expect(container.height()).toEqual($(document).height() - container.offset().top - 20)
+            expect(container.height()).toEqual($(window).height() - container.offset().top - 20)
 
         it "renders the grid", ->
             expect(container.find(".slick-row")).toHaveLength(2)
@@ -78,11 +78,17 @@ describe "Digilys.ColorTable", ->
             table = new Digilys.ColorTable(container, columns, data, columnMenu)
 
             spyOn(table, "sortBy")
+            spyOn(table.grid, "resizeCanvas")
 
         it "grid.onSort calls .sortBy()", ->
             table.grid.onSort.notify({ sortCol: "sortcol", sortAsc: "lol" }, new Slick.EventData())
             expect(table.sortBy).toHaveBeenCalledWith("sortcol", "lol")
             expect(table.sortBy).toHaveBeenCalledOn(table)
+
+        it "resizes the canvas on window resize", ->
+            $(window).trigger("resize")
+            expect(table.grid.resizeCanvas).toHaveBeenCalled()
+            expect(table.grid.resizeCanvas).toHaveBeenCalledOn(table.grid)
 
 
     describe ".sortBy()", ->

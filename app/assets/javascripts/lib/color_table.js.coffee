@@ -6,6 +6,7 @@ class ColorTable
     constructor: (@colorTable, @columns, data, @columnMenu) ->
 
         setTableHeight.call(this)
+        $(window).on "resize", => setTableHeight.call(this)
 
         @settings =
             searchPlaceholder: @colorTable.data("search-placeholder")
@@ -77,7 +78,8 @@ class ColorTable
 
     setTableHeight = ->
         offset = @colorTable.offset()
-        @colorTable.height($(document).height() - offset.top - 20)
+        @colorTable.height($(window).height() - offset.top - 20)
+        @grid.resizeCanvas() if @grid
 
     setHeaderHeight = (leftHeader, rightHeader) ->
         leftHeight  = leftHeader.children(":first").height()
