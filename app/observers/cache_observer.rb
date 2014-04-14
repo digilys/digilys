@@ -38,6 +38,8 @@ class CacheObserver < ActionController::Caching::Sweeper
     self.changed_models << model
   end
 
+  alias_method :after_destroy, :after_save
+
 
   def handle_changes
     single_models = {}
