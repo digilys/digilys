@@ -38,6 +38,10 @@ describe VersionHelper do
       version = double("PaperTrail::Version", attributes: { "object" => nil }, item: nil, object: %({"name":"Foo"}))
       expect(helper.version_item_link(version)).to eq "Foo"
     end
+    it "returns just a name for a deleted object where only a changeset exists" do
+      version = double("PaperTrail::Version", attributes: { "object" => nil }, item: nil, object: nil, changeset: { "name" => [ nil, "Foo" ] })
+      expect(helper.version_item_link(version)).to eq "Foo"
+    end
 
     it "tries to load the student for the deleted object" do
       student = create(:student)

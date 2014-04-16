@@ -35,13 +35,15 @@ module VersionHelper
           end
         end
       elsif changes = version.changeset["student_id"]
-          student = Student.where(id: changes.last).first
+        student = Student.where(id: changes.last).first
 
-          if student
-            return link_to(student.name, student)
-          else
-            return "Borttagen elev"
-          end
+        if student
+          return link_to(student.name, student)
+        else
+          return "Borttagen elev"
+        end
+      elsif changes = version.changeset["name"]
+        return changes.last
       end
     end
 
