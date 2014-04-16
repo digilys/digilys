@@ -152,6 +152,10 @@ describe VersionHelper do
       result = version_events_for_evaluation(create_version(evaluation, :update, { status: %w(empty complete) }))
       expect(result).to include(t(:"events.evaluation.status_complete"))
     end
+    it "displays a text for a destroy event" do
+      result = version_events_for_evaluation(create_version(evaluation, :destroy))
+      expect(result).to match_array([ t(:"events.evaluation.destroyed") ])
+    end
   end
 
   describe "#version_events_for_meeting" do
@@ -175,6 +179,10 @@ describe VersionHelper do
     it "includes a text when uncompleting the meeting" do
       result = version_events_for_meeting(create_version(meeting, :update, { completed: [true, false] }))
       expect(result).to include(t(:"events.meeting.uncompleted"))
+    end
+    it "displays a text for a destroy event" do
+      result = version_events_for_meeting(create_version(meeting, :destroy))
+      expect(result).to match_array([ t(:"events.meeting.destroyed") ])
     end
   end
 
@@ -203,6 +211,10 @@ describe VersionHelper do
     it "includes a text when opening the activity" do
       result = version_events_for_activity(create_version(activity, :update, { status: ["closed", "open"] }))
       expect(result).to include(t(:"events.activity.open"))
+    end
+    it "displays a text for a destroy event" do
+      result = version_events_for_activity(create_version(activity, :destroy))
+      expect(result).to match_array([ t(:"events.activity.destroyed") ])
     end
   end
 

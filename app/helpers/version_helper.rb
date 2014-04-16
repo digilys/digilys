@@ -76,9 +76,11 @@ module VersionHelper
   def version_events_for_evaluation(version)
     case version.event
     when "create"
-      [ t(:"events.evaluation.created", name: version.item.name) ]
+      [ t(:"events.evaluation.created") ]
     when "update"
       evaluation_changes(version)
+    when "destroy"
+      [ t(:"events.evaluation.destroyed") ]
     else
       nil
     end
@@ -90,6 +92,8 @@ module VersionHelper
       [ t(:"events.meeting.created") ]
     when "update"
       meeting_changes(version)
+    when "destroy"
+      [ t(:"events.meeting.destroyed") ]
     else
       nil
     end
@@ -101,6 +105,8 @@ module VersionHelper
       [ t(:"events.activity.created") ]
     when "update"
       activity_changes(version)
+    when "destroy"
+      [ t(:"events.activity.destroyed") ]
     else
       nil
     end

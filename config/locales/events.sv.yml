@@ -5,6 +5,7 @@ sv:
       name_changed: Planeringens rubrik ändrades från "%{from}" till "%{to}".
     evaluation:
       created: Lades till i planeringen.
+      destroyed: Togs bort från planeringen
       name_changed: Rubriken ändrades från "%{from}" till "%{to}".
       max_result_changed: Maxresultatet ändrades från %{from} till %{to}.
       date_changed: Datumet ändrades från %{from} till %{to}.
@@ -17,12 +18,14 @@ sv:
       status_complete: Testresultatet rapporterades.
     meeting:
       created: Lades till i planeringen
+      destroyed: Togs bort från planeringen
       name_changed: Rubriken ändrades från "%{from}" till "%{to}".
       date_changed: Datumet ändrades från %{from} till %{to}.
       completed: Protokollfördes
       uncompleted: Återfördes till att inte vara protokollfört
     activity:
       created: Lades till i planeringen
+      destroyed: Togs bort från planeringen
       name_changed: Rubriken ändrades från "%{from}" till "%{to}".
       start_date_changed: Startdatumet ändrades från %{from} till %{to}.
       end_date_changed: Slutdatumet ändrades från %{from} till %{to}.
