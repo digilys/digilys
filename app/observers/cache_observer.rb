@@ -38,10 +38,18 @@ class CacheObserver < ActionController::Caching::Sweeper
     self.changed_models << model
   end
 
-  alias_method :after_destroy, :after_save
+  # Destroys need to be handled before the object is destroyed
+  # since we need to use the existing data in the database for
+  # the cache invalidation
+  def before_destroy(model)
+    after_save(model)
+    handle_changes() # Perform the invalidation right away
+  end
 
 
   def handle_changes
+    return unless self.changed_models
+
     single_models = {}
     evaluations   = []
     students      = []
