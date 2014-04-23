@@ -187,9 +187,11 @@ describe "Digilys.TableCharterConverters", ->
                 { id: "evaluation-2", name: "E 2", field: "e2", maxResult: 8, date: "date-2" }
             ]
             students = [
-                { id: 1, name: "foo", e1: { value: 2 }, e2: { value: 4 } },
-                { id: 2, name: "bar", e1: { value: 3 }, e2: { value: 5 } },
-                { id: 3, name: "baz", e1: {} }
+                { id: 1, name: "foo",  e1: { value: 2 }, e2: { value: 4 } },
+                { id: 2, name: "bar",  e1: { value: 3 }, e2: { value: 5 } },
+                { id: 3, name: "baz",  e1: {} }
+                { id: 4, name: "apa",  e1: { value: 3 } },
+                { id: 5, name: "bepa", e2: { value: 4 } },
             ]
             result = C.toResultChart(evaluations, students)
 
@@ -198,12 +200,12 @@ describe "Digilys.TableCharterConverters", ->
         it "constructs a google chart data table", ->
             expect(result.length).toEqual(3) # title row + 2 evaluation rows
 
-        it "has a title row with the student names", ->
-            expect(result[0]).toEqual([ "", "foo", "bar", "baz" ])
+        it "has a title row with the student names, excluding students without any result", ->
+            expect(result[0]).toEqual([ "", "foo", "bar", "apa", "bepa" ])
 
-        it "has a data row for each evaluation with the normalized result per student", ->
-            expect(result[1]).toEqual([ "E 1 (date-1)", 2/4, 3/4, undefined ])
-            expect(result[2]).toEqual([ "E 2 (date-2)", 4/8, 5/8, undefined ])
+        it "has a data row for each evaluation with the normalized result per student, exluding students without any result", ->
+            expect(result[1]).toEqual([ "E 1 (date-1)", 2/4, 3/4, 3/4, undefined ])
+            expect(result[2]).toEqual([ "E 2 (date-2)", 4/8, 5/8, undefined, 4/8 ])
 
     describe ".toColorChart()", ->
         beforeEach ->

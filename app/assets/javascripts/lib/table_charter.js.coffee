@@ -108,6 +108,9 @@ Converters.toResultChart = (evaluations, students) ->
     array[0] = [ "" ]
     array[0].push(student.name) for student in students
 
+    # Track which values are only undefineds
+    onlyUndefined = {}
+
     i = 1
     for evaluation in evaluations
         array[i] = [ "#{evaluation.name} (#{evaluation.date})" ]
@@ -116,11 +119,24 @@ Converters.toResultChart = (evaluations, students) ->
             value = student[evaluation.field]
 
             if value && value.value
-                array[i].push(value.value / evaluation.maxResult)
+                newLength = array[i].push(value.value / evaluation.maxResult)
+
+                # Not undefined
+                onlyUndefined[newLength - 1] = false
             else
-                array[i].push(undefined)
+                newLength = array[i].push(undefined)
+
+                # Do not override a proper false value
+                if onlyUndefined[newLength - 1] != false
+                    onlyUndefined[newLength - 1] = true
 
         i++
+
+    # Remove students which only have undefined values
+    for idx, only of onlyUndefined when only
+        # Remove the element at the index in each of the sub arrays
+        for a in array
+            a.splice(idx, 1)
 
     return google.visualization.arrayToDataTable(array)
 
