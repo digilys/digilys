@@ -16,25 +16,26 @@ class CacheObserver < ActionController::Caching::Sweeper
     :student,
     :group
 
-  attr_accessor :changed_models
+  attr_accessor :inside_request, :changed_models
 
   # Controller callbacks
   def before(controller)
-    self.changed_models = []
+    self.inside_request = true
     return true
   end
   def after(controller)
     handle_changes()
+    self.inside_request = nil
   end
 
   # ActiveRecord callback
   def after_save(model)
-    if self.changed_models.nil?
+    unless self.inside_request
       $stderr.puts "\033[31mCacheObserver is running outside a request."
       $stderr.puts "Remember to call CacheObserver.instance.handle_changes if affecting something that needs the cache to be invalidated\033[0m"
-      self.changed_models = []
     end
 
+    self.changed_models ||= []
     self.changed_models << model
   end
 
@@ -48,7 +49,7 @@ class CacheObserver < ActionController::Caching::Sweeper
 
 
   def handle_changes
-    return unless self.changed_models
+    return if self.changed_models.blank?
 
     single_models = {}
     evaluations   = []
