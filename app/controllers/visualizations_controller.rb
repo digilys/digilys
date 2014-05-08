@@ -93,6 +93,9 @@ class VisualizationsController < ApplicationController
     # Title row
     rows << [ Evaluation.model_name.human(count: 2), *students.collect(&:name) ]
 
+    # Track only nils
+    only_nils = {}
+
     # Rows for results
     evaluations.each do |evaluation|
       row = [ "#{evaluation.name} (#{evaluation.date})" ]
@@ -100,14 +103,24 @@ class VisualizationsController < ApplicationController
       students.each do |student|
         result = evaluation.result_for(student)
 
+        nil_idx = row.length
+
         if result && result.value
           row << result.value.to_f / evaluation.max_result.to_f
+
+          only_nils[nil_idx] = false
         else
           row << nil
+
+          only_nils[nil_idx] = true if only_nils[nil_idx] != false
         end
       end
 
       rows << row
+    end
+
+    only_nils.each do |i, only|
+      rows.each { |r| r.delete_at(i) } if only
     end
 
     return rows

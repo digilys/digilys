@@ -53,12 +53,14 @@ describe VisualizationsController, versioning: !ENV["debug_versioning"].blank? d
   end
 
   describe "#results_to_datatable" do
-    let!(:students)     { create_list(:student, 2) }
+    let!(:students)     { create_list(:student, 3) }
     let!(:participants) { students.collect { |s| create(:participant, suite: suite, student: s) } }
     let!(:evaluations)  { create_list(:suite_evaluation, 2, suite: suite, max_result: 10, _yellow: 4..7) }
     let!(:result_s1_e1) { create(:result, evaluation: evaluations.first,  student: students.first,  value: 4) }
     let!(:result_s1_e2) { create(:result, evaluation: evaluations.second, student: students.first,  value: 5) }
     let!(:result_s2_e1) { create(:result, evaluation: evaluations.first,  student: students.second, value: 6) }
+    let!(:result_s3_e1) { create(:result, evaluation: evaluations.first,  student: students.third,  value: nil, absent: true) }
+    let!(:result_s3_e2) { create(:result, evaluation: evaluations.second, student: students.third,  value: nil, absent: true) }
 
     subject(:table) { controller.send(:results_to_datatable, evaluations) }
 
