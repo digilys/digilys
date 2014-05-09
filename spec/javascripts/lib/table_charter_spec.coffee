@@ -190,8 +190,9 @@ describe "Digilys.TableCharterConverters", ->
                 { id: 1, name: "foo",  e1: { value: 2 }, e2: { value: 4 } },
                 { id: 2, name: "bar",  e1: { value: 3 }, e2: { value: 5 } },
                 { id: 3, name: "baz",  e1: {} }
-                { id: 4, name: "apa",  e1: { value: 3 } },
-                { id: 5, name: "bepa", e2: { value: 4 } },
+                { id: 4, name: "bax",  e2: {} }
+                { id: 5, name: "apa",  e1: { value: 3 } },
+                { id: 6, name: "bepa", e2: { value: 4 } },
             ]
             result = C.toResultChart(evaluations, students)
 

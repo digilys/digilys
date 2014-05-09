@@ -90,40 +90,35 @@ class VisualizationsController < ApplicationController
       students = evaluations.collect(&:students).flatten.uniq
     end
 
-    # Title row
-    rows << [ Evaluation.model_name.human(count: 2), *students.collect(&:name) ]
+    # First row contains a dummy test name and the evaluation names
+    rows << [ Evaluation.model_name.human(count: 2), *evaluations.collect { |e| "#{e.name} (#{e.date})" } ]
 
-    # Track only nils
-    only_nils = {}
+    students.each do |student|
+      # One row per student, containing the name and the results
+      row = []
 
-    # Rows for results
-    evaluations.each do |evaluation|
-      row = [ "#{evaluation.name} (#{evaluation.date})" ]
-
-      students.each do |student|
+      evaluations.each do |evaluation|
         result = evaluation.result_for(student)
-
-        nil_idx = row.length
 
         if result && result.value
           row << result.value.to_f / evaluation.max_result.to_f
-
-          only_nils[nil_idx] = false
         else
           row << nil
-
-          only_nils[nil_idx] = true if only_nils[nil_idx] != false
         end
       end
 
-      rows << row
+      # Add the student name, and do not add the row if there are only nil result values
+      rows << row.unshift(student.name) if !row.compact.blank?
     end
 
-    only_nils.each do |i, only|
-      rows.each { |r| r.delete_at(i) } if only
-    end
-
-    return rows
+    # Google Chart wants the columns to be the students and the
+    # rows to be the evaluations to render a proper graph. We build
+    # it the other way around, so now we transpose the array, flipping
+    # it to the correct format.
+    #
+    # The reason for this is that it is much easier to check for
+    # students which have only nil results above.
+    return rows.transpose
   end
 
   def result_colors_to_datatable(evaluations)

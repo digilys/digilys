@@ -106,39 +106,44 @@ Converters = {}
 Converters.toResultChart = (evaluations, students) ->
     array = []
     array[0] = [ "" ]
-    array[0].push(student.name) for student in students
+    array[0].push("#{evaluation.name} (#{evaluation.date})") for evaluation in evaluations
 
-    # Track which values are only undefineds
-    onlyUndefined = {}
+    for student in students
+        row = []
 
-    i = 1
-    for evaluation in evaluations
-        array[i] = [ "#{evaluation.name} (#{evaluation.date})" ]
-
-        for student in students
+        for evaluation in evaluations
             value = student[evaluation.field]
 
             if value && value.value
-                newLength = array[i].push(value.value / evaluation.maxResult)
-
-                # Not undefined
-                onlyUndefined[newLength - 1] = false
+                newLength = row.push(value.value / evaluation.maxResult)
             else
-                newLength = array[i].push(undefined)
+                newLength = row.push(undefined)
 
-                # Do not override a proper false value
-                if onlyUndefined[newLength - 1] != false
-                    onlyUndefined[newLength - 1] = true
+        # Check if all added values are undefined
+        withoutUndefined = (i for i in row when i != undefined)
 
-        i++
+        if withoutUndefined.length > 0
+            row.unshift(student.name)
+            array.push(row)
 
-    # Remove students which only have undefined values
-    for idx, only of onlyUndefined when only
-        # Remove the element at the index in each of the sub arrays
-        for a in array
-            a.splice(idx, 1)
+    # Google Chart wants the columns to be the students and the
+    # rows to be the evaluations to render a proper graph. We build
+    # it the other way around, so now we transpose the array, flipping
+    # it to the correct format.
+    #
+    # The reason for this is that it is much easier to check for
+    # students which have only nil results above.
+    transposed = []
+    width      = array.length
+    height     = array[0].length
 
-    return google.visualization.arrayToDataTable(array)
+    for i in [0..(height - 1)]
+        transposed[i] = []
+
+        for j in [0..(width - 1)]
+            transposed[i][j] = array[j][i]
+
+    return google.visualization.arrayToDataTable(transposed)
 
 
 Converters.toColorChart = (evaluations, students) ->
