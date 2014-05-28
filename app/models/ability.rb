@@ -10,6 +10,8 @@ class Ability
 
     alias_action :submit_report,
                  :destroy_report,
+                 :report_all,
+                 :submit_report_all,
       to: :report
 
     alias_action :add_users,
