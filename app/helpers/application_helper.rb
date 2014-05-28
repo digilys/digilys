@@ -85,7 +85,7 @@ module ApplicationHelper
 
   # Initializes Google visualization libraries
   def gchart_init
-    html =  javascript_include_tag("//google.com/jsapi")
+    html =  javascript_include_tag("//www.google.com/jsapi")
     html << javascript_tag(%(google.load("visualization", "1.0", {"packages": ["corechart"]});))
     content_for :page_end, html
   end
