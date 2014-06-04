@@ -19,6 +19,9 @@
 
     %li.secondaries
       %ul.nav.nav-tabs.nav-split
+        - if params[:action] == "show"
+          %li
+            %a.color-table-fullscreen-action(href="#")= t(:".fullscreen_action")
         - if can? :edit, color_table
           %li{class: active_if(active == :edit)}
             %a{href:edit_color_table_path(color_table)}= t(:".edit_action")

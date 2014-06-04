@@ -13,8 +13,41 @@
 
 #color-table-group-selector { height: 0; }
 
+#color-table-container {
+    background: #fff;
+    padding-top: 20px;
+
+    .tools {
+        display: none;
+    }
+
+    &.fullscreen {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        padding-top: 0;
+
+        .tools {
+            font-size: 0.9em;
+            display: block;
+            margin: 0;
+            padding: 0;
+            float: right;
+            list-style-type: none;
+
+            li {
+                display: inline;
+                margin: 0 1em 0 0;
+                padding: 0;
+            }
+        }
+    }
+}
+
 #color-table {
-    margin-top: 20px;
     border-top: 1px solid $tableBorder;
     border-left: 1px solid $tableBorder;
 

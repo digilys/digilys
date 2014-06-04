@@ -65,3 +65,12 @@ $ ->
         # Chart display
         $("#chart-selector").each ->
             new Digilys.TableCharter($(this))
+
+        # Fullscreen
+        container = $("#color-table-container")
+
+        $("body").on "click", ".color-table-fullscreen-action", (event) ->
+            container.toggleClass("fullscreen")
+            $(window).trigger("resize")
+            event.preventDefault()
+
