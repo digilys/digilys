@@ -178,6 +178,73 @@ describe "Digilys.Autocomplete", ->
             expect(target).toContainElement(".load-mask")
 
 
+    describe ".preventOpeningAbove", ->
+        container = null
+
+        beforeEach ->
+            setup()
+
+        afterEach ->
+            $("body").css("padding-bottom", "0")
+
+        it "is called when the event select2-open is triggered on the element", ->
+            spyOn(autocomplete, "preventOpeningAbove")
+            autocomplete.elem.trigger("select2-open")
+            expect(autocomplete.preventOpeningAbove).toHaveBeenCalled()
+            expect(autocomplete.preventOpeningAbove).toHaveBeenCalledOn(autocomplete)
+
+        describe "when the select2 container is far enough from the bottom of the viewport", ->
+            beforeEach ->
+                container = {
+                    offset: -> { top: 0 }
+                    outerHeight: -> 1
+                }
+
+                autocomplete.elem.data("select2", { container: container })
+                autocomplete.preventOpeningAbove()
+
+            it "does nothing", ->
+                expect($("body")).not.toHaveCss("padding-bottom": "20em")
+
+        describe "when the select2 container is too close to the bottom of the viewport", ->
+            scrollIntoView = null
+            beforeEach ->
+                scrollIntoView = jasmine.createSpy("scrollIntoView")
+
+                container = {
+                    offset: -> { top: $(window).scrollTop() + $(window).height() - 219 }
+                    outerHeight: -> 0
+                    get: -> { scrollIntoView: scrollIntoView }
+                }
+
+
+                autocomplete.elem.data("select2", { container: container })
+                autocomplete.preventOpeningAbove()
+
+            it "adds a padding to the body", ->
+                expect($("body")).toHaveCss("padding-bottom": "500px")
+
+            it "scrolls the select2 container into view", ->
+                expect(scrollIntoView).toHaveBeenCalled()
+
+        describe "when the select2 container is too close to the bottom of the viewport but the top is above the viewport", ->
+            beforeEach ->
+                scrollIntoView = jasmine.createSpy("scrollIntoView")
+
+                container = {
+                    offset: -> { top: $(window).scrollTop() - 100  }
+                    outerHeight: -> $(window).height() + 100
+                }
+
+
+                autocomplete.elem.data("select2", { container: container })
+                autocomplete.preventOpeningAbove()
+
+            it "does nothing", ->
+                expect($("body")).not.toHaveCss("padding-bottom": "20em")
+
+
+
 describe "Digilys.DescriptionAutocomplete", ->
     elem         = null
     autocomplete = null

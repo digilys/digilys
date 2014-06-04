@@ -26,6 +26,8 @@ class Autocomplete
             if elem.data("autofocus")
                 elem.select2 "open"
 
+            elem.on "select2-open", => @preventOpeningAbove.apply(this, arguments)
+
     requestData: (term, page) ->
         data =
             q: {}
@@ -56,6 +58,19 @@ class Autocomplete
         submit.val(submit.data("loading-text"))
 
         form.submit()
+
+    preventOpeningAbove: ->
+        container = @elem.data("select2").container
+        containerTop = container.offset().top
+        containerBottom = containerTop + container.outerHeight(false)
+
+        win = $(window)
+        viewportTop = win.scrollTop()
+        viewportBottom = viewportTop + win.height()
+
+        if viewportTop < containerTop && viewportBottom - containerBottom < 220
+            $("body").css("padding-bottom", "500px")
+            container.get(0).scrollIntoView(true)
 
 # Export
 window.Digilys ?= {}
