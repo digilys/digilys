@@ -143,7 +143,7 @@ describe ApplicationHelper do
     describe "#gchart_init" do
       subject(:html) { Capybara::Node::Simple.new(helper.gchart_init) }
       it { should have_selector("script", count: 2, visible: false)}
-      it { should have_selector("script[src='//google.com/jsapi']", visible: false)}
+      it { should have_selector("script[src='//www.google.com/jsapi']", visible: false)}
       it { should have_content(%(google.load("visualization", "1.0", {"packages": ["corechart"]});)) }
     end
     describe "#gchart" do
