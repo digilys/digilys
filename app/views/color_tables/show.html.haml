@@ -40,7 +40,7 @@
 
 - columns_and_data = capture do
   - cache [ @color_table, "data" ] do
-    - evaluations = @color_table.generic_evaluations + @color_table.suite_evaluations.only_series_currents
+    - evaluations = @color_table.generic_evaluations.with_status(:partial, :complete) + @color_table.suite_evaluations.with_status(:partial, :complete).only_series_currents
     = "columns = [#{color_table_columns(@color_table.student_data, evaluations)}];".html_safe
     = "data = [#{result_rows(@color_table.students.order(current_name_order), @color_table.student_data, evaluations).join(",")}];".html_safe
 

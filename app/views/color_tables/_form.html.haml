@@ -11,6 +11,8 @@
           multiple: true,
           placeholder: t(:".evaluations_placeholder") } }
 
+    .alert.alert-info= t(:".missing_evaluations_info")
+
   = f.actions do
     = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
     %a.btn{href:f.object.new_record? ? color_tables_path() : color_table_path(f.object)}= t(:".cancel_action")

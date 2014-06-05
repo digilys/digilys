@@ -203,6 +203,10 @@ sv:
       fullscreen_action: Visa i fullskärm
     form:
       evaluations_placeholder: Sök och välj tester och elevdata
+      missing_evaluations_info: >
+        Om någon av testerna eller elevdata ovan inte syns i färgkartan kan det
+        bero på att det inte finns något resultat registrerat för testet.
+        Färgkartan visar endast tester och elevdata som har resultat.
     show:
       averages: Medelvärde
       hide_column_action: Dölj kolumn
