@@ -34,18 +34,6 @@ $ ->
             colorTable.attr "class", (i, cls) ->
                 cls.replace /show-\w+/, "show-#{button.data("value")}"
 
-        # Tooltips
-        enableTooltip = ->
-            $(".slick-header-column[title]", colorTable).tooltip(
-                html:      true
-                placement: "top"
-                delay:     { show: 300, hide: 100 }
-                container: "body"
-            )
-
-        enableTooltip()
-        colorTable.on "state-change", enableTooltip
-
         $("#color-table-group-selector").select2().on "change", -> ct.groupFilter($(this).val())
 
         # Student popover
@@ -66,11 +54,33 @@ $ ->
         $("#chart-selector").each ->
             new Digilys.TableCharter($(this))
 
-        # Fullscreen
+
         container = $("#color-table-container")
 
+        # Tooltips
+        enableTooltip = ->
+            if container.hasClass("fullscreen")
+                placement = "bottom"
+            else
+                placement = "top"
+
+            $(".slick-header-column[title]", colorTable).tooltip(
+                html:      true
+                placement: placement
+                delay:     { show: 300, hide: 100 }
+                container: "body"
+            )
+
+        enableTooltip()
+        colorTable.on "state-change", enableTooltip
+
+        # Fullscreen
         $("body").on "click", ".color-table-fullscreen-action", (event) ->
+            event.preventDefault()
+
             container.toggleClass("fullscreen")
             $(window).trigger("resize")
-            event.preventDefault()
+
+            $(".slick-header-column[title]", colorTable).tooltip("destroy")
+            enableTooltip()
 
