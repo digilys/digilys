@@ -23,6 +23,8 @@
 
     %li.secondaries
       %ul.nav.nav-tabs.nav-split
+        %li{class: active_if(active == :new)}
+          %a{href:new_group_path(copy_from: group.id)}= t(:".copy_action")
         - if can? :edit, group
           %li{class: active_if(active == :edit)}
             %a{href:edit_group_path(group)}= t(:".edit_action")

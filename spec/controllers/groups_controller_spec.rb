@@ -64,6 +64,11 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       get :new
       expect(response).to be_success
     end
+    it "loads the group to copy from if specified" do
+      copy_from = create(:group)
+      get :new, copy_from: copy_from.id
+      expect(assigns(:copy_from)).to eq(copy_from)
+    end
   end
   describe "POST #create" do
     it "redirects to the group when successful" do
@@ -79,6 +84,21 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
 
       expect(assigns(:group).instance).not_to eq instance
       expect(assigns(:group).instance).to     eq logged_in_user.active_instance
+    end
+
+    context "with a group to copy from" do
+      let(:copy_from) { create(:group) }
+      let(:students) { create_list(:student, 2) }
+
+      before(:each) do
+        copy_from.add_students(students)
+      end
+
+      it "copies the students from the group" do
+        post :create, group: valid_parameters_for(:group), copy_from: copy_from.id
+        expect(response).to redirect_to(assigns(:group))
+        expect(assigns(:group).students).to match_array(students)
+      end
     end
   end
 

@@ -87,6 +87,9 @@ sv:
     select_students_action: Lägg till elever
     move_students_action: Flytta elever
     select_users_action: Lägg till användare
+    copy_action: Kopiera
+    new:
+      copy_from_info_html: Du har valt att kopiera %{link}. När du skapar den nya gruppen kommer alla elever från %{name} att läggas till i den nya gruppen.
     form:
       parent_placeholder: Sök och välj en grupp
     show:

@@ -31,12 +31,15 @@ class GroupsController < ApplicationController
   end
 
   def new
+    @copy_from = Group.find(params[:copy_from]) if params[:copy_from]
   end
 
   def create
     @group.instance = current_instance
+    @copy_from = Group.find(params[:copy_from]) if params[:copy_from]
 
     if @group.save
+      @group.add_students(@copy_from.students) if @copy_from
       flash[:success] = t(:"groups.create.success")
       redirect_to @group
     else
