@@ -44,7 +44,7 @@ class Group < ActiveRecord::Base
       students.each do |student|
         unless group.students.include?(student)
           group.students << student
-          group.suites.each { |suite| suite.participants.create(student_id: student.id, group_id: group.id) }
+          group.suites.with_status(:open).each { |suite| suite.participants.create(student_id: student.id, group_id: group.id) }
         end
       end
       group = group.parent
@@ -57,14 +57,20 @@ class Group < ActiveRecord::Base
 
     students = Array(students).collect { |s| s.is_a?(Student) ? s : Student.find(s) }
 
+    # Remove from all children
     remove_students_from_all(students, self.children)
 
     group = self
 
+    # Remove from all parents
     until group.nil?
       group.students.delete(students)
       students.each do |student|
-        Participant.destroy_all(student_id: student.id, group_id: group.id)
+        Participant
+          .includes(:suite)
+          .where("suites.status" => "open")
+          .where(student_id: student.id, group_id: group.id)
+          .destroy_all
       end
       group = group.parent
     end
@@ -120,7 +126,11 @@ class Group < ActiveRecord::Base
     groups.each do |group|
       group.students.delete(students)
       students.each do |student|
-        Participant.destroy_all(student_id: student.id, group_id: group.id)
+        Participant
+          .includes(:suite)
+          .where("suites.status" => "open")
+          .where(student_id: student.id, group_id: group.id)
+          .destroy_all
       end
       remove_students_from_all(students, group.children)
     end

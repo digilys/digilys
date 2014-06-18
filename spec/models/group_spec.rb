@@ -117,15 +117,18 @@ describe Group do
     end
 
     context "automatic participation" do
-      let!(:parent1_suite)       { create(:suite) }
-      let!(:parent1_participant) { create(:participant, suite: parent1_suite, student: students.first, group: parent1) }
-      let!(:group_suite)         { create(:suite) }
-      let!(:group_participant)   { create(:participant, suite: group_suite,   student: students.first, group: group) }
+      let!(:parent1_suite)        { create(:suite) }
+      let!(:parent1_participant)  { create(:participant, suite: parent1_suite,  student: students.first, group: parent1) }
+      let!(:group_suite)          { create(:suite) }
+      let!(:group_participant)    { create(:participant, suite: group_suite,    student: students.first, group: group) }
+      let!(:inactive_suite)       { create(:suite, status: :closed) }
+      let!(:inactive_participant) { create(:participant, suite: inactive_suite, student: students.first, group: group) }
 
-      it "adds the users as participants to any suites the group or the parents, are associated with" do
+      it "adds the users as participants to any active suites the group or the parents, are associated with" do
         group.add_students(students.last)
         expect(parent1_suite.participants.where(student_id: students.last.id)).to have(1).items
         expect(group_suite.participants.where(student_id: students.last.id)).to have(1).items
+        expect(inactive_suite.participants.where(student_id: students.last.id)).to be_blank
       end
     end
   end
@@ -161,18 +164,21 @@ describe Group do
     end
 
     context "automatic departicipation" do
-      let!(:parent1_suite)       { create(:suite) }
-      let!(:parent1_participant) { create(:participant, suite: parent1_suite, student: students.first, group: parent1) }
-      let!(:parent2_suite)       { create(:suite) }
-      let!(:parent2_participant) { create(:participant, suite: parent2_suite, student: students.first, group: parent2) }
-      let!(:group_suite)         { create(:suite) }
-      let!(:group_participant)   { create(:participant, suite: group_suite,   student: students.first, group: group) }
+      let!(:parent1_suite)        { create(:suite) }
+      let!(:parent1_participant)  { create(:participant, suite: parent1_suite,  student: students.first, group: parent1) }
+      let!(:parent2_suite)        { create(:suite) }
+      let!(:parent2_participant)  { create(:participant, suite: parent2_suite,  student: students.first, group: parent2) }
+      let!(:group_suite)          { create(:suite) }
+      let!(:group_participant)    { create(:participant, suite: group_suite,    student: students.first, group: group) }
+      let!(:inactive_suite)       { create(:suite, status: :closed) }
+      let!(:inactive_participant) { create(:participant, suite: inactive_suite, student: students.first, group: group) }
 
-      it "removes the users as participants from any suites the group hierarchy is associated with" do
+      it "removes the users as participants from any active suites the group hierarchy is associated with" do
         parent2.remove_students(students.first)
         expect(parent1_suite.participants.where(student_id: students.first.id)).to be_blank
         expect(parent2_suite.participants.where(student_id: students.first.id)).to be_blank
         expect(group_suite.participants.where(student_id: students.first.id)).to be_blank
+        expect(inactive_suite.participants.where(student_id: students.first.id)).to have(1).items
       end
     end
   end
