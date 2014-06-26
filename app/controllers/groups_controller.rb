@@ -62,6 +62,21 @@ class GroupsController < ApplicationController
     end
   end
 
+  def confirm_status_change
+    @group.status = @group.open? ? :closed : :open
+  end
+  
+  def change_status
+    @group.status = params[:group][:status].to_sym
+
+    if @group.save
+      flash[:success] = t(:"groups.change_status.success.#{@group.status}")
+      redirect_to @group
+    else
+      render action: "confirm_status_change"
+    end
+  end
+
   def confirm_destroy
   end
   def destroy

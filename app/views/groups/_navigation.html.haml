@@ -28,6 +28,10 @@
         - if can? :edit, group
           %li{class: active_if(active == :edit)}
             %a{href:edit_group_path(group)}= t(:".edit_action")
+        - if can?(:change_status, group)
+          %li{class: active_if(active == :confirm_status_change)}
+            %a{href:confirm_status_change_group_path(group)}
+              = t(:".confirm_status_change_for_#{group.status_changed? ? group.status_was : group.status}")
         - if can? :destroy, group
           %li{class: active_if(active == :destroy)}
             %a{href:confirm_destroy_group_path(group)}= t(:".destroy_action")

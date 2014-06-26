@@ -20,6 +20,8 @@ Digilys::Application.routes.draw do
     end
     member do
       get    :confirm_destroy
+      get    :confirm_status_change
+      put    :change_status
       get    :select_students
       put    :add_students
       get    :move_students

@@ -133,6 +133,34 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
     end
   end
 
+  describe "GET #confirm_status_change" do
+    it "switches the status without saving" do
+      get :confirm_status_change, id: group.id
+      expect(response).to be_success
+      expect(assigns(:group).status.to_sym).to be :closed
+      expect(assigns(:group)).to be_changed
+    end
+    it "gives a 404 if the instance does not match" do
+      get :confirm_status_change, id: other_group.id
+      expect(response.status).to be 404
+    end
+  end
+  describe "PUT #change_status" do
+    it "updates the status and redirects to the group page" do
+      put :change_status, id: group.id, group: { status: "closed" }
+      expect(response).to redirect_to(group)
+      expect(group.reload).to be_closed
+    end
+    it "renders the confirm_change_status view when validation fails" do
+      put :change_status, id: group.id, group: { status: "invalid" }
+      expect(response).to render_template("confirm_status_change")
+    end
+    it "gives a 404 if the instance does not match" do
+      put :change_status, id: other_group.id
+      expect(response.status).to be 404
+    end
+  end
+
   describe "GET #confirm_destroy" do
     it "is successful" do
       get :confirm_destroy, id: group.id
