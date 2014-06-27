@@ -26,6 +26,23 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       expect(assigns(:groups)).to eq [children.first]
     end
   end
+  
+  describe "GET #closed" do
+    let!(:closed_groups) { create_list(:group, 2, status: :closed) }
+    let!(:open_groups) { create_list(:group, 1, status: :open) }
+
+
+    it "lists closed groups" do
+      get :closed
+      expect(response).to be_successful
+      expect(assigns(:groups)).to match_array(closed_groups)
+    end
+    it "filters all closed groups" do
+      get :closed, q: { name_cont: closed_groups.first.name }
+      expect(response).to be_successful
+      expect(assigns(:groups)).to eq [closed_groups.first]
+    end
+  end
 
   describe "GET #show" do
     it "is successful" do
@@ -39,9 +56,10 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
   end
 
   describe "GET #search" do
-    let(:grandparent) { create(:group) }
-    let(:parent)      { create(:group, parent: grandparent) }
-    let(:group)       { create(:group, parent: parent) }
+    let(:grandparent)  { create(:group) }
+    let(:parent)       { create(:group, parent: grandparent) }
+    let(:group)        { create(:group, parent: parent) }
+    let(:closed_group) { create(:group, status: :closed) }
 
     let!(:non_instance_group) { create(:group, name: group.name, instance: instance) }
 
@@ -57,6 +75,16 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       expect(json["results"].first).to include("id"   => group.id)
       expect(json["results"].first).to include("text" => "#{group.name}, #{parent.name}, #{grandparent.name}")
     end
+
+    it "returns no closed groups" do
+      get :search, q: { name_cont: closed_group.name }
+
+      expect(response).to be_success
+      json = JSON.parse(response.body)
+
+      expect(json["results"]).to have(0).items
+    end
+
   end
 
   describe "GET #new" do

@@ -31,36 +31,10 @@
       .btn-student
         %a.btn.btn-small{href: select_groups_student_path(@student)}= t(:".select_groups_action")
 
-    - unless @student.groups.blank?
-      = form_for @student,
-          url: remove_groups_student_path(@student),
-          html: { class: "prevent-navigation-confirmation" },
-          method: :delete do |f|
+    = render partial: "groups", locals: { student: @student, status: :open }
 
-        %table.table.table-striped.groups-table
-          %thead
-            %tr
-              - if can? :update, @student
-                %th.select &nbsp;
-              %th.name= Group.human_attribute_name(:name)
-              - if can? :show, Group
-                %th.actions &nbsp;
-          %tbody
-            - @student.groups.each do |group|
-              %tr
-                - if can? :update, @student
-                  %td.select
-                    = check_box_tag "group_ids[]", group.id, false, id: "group_ids_#{group.id}"
-                %td.name
-                  %label(for="group_ids_#{group.id}")
-                    = group.name
-                    %small= [ group.parent.try(:name), group.parent.try(:parent).try(:name) ].compact.join(", ")
-                - if can? :show, Group
-                  %td.actions
-                    %a.btn.btn-mini{href:url_for(group)}= t(:".show_action")
-
-        - if can? :update, :user
-          = submit_tag t(:".remove_groups_action"), class: "btn btn-small btn-danger"
+    %h3= t(:".closed_groups")
+    = render partial: "groups", locals: { student: @student, status: :closed }
 
   .span6
     - if !@student.generic_results.blank? || !@student.suite_results.blank?

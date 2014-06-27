@@ -28,8 +28,12 @@ class Participant < ActiveRecord::Base
     self.student.name
   end
   
-  def group_names
-    self.student.groups.collect(&:name).join(", ")
+  def group_names(status = nil)
+    if status.nil?
+      self.student.groups.collect(&:name).join(", ")
+    else
+      self.student.groups.with_status(status).collect(&:name).join(", ")
+    end
   end
 
   def self.with_gender(gender)

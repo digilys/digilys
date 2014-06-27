@@ -16,6 +16,7 @@ Digilys::Application.routes.draw do
 
   resources :groups do
     collection do
+      get :closed
       get :search
     end
     member do

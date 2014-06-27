@@ -1,0 +1,30 @@
+- unless student.groups.with_status(status).blank?
+  = form_for student,
+      url: remove_groups_student_path(student),
+      html: { class: "prevent-navigation-confirmation" },
+      method: :delete do |f|
+
+    %table.table.table-striped.groups-table
+      %thead
+        %tr
+          - if can? :update, student
+            %th.select &nbsp;
+          %th.name= Group.human_attribute_name(:name)
+          - if can? :show, Group
+            %th.actions &nbsp;
+      %tbody
+        - student.groups.with_status(status).each do |group|
+          %tr
+            - if can? :update, student
+              %td.select
+                = check_box_tag "group_ids[]", group.id, false, id: "group_ids_#{group.id}"
+            %td.name
+              %label(for="group_ids_#{group.id}")
+                = group.name
+                %small= [ group.parent.try(:name), group.parent.try(:parent).try(:name) ].compact.join(", ")
+            - if can? :show, Group
+              %td.actions
+                %a.btn.btn-mini{href:url_for(group)}= t(:".show_action")
+
+    - if can? :update, :user
+      = submit_tag t(:"students.show.remove_groups_action"), class: "btn btn-small btn-danger"

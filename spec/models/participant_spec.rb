@@ -55,6 +55,14 @@ describe Participant do
     before(:each) { student.groups = groups }
     subject { create(:participant, student: student).group_names.split(/\s*,\s*/) } # Split by comma so we can test by comparing arrays
     it { should match_array(groups.collect(&:name)) }
+
+    context "should only return open groups" do
+      let(:closed_groups)  { create_list(:group, 1, status: :closed) }
+      before(:each) { student.groups = groups + closed_groups }
+      subject { create(:participant, student: student).group_names(:open).split(/\s*,\s*/) } # Split by comma so we can test by comparing arrays
+
+      it { should match_array(groups.collect(&:name)) }
+    end
   end
 
   describe ".add_absent_results_for_passed_evaluations" do

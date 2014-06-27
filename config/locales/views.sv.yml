@@ -63,6 +63,7 @@ sv:
       charts: Trender
     show:
       remove_groups_action: Ta bort eleven från de markerade grupperna
+      closed_groups: Avslutade grupper
       stanines: Stanine
     form:
       basic_fields_title: Basinformation
@@ -88,6 +89,7 @@ sv:
     move_students_action: Flytta elever
     select_users_action: Lägg till användare
     copy_action: Kopiera
+    closed_action: Avslutade
     confirm_status_change_for_open: Avsluta
     confirm_status_change_for_closed: Återuppta
     new:
