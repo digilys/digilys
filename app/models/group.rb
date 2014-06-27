@@ -1,4 +1,6 @@
 class Group < ActiveRecord::Base
+  extend Enumerize
+
   belongs_to :instance
   belongs_to :parent,   class_name: "Group"
 
@@ -21,6 +23,8 @@ class Group < ActiveRecord::Base
     :imported,
     :instance,
     :instance_id
+
+  enumerize :status, in: [ :open, :closed ], predicates: true, scope: true, default: :open
 
   validates :name,     presence: true
   validates :instance, presence: true

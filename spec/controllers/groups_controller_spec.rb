@@ -26,6 +26,23 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       expect(assigns(:groups)).to eq [children.first]
     end
   end
+  
+  describe "GET #closed" do
+    let!(:closed_groups) { create_list(:group, 2, status: :closed) }
+    let!(:open_groups) { create_list(:group, 1, status: :open) }
+
+
+    it "lists closed groups" do
+      get :closed
+      expect(response).to be_successful
+      expect(assigns(:groups)).to match_array(closed_groups)
+    end
+    it "filters all closed groups" do
+      get :closed, q: { name_cont: closed_groups.first.name }
+      expect(response).to be_successful
+      expect(assigns(:groups)).to eq [closed_groups.first]
+    end
+  end
 
   describe "GET #show" do
     it "is successful" do
@@ -39,9 +56,10 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
   end
 
   describe "GET #search" do
-    let(:grandparent) { create(:group) }
-    let(:parent)      { create(:group, parent: grandparent) }
-    let(:group)       { create(:group, parent: parent) }
+    let(:grandparent)  { create(:group) }
+    let(:parent)       { create(:group, parent: grandparent) }
+    let(:group)        { create(:group, parent: parent) }
+    let(:closed_group) { create(:group, status: :closed) }
 
     let!(:non_instance_group) { create(:group, name: group.name, instance: instance) }
 
@@ -57,6 +75,16 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       expect(json["results"].first).to include("id"   => group.id)
       expect(json["results"].first).to include("text" => "#{group.name}, #{parent.name}, #{grandparent.name}")
     end
+
+    it "returns no closed groups" do
+      get :search, q: { name_cont: closed_group.name }
+
+      expect(response).to be_success
+      json = JSON.parse(response.body)
+
+      expect(json["results"]).to have(0).items
+    end
+
   end
 
   describe "GET #new" do
@@ -130,6 +158,34 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
     it "prevents changing the instance" do
       put :update, id: group.id, group: { instance_id: instance.id }
       expect(group.reload.instance).not_to eq instance
+    end
+  end
+
+  describe "GET #confirm_status_change" do
+    it "switches the status without saving" do
+      get :confirm_status_change, id: group.id
+      expect(response).to be_success
+      expect(assigns(:group).status.to_sym).to be :closed
+      expect(assigns(:group)).to be_changed
+    end
+    it "gives a 404 if the instance does not match" do
+      get :confirm_status_change, id: other_group.id
+      expect(response.status).to be 404
+    end
+  end
+  describe "PUT #change_status" do
+    it "updates the status and redirects to the group page" do
+      put :change_status, id: group.id, group: { status: "closed" }
+      expect(response).to redirect_to(group)
+      expect(group.reload).to be_closed
+    end
+    it "renders the confirm_change_status view when validation fails" do
+      put :change_status, id: group.id, group: { status: "invalid" }
+      expect(response).to render_template("confirm_status_change")
+    end
+    it "gives a 404 if the instance does not match" do
+      put :change_status, id: other_group.id
+      expect(response.status).to be 404
     end
   end
 
