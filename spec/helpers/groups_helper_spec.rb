@@ -45,4 +45,21 @@ describe GroupsHelper do
       it      { should have_content(top2.name) }
     end
   end
+
+  describe "#status_from_action" do
+    
+    it "returns :open when there are no parameters" do
+      expect(helper.status_from_action).to eq(:open)
+    end
+    
+    it "returns :open when index is passed as action" do
+      helper.stub(:params).and_return({:action => :index})
+      expect(helper.status_from_action).to eq(:open)
+    end
+    
+    it "returns :closed when closed is passed as action" do
+      helper.stub(:params).and_return({:action => :closed})
+      expect(helper.status_from_action).to eq(:closed)
+    end
+  end
 end

@@ -14,7 +14,7 @@
       - @groups.each do |g|
         = render partial: "group_row", locals: { group: g }
     - else
-      = render_group_tree(@groups)
+      = render_group_tree(@groups, status_from_action)
   %tbody
 
 = paginate(@groups)

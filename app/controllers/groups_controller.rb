@@ -148,7 +148,13 @@ class GroupsController < ApplicationController
 
     if has_search_param?
       @groups = @groups.search(params[:q]).result
-    else
+
+    elsif status == :open
+
+      # The reason for only getting groups without parents when
+      # we are looking for open groups, is that we need to get
+      # hold of all sub groups that are closed.
+
       @groups = @groups.top_level
     end
 
