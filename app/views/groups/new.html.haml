@@ -2,4 +2,10 @@
 
 = render partial: "navigation", locals: { active: :new }
 
-= render partial: "form", object: @group, as: :group
+- if @copy_from
+  .alert.alert-info
+    = t :".copy_from_info_html",
+      name: @copy_from.name,
+      link: link_to(@copy_from.name, @copy_from)
+
+= render partial: "form", object: @group, as: :group, locals: { copy_from: @copy_from }

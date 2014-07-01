@@ -16,10 +16,13 @@ Digilys::Application.routes.draw do
 
   resources :groups do
     collection do
+      get :closed
       get :search
     end
     member do
       get    :confirm_destroy
+      get    :confirm_status_change
+      put    :change_status
       get    :select_students
       put    :add_students
       get    :move_students

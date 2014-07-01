@@ -1,6 +1,6 @@
 %h1= Group.model_name.human(count: 2)
 
-= render partial: "navigation", locals: { active: :index }
+= render partial: "navigation", locals: { active: params[:action].to_sym }
 
 = simple_search_form(:name_cont)
 
@@ -14,7 +14,7 @@
       - @groups.each do |g|
         = render partial: "group_row", locals: { group: g }
     - else
-      = render_group_tree(@groups)
+      = render_group_tree(@groups, status_from_action)
   %tbody
 
 = paginate(@groups)

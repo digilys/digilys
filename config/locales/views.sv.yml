@@ -63,6 +63,7 @@ sv:
       charts: Trender
     show:
       remove_groups_action: Ta bort eleven från de markerade grupperna
+      closed_groups: Avslutade grupper
       stanines: Stanine
     form:
       basic_fields_title: Basinformation
@@ -87,6 +88,12 @@ sv:
     select_students_action: Lägg till elever
     move_students_action: Flytta elever
     select_users_action: Lägg till användare
+    copy_action: Kopiera
+    closed_action: Avslutade
+    confirm_status_change_for_open: Avsluta
+    confirm_status_change_for_closed: Återuppta
+    new:
+      copy_from_info_html: Du har valt att kopiera %{link}. När du skapar den nya gruppen kommer alla elever från %{name} att läggas till i den nya gruppen.
     form:
       parent_placeholder: Sök och välj en grupp
     show:
@@ -100,6 +107,17 @@ sv:
       confirmation: Är du säker på att du vill radera gruppen?
     destroy:
       success: Gruppen raderades
+    confirm_status_change:
+      message:
+        open: Om du återupptar gruppen flyttas den från avslutade grupper till aktiva. Det kommer åter vara möjligt att arbeta som vanligt i gruppen.
+        closed: Om du avslutar gruppen flyttas den från aktiva grupper till avslutade. Det är inte rekommenderat att ändra gruppen efter att den avslutats.
+      change_status_action:
+        closed: Avsluta
+        open: Återuppta
+    change_status:
+      success:
+        closed: Gruppen avslutades
+        open: Gruppen återupptogs
     select_students:
       students_placeholder: Sök och välj en eller flera elever
     add_students:

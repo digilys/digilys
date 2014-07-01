@@ -15,6 +15,6 @@
       %tr
         %td.name= link_to(student_name(student), student)
         %td.groups
-          %small= student.groups.collect(&:name).join(", ")
+          %small= student.groups.with_status(:open).collect(&:name).join(", ")
 
 = paginate(@students)

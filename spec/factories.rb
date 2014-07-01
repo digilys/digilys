@@ -46,6 +46,7 @@ FactoryGirl.define do
 
   factory :group do
     instance { Instance.order(:id).first || create(:instance) }
+    status              :open
 
     sequence(:name) { |i| "Group %09d" % i }
     parent          nil

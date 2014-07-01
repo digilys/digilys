@@ -1,0 +1,16 @@
+%h1
+  = @group.name
+  %small= Group.model_name.human
+
+= render partial: "navigation", locals: { group: @group, active: :confirm_status_change }
+
+= semantic_form_for @group, url: change_status_group_path(@group), method: :put do |f|
+
+  = f.hidden_field :status
+
+  .alert.alert-block.alert-warning
+    %p= t(:".message.#{@group.status}")
+
+  = f.actions do
+    = f.action :submit, label: t(:".change_status_action.#{@group.status}"), button_html: { class: "btn btn-warning"}
+    %a.btn{href:group_path(@group)}= t(:".cancel_action")

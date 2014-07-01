@@ -4,22 +4,19 @@ class GroupsController < ApplicationController
   before_filter :instance_filter
 
   def index
-    @groups = @groups.order(:name)
+    list(:open)
+  end
 
-    if has_search_param?
-      @groups = @groups.search(params[:q]).result
-    else
-      @groups = @groups.top_level
-    end
-
-    @groups = @groups.page(params[:page])
+  def closed
+    list(:closed)
+    render action: "index"
   end
 
   def show
   end
 
   def search
-    @groups        = @groups.with_parents(2, true).search(params[:q]).result.page(params[:page])
+    @groups        = @groups.with_status(:open).with_parents(2, true).search(params[:q]).result.page(params[:page])
     json           = {}
     json[:results] = @groups.collect { |s|
       text = [ s.name, s.parent.try(:name), s.parent.try(:parent).try(:name) ].compact.join(", ")
@@ -31,12 +28,15 @@ class GroupsController < ApplicationController
   end
 
   def new
+    @copy_from = Group.find(params[:copy_from]) if params[:copy_from]
   end
 
   def create
     @group.instance = current_instance
+    @copy_from = Group.find(params[:copy_from]) if params[:copy_from]
 
     if @group.save
+      @group.add_students(@copy_from.students) if @copy_from
       flash[:success] = t(:"groups.create.success")
       redirect_to @group
     else
@@ -56,6 +56,21 @@ class GroupsController < ApplicationController
       redirect_to @group
     else
       render action: "edit"
+    end
+  end
+
+  def confirm_status_change
+    @group.status = @group.open? ? :closed : :open
+  end
+  
+  def change_status
+    @group.status = params[:group][:status].to_sym
+
+    if @group.save
+      flash[:success] = t(:"groups.change_status.success.#{@group.status}")
+      redirect_to @group
+    else
+      render action: "confirm_status_change"
     end
   end
 
@@ -126,5 +141,23 @@ class GroupsController < ApplicationController
     elsif @group && !@group.new_record?
       raise ActiveRecord::RecordNotFound unless @group.instance_id == current_instance_id
     end
+  end
+
+  def list(status)
+    @groups = @groups.with_status(status).order(:name)
+
+    if has_search_param?
+      @groups = @groups.search(params[:q]).result
+
+    elsif status == :open
+
+      # The reason for only getting groups without parents when
+      # we are looking for open groups, is that we need to get
+      # hold of all sub groups that are closed.
+
+      @groups = @groups.top_level
+    end
+
+    @groups = @groups.page(params[:page])
   end
 end

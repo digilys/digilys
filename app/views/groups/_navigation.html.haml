@@ -23,9 +23,15 @@
 
     %li.secondaries
       %ul.nav.nav-tabs.nav-split
+        %li{class: active_if(active == :new)}
+          %a{href:new_group_path(copy_from: group.id)}= t(:".copy_action")
         - if can? :edit, group
           %li{class: active_if(active == :edit)}
             %a{href:edit_group_path(group)}= t(:".edit_action")
+        - if can?(:change_status, group)
+          %li{class: active_if(active == :confirm_status_change)}
+            %a{href:confirm_status_change_group_path(group)}
+              = t(:".confirm_status_change_for_#{group.status_changed? ? group.status_was : group.status}")
         - if can? :destroy, group
           %li{class: active_if(active == :destroy)}
             %a{href:confirm_destroy_group_path(group)}= t(:".destroy_action")
@@ -35,5 +41,7 @@
       %ul.nav.nav-tabs.nav-split
         %li{class: active_if(active == :index)}
           %a{href:groups_path()}= t(:".index_action")
+        %li{class: active_if(active == :closed)}
+          %a{href:closed_groups_path()}= t(:".closed_action")
         %li{class: active_if(active == :new)}
           %a{href:new_group_path()}= t(:".new_action")
