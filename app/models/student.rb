@@ -44,7 +44,7 @@ class Student < ActiveRecord::Base
     :instance,
     :instance_id
 
-  validates :personal_id, presence: true, uniqueness: true
+  validates :personal_id, presence: true, uniqueness: {:scope => :instance_id}
   validates :first_name,  presence: true
   validates :last_name,   presence: true
   validates :instance,    presence: true
