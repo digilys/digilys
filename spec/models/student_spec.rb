@@ -21,12 +21,22 @@ describe Student do
   end
   context "validation" do
     it { should validate_presence_of(:personal_id) }
-    it { should validate_uniqueness_of(:personal_id) }
+    it { should validate_uniqueness_of(:personal_id).scoped_to(:instance_id) }
     it { should validate_presence_of(:first_name) }
     it { should validate_presence_of(:last_name) }
     it { should validate_presence_of(:instance) }
     it { should ensure_inclusion_of(:gender).in_array(%w(male female)) }
     it { should_not allow_value(nil).for(:gender)}
+
+    context "same personal_id in two different instances" do
+      let(:instance1) { create(:instance) }
+      let(:instance2) { create(:instance) }
+      let(:student1) { create(:student, instance: instance1, personal_id: "foo") }
+      let(:student2) { build(:student, instance: instance2, personal_id: "foo") }
+
+      it { expect(student2.save!).to be_true }
+    end
+
   end
   context ".validate_data_text" do
     it { should allow_value(nil).for(:data_text) }
