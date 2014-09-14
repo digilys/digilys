@@ -41,6 +41,22 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
         expect(assigns(:suites)).to eq [regular_suites.first]
       end
     end
+
+    context "with a regular user with multiple roles, fix for #203" do
+      login_user(:user)
+
+      before(:each) do
+        logged_in_user.grant :suite_member, regular_suites.first
+        logged_in_user.grant :suite_manager, regular_suites.first
+      end
+
+      it "lists regular suites accessible by the user without dublicates" do
+        get :index
+        expect(response).to be_success
+        expect(assigns(:suites)).to eq [regular_suites.first]
+      end
+    end
+
   end
 
   describe "GET #closed" do
