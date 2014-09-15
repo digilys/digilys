@@ -163,7 +163,8 @@ class SuitesController < ApplicationController
 
   def list(status)
     if !current_user.has_role?(:admin)
-      @suites = @suites.with_role([:suite_manager, :suite_member], current_user)
+      # Needs to be unique in case a user have multiple roles for the same resource
+      @suites = @suites.with_role([:suite_manager, :suite_member], current_user).uniq
     end
 
     @suites = @suites.regular.with_status(status).order(:name)
