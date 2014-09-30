@@ -34,6 +34,11 @@ class ColorTable
         @grid.onColumnsResized.subscribe   @stateChange
         @grid.onColumnsReordered.subscribe @stateChange
 
+	# Hide all tooltips when a user reorders some columns. This is a fix
+	# for #214 where the tooltip sometimes got stuck after a reorder.
+        @grid.onColumnsReordered.subscribe (e, args) =>
+            $(".tooltip").hide()
+
         # Refreshing
         @dataView.onRowsChanged.subscribe (e, args)     => redrawRows.call(this, args.rows)
         @dataView.onRowCountChanged.subscribe (e, args) => redrawRows.call(this, args.rows)
