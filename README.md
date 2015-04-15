@@ -32,9 +32,18 @@ The application is a standard Ruby on Rails application.
    in `config/app/base.yml`
  * `bundle install`
  * `rake app:bootstrap app:create_admin`
-    * Take a look in `db/seeds` for development seeds. Run them using
+ * Take a look in `db/seeds` for development seeds. Run them using
     `rails runner db/seeds/file.rb`.
  * `rails server`
+
+### Development using Vagrant
+
+Dependencies: Virtualbox and Vagrant
+
+* `vagrant up`
+* `vagrant ssh`
+* `rake db:create db:setup`
+* Follow the instructions above
 
 ## Configuration
 
