@@ -7,43 +7,7 @@
 = semantic_form_for :evaluation,
   url: submit_report_all_suite_evaluations_path(@suite),
   html: { id: "multiple-result-entry-form", class: "masked-on-submit" } do |f|
-
-  %table.table.table-striped
-    %thead
-      %tr
-        %th
-        - @evaluations.each do |evaluation|
-          %th= evaluation.name
-    %tbody
-      %tr.max-results
-        %td.name= Evaluation.human_attribute_name(:max_result)
-        - @evaluations.each do |evaluation|
-          %td
-            %input.max-result.input-mini{disabled: "disabled",
-              type: "number",
-              value: evaluation.max_result }
-      - @participants.each do |participant|
-        %tr
-          %td.name= participant.name
-          - @evaluations.each do |evaluation|
-            %td.control-group
-              - if result = evaluation.results.detect { |r| r.student_id == participant.student_id }
-                %input.input-mini{name: "results[#{evaluation.id}][#{participant.student_id}]",
-                  type: "number",
-                  id: "results_#{evaluation.id}_#{participant.student_id}_value",
-                  min: 0,
-                  max: evaluation.max_result,
-                  value: result.value || "",
-                  disabled: result.absent,
-                  data: { "error-message" => t(:".result_error_message") }}
-                .absent
-                  %label{for: "results_#{evaluation.id}_#{participant.student_id}_absent",
-                    class: "checkbox" }
-                    = check_box_tag("results[#{evaluation.id}][#{participant.student_id}]",
-                      "absent",
-                      result.absent,
-                      id: "results_#{evaluation.id}_#{participant.student_id}_absent")
-                    = t(:".absent")
+  =render partial: "results", locals: { groups: @groups, evaluations: @evaluations }
 
   = f.actions do
     = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary", tabindex: 3 }

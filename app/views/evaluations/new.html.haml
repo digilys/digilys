@@ -4,4 +4,4 @@
 
 = closed_suite_message(@evaluation.suite)
 
-= render partial: "form", object: @evaluation, as: :evaluation
+= render partial: "form", object: @evaluation, as: :evaluation, locals: { suite: @suite, evaluations: @evaluations }

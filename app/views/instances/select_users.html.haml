@@ -1,0 +1,25 @@
+%h1
+  = t(:".title")
+  %small= @instance.name
+
+= semantic_form_for :instance,
+  url: add_users_instance_path(@instance),
+  method: :put,
+  html: { id: "select-users-form" } do |f|
+
+  %p= t(:".info")
+
+  = f.inputs do
+    = f.input :user_id,
+      value: nil,
+      as: :hidden,
+      input_html: { class: "user-autocomplete-field span8",
+        data: { url: search_users_path(format: :json),
+          data: @instance.users_select2_data.to_json,
+          multiple: true,
+          autofocus: true,
+          placeholder: t(:".users_placeholder") } }
+
+  = f.actions do
+    = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
+    %a.btn{href:url_for(@instance)}= t(:".cancel_action")

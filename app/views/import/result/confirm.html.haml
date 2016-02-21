@@ -1,0 +1,96 @@
+.page-header
+  %h1
+    = t(:".import")
+    %small= t(:".result")
+
+- if @importer.valid?
+  .alert.alert-block.alert-success
+    = t(:".correct_data")
+
+  -if !@importer.old_values.empty?
+    .alert.alert-block.alert-errors
+      = t(:".will_override_values")
+
+  = form_tag({ action: "create" }, { method: :post }) do
+    .row
+      .span6
+        %table.table.table-condensed.import-confirmation-list{class: "#{"table-striped"}"}
+          %thead
+            %tr
+              %th.name
+                = Student.human_attribute_name(:name)
+              %th.result
+                = Result.human_attribute_name(:value)
+              %th.prev_result
+                = t(".old_value")
+          %tbody
+            - @results.each do |rf|
+              %tr
+                %td
+                  = rf.student.name
+                %td
+                  = rf.value
+                %td
+                  - if @importer.old_values.has_key?(rf.id)
+                    = @importer.old_values[rf.id]
+
+    = hidden_field_tag :filename, @filename
+
+    = hidden_field_tag :evaluation, @evaluation.id
+
+    .form-actions
+      = submit_tag t(:".import"), class: "btn btn-success", name: nil
+      = link_to t(:".cancel_action"), new_import_result_path(), class: "btn"
+
+- else
+  .alert.alert-block.alert-errors
+    = t(:".errors_found")
+
+  - if !@importer.invalid_students.blank?
+    .row12
+      .alert.alert-error.alert-block.alert-errors= t(:".students_not_found", evaluation_name: @evaluation.name)
+      %table.table.table-condensed
+        %thead
+          %tr
+            %th.personal_id= Student.human_attribute_name(:personal_id)
+        %tbody
+          - @importer.invalid_students.each do |s|
+            %tr
+              %td.personal_id= s
+
+    .row12
+      %h4= t(:".registered_students", evaluation_name: @evaluation.name)
+      %table.table.table-condensed
+        %thead
+          %tr
+            %th.first_name=  Student.human_attribute_name(:first_name)
+            %th.last_name=   Student.human_attribute_name(:last_name)
+            %th.personal_id= Student.human_attribute_name(:personal_id)
+        %tbody
+          - @evaluation.participants.each do |p|
+            %tr
+              %td.first_name=  p.student.first_name
+              %td.last_name=   p.student.last_name
+              %td.personal_id= p.student.personal_id
+
+  - if !@importer.invalid_results.blank?
+    .row12
+      .alert.alert-error.alert-block.alert-errors= t(:".invalid_results")
+      - @importer.invalid_results.each do |r|
+        - r
+      %table.table.table-condensed.import-confirmation-list
+        %thead
+          %tr
+            %th.personal_id= Student.human_attribute_name(:personal_id)
+            %th.result= t(:".result")
+            %th.error= t(:".error_msg")
+        %tbody
+          - @importer.invalid_results.each do |d|
+            - a = d[:attributes]
+            %tr
+              %td.personal_id= a[:personal_id]
+              %td.result= a[:result]
+              %td.error
+                %ul
+                  - d[:model].errors.full_messages.each do |err|
+                    %li= err

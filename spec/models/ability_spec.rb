@@ -48,11 +48,42 @@ describe Ability do
       it { should_not be_able_to(:select, not_member_of) }
       it { should     be_able_to(:select, member_of) }
     end
+
+    context "Instance admin" do
+      let!(:user)      { create(:user) }
+      let!(:instance)  { create(:instance, admin: user) }
+      let!(:suite)     { create(:suite, instance: instance) }
+      let!(:template_suite)     { create(:suite, instance: instance, is_template: true) }
+      let!(:evaluation){ create(:suite_evaluation, suite: suite) }
+      before(:each) do
+        user.active_instance = instance
+        user.save
+      end
+      subject(:ability) { Ability.new(user) }
+      it              { should be_able_to(:import, Instance) }
+      it              { should be_able_to(:manage, User) }
+      it              { should be_able_to(:view, User) }
+      it              { should be_able_to(:manage, User) }
+      it              { should be_able_to(:create, User) }
+      it              { should be_able_to(:change, User) }
+      it              { should be_able_to(:view, User) }
+      it              { should be_able_to(:edit, User) }
+      it              { should_not be_able_to(:destroy, User) }
+      it              { should_not be_able_to(:manage, Role) }
+      it              { should be_able_to(:edit, user) }
+      it              { should be_able_to(:manage, suite) }
+      it              { should_not be_able_to(:destroy, suite) }
+      it              { should_not be_able_to(:manage, template_suite) }
+      it              { should_not be_able_to(:destroy, template_suite) }
+    end
   end
 
   context "Admin" do
     let(:user) { create(:admin) }
     it         { should be_able_to(:manage, :all) }
+    it         { should be_able_to(:import, :all) }
+    it         { should be_able_to(:import, Instance) }
+    it         { should be_able_to(:manage, Role) }
   end
 
   context "Superuser" do
@@ -60,6 +91,8 @@ describe Ability do
 
     it { should     be_able_to(:manage,  Student) }
     it { should_not be_able_to(:destroy, Student) }
+
+    it { should be_able_to(:manage, Role) }
 
     it { should     be_able_to(:manage,  Group) }
 

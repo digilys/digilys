@@ -1,8 +1,8 @@
 %table.table.table-bordered.table-hover.table-striped.suite-associations-table
   %tbody
     %tr
-      %th(colspan="2")= Evaluation.model_name.human(count: 2)
-    - suite.evaluations.each do |evaluation|
+      %th(colspan="3")= Evaluation.model_name.human(count: 2)
+    - suite.evaluations.order(:created_at).each do |evaluation|
       %tr
         %td.name
           = evaluation.name
@@ -14,9 +14,20 @@
             %a.btn.btn-mini{href: evaluation_path(evaluation)}=                            t(:".show_action")
             %a.btn.btn-mini{href: edit_evaluation_path(evaluation)}=                       t(:".edit_action")
             %a.btn.btn-mini.btn-danger{href: confirm_destroy_evaluation_path(evaluation)}= t(:".destroy_action")
+        %td.position
+          .btn-group
+            - unless evaluation.last?
+              = link_to t(:".move_down"), suite_evaluation_move_down_path(suite, evaluation), { :action => :move_down, :method => :put, :class => "btn btn-mini" }
+            - unless suite.evaluations.first.position == evaluation.position
+              = link_to t(:".move_up"), suite_evaluation_move_up_path(suite, evaluation), { :action => :move_up, :method => :put, :class => "btn btn-mini" }
+            - unless evaluation.last?
+              = link_to t(:".move_to_bottom"), suite_evaluation_move_to_bottom_path(suite, evaluation), { :action => :move_to_bottom, :method => :put, :class => "btn btn-mini" }
+            - unless suite.evaluations.first.position == evaluation.position
+              = link_to t(:".move_to_top"), suite_evaluation_move_to_top_path(suite, evaluation), { :action => :move_to_top, :method => :put, :class => "btn btn-mini" }
+
     %tr
-      %th(colspan="2")= Meeting.model_name.human(count: 2)
-    - suite.meetings.each do |meeting|
+      %th(colspan="3")= Meeting.model_name.human(count: 2)
+    - suite.meetings.order(:created_at).each do |meeting|
       %tr
         %td.name= meeting.name
         %td.actions

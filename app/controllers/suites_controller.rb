@@ -4,6 +4,7 @@ class SuitesController < ApplicationController
   before_filter :load_from_template,                only: :new_from_template
 
   load_and_authorize_resource
+  skip_load_resource :only => :restore
 
   before_filter :instance_filter
 
@@ -63,6 +64,10 @@ class SuitesController < ApplicationController
       @suite.participants.build
       render action: "new"
     end
+
+    current_instance.users.each do |user|
+      user.add_role :suite_member, @suite
+    end
   end
 
   def edit
@@ -106,6 +111,13 @@ class SuitesController < ApplicationController
     end
   end
 
+  def restore
+    suite = Suite.find_in_trash(params[:id])
+    suite.evaluations.deleted.map { |e| e.restore }
+    suite.restore
+    flash[:success] = t(:"suites.restore.success.#{suite.is_template? ? "template" : "regular"}")
+    redirect_to trash_index_path
+  end
 
   def select_users
   end
@@ -158,6 +170,25 @@ class SuitesController < ApplicationController
     render json: {status: "ok"}
   end
 
+  def move_down
+    Evaluation.find(params[:evaluation_id]).move_lower
+    redirect_to Suite.find(params[:suite_id])
+  end
+
+  def move_up
+    Evaluation.find(params[:evaluation_id]).move_higher
+    redirect_to Suite.find(params[:suite_id])
+  end
+
+  def move_to_top
+    Evaluation.find(params[:evaluation_id]).move_to_top
+    redirect_to Suite.find(params[:suite_id])
+  end
+
+  def move_to_bottom
+    Evaluation.find(params[:evaluation_id]).move_to_bottom
+    redirect_to Suite.find(params[:suite_id])
+  end
 
   private
 
@@ -201,9 +232,8 @@ class SuitesController < ApplicationController
   end
 
   def instance_filter
-    if @suites
-      @suites = @suites.where(instance_id: current_instance_id)
-    elsif @suite && !@suite.new_record?
+    @suites = Suite.where(instance_id: current_instance_id)
+    if @suite && !@suite.new_record?
       raise ActiveRecord::RecordNotFound unless @suite.instance_id == current_instance_id
     end
   end

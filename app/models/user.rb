@@ -2,13 +2,13 @@ class User < ActiveRecord::Base
   rolify
 
   devise :"#{Conf.yubikey ? "yubikey_" : ""}database_authenticatable",
-    :registerable,
     :trackable,
     :validatable
 
   has_and_belongs_to_many :groups,     order: "groups.name asc"
   has_and_belongs_to_many :activities
   has_and_belongs_to_many :evaluations
+  has_and_belongs_to_many :instances
 
   has_many :settings, as: :customizer, dependent: :destroy
 
@@ -22,6 +22,7 @@ class User < ActiveRecord::Base
     :role_ids,
     :name,
     :active_instance_id,
+    :instance_ids,
     :name_ordering
 
   validates :name, presence: true
@@ -49,6 +50,17 @@ class User < ActiveRecord::Base
     where(invisible: false)
   end
 
+  def is_administrator?
+    return has_any_role?(:admin, :superuser)
+  end
+
+  def is_admin_of?(instance)
+    return instance.admin == self unless instance.nil? || instance.admin.nil?
+  end
+
+  def is_admin?
+    return Instance.where(:user_id => self).any?
+  end
 
   def save_setting!(customizable, data)
     setting   = self.settings.for(customizable).first

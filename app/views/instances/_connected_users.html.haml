@@ -1,0 +1,17 @@
+%table.table.table-striped.users-table.suite-users-table
+  %tbody
+    - instance.users.each do |user|
+      %tr
+        %td.email
+          = user.name
+
+        %td.actions
+          - if user.has_role(:admin)
+            = semantic_form_for :instance,
+              url: remove_users_instance_path(instance),
+              method: :delete,
+              html: { id: "remove-user-#{user.id}-form" } do |f|
+
+              = f.hidden_field :user_id, value: user.id
+              .btn-group
+                = f.submit t(:".remove_user_action"), class: "btn btn-mini btn-danger", data: { confirm: "#{t(:".users.confirm_destroy_user_message").html_safe}" }

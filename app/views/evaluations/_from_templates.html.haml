@@ -1,0 +1,16 @@
+= semantic_form_for @suite, html: { class: "form-horizontal" } do |f|
+  = f.fields_for :evaluations, @evaluations do |ef|
+    = ef.hidden_field :template_id
+    = ef.hidden_field :type
+    = ef.hidden_field :description
+    = ef.hidden_field :category_list
+    = ef.hidden_field :max_result
+    = ef.hidden_field :colors_serialized
+    = ef.hidden_field :stanines_serialized
+    = ef.hidden_field :series_id, value: ef.object.series_name if ef.object.series_id
+
+    = ef.input :name,                              input_html: { required: true }
+    = ef.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }
+  = f.actions do
+    = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
+    %a.btn{href:@suite.new_record? ? suites_path() : url_for(@suite)}= t(:".cancel_action")

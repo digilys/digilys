@@ -13,7 +13,7 @@
           = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
           %a.btn{href:suite.new_record? ? suites_path() : url_for(suite)}= t(:".cancel_action")
 
-  - if suite.new_record? 
+  - if suite.new_record?
     - if !suite.is_template?
       - if suite.template
         = f.inputs Evaluation.model_name.human(count: 2) do
@@ -30,7 +30,7 @@
             = ef.input :name,                              input_html: { readonly: true }
             = ef.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }
 
-        = f.inputs Meeting.model_name.human(count: 2) do 
+        = f.inputs Meeting.model_name.human(count: 2) do
           = f.inputs for: :meetings do |mf|
             = mf.hidden_field :agenda
 
@@ -68,4 +68,7 @@
 
   = f.actions do
     = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
-    %a.btn{href:suite.new_record? ? suites_path() : url_for(suite)}= t(:".cancel_action")
+    - if suite.is_template?
+      %a.btn{href:suite.new_record? ? template_suites_path() : url_for(suite)}= t(:".cancel_action")
+    - else
+      %a.btn{href:suite.new_record? ? suites_path() : url_for(suite)}= t(:".cancel_action")

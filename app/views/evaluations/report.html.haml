@@ -6,32 +6,10 @@
 
 = closed_suite_message(@suite)
 
-= semantic_form_for @evaluation,
-  url: submit_report_evaluation_path(@evaluation),
-  html: { id: "result-entry-form", class: "form-horizontal masked-on-submit" } do |f|
-
-  .row
-    .span6
-      = f.input :max_result, input_html: { disabled: true, class: "span9" }
-
-  - first = true
-  = f.inputs for: :results do |rf|
-    .row
-      .span6
-        = rf.input :value,
-          label: student_name(rf.object.student),
-          input_html: { autofocus: first,
-            tabindex: 1,
-            disabled: rf.object.absent,
-            class: "span9",
-            data: { "error-message" => t(:".result_error_message") } }
-      .span4
-        = rf.input :absent, wrapper_html: { class: "secondary-controls" }, input_html: { tabindex: 2 }
-
-    = rf.hidden_field :student_id
-    = rf.hidden_field :_destroy, value: 0 if !rf.object.new_record?
-
-    - first = false
+= semantic_form_for :evaluation,
+  url: submit_report_all_suite_evaluations_path(@suite),
+  html: { id: "multiple-result-entry-form", class: "masked-on-submit", multipart: true } do |f|
+  =render partial: "results", locals: { groups: @groups, evaluations: [@evaluation] }
 
   = f.actions do
     = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary", tabindex: 3 }
@@ -41,4 +19,3 @@
       method: :delete,
       class: "btn btn-danger",
       tabindex: 3
-

@@ -1,0 +1,47 @@
+.page-header
+  %h1
+    = t(:".import")
+    %small= t(:".result")
+
+%ul.nav.nav-tabs
+  %li.active
+    %a(href="#upload"               data-toggle="tab")= t(:".import")
+  %li
+    %a(href="#format-specification" data-toggle="tab")= t(:".format_specification")
+
+.tab-content
+  .tab-pane.active#upload
+
+    .alert.alert-block.alert-info
+      = t(:".instruction_html")
+
+    %label= Suite.model_name.human
+    %select{name:'suites', onchange: 'window.location.href = window.location.pathname + "?suites=" + this.value' }
+      - @suites.each do |suite|
+        %option{value: suite.id, selected: suite.id == @selected_suite.id, data: { name: suite.name }}
+          = suite.name
+
+    = form_tag({ action: "confirm" }, { method: :post, multipart: true }) do
+      - if @evaluations
+        .form-group
+          %label= Evaluation.model_name.human
+          %select{name:'evaluation'}
+            - @evaluations.each do |eval|
+              %option{value: eval.id, data: { name: eval.name }}
+                = eval.name
+
+      .fileupload.fileupload-new{data: { provides: "fileupload" }}
+        .input-append
+          .uneditable-input.span3
+            %i.icon-file.fileupload-exists
+            %span.fileupload-preview
+          %span.btn.btn-file
+            %span.fileupload-new= t(:".select_file")
+            %span.fileupload-exists= t(:".change_file")
+            %input{type: "file", name: "csv_file"}
+          %a.btn.fileupload-exists{href: "#", data: { dismiss: "fileupload" } }= t(:".remove_file")
+
+      .form-actions
+        = submit_tag t(:".import"), class: "btn", name: nil
+  .tab-pane#format-specification
+    = t(:".format_specification_html")

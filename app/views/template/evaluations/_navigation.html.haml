@@ -3,8 +3,9 @@
 - content_for :title do
   - t(:".title")
 
-%ul.nav.nav-tabs
-  %li{class: active_if(active == :index)}
-    %a{href:template_evaluations_path()}= t(:".index_action")
-  %li{class: active_if(active == :new)}
-    %a{href:new_template_evaluation_path()}= t(:".new_action")
+.row-fluid
+  .span6
+    .btn-group
+      %a.btn.btn-small{href: new_template_evaluation_path()}= t(:".new_action")
+%br
+

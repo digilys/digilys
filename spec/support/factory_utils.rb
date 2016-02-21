@@ -23,8 +23,14 @@ module FactoryUtils
 
   private
 
+  def required?(obj, attr)
+    target = (obj.class == Class) ? obj : obj.class
+    target.validators_on(attribute).map(&:class).include?(
+          ActiveModel::Validations::PresenceValidator)
+  end
+
   def filter_parameters(model, accessible_attrs)
-    parameters = attributes_for(model)
+    parameters = attributes_for(model).merge build(model).attributes
 
     # Remove attributes that are not accessible and
     # convert active record values to ids

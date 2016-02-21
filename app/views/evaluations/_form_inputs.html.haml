@@ -1,0 +1,66 @@
+= semantic_form_for evaluation,
+  html: { id: "evaluation-form", class: "#{evaluation.new_record? ? "new" : "edit" }" } do |f|
+
+  = f.inputs t(:".basic_info") do
+
+    = f.hidden_field :template_id
+    = f.hidden_field :suite_id
+    = f.hidden_field :type
+
+    .row-fluid
+      .span6
+        = f.input :name, required: true, input_html: { required: true, autofocus: true }
+        = f.input :description, as: :text, input_html: { class: "input-xlarge", rows: 3 }
+        - if evaluation.has_regular_suite?
+          = f.input :date, as: :string, required: true, input_html: { required: true, class: "datepicker" }
+        - if evaluation.type.generic? && evaluation.new_record?
+          = f.input :value_type, include_blank: false
+
+      .span6
+        - unless evaluation.type.generic?
+          = f.input :target, include_blank: false
+        = f.input :category_list,
+          hint: t(:".category_help"),
+          input_html: { class: "tag-field span12",
+          data: { "existing-tags" => Evaluation.all_tags(on: :categories).collect(&:name).to_json } }
+        - if evaluation.type.suite?
+          - series = evaluation.suite.series.collect { |s| { id: s.id, text: s.name } }
+          = f.input :series_id,
+            as: :string,
+            hint: t(:".series_help"),
+            input_html: { class: "editable-select span12",
+            data: { placeholder: t(:".series_placeholder"),
+            data: series.to_json } }
+
+  - if evaluation.type.generic?
+    - if evaluation.new_record? || evaluation.value_type.numeric?
+      = render partial: "evaluations/numeric_fields", locals: { evaluation: evaluation, f: f, hide: !evaluation.value_type.numeric? }
+    - if evaluation.new_record? || evaluation.value_type.boolean?
+      = render partial: "evaluations/boolean_fields", locals: { evaluation: evaluation, f: f, hide: !evaluation.value_type.boolean? }
+    - if evaluation.new_record? || evaluation.value_type.grade?
+      = render partial: "evaluations/grade_fields",   locals: { evaluation: evaluation, f: f, hide: !evaluation.value_type.grade? }
+  - else
+    = render partial: "evaluations/numeric_fields", locals: { evaluation: evaluation, f: f }
+
+    - if evaluation.has_regular_suite?
+      = f.inputs t(:".assign_to") do
+        .alert.alert-info= t(:".assign_to_help")
+        = f.input :students_and_groups,
+          as: :hidden,
+          input_html: { class: "evaluation-participants-autocomplete-field input-xxlarge",
+            data: { url: search_participants_suite_path(evaluation.suite),
+              data: evaluation.students_and_groups_select2_data.to_json,
+              placeholder: t(:".activity_students_placeholder"),
+              multiple: true } }
+        = f.input :user_ids,
+          as: :hidden,
+          input_html: { class: "user-autocomplete-field input-xxlarge",
+            value: nil,
+            data: { url: search_users_path(format: :json),
+              data: evaluation.users_select2_data.to_json,
+              multiple: true,
+              placeholder: t(:".users_placeholder") } }
+
+  = f.actions do
+    = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary"}
+    %a.btn{href:evaluation_cancel_path(evaluation) }= t(:".cancel_action")

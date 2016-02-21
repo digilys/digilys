@@ -5,7 +5,8 @@ describe "shared/_confirm_destroy_form" do
     local(
       entity:      create(:user),
       message:     "Message",
-      cancel_path: "/foo/bar"
+      cancel_path: "/foo/bar",
+      options: {}
     )
   end
   it "renders without errors" do

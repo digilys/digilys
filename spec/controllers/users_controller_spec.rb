@@ -7,9 +7,41 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
 
   let(:user) { create(:user) }
 
+  context "non admin" do
+    login_user(:user)
+    describe "GET #new" do
+      it "should return 401" do
+        get :new
+        expect(response.status).to be 401
+      end
+    end
+    describe "GET #edit" do
+      it "should return 401" do
+        get :edit, id: user
+        expect(response.status).to be 401
+      end
+    end
+    describe "POST #create" do
+      it "should return 401" do
+        post :create, user: valid_parameters_for(:user)
+        expect(response.status).to be 401
+      end
+    end
+  end
+
   describe "GET #index" do
+    login_user(:admin)
     let!(:users)           { create_list(:user,           2) }
     let!(:invisible_users) { create_list(:invisible_user, 2) }
+
+    before(:each) do
+      users.each do |u|
+        u.add_role(:member, logged_in_user.active_instance)
+        u.save
+        logged_in_user.add_role(:member, logged_in_user.active_instance)
+        logged_in_user.save
+      end
+    end
 
     it "lists users in the current instance" do
       get :index
@@ -20,6 +52,22 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
       get :index, q: { name_cont: users.first.name }
       expect(response).to be_successful
       expect(assigns(:users)).to eq [users.first]
+    end
+
+    context "as instance admin" do
+      login_user(:user)
+      let!(:users)           { create_list(:user, 3) }
+      before(:each) do
+        users.first.add_role(:admin)
+        users.second.add_role(:superuser)
+        logged_in_user.active_instance.admin = logged_in_user
+        logged_in_user.active_instance.save
+      end
+      it "does not list admins or superusers" do
+        get :index
+        expect(response).to be_successful
+        expect(assigns(:users)).to match_array([ users.third, logged_in_user ])
+      end
     end
   end
 
@@ -53,6 +101,10 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
     it "is successful" do
       get :edit, id: user.id
       expect(response).to be_success
+    end
+    it "generates a 404 if the user does not exist" do
+      get :edit, id: -1
+      expect(response.status).to be 404
     end
   end
   describe "PUT #update" do
@@ -94,17 +146,53 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
       let(:user) { create(:user, active_instance: instances.first) }
 
       it "changes instances for the user" do
-        put :update, id: user.id, user: { instances: [instances.second.id] }
+        put :update, id: user.id, user: { instance_ids: [instances.second.id] }
         expect(user).to have_role(:member, instances.second)
         expect(user).not_to have_role(:member, instances.first)
       end
       it "changes the active instance if the active instance is removed" do
-        put :update, id: user.id, user: { instances: [instances.second.id] }
+        put :update, id: user.id, user: { instance_ids: [instances.second.id] }
         expect(user.reload.active_instance).to eq instances.second
       end
       it "removes the active instance if all instances are removed" do
-        put :update, id: user.id, user: { instances: [] }
+        put :update, id: user.id, user: { instance_ids: [] }
         expect(user.reload.active_instance).to be_nil
+      end
+
+      context "with previous" do
+        let!(:admin) { create(:user) }
+        let!(:suite_1) { create(:suite, instance: instances.first) }
+        let!(:suite_2) { create(:suite, instance: instances.second) }
+        before(:each) do
+          instances.first.admin = admin
+          instances.first.save
+          user.instances = [instances.first]
+          user.save
+        end
+        it "adds roles to new instances" do
+          put :update, id: user.id, user: { instance_ids: [instances.second] }
+          expect(user.has_role?(:member, instances.second)).to be_true
+        end
+        it "adds roles to new instance suites" do
+          put :update, id: user.id, user: { instance_ids: [instances.second] }
+          expect(user.has_role?(:suite_member, suite_2)).to be_true
+        end
+        it "removes roles from old instances" do
+          put :update, id: user.id, user: { instance_ids: [instances.second] }
+          expect(user.has_role?(:member, instances.first)).to be_false
+        end
+        it "removes roles from old suites" do
+          put :update, id: user.id, user: { instance_ids: [instances.second] }
+          expect(user.has_role?(:suite_member, suite_1)).to be_false
+        end
+        it "do not remove roles if user is admin of instance" do
+          put :update, id: admin.id, user: { instance_ids: [instances.first] }
+          expect(admin.has_role?(:member, instances.first)).to be_true
+          expect(admin.has_role?(:suite_member, suite_1)).to be_true
+          put :update, id: admin.id, user: { instance_ids: [instances.second] }
+          expect(admin.has_role?(:member, instances.first)).to be_true
+          expect(admin.has_role?(:suite_member, suite_1)).to be_true
+        end
       end
 
       context "without previous" do
@@ -116,15 +204,15 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
           user.save
         end
         it "changes instances for the user" do
-          put :update, id: user.id, user: { instances: [instances.second.id] }
+          put :update, id: user.id, user: { instance_ids: [instances.second.id] }
           expect(user).to have_role(:member, instances.second)
         end
         it "changes the active instance if the active instance is removed" do
-          put :update, id: user.id, user: { instances: [instances.second.id] }
+          put :update, id: user.id, user: { instance_ids: [instances.second.id] }
           expect(user.reload.active_instance).to eq instances.second
         end
         it "removes the active instance if all instances are removed" do
-          put :update, id: user.id, user: { instances: [] }
+          put :update, id: user.id, user: { instance_ids: [] }
           expect(user.reload.active_instance).to be_nil
         end
       end
@@ -142,6 +230,54 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
       delete :destroy, id: user.id
       expect(response).to redirect_to(users_url())
       expect(User.exists?(user.id)).to be_false
+    end
+  end
+  describe "GET #new" do
+    it "builds a user" do
+      get :new
+      expect(response).to be_success
+    end
+  end
+  describe "POST #create" do
+    let!(:instance_1) { create(:instance) }
+    let!(:instance_2) { create(:instance) }
+    let!(:suite_1) { create(:suite, instance: instance_1) }
+    let!(:suite_2) { create(:suite, instance: instance_2) }
+
+    it "redirects to users page on success" do
+      post :create, user: valid_parameters_for(:user)
+      expect(response).to redirect_to(users_path)
+    end
+    it "renders the new action on invalid parameters" do
+      post :create, user: invalid_parameters_for(:user)
+      expect(response).to render_template("new")
+    end
+    it "adds instances" do
+      params = valid_parameters_for(:user)
+      params["instance_ids"] = [instance_1.id, instance_2.id]
+      post :create, user: params
+      expect(response).to redirect_to(users_path)
+      expect(User.last.instances.size).to eq 2
+    end
+    it "add roles to instances" do
+      params = valid_parameters_for(:user)
+      params["instance_ids"] = [instance_1.id, instance_2.id]
+      post :create, user: params
+      expect(User.last.has_role?(:member, instance_1)).to be_true
+      expect(User.last.has_role?(:member, instance_2)).to be_true
+    end
+    it "add roles to instance suites" do
+      params = valid_parameters_for(:user)
+      params["instance_ids"] = [instance_1.id, instance_2.id]
+      post :create, user: params
+      expect(User.last.has_role?(:suite_member, suite_1)).to be_true
+      expect(User.last.has_role?(:suite_member, suite_2)).to be_true
+    end
+    it "add roles" do
+      params = valid_parameters_for(:user)
+      params[:role_ids] = [Role.find_by_name("admin").id]
+      post :create, user: params
+      expect(User.last.has_role?(:admin)).to be_true
     end
   end
 end

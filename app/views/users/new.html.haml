@@ -1,0 +1,39 @@
+%h2= t("devise.registrations.sign_up")
+
+= semantic_form_for @user,
+  :url => users_path,
+  html: { id: "users-form" } do |f|
+  - unless @user.errors.empty?
+    .alert.alert-block.alert-errors
+      = t(:".errors_found")
+      - @user.errors.full_messages.each do |err|
+        %li= err
+  = f.inputs do
+    - if Conf.multiple_instances
+      = f.inputs do
+        = f.input :instances,
+          as: :check_boxes,
+          collection: Instance.authorized_instances(current_user),
+          required: true
+    - else
+      = f.input :instances, as: :hidden, required: true, input_html: { value: current_user.active_instance.id }
+    = f.input :active_instance_id, as: :hidden, required: true, input_html: { value: current_user.active_instance.id }
+
+    = f.input :name, :input_html => {:autofocus => true}
+    = f.input :email
+    = f.input :password
+    = f.input :password_confirmation, :required => true
+    = f.input :registered_yubikey, as: :password, hint: Conf.yubikey.hint if Conf.yubikey
+
+    - if can? :manage, Role
+      = f.inputs do
+        = f.input :roles,
+          as: :select,
+          include_blank: User.model_name.human,
+          collection: Role.where(name: %w(admin superuser)).collect { |r| [ t(:"roles.#{r.name}"), r.id ] },
+          input_html: { multiple: false }
+        .alert.alert-box.alert-info
+          = t(:".roles_explanation_html")
+
+  = f.actions do
+    = f.action :submit, :label => t(:".create"), :button_html => { :disable_with => t(:wait) }

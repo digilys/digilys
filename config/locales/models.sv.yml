@@ -48,6 +48,7 @@ sv:
         other: Testserier
     attributes:
       evaluation:
+        deleted_at: Borttagen
         template: Mall
         template_id: Mall
         suite: Planering
@@ -109,6 +110,7 @@ sv:
         group: Grupp
         group_id: Grupp
       suite:
+        deleted_at: Borttagen
         name: Rubrik
         template_id: Mall
         template: Mall

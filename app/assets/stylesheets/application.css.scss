@@ -15,7 +15,6 @@
  *= require jasny-bootstrap-responsive
  *= require slickgrid/slick.grid.css
  *= require slickgrid/slick.headermenu.css
- *= require_self
  *= require_tree .
 */
 
@@ -31,16 +30,6 @@
     visibility: hidden;
 }
 
-#feedback-modal {
-    width:       800px;
-    height:      600px;
-    margin-left: -400px;
-
-    .modal-body {
-        height:     600px;
-        max-height: 600px;
-    }
-}
 #instruction-modal {
     width:       590px;
     margin-left: -305px;
@@ -150,4 +139,8 @@
         display: block;
         color: #999;
     }
+}
+
+.navbar-static-top {
+  margin-bottom: 22px;
 }

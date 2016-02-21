@@ -6,6 +6,11 @@
     %small= User.model_name.human
 
 .row-fluid
+  - unless @user.errors.empty?
+    .alert.alert-block.alert-errors
+      = t(:".errors_found")
+      - @user.errors.full_messages.each do |err|
+        %li= err
   .span6
     = semantic_form_for @user do |f|
 
@@ -22,13 +27,14 @@
           = f.input :password, hint: t(:".password_for_other_hint")
           = f.input :password_confirmation
 
-      - if can? :manage, User
+      - if can? :change_instance, User
         - if Conf.multiple_instances
           = f.inputs t(:".instances_title") do
             = f.input :instances,
               as: :check_boxes,
-              collection: Instance.order(:name).all
+              collection: Instance.authorized_instances(current_user)
 
+      - if can? :manage, Role
         = f.inputs t(:".roles_title") do
           = f.input :roles,
             as: :select,

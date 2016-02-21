@@ -11,3 +11,19 @@
         %tr.name
           %th= Instance.human_attribute_name(:name)
           %td= @instance.name
+- if @instance.admin
+  .row-fluid
+    .span6
+      %table.table.table-bordered.details-table.instance-details-table
+        %tbody
+          %tr.admin
+            %th= t(:".instance_admin")
+            %td= @instance.admin.name
+      %small= t(:".instance_admin_message")
+.row-fluid
+  .span6
+    %h3= t(:".users.title")
+    %p= t(:".users.add_user_message")
+    .btn-group
+      %a.btn.btn-small{href: select_users_instance_path(@instance)}= t(:".users.add")
+    = render partial: "connected_users", locals: { instance: @instance }

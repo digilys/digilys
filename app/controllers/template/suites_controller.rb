@@ -27,6 +27,6 @@ class Template::SuitesController < ApplicationController
   private
 
   def instance_filter
-    @suites = @suites.where(instance_id: current_instance_id) if @suites
+    @suites = Suite.where(instance_id: current_instance_id, is_template: true)
   end
 end

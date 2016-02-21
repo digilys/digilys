@@ -1,9 +1,10 @@
 - if @suite.is_template?
   %h1= t(:"template.suites.title")
-  = render partial: "template/suites/navigation", locals: { active: :new }
 - else
   %h1= Suite.model_name.human(count: 2)
   = render partial: "navigation", locals: { active: :new }
+
+%h3= t(:".new_action")
 
 - if @suite.template
   .alert.alert-info= t(:".from_template", template_name: @suite.template.name)
@@ -19,7 +20,7 @@
       .controls
         = f.hidden_field :template_id,
           class: "suite-template-autocomplete-field",
-          data: { url: search_template_suites_path(), 
+          data: { url: search_template_suites_path(),
             placeholder: t(:".template_placeholder")}
         = f.submit t(:".use_template_action"), class: "btn btn-primary", data: { "loading-text" => t(:wait) }
 

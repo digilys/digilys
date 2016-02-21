@@ -1,20 +1,27 @@
 sv:
   layouts:
     application:
-      feedback: Feedback
       help: Hjälp
       logged_in_as: Inloggad som %{name}
-      templates: Mallar
-      import: Importera
   shared:
-    import: Importera
     generics: Grunddata
+    trash: Papperskorg
+    templates_menu:
+      title: Mallar
+      suites: Planeringsmallar
+      evaluations: Testmallar
+    import: Importera
     back_action:       Ta mig tillbaka
     continue_action:   Fortsätt leta
     start_over_action: Börja om från början
-    import_sidebar:
+    import_menu: 
+      title: Importera
+      instructions: Instruktioner
       evaluation_templates: Testmallar
       student_data: Elevinformation
+      results: Resultat
+    students_menu:
+      title: Elever
     "404":
       title: Ojdå!
       body_html: |
@@ -49,6 +56,7 @@ sv:
         <h3>Börja genom att göra ett val till vänster!</h3>
 
   return_to_suite: Återvänd till planeringen
+  return_to_suite_template: Återvänd till planeringsmallen
   evaluation_report_action: Rapportera resultat
   meeting_report_action: Protokollför
   meeting_completed: Mötet genomfört och protokollfört
@@ -207,6 +215,10 @@ sv:
       success:
         regular: Planeringen och tillhörande information raderades
         template: Planeringsmallen raderades
+    restore:
+      success:
+        regular: Planeringen och tillhörande information återställdes
+        template: Planeringsmallen återställdes
     select_users:
       title: Lägg till deltagare
     add_users:
@@ -215,6 +227,10 @@ sv:
       success: Deltagaren togs bort från planeringen.
     closed_suite_message_html: Planeringen är avslutad. Det är inte rekommenderat att göra ändringar i avslutade planeringar.
     closed_suite_message_change_status_html: Om du vill göra ändringar, kan du återuppta planeringen.
+    move_up: Flytta upp
+    move_to_top: Flytta längst upp
+    move_down: Flytta ner
+    move_to_bottom: Flytta längst ner
 
   color_tables:
     navigation:
@@ -269,6 +285,7 @@ sv:
       success: Eleven togs bort från planeringen
 
   evaluations:
+    show_action: Översikt
     titles:
       template: Testmall
       suite: "%{suite}"
@@ -293,11 +310,12 @@ sv:
       template_notice: Detta är en mall för test.
       participants: Elever
       users: Deltagare
+    select_template:
+      template_placeholder: Sök och välj en mall
+      use_template_action: Använd mall
     form:
       for_suite: Detta test tillhör %{suite_name}.
       from_template: Använder mallen %{template_name}.
-      template_placeholder: Sök och välj en mall
-      use_template_action: Använd mall
       basic_info: Grundinformation
       result_info: Resultatinformation
       category_help: Välj befintliga eller skriv in nya kategorier
@@ -330,13 +348,19 @@ sv:
     confirm_destroy:
       confirmation:
         suite: Om du raderar testet raderas även alla tillhörande testresultat.
+        template_test: Är du säker på att du vill radera testet för planeringsmallen?
         template: Är du säker på att du vill radera testmallen?
         generic: Om du raderar elevdata raderas även alla tillhörande resultat.
+        confirm_destroy_evaluation_msg: Är du säker på att du vill ta bort planeringen?
     destroy:
       success:
         suite: Testet och tillhörande information raderades
         template: Testmallen raderades
         generic: Elevdata raderades
+    restore:
+      success:
+        suite: Tested återställdes
+        template: Testmallen återställdes
     report_all:
       title: Rapportera resultat
       absent: Deltog ej
@@ -389,6 +413,10 @@ sv:
         inquiry: Frågeställningen togs bort från planeringen
 
   users:
+    index:
+      new: Skapa ny användare
+    new:
+      create: Skapa användare
     edit:
       edit_self_title: Ändra användaruppgifter och inställningar
       details_title: Användaruppgifter
@@ -398,13 +426,6 @@ sv:
       password_for_other_hint: Lämna lösenordet tomt om du inte vill ändra användarens nuvarande lösenord.
       instances_title: Instanser
       roles_title: Rättigheter
-      roles_explanation_html: |
-        <p>Kortfattad information om roller:</p>
-        <ul>
-          <li><strong>Administratörer</strong> har fulla rättigheter i DigiLys</li>
-          <li><strong>Planerare</strong> kan skapa planeringar och lägga till Deltagare</li>
-          <li><strong>Användare</strong> kan arbeta i de planeringar de är Deltagare</li>
-        </ul>
       preferences_title: Inställningar
       first_name_order: Förnamn, efternamn
       last_name_order: Efternamn, förnamn
@@ -414,6 +435,13 @@ sv:
       confirmation: Är du säker på att du vill radera användaren?
     destroy:
       success: Användaren raderades
+    roles_explanation_html: |
+      <p>Kortfattad information om roller:</p>
+      <ul>
+        <li><strong>Administratörer</strong> har fulla rättigheter i DigiLys</li>
+        <li><strong>Planerare</strong> kan skapa planeringar och lägga till Deltagare</li>
+        <li><strong>Användare</strong> kan arbeta i de planeringar de är Deltagare</li>
+      </ul>
 
   visualizations:
     navigation:
@@ -444,6 +472,7 @@ sv:
   instances:
     handle: Hantera instanser
     choose: Välj instans
+    user_ids: Deltagare
     select:
       title: Byt aktiv instans
       description: "Byt till en annan instans genom att välja en instans nedan:"
@@ -451,6 +480,24 @@ sv:
       success: Instansen skapades
     update:
       success: Instansen uppdaterades
+    connected_users:
+      remove_user_action: Ta bort från instansen
+      users:
+        confirm_destroy_user_message: Tas deltagaren bort från instansen kommer den även att tas bort från alla planeringen för instansen.
+    select_users:
+      title: Lägg till deltagare
+      info: Deltagare för en instans läggs automatiskt till som deltagare för alla planeringar för instansen.
+    show:
+      instance_admin: "Administrator för denna instans*"
+      instance_admin_message: "*Administratorn för en instans kan importera till instansen"
+      users:
+        title: Deltagare
+        add: Lägg till deltagare
+        add_user_message: Deltagare för en instans läggs automatiskt till som deltagare för alla planeringar för instansen.
+    add_users:
+      success: Användaren lades till i instansen och alla tillhörande planeringar
+    remove_users:
+      success: Användaren togs bort från instansen och alla tillhörande planeringar
 
   authorizations:
     title: Deltagare
@@ -569,3 +616,51 @@ sv:
       create:
         success: "%{count} elever importerades"
         error: "Fel uppstod när eleverna skulle importeras. Vid felrapport, var god att ange följande till utvecklarna: %{filename}."
+    result:
+      result: Resultat
+      instruction_html: |
+        <h5>Instruktioner för import av testresultat</h5>
+        <ul>
+        <li>Importen kräver en CSV-fil, alltså en textfil med kommaseparerade värden.</li>
+        <li>
+        För att få en CSV-fil från Google-dokumentet gör man följande:
+          <ol>
+          <li>Öppna Google-dokumentet</li>
+          <li>Gå till det blad som innehåller testmallarna som ska importeras</li>
+          <li>Välj File &gt; Download as &gt; Comma separated values (.csv, current sheet)</li>
+          <li>Filen som laddas ner är den som ska anges nedan.</li>
+          </ol>
+        </li>
+        <li><b>Det är viktigt att korrekt format används i Google-dokumentet. Är inte formatet korrekt fungerar inte importen.</b></li>
+        </ul>
+      format_specification_html: |
+        <p>Kolumnerna i CSV-filen måste vara följande:</p>
+        <ol>
+        <li>Personnummer</li>
+        <li>Resultat</li>
+        </ol>
+        <p>Ordningen på kolumnerna <b>måste</b> vara enligt ovanstående. Ordningen får inte ändras och man får inte lägga in ytterligare kolumner.</p>
+        <p>För att uppdatera en elevs information måste personnumret vara identiskt med det som redan ligger i DigiLys. Skiljer det sig på något sätt, t.ex. genom att man har 12 siffror eller saknar streck mellan födelsedatum och de fyra sista siffrorna, så kommer inte importen kunna hitta den befintliga eleven.</p>
+        <h6>Exempel:</h6>
+        <p>950101-1234,10</p>
+        <p>950102-5678,5</p>
+      confirm:
+        student_update: Befintlig elev uppdateras
+        school: Skola
+        grade: Klass
+        error: Ett fel uppstod när filen skulle läsas in. Var god kontrollera att formatet är korrekt. Vid problem, kontakta ansvariga tekniker.
+        error_msg: Felmeddelande
+        invalid_results: Ogiltigt resultat
+        students_not_found: Kunde inte hitta följande studenter för prov %{evaluation_name}
+        registered_students: Studenter registrerade för prov %{evaluation_name}
+        personal_id: Personnummer
+        will_override_values: Vissa studenter hade redan registrerade resultat, dessa värden kommer att skrivas över.
+        old_value: Tidigare registrerat resultat
+      create:
+        success: "%{count} resultat importerades"
+        error: "Fel uppstod när resultatet skulle importeras. Vid felrapport, var god att ange följande till utvecklarna: %{filename}."
+  trash:
+    index:
+      template: Mall
+      title: Papperskorg
+      restore: Återställ

@@ -2,7 +2,6 @@
   %h1
     = t(:".import")
     %small= Instruction.model_name.human
-
 = form_tag({ action: "confirm" }, { method: :post, multipart: true }) do
   .fileupload.fileupload-new{data: { provides: "fileupload" }}
     .input-append

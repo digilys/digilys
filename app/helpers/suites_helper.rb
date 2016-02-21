@@ -19,7 +19,8 @@ module SuitesHelper
   end
 
   # Returns true if the user is currently working with a suite template
-  def working_with_suite_template?(suite)
+  def working_with_suite_template?(suite, evaluation=nil)
+    @working_with_suite_template ||= evaluation.suite.is_template unless evaluation.nil? || evaluation.suite.nil?
     @working_with_suite_template ||= params?(controller: "template/suites") ||
       suite && suite.is_template?
   end

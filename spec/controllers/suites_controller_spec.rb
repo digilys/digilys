@@ -234,7 +234,7 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
       # the wrong order. An after_create hook in Partipants caused incoming evaluations
       # to be wiped from the suite before they were saved. This was remedied by declaring
       # has_many :evaluations before has_many :participants in Suite.
-      
+
       post(
         :create,
         suite: {
@@ -273,6 +273,25 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
       expect(Suite.last.evaluations).to have(1).items
       expect(Suite.last.meetings).to have(1).items
     end
+    context "with instance users" do
+      let(:user_1) { create(:user, active_instance: instance) }
+      let(:user_2) { create(:user, active_instance: instance) }
+
+      it "adds all instance users" do
+        logged_in_user.active_instance.users << user_1
+        logged_in_user.active_instance.users << user_2
+        post(
+          :create,
+          suite: {
+            name: "Test suite222",
+            is_template: "0",
+            instance_id: instance.id,
+          }
+        )
+        expect(response).to redirect_to(Suite.last)
+        expect(Suite.last.reload.users).to have(3).items
+      end
+    end
   end
 
   describe "GET #edit" do
@@ -287,7 +306,7 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
   end
   describe "PUT #update" do
     it "redirects to the suite when successful" do
-      new_name = "#{suite.name} updated" 
+      new_name = "#{suite.name} updated"
       put :update, id: suite.id, suite: { name: new_name }
       expect(response).to redirect_to(suite)
       expect(suite.reload.name).to eq new_name
@@ -480,6 +499,76 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
     it "gives a 404 if the instance does not match" do
       delete :remove_contributors, id: other_suite.id, user_ids: users.collect(&:id).join(",")
       expect(response.status).to be 404
+    end
+  end
+
+  describe "PUT #move" do
+    let!(:suite)           { create(:suite) }
+    let!(:evaluation_1)    { create(:suite_evaluation, suite: suite, position: 1) }
+    let!(:evaluation_2)    { create(:suite_evaluation, suite: suite, position: 2) }
+    let!(:evaluation_3)    { create(:suite_evaluation, suite: suite, position: 3) }
+
+    it "moves up" do
+      put :move_up, suite_id: suite.id, evaluation_id: evaluation_2.id
+      expect(response).to redirect_to(suite)
+      expect(evaluation_2.reload.position).to eq 1
+      expect(evaluation_1.reload.position).to eq 2
+    end
+
+    it "moves to top" do
+      put :move_to_top, suite_id: suite.id, evaluation_id: evaluation_3.id
+      expect(response).to redirect_to(suite)
+      expect(evaluation_3.reload.position).to eq 1
+      expect(evaluation_1.reload.position).to eq 2
+      expect(evaluation_2.reload.position).to eq 3
+    end
+
+    it "moves down" do
+      put :move_down, suite_id: suite.id, evaluation_id: evaluation_2.id
+      expect(response).to redirect_to(suite)
+      expect(evaluation_1.reload.position).to eq 1
+      expect(evaluation_3.reload.position).to eq 2
+      expect(evaluation_2.reload.position).to eq 3
+    end
+
+    it "moves to bottom" do
+      put :move_to_bottom, suite_id: suite.id, evaluation_id: evaluation_1.id
+      expect(response).to redirect_to(suite)
+      expect(evaluation_2.reload.position).to eq 1
+      expect(evaluation_3.reload.position).to eq 2
+      expect(evaluation_1.reload.position).to eq 3
+    end
+  end
+  describe "PUT #restore" do
+    let!(:suite)    { create(:suite) }
+    let!(:evaluation_1)    { create(:suite_evaluation, suite: suite) }
+    let!(:evaluation_2)    { create(:suite_evaluation, suite: suite) }
+    before(:each) do
+      suite.destroy
+    end
+    it "redirects to trash" do
+      put :restore, id: suite.id
+      expect(response).to redirect_to(trash_index_path)
+    end
+    it "restores suite" do
+      put :restore, id: suite.id
+      expect(suite.reload.deleted_at?).to be_false
+    end
+    it "restores all evaluations" do
+      put :restore, id: suite.id
+      expect(evaluation_1.reload.deleted_at?).to be_false
+      expect(evaluation_2.reload.deleted_at?).to be_false
+    end
+  end
+  describe "PUT #restore ordinary user" do
+    let!(:suite)    { create(:suite) }
+    login_user(:user)
+    before(:each) do
+      suite.destroy
+    end
+    it "returns 401 if user is not admin" do
+      put :restore, id: suite.id
+      expect(response.status).to be 401
     end
   end
 end

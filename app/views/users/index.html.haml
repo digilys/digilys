@@ -1,22 +1,30 @@
 %h1= User.model_name.human
 
-= simple_search_form(:name_or_email_cont)
+- if can? :create, User
+  = link_to t(:".new"), new_user_path, class: "btn"
+  <br/> <br/>
 
-%table.table.table-striped.users-table
-  %thead
-    %tr
-      %th.name=   Suite.human_attribute_name(:name)
-      %th.email=  Suite.human_attribute_name(:email)
-      %th.actions &nbsp;
-  %tbody
-    - @users.each do |user|
+- if can? :view, User
+  = simple_search_form(:name_or_email_cont)
+
+  %table.table.table-striped.users-table
+    %thead
       %tr
-        %td.name=  user.name
-        %td.email= user.email
-        %td.actions
-          .btn-group
-            %a.btn.btn-mini{href: edit_user_path(user)}= t(:".edit_action")
-            - unless current_user == user
-              %a.btn.btn-danger.btn-mini{href: confirm_destroy_user_path(user)}= t(:".destroy_action")
+        %th.name=   User.human_attribute_name(:name)
+        %th.instance=   Instance.model_name.human(count: 1)
+        %th.email=  Suite.human_attribute_name(:email)
+        %th.actions &nbsp;
+    %tbody
+      - @users.each do |user|
+        %tr
+          %td.name=  user.name
+          %td.name=  user.instances.map(&:name).join(",")
+          %td.email= user.email
+          %td.actions
+            .btn-group
+              - if can? :change, User
+                %a.btn.btn-mini{href: edit_user_path(user)}= t(:".edit_action")
+              - if (can? :destroy, User) && current_user != user
+                %a.btn.btn-danger.btn-mini{href: confirm_destroy_user_path(user)}= t(:".destroy_action")
 
-= paginate(@users)
+  = paginate(@users)

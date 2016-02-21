@@ -226,6 +226,32 @@ describe Evaluation do
     end
   end
 
+  context "position" do
+    let!(:suite)           { create(:suite) }
+    let!(:evaluation_1)    { create(:suite_evaluation, suite: suite, position: 1) }
+    let!(:evaluation_2)    { create(:suite_evaluation, suite: suite, position: 2) }
+
+    it "moves higher" do
+      evaluation_2.move_higher
+      expect(evaluation_2.reload.position).to eq 1
+      expect(evaluation_1.reload.position).to eq 2
+    end
+    it "moves to top" do
+      evaluation_2.move_to_top
+      expect(evaluation_2.reload.position).to eq 1
+      expect(evaluation_1.reload.position).to eq 2
+    end
+    it "moves lower" do
+      evaluation_1.move_lower
+      expect(evaluation_2.reload.position).to eq 1
+      expect(evaluation_1.reload.position).to eq 2
+    end
+    it "moves to bottom" do
+      evaluation_1.move_to_bottom
+      expect(evaluation_2.reload.position).to eq 1
+      expect(evaluation_1.reload.position).to eq 2
+    end
+  end
 
   describe ".parse_students_and_groups" do
     let(:suite)        { create(:suite) }
@@ -297,7 +323,7 @@ describe Evaluation do
       end
     end
   end
-  
+
   describe ".persist_colors_and_stanines" do
     let(:colors)   { nil }
     let(:stanines) { nil }
@@ -1016,6 +1042,7 @@ describe Evaluation do
     let(:num_participants) { 0 }
     let(:num_results)      { 0 }
     let!(:evaluation)      { create(:suite_evaluation, suite: suite) }
+    let!(:table_state)       { create(:table_state, base: suite.color_table, data: { "hiddenColumns" => ["evaluation-x"] }) }
 
     before(:each) do
       participants = 1.upto(num_participants).collect { |i| create(:participant, suite: suite) }
@@ -1034,10 +1061,33 @@ describe Evaluation do
       context "and complete results" do
         let(:num_results) { 3 }
         its(:status)      { should == "complete" }
+        it "should add itself to hidden columns for each color table state" do
+          expect(table_state.reload.data["hiddenColumns"]).to include("evaluation-#{evaluation.id}")
+        end
       end
       context "and partial results" do
         let(:num_results) { 2 }
         its(:status)      { should == "partial" }
+        it "should add itself to hidden columns for each color table state" do
+          expect(table_state.reload.data["hiddenColumns"]).to include("evaluation-#{evaluation.id}")
+        end
+      end
+    end
+
+    context "with results" do
+      let(:num_participants) { 3 }
+      let(:num_results) { 1 }
+      its(:status)           { should == "partial" }
+
+      context "after removing results" do
+        before(:each) do
+          evaluation.results.each do |r|
+            r.destroy
+          end
+        end
+        it "should still be in hidden columns for table states" do
+          expect(table_state.reload.data["hiddenColumns"]).to include("evaluation-#{evaluation.id}")
+        end
       end
     end
   end
@@ -1095,11 +1145,11 @@ describe Evaluation do
 
       expect(Series.where(id: series.id).exists?).to be_false
     end
-    it "destroys a series after evaluation destroy if the series has no other evaluations" do
+    it "do not destroys a series after evaluation destroy if the series has no other evaluations" do
       evaluation = create(:suite_evaluation, suite: suite, series: series)
       evaluation.destroy
 
-      expect(Series.where(id: series.id).exists?).to be_false
+      expect(Series.where(id: series.id).exists?).to be_true
     end
   end
 

@@ -105,7 +105,11 @@ class ApplicationController < ActionController::Base
   end
 
   def authorize_import
-    authorize! :import, :all
+    authorize! :import, Instance
+  end
+
+  def authorize_restore
+    authorize! :restore, :all
   end
 
   def timestamp_prefix(s)

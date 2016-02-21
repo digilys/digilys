@@ -1,0 +1,44 @@
+%h1= t(:".title")
+
+%h2= Suite.model_name.human(count: 2)
+%table.table.table-striped.suites-table
+  %thead
+    %tr
+      %th.name= Instance.model_name.human(count: 1)
+      %th.name= Suite.human_attribute_name(:name)
+      %th.template= t(:".template")
+      %th.deleted_at= Suite.human_attribute_name(:deleted_at)
+      %th.restore= t(:".restore")
+  %tbody
+    - @suites.each do |suite|
+      %tr
+        %td.instance= suite.instance.name
+        %td.name= suite.name
+        %td.template= suite.is_template ?  t(:yes) : t(:no)
+        %td.deleted_at= suite.deleted_at
+        %td.resotre= link_to t(:".restore"), restore_suite_path(suite), method: :put, class: "btn btn-mini"
+
+%h2= Evaluation.model_name.human(count: 2)
+%table.table.table-striped.evaluations-table
+  %thead
+    %tr
+      %th.name= Instance.model_name.human(count: 1)
+      %th.suite= Suite.model_name.human(count: 1)
+      %th.name= Evaluation.human_attribute_name(:name)
+      %th.template= t(:".template")
+      %th.description= Evaluation.human_attribute_name(:description)
+      %th.deleted_at= Suite.human_attribute_name(:deleted_at)
+      %th.restore= t(:".restore")
+  %tbody
+    - @evaluations.each do |evaluation|
+      %tr
+        %td.instance= evaluation.suite.instance.try(:name)
+        %td.description= link_to evaluation.suite.try(:name), suite_path(evaluation.suite)
+        %td.name
+          = evaluation.name
+          - evaluation.category_list.each do |category|
+            %span.label.label-info= category
+        %td.template= evaluation.type.template? ?  t(:yes) : t(:no)
+        %td.description= evaluation.description
+        %td.deleted_at= evaluation.deleted_at
+        %td.restore= link_to t(:".restore"), restore_evaluation_path(evaluation), method: :put, class: "btn btn-mini"

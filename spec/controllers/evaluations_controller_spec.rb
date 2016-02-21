@@ -87,13 +87,28 @@ describe EvaluationsController, versioning: !ENV["debug_versioning"].blank? do
     end
   end
   describe "POST #new_from_template" do
-    let(:template) { create(:evaluation_template) }
-    let(:suite)    { create(:suite) }
+    let(:template)  { create(:evaluation_template) }
+    let(:template2) { create(:evaluation_template) }
+    let(:template3) { create(:evaluation_template) }
+    let(:suite)     { create(:suite) }
+    let(:suite_template)     { create(:suite, is_template: true) }
     it "builds an evaluation from a template" do
       post :new_from_template, evaluation: { template_id: template.id, suite_id: suite.id }
       expect(response).to be_success
       expect(assigns(:evaluation).template_id).to eq template.id
       expect(assigns(:evaluation).suite_id).to    eq suite.id
+    end
+    it "adds all templates to suite if several" do
+      ids = [template.id, template2.id, template3.id]
+      post :new_from_template, evaluation: { template_id: ids.join(","), suite_id: suite_template.id, type: "suite" }
+      expect(response).to redirect_to(suite_template)
+      expect(suite_template.evaluations.count).to eq 3
+    end
+    it "does not add templates to suite if suite is not template" do
+      ids = [template.id, template2.id, template3.id]
+      post :new_from_template, evaluation: { template_id: ids.join(","), suite_id: suite.id, type: "suite" }
+      expect(response).to render_template("new")
+      expect(suite.evaluations.count).to eq 0
     end
     it "generates a 404 if the suite instance does not match" do
       post :new_from_template, evaluation: { template_id: template.id, suite_id: other_suite.id }
@@ -134,8 +149,11 @@ describe EvaluationsController, versioning: !ENV["debug_versioning"].blank? do
     end
   end
   describe "PUT #update" do
+    let(:user_1) { create(:user) }
+    let(:user_2) { create(:user) }
+
     it "redirects to the evaluation when successful" do
-      new_name = "#{evaluation.name} updated" 
+      new_name = "#{evaluation.name} updated"
       put :update, id: evaluation.id, evaluation: { name: new_name }
       expect(response).to redirect_to(evaluation)
       expect(evaluation.reload.name).to eq new_name
@@ -155,6 +173,11 @@ describe EvaluationsController, versioning: !ENV["debug_versioning"].blank? do
     it "prevents changing the instance" do
       put :update, id: generic_evaluation.id, evaluation: { instance_id: instance.id }
       expect(generic_evaluation.reload.instance).not_to eq instance
+    end
+    it "adds users to the evaluation" do
+      put :update, id: evaluation.id, evaluation: { user_ids: [user_1.id, user_2.id].join(",") }
+      expect(response).to redirect_to(evaluation)
+      expect(evaluation.users.length).to eq 2
     end
   end
 
@@ -193,6 +216,11 @@ describe EvaluationsController, versioning: !ENV["debug_versioning"].blank? do
     it "generates a 404 if the instance does not match" do
       delete :destroy, id: other_generic_evaluation.id
       expect(response.status).to be 404
+    end
+    it "marks as deleted" do
+      expect {
+        delete :destroy, id: evaluation.id
+      }.to change { Evaluation.deleted.size }.from(0).to(1)
     end
   end
 
@@ -276,22 +304,6 @@ describe EvaluationsController, versioning: !ENV["debug_versioning"].blank? do
     end
     it "generates a 404 if the suite instance does not match" do
       post :report_all, suite_id: other_suite.id, ids: [other_evaluation.id]
-      expect(response.status).to be 404
-    end
-  end
-  describe "PUT #submit_report" do
-    it "redirects to the evaluation's suite when successful" do
-      new_name = "#{evaluation.name} updated" 
-      put :submit_report, id: evaluation.id, evaluation: { name: new_name }
-      expect(response).to redirect_to(evaluation.suite)
-      expect(evaluation.reload.name).to eq new_name
-    end
-    it "renders the report view when validation fails" do
-      put :submit_report, id: evaluation.id, evaluation: invalid_parameters_for(:evaluation)
-      expect(response).to render_template("report")
-    end
-    it "generates a 404 if the suite instance does not match" do
-      put :submit_report, id: other_evaluation.id, evaluation: {}
       expect(response.status).to be 404
     end
   end
@@ -387,6 +399,25 @@ describe EvaluationsController, versioning: !ENV["debug_versioning"].blank? do
     it "generates a 404 if the suite instance does not match" do
       delete :destroy_report, id: other_evaluation.id
       expect(response.status).to be 404
+    end
+  end
+  describe "PUT #restore" do
+    let!(:deleted_evaluation)       { create(:suite_evaluation, deleted_at: "2015-01-01 00:00") }
+    it "redirects to trash" do
+      put :restore, id: deleted_evaluation.id
+      expect(response).to redirect_to(trash_index_path)
+    end
+    it "restores evaluation" do
+      put :restore, id: deleted_evaluation.id
+      expect(deleted_evaluation.reload.deleted_at?).to be_false
+    end
+  end
+  describe "PUT #restore ordinary user" do
+    let!(:deleted_evaluation)       { create(:suite_evaluation, deleted_at: "2015-01-01 00:00") }
+    login_user(:user)
+    it "returns 401 if user is not admin" do
+      put :restore, id: deleted_evaluation.id
+      expect(response.status).to be 401
     end
   end
 end

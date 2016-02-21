@@ -4,6 +4,9 @@ class Ability
   def initialize(user)
     return unless user
 
+    active_instance = user.active_instance
+    is_instance_admin = user.is_admin_of?(active_instance)
+
     alias_action :index, :closed, :search, to: :list
     alias_action :new_from_template,       to: :create
     alias_action :confirm_destroy,         to: :destroy
@@ -41,10 +44,15 @@ class Ability
 
     if user.has_role?(:admin)
       can :manage, :all
+      can :restore, :all
+      can :change_instance, User
+      can :manage, Role
     elsif user.has_role?(:superuser)
       # Students
       can    :manage, Student
       cannot :destroy, Student
+
+      can :manage, Role
 
       # Groups
       can    :manage, Group
@@ -63,6 +71,31 @@ class Ability
 
       # Color tables
       can :create, ColorTable
+
+      # Import
+      can :import, Instance
+    elsif is_instance_admin
+      # Import
+      can :import, Instance do |instance|
+        user.is_admin_of?(instance)
+      end
+
+      can :manage, User
+      can [ :view, :edit, :change ], User do |u|
+        u.instances.include?(active_instance)
+      end
+      cannot [ :destroy ], User
+      cannot :change_instance, User
+
+      can :manage, Suite do |suite|
+        !suite.is_template? && user.is_admin_of?(suite.instance)
+      end
+      cannot :create, Suite
+      cannot :destroy, Suite
+
+      # Groups
+      can    :manage, Group
+      cannot :destroy, Group
     end
 
     can :list,    Suite
@@ -124,7 +157,7 @@ class Ability
 
     can :list,   Instance
     can :select, Instance do |instance|
-      user.has_role?(:member, instance)
+      user.has_role?(:member, instance) || user.is_admin_of?(instance)
     end
 
     # Updating the user's details

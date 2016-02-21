@@ -6,4 +6,7 @@
 
 = closed_suite_message(@evaluation.suite)
 
-= confirm_destroy_form(@evaluation, t(:".confirmation.#{@evaluation.type}"))
+- if @evaluation.suite && @evaluation.suite.is_template
+  = confirm_destroy_form(@evaluation, t(:".confirmation.template_test"))
+- else
+  = confirm_destroy_form(@evaluation, t(:".confirmation.#{@evaluation.type}"))

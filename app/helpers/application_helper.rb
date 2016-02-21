@@ -32,6 +32,18 @@ module ApplicationHelper
     render partial: "shared/instance_indicator"
   end
 
+  def templates_menu
+    render partial: "shared/templates_menu"
+  end
+
+  def import_menu
+    render partial: "shared/import_menu"
+  end
+
+  def students_menu
+    render partial: "shared/students_menu"
+  end
+
   # Bootstrap "active" class generator
   def active_if(condition)
     condition ? "active" : ""
@@ -60,19 +72,25 @@ module ApplicationHelper
     return false
   end
 
+  def menu
+    render partial: "shared/menu", locals: { suite: @suite, evaluation: @evaluation }
+  end
 
   # Checks if the user is under the import namespace
   def working_with_import?
     params[:controller].start_with?("import/")
   end
 
+  def working_with_trash?
+    params[:controller].start_with?("trash")
+  end
 
   # Renders a form for confirming a destroy action
   def confirm_destroy_form(entity, message, options = {})
     cancel_path = url_for(options[:cancel_to] || url_for(entity))
 
     render partial: "shared/confirm_destroy_form",
-      locals: { entity: entity, message: message, cancel_path: cancel_path }
+      locals: { entity: entity, message: message, cancel_path: cancel_path, options: options }
   end
 
   def simple_search_form(field)

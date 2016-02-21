@@ -1,0 +1,8 @@
+%a#template-selector-toggler.dropdown-toggle{data: { toggle: "dropdown" }}
+  = t(:".title")
+  %span.caret
+%ul.dropdown-menu
+  %li= link_to t(:".instructions"), new_import_instruction_path()
+  %li= link_to t(:".evaluation_templates"), new_import_evaluation_template_path()
+  %li= link_to t(:".student_data"), new_import_student_data_path()
+  %li= link_to t(:".results"), new_import_result_path()

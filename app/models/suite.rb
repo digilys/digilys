@@ -1,6 +1,10 @@
 class Suite < ActiveRecord::Base
   extend Enumerize
 
+  has_trash
+  default_scope where(arel_table[:deleted_at].eq(nil)) if arel_table[:deleted_at]
+  attr_accessible :deleted_at
+
   resourcify
   has_paper_trail skip: [ :generic_evaluations, :student_data ], meta: { suite_id: ->(s) { s.id } }
 
@@ -21,7 +25,7 @@ class Suite < ActiveRecord::Base
   # might not affect the correct evaluations
   has_many :evaluations,
     inverse_of: :suite,
-    order: "date asc",
+    order: :position,
     dependent: :destroy
 
   has_many :meetings,
@@ -140,14 +144,18 @@ class Suite < ActiveRecord::Base
 
       s.assign_attributes(attrs)
 
-      template.evaluations.each do |evaluation|
+      template.evaluations.order(:created_at).each do |evaluation|
         s.evaluations << Evaluation.new_from_template(evaluation, template_id: evaluation.template_id)
       end
 
-      template.meetings.each do |meeting|
+      template.meetings.order(:created_at).each do |meeting|
         s.meetings.build(name: meeting.name, agenda: meeting.agenda)
       end
     end
+  end
+
+  def self.in_instance(instance_id)
+    self.where(:instance_id => instance_id)
   end
 
 

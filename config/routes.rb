@@ -1,11 +1,13 @@
 Digilys::Application.routes.draw do
+  get "trash/index"
+
   # Landing page
   get "index/index"
 
   # Frontend error logging
   post "error/log"
 
-  resources :users, only: [ :index, :edit, :update, :destroy ] do
+  resources :users, except: [ :show ] do
     collection do
       get :search
     end
@@ -68,6 +70,7 @@ Digilys::Application.routes.draw do
       delete :remove_users
       put    :add_contributors
       delete :remove_contributors
+      put    :restore
     end
 
     resources :evaluations,  only: :new do
@@ -75,6 +78,10 @@ Digilys::Application.routes.draw do
         post :report_all
         post :submit_report_all
       end
+      put    :move_down,      controller: :suites
+      put    :move_up,        controller: :suites
+      put    :move_to_top,    controller: :suites
+      put    :move_to_bottom, controller: :suites
     end
     resources :participants, only: :new
     resources :meetings,     only: :new
@@ -118,6 +125,7 @@ Digilys::Application.routes.draw do
       get    :report
       put    :submit_report
       delete :destroy_report
+      put    :restore
     end
   end
 
@@ -155,6 +163,9 @@ Digilys::Application.routes.draw do
   resources :instances, except: [ :destroy ] do
     member do
       post :select
+      put    :add_users
+      delete :remove_users
+      get    :select_users
     end
   end
 
@@ -191,7 +202,14 @@ Digilys::Application.routes.draw do
         post :confirm
       end
     end
+    resources :result, only: [ :new, :create ] do
+      collection do
+        post :confirm
+      end
+    end
   end
+
+  resources :trash, only: [ :index ]
 
   devise_for :users, path: "authenticate"
 

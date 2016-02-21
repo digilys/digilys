@@ -25,7 +25,7 @@ module EvaluationsHelper
     end
   end
 
-  # Renders a bootstrap progress bar representing the result distribution 
+  # Renders a bootstrap progress bar representing the result distribution
   # of this evaluation, if any
   def evaluation_progress_bar(evaluation)
     result_distribution = evaluation.result_distribution

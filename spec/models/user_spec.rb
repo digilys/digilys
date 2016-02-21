@@ -126,4 +126,13 @@ describe User do
       its(:name_ordering) { should == :first_name }
     end
   end
+
+  context "instance admin" do
+    let(:user)  { create(:user) }
+    let(:instance_admin) { create(:user) }
+    let(:instance)       { create(:instance, admin: instance_admin) }
+
+    it { expect(instance_admin.is_admin_of?(instance)).to be_true }
+    it { expect(user.is_admin_of?(instance)).to be_false }
+  end
 end

@@ -14,7 +14,7 @@
     - @versions.each do |version|
       %tr
         %td.when= l version.created_at, format: :long
-        %td.who= User.find(version.whodunnit).name
+        %td.who= User.where(id: version.whodunnit).first.try(:name)
         %td.subject
           = version_item_link(version)
           %small= version.item_type.constantize.model_name.human

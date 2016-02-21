@@ -1,8 +1,11 @@
+require 'csv'
+
 class EvaluationsController < ApplicationController
   before_filter :load_from_template, only: :new_from_template
 
   load_and_authorize_resource :suite
   load_and_authorize_resource through: :suite, shallow: true
+  skip_load_resource :only => :restore
 
   before_filter :instance_filter
 
@@ -36,17 +39,35 @@ class EvaluationsController < ApplicationController
   end
 
   def new_from_template
-    render action: "new"
+    if params[:evaluation][:template_id].split(",").length > 1
+      if @evaluation.suite.is_template?
+        create
+      else
+        render action: "new"
+      end
+    else
+      render action: "new"
+    end
   end
 
   def create
-    @evaluation.instance = current_instance unless @evaluation.type.try(:suite?)
-
-    if @evaluation.save
+    if params[:evaluation][:template_id] && params[:evaluation][:template_id].split(",").length > 1
+      params[:evaluation][:template_id].split(",").each do |id|
+        load_from_template(id)
+        @evaluation.instance = current_instance unless @evaluation.type.try(:suite?)
+        @evaluation.save
+      end
       flash[:success] = t(:"evaluations.create.success.#{@evaluation.type}")
-      redirect_to @evaluation
+      redirect_to @evaluation.suite
     else
-      render action: "new"
+      @evaluation.instance = current_instance unless @evaluation.type.try(:suite?)
+
+      if @evaluation.save
+        flash[:success] = t(:"evaluations.create.success.#{@evaluation.type}")
+        redirect_to @evaluation
+      else
+        render action: "new"
+      end
     end
   end
 
@@ -56,6 +77,8 @@ class EvaluationsController < ApplicationController
   def update
     params[:evaluation].delete(:instance)
     params[:evaluation].delete(:instance_id)
+
+    params[:evaluation][:user_ids] = params[:evaluation][:user_ids].split(",") unless params[:evaluation].nil? or params[:evaluation][:user_ids].nil?
 
     if @evaluation.update_attributes(params[:evaluation])
       flash[:success] = t(:"evaluations.update.success.#{@evaluation.type}")
@@ -82,20 +105,18 @@ class EvaluationsController < ApplicationController
     end
   end
 
+  def restore
+    evaluation = Evaluation.find_in_trash(params[:id])
+    evaluation.restore
+    flash[:success] = t(:"evaluations.restore.success.#{evaluation.type}")
+    redirect_to trash_index_path
+  end
+
   def report
     @suite        = @evaluation.suite
-    @participants = @evaluation.participants
-
-    @participants.each do |participant|
-      if !@evaluation.results.exists?(student_id: participant.student_id)
-        @evaluation.results.build(student_id: participant.student_id)
-      end
-    end
-
-    first, second = current_name_order.split(/\s*,\s*/)
-
-    @evaluation.results.sort_by! { |r| r.student.send(first) + r.student.send(second) }
+    @groups = result_groups([@evaluation])
   end
+
   def report_all
     if params[:ids].blank?
       redirect_to @suite
@@ -103,35 +124,10 @@ class EvaluationsController < ApplicationController
       redirect_to report_evaluation_url(params[:ids].first)
     else
       @evaluations = Evaluation.order(:date).find(params[:ids])
-
-      @participants = {}
-
-      @evaluations.each do |evaluation|
-        evaluation.participants.each do |participant|
-          unless evaluation.results.detect { |r| r.student_id == participant.student_id }
-            evaluation.results.build(student_id: participant.student_id)
-          end
-
-          @participants[participant.id] = participant unless @participants.has_key?(participant.id)
-        end
-      end
-
-      @participants = @participants.values
-      @participants.sort_by!(&:name)
+      @groups = result_groups(@evaluations)
     end
   end
 
-  def submit_report
-    @suite        = @evaluation.suite
-    @participants = @suite.participants
-
-    if @evaluation.update_attributes(params[:evaluation])
-      flash[:success] = t(:"evaluations.submit_report.success")
-      redirect_to @suite
-    else
-      render action: "report"
-    end
-  end
   def submit_report_all
     params[:results].each do |evaluation_id, students|
       evaluation = Evaluation.find(evaluation_id)
@@ -167,11 +163,49 @@ class EvaluationsController < ApplicationController
 
   private
 
+  def result_groups(evaluations)
+    participants = {}
+
+    evaluations.each do |evaluation|
+      evaluation.participants.each do |participant|
+        unless evaluation.results.detect { |r| r.student_id == participant.student_id }
+          evaluation.results.build(student_id: participant.student_id)
+        end
+
+        group = participant.group.name unless participant.group.nil?
+
+        participants[group] = [] if participants[group].nil?
+        participants[group] << participant unless participants[group].include?(participant)
+      end
+    end
+    return participants
+  end
+
   # Loads an entity from a template id.
   # Required as a before_filter so it works with cancan's auth
-  def load_from_template
-    template    = Evaluation.find(params[:evaluation][:template_id])
-    @evaluation = Evaluation.new_from_template(template, params[:evaluation])
+  def load_from_template(id=nil)
+    ids = params[:evaluation][:template_id].split(",")
+    @suite = Suite.find(params[:evaluation][:suite_id])
+    if ids.size > 1 && !@suite.is_template?
+      @evaluations = []
+      ids.each do |i|
+        template    = Evaluation.find(i)
+        evaluation = Evaluation.new_from_template(template, params[:evaluation])
+        evaluation.instance = current_instance unless evaluation.type.try(:suite?)
+        evaluation.save
+        @suite.evaluations.build(name: evaluation.name) unless @suite.is_template?
+        @evaluations << evaluation
+      end
+      @evaluation = @evaluations.first
+    else
+      id ||= params[:evaluation][:template_id]
+      template    = Evaluation.find(id)
+      @evaluation = Evaluation.new_from_template(template, params[:evaluation])
+    end
+  end
+
+  def report_params
+    params.require(:evaluation).permit(:result_file)
   end
 
   def instance_filter
@@ -180,5 +214,17 @@ class EvaluationsController < ApplicationController
     elsif @evaluation && !@evaluation.new_record?
       raise ActiveRecord::RecordNotFound if @evaluation.instance_id != current_instance_id
     end
+  end
+
+  def format_participants(participants)
+      participants.each do |participant|
+        if !@evaluation.results.exists?(student_id: participant.student_id)
+          @evaluation.results.build(student_id: participant.student_id)
+        end
+      end
+
+      first, second = current_name_order.split(/\s*,\s*/)
+
+      @evaluation.results.sort_by! { |r| r.student.send(first) + r.student.send(second) }
   end
 end

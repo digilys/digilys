@@ -4,6 +4,7 @@ class UsersController < ApplicationController
   load_and_authorize_resource
 
   before_filter :instance_filter, only: [ :search ]
+  before_filter :authorized_users, only: [ :index ]
 
   def index
     @users = @users.visible.order(:name)
@@ -23,6 +24,10 @@ class UsersController < ApplicationController
   def edit
   end
 
+  def new
+    @user = User.new
+  end
+
   def update
     is_self_update = current_user == @user
 
@@ -36,13 +41,14 @@ class UsersController < ApplicationController
     end
 
     role_ids = params[:user].delete(:role_ids)
-    instance_ids = params[:user].delete(:instances)
+    instance_ids = params[:user].delete(:instance_ids)
 
     if @user.send(update_method, params[:user])
 
       if can?(:manage, User)
         assign_role(     @user, role_ids)     if role_ids
         assign_instances(@user, instance_ids) if instance_ids
+        assign_suites(@user, instance_ids) if instance_ids
       end
 
       sign_in @user, bypass: true if is_self_update
@@ -51,6 +57,23 @@ class UsersController < ApplicationController
       redirect_to edit_user_url(@user)
     else
       render action: "edit"
+    end
+  end
+
+  def create
+    instance_ids = params[:user].delete(:instance_ids)
+    role_ids = params[:user].delete(:role_ids)
+
+    @user = User.new(params[:user])
+    @user.active_instance = current_user.active_instance
+
+    if @user.save
+      assign_role(@user, role_ids)     if role_ids
+      assign_instances(@user, instance_ids) if instance_ids
+      assign_suites(@user, instance_ids) if instance_ids
+      redirect_to users_path, notice: "User succesfully created!"
+    else
+      render :new
     end
   end
 
@@ -75,6 +98,17 @@ class UsersController < ApplicationController
     end
   end
 
+  def assign_suites(user, instance_ids)
+    incoming_suites = Suite.where(instance_id: instance_ids).all
+    previous_suites = Suite.with_role(:suite_member, user).all
+    incoming_suites.each do |suite|
+      user.add_role(:suite_member, suite)
+    end
+    previous_suites.each do |suite|
+      user.remove_role(:suite_member, suite) unless user.is_admin_of?(suite.instance)
+    end
+  end
+
   def assign_instances(user, instance_ids)
     incoming = Instance.where(id: instance_ids).all
     previous = Instance.with_role(:member, user).all
@@ -86,7 +120,7 @@ class UsersController < ApplicationController
       user.add_role(:member, i)
     end
     removed.each do |i|
-      user.remove_role(:member, i)
+      user.remove_role(:member, i) unless user.is_admin_of?(i)
     end
 
     if user.active_instance.nil? || removed.include?(user.active_instance)
@@ -95,6 +129,10 @@ class UsersController < ApplicationController
     end
   end
 
+  def authorized_users
+    @users = @users.with_role(:member, current_instance)
+    @users = @users.where("users.id NOT IN (?)", User.with_any_role(:admin, :superuser)) unless current_user.is_administrator?
+  end
 
   def instance_filter
     @users = @users.with_role(:member, current_instance)

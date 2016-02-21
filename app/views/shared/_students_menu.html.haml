@@ -1,0 +1,8 @@
+%a#templates-selector-toggler{data: { toggle: "dropdown" }}
+  = t(:".title")
+  %span.caret
+%ul.dropdown-menu
+  - if can? :create, Suite
+    %li= link_to Student.model_name.human(count: 2), students_path()
+  - if can? :manage, Evaluation
+    %li= link_to Group.model_name.human(count: 2), groups_path()

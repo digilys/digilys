@@ -1,6 +1,10 @@
 class Evaluation < ActiveRecord::Base
   extend Enumerize
 
+  has_trash
+  default_scope where(arel_table[:deleted_at].eq(nil)) if arel_table[:deleted_at]
+  attr_accessible :deleted_at
+
   has_paper_trail meta: { suite_id: ->(s) { s.suite_id } }
 
   # Column name "type" is not used for inheritance
@@ -20,6 +24,8 @@ class Evaluation < ActiveRecord::Base
   has_and_belongs_to_many :color_tables
 
   belongs_to :suite,              inverse_of: :evaluations
+  acts_as_list scope: :suite
+
   belongs_to :series
   has_many   :suite_participants, through:    :suite,       source: :participants
   has_many   :results,            include:    :student,     dependent: :destroy
@@ -164,7 +170,7 @@ class Evaluation < ActiveRecord::Base
   )
 
   GRADES = ("a".."f").to_a.reverse
-  
+
   GRADES.each_with_index do |grade, i|
     validates(:"color_for_grade_#{grade}",
       numericality: {
@@ -324,7 +330,7 @@ class Evaluation < ActiveRecord::Base
     self.results.each do |result|
       colors[result.color || :absent] += 1
     end
-    
+
     colors.each_pair do |color, num|
       result_distribution[color] = (num.to_f / total) * 100.0
     end
@@ -350,7 +356,7 @@ class Evaluation < ActiveRecord::Base
 
   def alias_for(value)
     if self.value_aliases.blank?
-      value 
+      value
     else
       self.value_aliases[value.to_s] || value
     end
@@ -446,12 +452,20 @@ class Evaluation < ActiveRecord::Base
     num_results = self.results(true).count(:all)
     num_participants = self.participant_count(true)
 
+    prev_status = self.status
     if num_results > 0 && num_results < num_participants
       self.status = :partial
     elsif num_results > 0 && num_results >= num_participants
       self.status = :complete
     else
       self.status = :empty
+    end
+
+    if self.suite && prev_status == "empty" && self.status != "empty"
+      self.suite.color_table.table_states.each do |state|
+        state.data["hiddenColumns"] << "evaluation-#{self.id}" unless state.data["hiddenColumns"].include?("evaluation-#{self.id}")
+        state.save!
+      end
     end
 
     self.save!
@@ -546,7 +560,7 @@ class Evaluation < ActiveRecord::Base
     if !(ids = obj.generic_evaluations).blank?
       ctx = ctx.where("id not in (?)", ids)
     end
-      
+
     return ctx
   end
 

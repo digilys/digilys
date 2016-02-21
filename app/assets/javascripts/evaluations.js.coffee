@@ -42,4 +42,3 @@ $ ->
 
     $(".evaluation-template-autocomplete-field").each ->
         autocomplete = new Digilys.DescriptionAutocomplete($(this))
-        autocomplete.enableAutosubmit("form")

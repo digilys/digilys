@@ -25,6 +25,7 @@ add_be_a_complete(:suite_template, Suite, [
   "template_id",         # Do not require templates to belong to other templates
   "generic_evaluations", # Generic evaluations are only relevant for the color table
   "student_data",        # Student data is only relevant for the color table
+  "deleted_at"
 ], [
   :roles,        # Roles are not copied from templates
   :versions,     # PaperTrail is not needed
@@ -45,6 +46,7 @@ add_be_a_complete(:suite_evaluation, Evaluation, [
   "value_aliases", # It's a numeric template, thus no value aliases
   "imported",      # Suite evaluations are not imported
   "date",          # If it's a suite template, the date is blank
+  "deleted_at"
 ], [
   :versions,                # PaperTrail is not needed
   :instance,                # The instance is on the suite for suite evaluations])
@@ -64,6 +66,7 @@ add_be_a_complete(:evaluation_template, Evaluation, [
   "value_aliases",     # It's a numeric template, thus no value aliases
   "series_id",         # Templates do not belong to series
   "is_series_current", # dito
+  "deleted_at"
 ], [
   :versions,                # PaperTrail is not needed
   :template,                # Don't require that a complete template should belong to another template
@@ -81,6 +84,7 @@ add_be_a_complete(:evaluation_template, Evaluation, [
 add_be_a_complete(:meeting, Meeting, [
   "completed", # Meetings are completed later
   "notes",     # dito
+  "deleted_at"
 ], [
   :versions,   # PaperTrail is not needed
   :activities, # Activites are added upon completion

@@ -4,33 +4,18 @@
 - content_for :title do
   = t(:"evaluations.titles.#{evaluation.type}s.text", suite: evaluation.suite.try(:name))
 
+- if evaluation.suite && evaluation.suite.is_template
+  %a{href:suite_path(evaluation.suite)}= t(:".return_to_suite_template")
+- elsif evaluation.type.suite?
+  %a{href:suite_path(evaluation.suite)}= t(:".return_to_suite")
+
 %ul.nav.nav-tabs.nav-split
   - if !only_return
     %li.primaries
       %ul.nav.nav-tabs.nav-split
-        - if evaluation.type.template?
-          %li
-            %a{href:template_evaluations_path()}= t(:".index_action")
-          %li{class: active_if(active == :new)}
-            %a{href:new_template_evaluation_path()}= t(:".new_action")
-
-        - elsif evaluation.type.suite? && can?(:change, evaluation.suite)
-          %li{class: active_if(active == :new)}
-            %a{href:new_suite_evaluation_path(evaluation.suite)}= t(:".new_action")
-
-        - elsif evaluation.type.generic?
-          %li
-            %a{href:generic_evaluations_path()}= t(:".index_action")
-          %li{class: active_if(active == :new)}
-            %a{href:new_generic_evaluation_path()}= t(:".new_action")
-
         - if !evaluation.new_record?
           %li{class: active_if(active == :show)}
             %a{href:evaluation_path(evaluation)}= t(:".show_action")
-
-        - if evaluation.type.suite?
-          %li
-            %a{href:suite_path(evaluation.suite)}= t(:".return_to_suite")
 
     - if !evaluation.new_record?
       %li.secondaries
@@ -41,10 +26,3 @@
           - if can?(:destroy, evaluation)
             %li{class: active_if(active == :destroy)}
               %a{href:confirm_destroy_evaluation_path(evaluation)}= t(:".destroy_action")
-
-  - else
-    %li.primaries
-      %ul.nav.nav-tabs.nav-split
-        %li
-          %a{href:suite_path(evaluation.suite)}= t(:".return_to_suite")
-

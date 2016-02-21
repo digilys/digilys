@@ -1,0 +1,28 @@
+- working_with_templates = working_with_evaluation_template?(@evaluation) || working_with_suite_template?(@suite, @evaluation)
+- if Conf.multiple_instances && user_signed_in?
+  = instance_indicator
+  %li.divider-vertical
+- if can? :list, Suite
+  %li{class: active_if(working_with_suite?(@suite, @evaluation))}
+    %a{href: suites_path()}= Suite.model_name.human(count: 2)
+- if can? :manage, Evaluation
+  %li{class: active_if(working_with_generic_evaluation?(@evaluation))}
+    %a{href: generic_evaluations_path()}= t(:".generics")
+- if can? :list, ColorTable
+  %li{class: active_if(params?(controller: "color_tables"))}
+    %a{href: color_tables_path()}= ColorTable.model_name.human(count: 2)
+- if can?(:manage, Student) ||  can?(:manage, Group)
+  %li.dropdown{class: active_if(params?(controller: "students") || params?(controller: "groups"))}
+    = students_menu
+- if can?(:create, Suite) || can?(:manage, Evaluation)
+  %li.dropdown{class: active_if(working_with_templates)}
+    = templates_menu
+- if can? :import, Instance
+  %li.dropdown{class: active_if(working_with_import?)}
+    = import_menu
+- if can? :restore, :all
+  %li{class: active_if(working_with_trash?)}
+    %a{href: trash_index_path()}= t(:".trash")
+- if can? :manage, User
+  %li{class: active_if(params?(controller: "users"))}
+    %a{href: users_path()}= User.model_name.human(count: 2)

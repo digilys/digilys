@@ -86,6 +86,24 @@ describe ApplicationHelper do
     end
   end
 
+  describe "#working_with_trash?" do
+    let(:params) { { controller: controller_name } }
+    before       { helper.stub(:params).and_return(params) }
+    subject      { helper.working_with_trash? }
+    context "under trash namespace" do
+      let(:controller_name) { "trash/index" }
+      it                    { should be_true }
+    end
+    context "under other namespace" do
+      let(:controller_name) { "users/" }
+      it                    { should be_false }
+    end
+    context "under no namespace" do
+      let(:controller_name) { "" }
+      it                    { should be_false }
+    end
+  end
+
   describe "#confirm_destroy_form" do
     before(:each) do
       helper.stub(:render) { |options| options }
@@ -99,7 +117,7 @@ describe ApplicationHelper do
     subject { rendered }
 
     it { should include(partial: "shared/confirm_destroy_form") }
-    
+
     context "locals" do
       subject { rendered[:locals] }
 

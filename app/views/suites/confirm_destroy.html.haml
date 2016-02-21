@@ -4,4 +4,4 @@
 
 = render partial: "navigation", locals: { suite: @suite, active: :destroy }
 
-= confirm_destroy_form(@suite, t(:".confirmation.#{@suite.is_template? ? "template" : "regular"}"))
+= confirm_destroy_form(@suite, t(:".confirmation.#{@suite.is_template? ? "template" : "regular"}"), { confirm_destroy: true })

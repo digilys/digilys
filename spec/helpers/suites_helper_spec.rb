@@ -12,20 +12,20 @@ describe SuitesHelper do
     context "with entities" do
       let!(:open) do
         [
-          create(:suite_evaluation, suite: suite, date: Date.today,    status:    :empty), 
-          create(:suite_evaluation, suite: suite, date: Date.tomorrow, status:    :partial), 
-          create(:meeting,          suite: suite, date: Date.today,    completed: false), 
+          create(:suite_evaluation, suite: suite, date: Date.today,    status:    :empty, position: 1),
+          create(:suite_evaluation, suite: suite, date: Date.tomorrow, status:    :partial, position: 2),
+          create(:meeting,          suite: suite, date: Date.today,    completed: false),
           create(:meeting,          suite: suite, date: Date.tomorrow, completed: false)
         ]
       end
       let!(:closed) do
         [
-          create(:suite_evaluation, suite: suite, date: Date.yesterday,         status:    :complete), 
+          create(:suite_evaluation, suite: suite, date: Date.yesterday,         status:    :complete, position: 1),
           create(:meeting,          suite: suite, date: Date.yesterday - 1.day, completed: true)
         ]
       end
 
-      it "partitions the entities by open/closed and sorts them in date order" do
+      it "partitions the entities by open/closed and sorts evaluations by position and meetings by date" do
         expect(entries[:open]).to   match_array(open)
         expect(entries[:closed]).to match_array(closed)
 
@@ -84,9 +84,10 @@ describe SuitesHelper do
   context "#working_with_suite_template?" do
     let(:params)  { {} }
     let(:suite)   { nil }
+    let(:evaluation) { nil }
     before(:each) { helper.stub(:params).and_return(params) }
 
-    subject { helper.working_with_suite_template?(suite) }
+    subject { helper.working_with_suite_template?(suite, evaluation) }
 
     it { should be_false }
 
@@ -101,6 +102,11 @@ describe SuitesHelper do
     context "under suites#template" do
       let(:params) { { "controller" => "template/suites" } }
       it           { should be_true }
+    end
+    context "with suite evaluation" do
+      let(:suite)       { create(:suite, is_template: true) }
+      let(:evaluation)  { create(:suite_evaluation, suite: suite) }
+      it                { should be_true }
     end
   end
 
