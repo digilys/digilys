@@ -16,7 +16,7 @@ class Import::EvaluationTemplatesController < ApplicationController
     @importer = importer_for(full_path, params[:update])
   rescue => e
     logger.error(e.message)
-    flash[:error] = t(:"import.evaluation_templates.confirm.error")
+    flash[:error] = t(:"import.evaluation_templates.create.error",:filename=>@filename,:errmsg=>e.message)
     redirect_to action: "new"
   end
 

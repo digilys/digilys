@@ -14,7 +14,7 @@ sv:
     back_action:       Ta mig tillbaka
     continue_action:   Fortsätt leta
     start_over_action: Börja om från början
-    import_menu: 
+    import_menu:
       title: Importera
       instructions: Instruktioner
       evaluation_templates: Testmallar
@@ -584,7 +584,7 @@ sv:
         existing_not_found: Befintlig mall hittades inte
       create:
         success: "%{count} testmallar importerades"
-        error: "Fel uppstod när testmallarna skulle importeras. Vid felrapport, var god att ange följande till utvecklarna: %{filename}."
+        error: "Fel uppstod när testmallarna skulle importeras. Vid felrapport, var god att ange följande till utvecklarna: %{filename} - samt följande information: %{errmsg}"
     student_data:
       student_data: Elevinformation
       instruction_html: |
