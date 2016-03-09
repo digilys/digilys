@@ -85,6 +85,9 @@
       .row-fluid
         = content_for?(:content) ? yield(:content) : yield
 
+      .row-fluid
+        = debug(params) if Rails.env.development?
+
     - if Conf.eula && show_eula?
       #eula-modal.modal.hide.fade(role="dialog" aria-hidden="true" aria-labelledby="feedback-eula-header" data-backdrop="static")
         .modal-header
