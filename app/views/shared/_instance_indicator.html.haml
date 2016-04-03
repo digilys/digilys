@@ -5,7 +5,7 @@
   %ul.dropdown-menu
     %li.load-indicator.disabled
       %a(href="#")= t(:wait)
-    - if can?(:manage, Instance)
+    - if can?(:manage, Instance) || can?(:control, Instance)
       %li.divider
       %li
         = link_to t(:"instances.handle"), instances_path()

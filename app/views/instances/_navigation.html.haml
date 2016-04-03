@@ -9,8 +9,9 @@
     %ul.nav.nav-tabs.nav-split
       %li{class: active_if(active == :index)}
         %a{href:instances_path()}= t(:".index_action")
-      %li{class: active_if(active == :new)}
-        %a{href:new_instance_path()}= t(:".new_action")
+      - if can?(:create, Instance)
+        %li{class: active_if(active == :new)}
+          %a{href:new_instance_path()}= t(:".new_action")
       - if instance && can?(:show, instance)
         %li{class: active_if(active == :show)}
           %a{href:instance_path(instance)}= t(:".show_action")

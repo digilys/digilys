@@ -138,6 +138,7 @@ class UsersController < ApplicationController
   end
 
   def instance_filter
+    @users = User if @users.nil?
     @users = @users.with_role(:member, current_instance)
   end
 end

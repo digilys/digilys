@@ -48,6 +48,7 @@ describe Ability do
       it { should_not be_able_to(:select, not_member_of) }
       it { should     be_able_to(:select, member_of) }
       it { should_not be_able_to(:import, Instance) }
+      it { should_not be_able_to(:control, Instance) }
     end
 
     context "Instance admin" do
@@ -112,6 +113,15 @@ describe Ability do
       it              { should_not be_able_to(:destroy, template_suite) }
       it              { should_not be_able_to(:manage, template_suite) }
       it              { should_not be_able_to(:destroy, template_suite) }
+
+      # Instance
+      it              { should be_able_to(:control, Instance) }
+
+      it              { should be_able_to(:view, instance) }
+      it              { should be_able_to(:associate_users, instance) }
+
+      it              { should_not be_able_to(:view, other_instance) }
+      it              { should_not be_able_to(:associate_users, other_instance) }
     end
   end
 

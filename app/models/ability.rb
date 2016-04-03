@@ -99,6 +99,11 @@ class Ability
       end
       cannot :create, Suite
       cannot :destroy, Suite
+
+      can :control, Instance
+      can [ :view, :associate_users ], Instance do |inst|
+        user.is_admin_of?(inst)
+      end
     end
 
     can :list,    Suite
