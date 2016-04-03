@@ -74,11 +74,14 @@ class Ability
 
       # Import
       can :import, Instance
+      can :import_instructions, Instance
+      can :import_student_data, Instance
+      can :import_evaluation_templates, Instance
+      can :import_results, Instance
     elsif is_instance_admin
       # Import
-      can :import, Instance do |instance|
-        user.is_admin_of?(instance)
-      end
+      can :import, Instance
+      can :import_student_data, Instance
 
       can :manage, User
       can [ :view, :edit, :change ], User do |u|

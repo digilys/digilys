@@ -2,7 +2,11 @@
   = t(:".title")
   %span.caret
 %ul.dropdown-menu
-  %li= link_to t(:".instructions"), new_import_instruction_path()
-  %li= link_to t(:".evaluation_templates"), new_import_evaluation_template_path()
-  %li= link_to t(:".student_data"), new_import_student_data_path()
-  %li= link_to t(:".results"), new_import_result_path()
+  - if can? :import_instructions, Instance
+    %li= link_to t(:".instructions"), new_import_instruction_path()
+  - if can? :import_evaluation_templates, Instance
+    %li= link_to t(:".evaluation_templates"), new_import_evaluation_template_path()
+  - if can? :import_student_data, Instance
+    %li= link_to t(:".student_data"), new_import_student_data_path()
+  - if can? :import_results, Instance
+    %li= link_to t(:".results"), new_import_result_path()

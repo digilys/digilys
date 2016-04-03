@@ -47,6 +47,7 @@ describe Ability do
 
       it { should_not be_able_to(:select, not_member_of) }
       it { should     be_able_to(:select, member_of) }
+      it { should_not be_able_to(:import, Instance) }
     end
 
     context "Instance admin" do
@@ -62,6 +63,10 @@ describe Ability do
       end
       subject(:ability) { Ability.new(user) }
       it              { should be_able_to(:import, Instance) }
+      it              { should be_able_to(:import_student_data, Instance) }
+      it              { should_not be_able_to(:import_instructions, Instance) }
+      it              { should_not be_able_to(:import_evaluation_templates, Instance) }
+      it              { should_not be_able_to(:import_results, Instance) }
       it              { should be_able_to(:manage, User) }
       it              { should be_able_to(:view, User) }
       it              { should be_able_to(:manage, User) }
@@ -85,6 +90,10 @@ describe Ability do
     it         { should be_able_to(:manage, :all) }
     it         { should be_able_to(:import, :all) }
     it         { should be_able_to(:import, Instance) }
+    it         { should be_able_to(:import_student_data, Instance) }
+    it         { should be_able_to(:import_instructions, Instance) }
+    it         { should be_able_to(:import_evaluation_templates, Instance) }
+    it         { should be_able_to(:import_results, Instance) }
     it         { should be_able_to(:manage, Role) }
   end
 
