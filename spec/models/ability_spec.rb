@@ -58,6 +58,7 @@ describe Ability do
       let!(:instance_member)      { create(:user) }
       let!(:admin)                { create(:admin) }
       let!(:suite)                { create(:suite, instance: instance) }
+      let!(:other_suite)          { create(:suite, instance: other_instance) }
       let!(:template_suite)       { create(:suite, instance: instance, is_template: true) }
       let!(:evaluation)           { create(:suite_evaluation, suite: suite) }
       before(:each) do
@@ -91,9 +92,24 @@ describe Ability do
       it              { should_not be_able_to(:change, admin) }
       it              { should_not be_able_to(:destroy, admin) }
 
+      # Role
       it              { should be_able_to(:manage, Role) }
+
+      # Suite
+      it              { should_not be_able_to(:create, Suite) }
+
       it              { should be_able_to(:manage, suite) }
+      it              { should be_able_to(:view, suite) }
+      it              { should be_able_to(:edit, suite) }
+      it              { should be_able_to(:change, suite) }
       it              { should_not be_able_to(:destroy, suite) }
+
+      it              { should_not be_able_to(:destroy, other_suite) }
+      it              { should_not be_able_to(:view, other_suite) }
+      it              { should_not be_able_to(:edit, other_suite) }
+      it              { should_not be_able_to(:change, other_suite) }
+
+      it              { should_not be_able_to(:destroy, template_suite) }
       it              { should_not be_able_to(:manage, template_suite) }
       it              { should_not be_able_to(:destroy, template_suite) }
     end
