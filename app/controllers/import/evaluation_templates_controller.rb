@@ -35,7 +35,7 @@ class Import::EvaluationTemplatesController < ApplicationController
       flash[:success] = t(:"import.evaluation_templates.create.success", count: importer.valid_count)
       redirect_to template_evaluations_url()
     else
-      flash[:error] = t(:"import.evaluation_templates.create.error", filename: params[:filename])
+      flash[:error] = t(:"import.evaluation_templates.create.error", filename: params[:filename], errmsg: importer.invalid)
       redirect_to action: "new"
     end
   end
