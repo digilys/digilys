@@ -83,13 +83,12 @@ class Ability
       can :import, Instance
       can :import_student_data, Instance
 
-      can :manage, User
-      can [ :view, :edit, :change ], User do |u|
-        u.instances.include?(active_instance)
+      can :create, User
+      can [ :manage, :view, :edit, :change ], User do |u|
+        u.instances.include?(active_instance) && !u.is_administrator?
       end
-      cannot [ :destroy ], User
       can [ :destroy ], User do |u|
-        !u.is_administrator?
+        u.instances.include?(active_instance) && !u.is_administrator?
       end
       cannot :change_instance, User
 

@@ -130,6 +130,7 @@ class UsersController < ApplicationController
   end
 
   def authorized_users
+    @users = User if @users.nil?
     @users = @users.with_role(:member, current_instance)
 
     @users = @users.where("users.id NOT IN (?)", User.with_any_role(:admin)) unless current_user.is_administrator?
