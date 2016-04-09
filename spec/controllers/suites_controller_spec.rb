@@ -184,6 +184,24 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
       get :log, id: other_suite.id
       expect(response.status).to be 404
     end
+    context "as instance admin" do
+      login_user(:user)
+      let(:other_instance)      { create(:instance) }
+      let(:suite)         { create(:suite, instance: logged_in_user.active_instance) }
+      let(:other_suite)   { create(:suite, instance: other_instance) }
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "is successful" do
+        get :log, id: suite.id
+        expect(response).to be_success
+      end
+      it "returns 401 is user is not admin of instance" do
+        get :log, id: other_suite.id
+        expect(response.status).to be 401
+      end
+    end
   end
 
   describe "GET #new" do

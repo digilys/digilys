@@ -140,6 +140,10 @@ describe Ability do
       it              { should_not be_able_to(:select_users, Group) }
       it              { should_not be_able_to(:add_users, Group) }
       it              { should_not be_able_to(:remove_users, Group) }
+
+      # Log
+      it              { should be_able_to(:log, suite) }
+      it              { should_not be_able_to(:log, other_suite) }
     end
   end
 
