@@ -56,7 +56,17 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
         expect(assigns(:suites)).to eq [regular_suites.first]
       end
     end
-
+    context "as instance admin" do
+      login_user(:user)
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "is successful" do
+        get :index
+        expect(response).to be_success
+      end
+    end
   end
 
   describe "GET #closed" do
@@ -91,6 +101,19 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
         expect(assigns(:suites)).to eq [regular_suites.first]
       end
     end
+
+    context "as instance admin" do
+      login_user(:user)
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "lists regular suites accessible by the user" do
+        get :closed
+        expect(response).to be_success
+        expect(assigns(:suites)).to eq regular_suites  # Suite.where(instance_id: logged_in_user.active_instance.id)  # [regular_suite]
+      end
+    end
   end
 
   describe "GET #search_participants" do
@@ -118,6 +141,20 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
 
       get :search_participants, id: suite.id, gq: { name_cont: group.name }, sq: { last_name_cont: student.last_name }
       expect(response.status).to be 404
+    end
+    context "as instance admin" do
+      login_user(:user)
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "searches suite participant students and groups" do
+        get :search_participants, id: suite.id, gq: { name_cont: group.name }, sq: { last_name_cont: student.last_name }
+
+        expect(response).to be_success
+        json = JSON.parse(response.body)
+        expect(json["results"]).to        have(2).items
+      end
     end
   end
 
@@ -155,7 +192,19 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
       expect(response).to be_success
       expect(assigns(:suite).participants).to have(1).item
     end
+    context "as instance admin" do
+      login_user(:user)
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "returns 401 is user is not admin of instance" do
+        get :new
+        expect(response.status).to be 401
+      end
+    end
   end
+
   describe "POST #new_from_template" do
     let(:template) { create(:suite, is_template: true) }
     it "builds an evaluation from a template" do
@@ -168,6 +217,17 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
       template = create(:suite, is_template: true, instance: instance)
       post :new_from_template, suite: { template_id: template.id }
       expect(response.status).to be 404
+    end
+    context "as instance admin" do
+      login_user(:user)
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "returns 401 is user is not admin of instance" do
+        post :new_from_template, suite: { template_id: template.id }
+        expect(response.status).to be 401
+      end
     end
   end
   describe "POST #create" do
@@ -292,6 +352,24 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
         expect(Suite.last.reload.users).to have(3).items
       end
     end
+    context "as instance admin" do
+      login_user(:user)
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "returns 401 is user is not admin of instance" do
+        post(
+          :create,
+          suite: {
+            name: "Test suite222",
+            is_template: "0",
+            instance_id: instance.id,
+          }
+        )
+        expect(response.status).to be 401
+      end
+    end
   end
 
   describe "GET #edit" do
@@ -302,6 +380,24 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
     it "gives a 404 if the instance does not match" do
       get :edit, id: other_suite.id
       expect(response.status).to be 404
+    end
+    context "as instance admin" do
+      login_user(:user)
+      let(:instance)        { create(:instance) }
+      let(:instance_suite)  { create(:suite, instance: logged_in_user.active_instance) }
+      let(:other_suite)     { create(:suite, instance: instance) }
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "is successful" do
+        get :edit, id: instance_suite.id
+        expect(response).to be_success
+      end
+      it "returns 401 if user is not admin of the instance" do
+        get :edit, id: other_suite.id
+        expect(response.status).to be 401
+      end
     end
   end
   describe "PUT #update" do
@@ -323,6 +419,27 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
       put :update, id: suite.id, suite: { instance_id: instance.id }
       expect(suite.reload.instance).not_to eq instance
     end
+    context "as instance admin" do
+      login_user(:user)
+      let(:instance)        { create(:instance) }
+      let(:instance_suite)  { create(:suite, instance: logged_in_user.active_instance) }
+      let(:other_suite)     { create(:suite, instance: instance) }
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "is successful" do
+        new_name = "#{instance_suite.name} updated"
+        put :update, id: instance_suite.id, suite: { name: new_name }
+        expect(response).to redirect_to(instance_suite)
+        expect(instance_suite.reload.name).to eq new_name
+      end
+      it "returns 401 if user is not admin of the instance" do
+        new_name = "#{other_suite.name} updated"
+        put :update, id: other_suite.id, suite: { name: new_name }
+        expect(response.status).to be 401
+      end
+    end
   end
 
   describe "GET #confirm_status_change" do
@@ -335,6 +452,26 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
     it "gives a 404 if the instance does not match" do
       get :confirm_status_change, id: other_suite.id
       expect(response.status).to be 404
+    end
+    context "as instance admin" do
+      login_user(:user)
+      let(:instance)        { create(:instance) }
+      let(:instance_suite)  { create(:suite, instance: logged_in_user.active_instance) }
+      let(:other_suite)     { create(:suite, instance: instance) }
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "is successful" do
+        get :confirm_status_change, id: instance_suite.id
+        expect(response).to be_success
+        expect(assigns(:suite).status.to_sym).to be :closed
+        expect(assigns(:suite)).to be_changed
+      end
+      it "returns 401 if user is not admin of the instance" do
+        get :confirm_status_change, id: other_suite.id
+        expect(response.status).to be 401
+      end
     end
   end
   describe "PUT #change_status" do
@@ -351,6 +488,25 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
       put :change_status, id: other_suite.id
       expect(response.status).to be 404
     end
+    context "as instance admin" do
+      login_user(:user)
+      let(:instance)        { create(:instance) }
+      let(:instance_suite)  { create(:suite, instance: logged_in_user.active_instance) }
+      let(:other_suite)     { create(:suite, instance: instance) }
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "is successful" do
+        put :change_status, id: instance_suite.id, suite: { status: "closed" }
+        expect(response).to redirect_to(instance_suite)
+        expect(instance_suite.reload).to be_closed
+      end
+      it "returns 401 if user is not admin of the instance" do
+        put :change_status, id: other_suite.id, suite: { status: "closed" }
+        expect(response.status).to be 401
+      end
+    end
   end
 
   describe "GET #confirm_destroy" do
@@ -362,7 +518,20 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
       get :confirm_destroy, id: other_suite.id
       expect(response.status).to be 404
     end
+    context "as instance admin" do
+      login_user(:user)
+      let(:instance_suite)  { create(:suite, instance: logged_in_user.active_instance) }
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "returns 401 is user is not admin of instance" do
+        get :confirm_destroy, id: instance_suite.id
+        expect(response.status).to be 401
+      end
+    end
   end
+
   describe "DELETE #destroy" do
     it "redirects to the suite list page" do
       delete :destroy, id: suite.id
@@ -381,6 +550,18 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
       delete :destroy, id: other_suite.id
       expect(response.status).to be 404
     end
+    context "as instance admin" do
+      login_user(:user)
+      let(:instance_suite)  { create(:suite, instance: logged_in_user.active_instance) }
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "returns 401 is user is not admin of instance" do
+        get :confirm_destroy, id: instance_suite.id
+        expect(response.status).to be 401
+      end
+    end
   end
 
   describe "GET #select_users" do
@@ -391,6 +572,24 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
     it "gives a 404 if the instance does not match" do
       get :select_users, id: other_suite.id
       expect(response.status).to be 404
+    end
+    context "as instance admin" do
+      login_user(:user)
+      let(:instance)        { create(:instance) }
+      let(:instance_suite)  { create(:suite, instance: logged_in_user.active_instance) }
+      let(:other_suite)     { create(:suite, instance: instance) }
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "is successful" do
+        get :select_users, id: instance_suite.id
+        expect(response).to be_success
+      end
+      it "returns 401 is user is not admin of instance" do
+        get :confirm_destroy, id: other_suite.id
+        expect(response.status).to be 401
+      end
     end
   end
   describe "PUT #add_users" do
@@ -416,6 +615,33 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
     it "gives a 404 if the instance does not match" do
       put :add_users, id: other_suite.id, suite: { user_id: users.collect(&:id).join(",") }
       expect(response.status).to be 404
+    end
+    context "as instance admin" do
+      login_user(:user)
+      let(:instance)        { create(:instance) }
+      let(:instance_suite)  { create(:suite, instance: logged_in_user.active_instance) }
+      let(:other_suite)     { create(:suite, instance: instance) }
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "gives the users suite_member privileges for the suite" do
+        expect(users.first.has_role?(:suite_member, instance_suite)).to be_false
+        expect(users.second.has_role?(:suite_member, instance_suite)).to be_false
+
+        put :add_users, id: instance_suite.id, suite: { user_id: users.collect(&:id).join(",") }
+        expect(response).to redirect_to(instance_suite)
+
+        expect(users.first.has_role?(:suite_member, instance_suite)).to be_true
+        expect(users.second.has_role?(:suite_member, instance_suite)).to be_true
+      end
+      it "returns 401 is user is not admin of instance" do
+        expect(users.first.has_role?(:suite_member, other_suite)).to be_false
+        expect(users.second.has_role?(:suite_member, other_suite)).to be_false
+
+        put :add_users, id: other_suite.id, suite: { user_id: users.collect(&:id).join(",") }
+        expect(response.status).to be 401
+      end
     end
   end
   describe "DELETE #remove_users" do
@@ -447,6 +673,42 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
       delete :remove_users, id: other_suite.id, suite: { user_id: users.collect(&:id).join(",") }
       expect(response.status).to be 404
     end
+    context "as instance admin" do
+      login_user(:user)
+      let(:instance)        { create(:instance) }
+      let(:instance_suite)  { create(:suite, instance: logged_in_user.active_instance) }
+      let(:other_suite)     { create(:suite, instance: instance) }
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "removes the users' suite_member and suite_contributor privileges for the suite" do
+        users.each { |u| u.add_role :suite_member, instance_suite }
+        users.first.add_role :suite_contributor, instance_suite
+
+        expect(users.first.has_role?(:suite_member, instance_suite)).to be_true
+        expect(users.first.has_role?(:suite_contributor, instance_suite)).to be_true
+        expect(users.second.has_role?(:suite_member, instance_suite)).to be_true
+
+        delete :remove_users, id: instance_suite.id, suite: { user_id: users.collect(&:id).join(",") }
+        expect(response).to redirect_to(instance_suite)
+
+        expect(users.first.has_role?(:suite_member, instance_suite)).to be_false
+        expect(users.first.has_role?(:suite_contributor, instance_suite)).to be_false
+        expect(users.second.has_role?(:suite_member, instance_suite)).to be_false
+      end
+      it "returns 401 is user is not admin of instance" do
+        users.each { |u| u.add_role :suite_member, other_suite }
+        users.first.add_role :suite_contributor, other_suite
+
+        expect(users.first.has_role?(:suite_member, other_suite)).to be_true
+        expect(users.first.has_role?(:suite_contributor, other_suite)).to be_true
+        expect(users.second.has_role?(:suite_member, other_suite)).to be_true
+
+        delete :remove_users, id: other_suite.id, suite: { user_id: users.collect(&:id).join(",") }
+        expect(response.status).to be 401
+      end
+    end
   end
 
   describe "PUT #add_contributors" do
@@ -472,6 +734,33 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
     it "gives a 404 if the instance does not match" do
       put :add_contributors, id: other_suite.id, user_ids: users.collect(&:id)
       expect(response.status).to be 404
+    end
+    context "as instance admin" do
+      login_user(:user)
+      let(:instance)        { create(:instance) }
+      let(:instance_suite)  { create(:suite, instance: logged_in_user.active_instance) }
+      let(:other_suite)     { create(:suite, instance: instance) }
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "gives the users suite_contributor privileges for the suite" do
+        expect(users.first.has_role?(:suite_contributor, instance_suite)).to be_false
+        expect(users.second.has_role?(:suite_contributor, instance_suite)).to be_false
+
+        put :add_contributors, id: instance_suite.id, user_ids: users.collect(&:id)
+        expect(response).to be_success
+
+        expect(users.first.has_role?(:suite_contributor, instance_suite)).to be_true
+        expect(users.second.has_role?(:suite_contributor, instance_suite)).to be_true
+      end
+      it "returns 401 is user is not admin of instance" do
+        expect(users.first.has_role?(:suite_contributor, other_suite)).to be_false
+        expect(users.second.has_role?(:suite_contributor, other_suite)).to be_false
+
+        put :add_contributors, id: other_suite.id, user_ids: users.collect(&:id)
+        expect(response.status).to be 401
+      end
     end
   end
   describe "PUT #remove_contributors" do
@@ -499,6 +788,37 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
     it "gives a 404 if the instance does not match" do
       delete :remove_contributors, id: other_suite.id, user_ids: users.collect(&:id).join(",")
       expect(response.status).to be 404
+    end
+    context "as instance admin" do
+      login_user(:user)
+      let(:instance)        { create(:instance) }
+      let(:instance_suite)  { create(:suite, instance: logged_in_user.active_instance) }
+      let(:other_suite)     { create(:suite, instance: instance) }
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "removes the users suite_contributor privileges for the suite" do
+        users.each { |u| u.add_role :suite_contributor, instance_suite }
+
+        expect(users.first.has_role?(:suite_contributor, instance_suite)).to be_true
+        expect(users.second.has_role?(:suite_contributor, instance_suite)).to be_true
+
+        delete :remove_contributors, id: instance_suite.id, user_ids: users.collect(&:id)
+        expect(response).to be_success
+
+        expect(users.first.has_role?(:suite_contributor, instance_suite)).to be_false
+        expect(users.second.has_role?(:suite_contributor, instance_suite)).to be_false
+      end
+      it "returns 401 is user is not admin of instance" do
+        users.each { |u| u.add_role :suite_contributor, other_suite }
+
+        expect(users.first.has_role?(:suite_contributor, other_suite)).to be_true
+        expect(users.second.has_role?(:suite_contributor, other_suite)).to be_true
+
+        delete :remove_contributors, id: other_suite.id, user_ids: users.collect(&:id)
+        expect(response.status).to be 401
+      end
     end
   end
 
