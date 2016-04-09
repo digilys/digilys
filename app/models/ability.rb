@@ -55,7 +55,7 @@ class Ability
       can :manage, Role
 
       # Groups
-      can    :manage, Group
+      can :manage, Group
 
       # Suites
       can :create,            Suite
@@ -104,6 +104,12 @@ class Ability
       can [ :view, :associate_users ], Instance do |inst|
         user.is_admin_of?(inst)
       end
+
+      # Groups
+      can [ :manage ], Group
+      cannot [ :edit, :update, :destroy, :create_new ], Group
+      cannot [ :select_students, :add_students, :remove_students ], Group
+      cannot [ :select_users, :add_users, :remove_users ], Group
     end
 
     can :list,    Suite

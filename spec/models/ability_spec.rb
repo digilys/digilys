@@ -122,6 +122,24 @@ describe Ability do
 
       it              { should_not be_able_to(:view, other_instance) }
       it              { should_not be_able_to(:associate_users, other_instance) }
+
+      # Group
+      it              { should be_able_to(:manage, Group) }
+      it              { should be_able_to(:view, Group) }
+      it              { should be_able_to(:copy, Group) }
+      it              { should be_able_to(:create, Group) }
+      it              { should be_able_to(:move_students, Group) }
+
+      it              { should_not be_able_to(:edit, Group) }
+      it              { should_not be_able_to(:update, Group) }
+      it              { should_not be_able_to(:create_new, Group) }
+      it              { should_not be_able_to(:destroy, Group) }
+      it              { should_not be_able_to(:select_students, Group) }
+      it              { should_not be_able_to(:add_students, Group) }
+      it              { should_not be_able_to(:remove_students, Group) }
+      it              { should_not be_able_to(:select_users, Group) }
+      it              { should_not be_able_to(:add_users, Group) }
+      it              { should_not be_able_to(:remove_users, Group) }
     end
   end
 
