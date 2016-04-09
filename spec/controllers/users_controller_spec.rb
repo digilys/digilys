@@ -5,7 +5,8 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
 
   login_user(:admin)
 
-  let(:user) { create(:user) }
+  let(:user)           { create(:user) }
+  let(:instance_admin) { create(:user) }
 
   context "non admin" do
     login_user(:user)
@@ -56,7 +57,8 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
 
     context "as instance admin" do
       login_user(:user)
-      let!(:users)           { create_list(:user, 3) }
+      let!(:other_instance)  { create(:instance) }
+      let!(:users)           { create_list(:user, 3, active_instance: logged_in_user.active_instance) }
       before(:each) do
         users.first.add_role(:admin)
         users.second.add_role(:superuser)
@@ -67,6 +69,12 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
         get :index
         expect(response).to be_successful
         expect(assigns(:users)).to match_array([ users.second, users.third, logged_in_user ])
+      end
+      it "only lists instance members" do
+        users.third.remove_role(:member, logged_in_user.active_instance)
+        get :index
+        expect(response).to be_successful
+        expect(assigns(:users)).to match_array([ users.second, logged_in_user ])
       end
     end
   end
@@ -95,6 +103,23 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
       expect(json["results"].first).to include("id"   => users.first.id)
       expect(json["results"].first).to include("text" => "#{users.first.name}, #{users.first.email}")
     end
+
+    context "as instance admin" do
+      login_user(:user)
+      before(:each) do
+        users.second.remove_role(:member, logged_in_user.active_instance)
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "only lists instance members" do
+        get :search, q: {}
+
+        expect(response).to be_success
+        json = JSON.parse(response.body)
+
+        expect(json["results"]).to have(users.length).items
+      end
+    end
   end
 
   describe "GET #edit" do
@@ -106,7 +131,30 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
       get :edit, id: -1
       expect(response.status).to be 404
     end
+    context "as instance admin" do
+      login_user(:user)
+      let!(:member)       { create(:user, active_instance: logged_in_user.active_instance) }
+      let!(:admin)        { create(:admin, active_instance: logged_in_user.active_instance) }
+      let!(:non_member)   { create(:user) }
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "is successful for instance member" do
+        get :edit, id: member.id
+        expect(response).to be_success
+      end
+      it "generates a 401 for non instance member" do
+        get :edit, id: non_member.id
+        expect(response.status).to be 401
+      end
+      it "generates a 401 for admins" do
+        get :edit, id: admin.id
+        expect(response.status).to be 401
+      end
+    end
   end
+
   describe "PUT #update" do
     it "redirects to the user edit page when successful" do
       new_name = "#{user.name} updated"
@@ -217,6 +265,37 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
         end
       end
     end
+    context "as instance admin" do
+      login_user(:user)
+      let!(:instance)     { create(:instance) }
+      let!(:member)       { create(:user, active_instance: logged_in_user.active_instance) }
+      let!(:admin)        { create(:admin, active_instance: logged_in_user.active_instance) }
+      let!(:non_member)   { create(:user) }
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "can update instance members" do
+        new_name = "#{member.name} updated"
+        put :update, id: member.id, user: { name: new_name }
+        expect(response).to redirect_to(edit_user_path(member))
+        expect(member.reload.name).to eq new_name
+      end
+      it "can not update non members" do
+        new_name = "#{non_member.name} updated"
+        put :update, id: non_member.id, user: { name: new_name }
+        expect(response.status).to be 401  # redirect_to(edit_user_path(member)) # be 401
+      end
+      it "can not update admins" do
+        new_name = "#{admin.name} updated"
+        put :update, id: admin.id, user: { name: new_name }
+        expect(response.status).to be 401
+      end
+      it "can not add other instances" do
+        put :update, id: member.id, user: { instance_ids: [instance.id] }
+        expect(member.reload.active_instance).to be nil
+      end
+    end
   end
 
   describe "GET #confirm_destroy" do
@@ -230,6 +309,30 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
       delete :destroy, id: user.id
       expect(response).to redirect_to(users_url())
       expect(User.exists?(user.id)).to be_false
+    end
+    context "as instance admin" do
+      login_user(:user)
+      let!(:instance)     { create(:instance) }
+      let!(:member)       { create(:user, active_instance: logged_in_user.active_instance) }
+      let!(:admin)        { create(:admin, active_instance: logged_in_user.active_instance) }
+      let!(:non_member)   { create(:user) }
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "can delete instance member" do
+        delete :destroy, id: member.id
+        expect(response).to redirect_to(users_url())
+        expect(User.exists?(member.id)).to be_false
+      end
+      it "can not delete non members" do
+        delete :destroy, id: non_member.id
+        expect(response.status).to be 401  # redirect_to(edit_user_path(member)) # be 401
+      end
+      it "can not delete admins" do
+        delete :destroy, id: admin.id
+        expect(response.status).to be 401
+      end
     end
   end
   describe "GET #new" do
@@ -278,6 +381,36 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
       params[:role_ids] = [Role.find_by_name("admin").id]
       post :create, user: params
       expect(User.last.has_role?(:admin)).to be_true
+    end
+    context "as instance admin" do
+      login_user(:user)
+      let!(:instance)         { create(:instance) }
+      let!(:instance_suite)   { create(:suite, instance: logged_in_user.active_instance) }
+      before(:each) do
+        logged_in_user.remove_role(:admin)
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "can create for own instance" do
+        params = valid_parameters_for(:user)
+        params["instance_ids"] = [logged_in_user.active_instance.id]
+        post :create, user: params
+        expect(response).to redirect_to(users_path)
+        expect(User.last.has_role?(:suite_member, instance_suite)).to be_true
+        expect(User.last.has_role?(:member, logged_in_user.active_instance)).to be_true
+      end
+      it "can only add own instance to instances" do
+        params = valid_parameters_for(:user)
+        params["instance_ids"] = [logged_in_user.active_instance.id, instance_1.id, instance_2.id]
+        post :create, user: params
+        expect(response).to redirect_to(users_path)
+        expect(User.last.has_role?(:member, logged_in_user.active_instance)).to be_true
+        expect(User.last.has_role?(:member, instance_1)).to be_false
+        expect(User.last.has_role?(:member, instance_2)).to be_false
+        expect(User.last.has_role?(:suite_member, instance_suite)).to be_true
+        expect(User.last.has_role?(:suite_member, suite_1)).to be_false
+        expect(User.last.has_role?(:suite_member, suite_2)).to be_false
+      end
     end
   end
 end
