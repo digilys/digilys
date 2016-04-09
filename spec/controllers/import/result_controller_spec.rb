@@ -20,6 +20,18 @@ describe Import::ResultController, versioning: !ENV["debug_versioning"].blank? d
       get :new, suites: suite.id
       expect(response).to be_success
     end
+
+    context "as instance admin" do
+      login_user(:user)
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "returns 401" do
+        get :new
+        expect(response.status).to be 401
+      end
+    end
   end
 
   describe "POST #confirm" do
@@ -52,6 +64,18 @@ describe Import::ResultController, versioning: !ENV["debug_versioning"].blank? d
       expect(flash[:error]).not_to be_empty
       expect(response).to redirect_to(new_import_result_path())
     end
+
+    context "as instance admin" do
+      login_user(:user)
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "returns 401" do
+        post :confirm, csv_file: uploaded_file, evaluation: evaluation
+        expect(response.status).to be 401
+      end
+    end
   end
 
   describe "POST #create" do
@@ -78,18 +102,6 @@ describe Import::ResultController, versioning: !ENV["debug_versioning"].blank? d
         expect(evaluation.results.count).to eq 1
         expect(evaluation.results.first.value).to eq 3
         expect(response).to redirect_to(suite_path(suite))
-      end
-
-      context "as admin of instance" do
-        login_user(:user)
-        before(:each) do
-          logged_in_user.admin_instance = logged_in_user.active_instance
-          logged_in_user.save
-        end
-        it "redirects to root url" do
-          post :create, filename: File.basename(temp_file), evaluation: evaluation
-          expect(response).to redirect_to(evaluation.suite)
-        end
       end
     end
 
@@ -136,6 +148,25 @@ describe Import::ResultController, versioning: !ENV["debug_versioning"].blank? d
         expect(evaluation.results.count).to eq 1
         expect(evaluation.results.first.value).to eq 7
         expect(response).to redirect_to(suite_path(suite))
+      end
+    end
+
+    context "as instance admin" do
+      login_user(:user)
+      temp_file(
+        File.join(Rails.root, "tmp/uploads"),
+        <<-CSV.strip_heredoc
+        20000101-4321,7
+        CSV
+      )
+
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "returns 401" do
+        post :create, filename: File.basename(temp_file), evaluation: evaluation
+        expect(response.status).to be 401
       end
     end
   end

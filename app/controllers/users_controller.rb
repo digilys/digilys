@@ -41,7 +41,7 @@ class UsersController < ApplicationController
     end
 
     role_ids = params[:user].delete(:role_ids)
-    instance_ids = params[:user].delete(:instance_ids)
+    instance_ids = filter_instance_ids(params[:user].delete(:instance_ids))
 
     if @user.send(update_method, params[:user])
 
@@ -61,7 +61,7 @@ class UsersController < ApplicationController
   end
 
   def create
-    instance_ids = params[:user].delete(:instance_ids)
+    instance_ids = filter_instance_ids(params[:user].delete(:instance_ids))
     role_ids = params[:user].delete(:role_ids)
 
     @user = User.new(params[:user])
@@ -140,5 +140,14 @@ class UsersController < ApplicationController
   def instance_filter
     @users = User if @users.nil?
     @users = @users.with_role(:member, current_instance)
+  end
+
+  def filter_instance_ids(instance_ids)
+    instance_ids = [] if instance_ids.nil?
+    if !current_user.has_role?(:admin)
+      instance_ids = instance_ids & [current_user.active_instance.id.to_s]
+      # instance_ids.include?(current_user.active_instance.id.to_s) ? [current_user.active_instance.id] : []
+    end
+    return instance_ids
   end
 end

@@ -10,6 +10,17 @@ describe Import::EvaluationTemplatesController, versioning: !ENV["debug_versioni
       get :new
       expect(response).to be_success
     end
+    context "as instance admin" do
+      login_user(:user)
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "returns 401" do
+        get :new
+        expect(response.status).to be 401
+      end
+    end
   end
 
   describe "POST #confirm" do
@@ -36,6 +47,19 @@ describe Import::EvaluationTemplatesController, versioning: !ENV["debug_versioni
       expect(flash[:error]).not_to be_empty
       expect(response).to redirect_to(new_import_evaluation_template_url())
     end
+    context "as instance admin" do
+      login_user(:user)
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "returns 401" do
+        Timecop.freeze(timestamp) do
+          post :confirm, csv_file: uploaded_file
+        end
+        expect(response.status).to be 401
+      end
+    end
   end
 
   describe "POST #create" do
@@ -53,6 +77,17 @@ describe Import::EvaluationTemplatesController, versioning: !ENV["debug_versioni
         post :create, filename: File.basename(temp_file)
         expect(response).to redirect_to(template_evaluations_url())
         expect(Evaluation.count).to eq 1
+      end
+      context "as instance admin" do
+        login_user(:user)
+        before(:each) do
+          logged_in_user.admin_instance = logged_in_user.active_instance
+          logged_in_user.save
+        end
+        it "returns 401" do
+          post :create, filename: File.basename(temp_file)
+          expect(response.status).to be 401
+        end
       end
     end
     context "without an uploaded file" do

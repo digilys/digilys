@@ -104,8 +104,8 @@ class ApplicationController < ActionController::Base
     return result.values
   end
 
-  def authorize_import
-    authorize! :import, Instance
+  def authorize_import(type)
+    authorize! ("import_" + type).to_sym, Instance
   end
 
   def authorize_restore

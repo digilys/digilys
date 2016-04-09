@@ -2,7 +2,7 @@ require "csv"
 require "digilys/result_importer"
 
 class Import::ResultController < ApplicationController
-  before_filter :authorize_import
+  before_filter { authorize_import("result") }
 
   def new
     @suites = Suite.where(instance_id: current_user.active_instance_id, is_template: false).order(:name).all

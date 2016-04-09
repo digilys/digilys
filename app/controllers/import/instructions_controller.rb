@@ -1,5 +1,5 @@
 class Import::InstructionsController < ApplicationController
-  before_filter :authorize_import
+  before_filter { authorize_import("instructions") }
 
   def new
   end
