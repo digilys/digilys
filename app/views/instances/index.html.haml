@@ -6,10 +6,12 @@
   %thead
     %tr
       %th.name=   Instance.human_attribute_name(:name)
+      %th.name=   Instance.human_attribute_name(:admins)
 
   %tbody
     - @instances.each do |instance|
       %tr
         %td.name= link_to(instance.name, instance)
+        %td.admins= instance.admins.collect{|u| u.name}.join(", ")
 
 = paginate(@instances)

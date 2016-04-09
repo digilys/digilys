@@ -3,16 +3,11 @@ class InstancesController < ApplicationController
 
   load_and_authorize_resource
 
-  after_filter :add_roles_to_admin, :only => [ :create, :update ]
-  before_filter :remove_admin_roles, :only => [ :update ]
-
   def index
     @instances = @instances.with_role(:member, current_user) unless can?(:manage, Instance)
     @instances = @instances.order(:name)
 
     if request.xhr?
-      @instances += Instance.where(:user_id => current_user)
-      @instances = @instances.uniq
       render partial: "list", layout: false if request.xhr?
     else
       @instances = @instances.page(params[:page])
@@ -93,26 +88,5 @@ class InstancesController < ApplicationController
     flash[:success] = t(:"instances.remove_users.success")
     redirect_to @instance
   end
-
-  private
-    def remove_admin_roles
-      if @instance.admin
-        @instance.admin.remove_role :member, @instance unless @instance.admin.instances.include?(@instance)
-        Suite.in_instance(@instance).each do |suite|
-          @instance.admin.remove_role :suite_member, suite unless @instance.admin.instances.include?(@instance)
-          suite.touch
-        end
-      end
-    end
-
-    def add_roles_to_admin
-      if @instance.admin
-        @instance.admin.add_role :member, @instance
-        Suite.in_instance(@instance).each do |suite|
-          @instance.admin.add_role :suite_member, suite
-          suite.touch
-        end
-      end
-    end
 
 end

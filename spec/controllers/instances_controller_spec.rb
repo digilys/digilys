@@ -65,14 +65,6 @@ describe InstancesController, versioning: !ENV["debug_versioning"].blank? do
       post :create, instance: invalid_parameters_for(:instance)
       expect(response).to render_template("new")
     end
-    context "with admin" do
-      let(:admin) { create(:user) }
-      it "add roles to admin" do
-        params = { name: "instans", user_id: admin.id }
-        post :create, instance: params
-        expect(admin.has_role?(:member, Instance.where(name: "instans").first)).to be_true
-      end
-    end
   end
 
   describe "GET #edit" do
@@ -91,49 +83,6 @@ describe InstancesController, versioning: !ENV["debug_versioning"].blank? do
     it "renders the edit view when validation fails" do
       put :update, id: instance.id, instance: invalid_parameters_for(:instance)
       expect(response).to render_template("edit")
-    end
-    context "with admin" do
-      let(:prev_admin) { create(:user) }
-      let(:new_admin) { create(:user) }
-      let(:instance) { create(:instance, admin: prev_admin) }
-      let!(:suite_1) { create(:suite, instance: instance) }
-      let!(:suite_2) { create(:suite, instance: instance) }
-      let(:instance_user) { create(:user, instances: [instance]) }
-      it "add roles to new admin" do
-        params = { name: "instans", user_id: new_admin.id }
-        put :update, id: instance.id, instance: params
-        expect(new_admin.has_role?(:member, Instance.where(name: "instans").first)).to be_true
-      end
-      it "removes roles for previous admin" do
-        params = { name: "instans", user_id: new_admin.id }
-        put :update, id: instance.id, instance: params
-        expect(prev_admin.has_role?(:member, Instance.where(name: "instans").first)).to be_false
-      end
-      it "add suite roles to new admin" do
-        params = { name: "instans", user_id: new_admin.id }
-        put :update, id: instance.id, instance: params
-        expect(new_admin.has_role?(:suite_member, suite_1)).to be_true
-        expect(new_admin.has_role?(:suite_member, suite_1)).to be_true
-      end
-      it "removes suite roles for previous admin" do
-        params = { name: "instans", user_id: new_admin.id }
-        put :update, id: instance.id, instance: params
-        expect(prev_admin.has_role?(:suite_member, suite_1)).to be_false
-        expect(prev_admin.has_role?(:suite_member, suite_1)).to be_false
-      end
-      it "removes roles unless user is member of instance" do
-        params = { name: "instans", user_id: instance_user.id }
-        put :update, id: instance.id, instance: params
-        expect(instance_user.has_role?(:member, Instance.where(name: "instans").first)).to be_true
-        expect(instance_user.has_role?(:suite_member, suite_1)).to be_true
-        expect(instance_user.has_role?(:suite_member, suite_1)).to be_true
-
-        params = { name: "instans", user_id: new_admin.id }
-        put :update, id: instance.id, instance: params
-        expect(instance_user.has_role?(:member, Instance.where(name: "instans").first)).to be_true
-        expect(instance_user.has_role?(:suite_member, suite_1)).to be_true
-        expect(instance_user.has_role?(:suite_member, suite_1)).to be_true
-      end
     end
   end
   describe "add user" do

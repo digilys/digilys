@@ -85,17 +85,18 @@ class Ability
         u.instances.include?(active_instance)
       end
       cannot [ :destroy ], User
+      can [ :destroy ], User do |u|
+        !u.is_administrator?
+      end
       cannot :change_instance, User
+
+      can :manage, Role
 
       can :manage, Suite do |suite|
         !suite.is_template? && user.is_admin_of?(suite.instance)
       end
       cannot :create, Suite
       cannot :destroy, Suite
-
-      # Groups
-      can    :manage, Group
-      cannot :destroy, Group
     end
 
     can :list,    Suite

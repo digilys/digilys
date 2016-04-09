@@ -166,6 +166,7 @@ sv:
         registered_yubikey: YubiKey-lösenord
         instances: Instanser
         active_instance: Instans
+        admin_instance: Administrator för
         name_ordering: Sorteringsordning för elever
       instruction:
         title: Titel
@@ -177,6 +178,7 @@ sv:
         owner_id: Tillhör
       instance:
         name: Namn
+        admins: Administratörer
       series:
         name: Namn
         suite: Planering

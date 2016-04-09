@@ -128,9 +128,9 @@ describe User do
   end
 
   context "instance admin" do
-    let(:user)  { create(:user) }
-    let(:instance_admin) { create(:user) }
-    let(:instance)       { create(:instance, admin: instance_admin) }
+    let(:instance)       { create(:instance) }
+    let(:user)           { create(:user) }
+    let(:instance_admin) { create(:user, admin_instance: instance) }
 
     it { expect(instance_admin.is_admin_of?(instance)).to be_true }
     it { expect(user.is_admin_of?(instance)).to be_false }

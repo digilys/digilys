@@ -60,13 +60,13 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
       before(:each) do
         users.first.add_role(:admin)
         users.second.add_role(:superuser)
-        logged_in_user.active_instance.admin = logged_in_user
-        logged_in_user.active_instance.save
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
       end
-      it "does not list admins or superusers" do
+      it "does not list admins" do
         get :index
         expect(response).to be_successful
-        expect(assigns(:users)).to match_array([ users.third, logged_in_user ])
+        expect(assigns(:users)).to match_array([ users.second, users.third, logged_in_user ])
       end
     end
   end
@@ -164,8 +164,8 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
         let!(:suite_1) { create(:suite, instance: instances.first) }
         let!(:suite_2) { create(:suite, instance: instances.second) }
         before(:each) do
-          instances.first.admin = admin
-          instances.first.save
+          admin.admin_instance = instances.first
+          admin.save
           user.instances = [instances.first]
           user.save
         end

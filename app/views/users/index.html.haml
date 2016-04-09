@@ -13,6 +13,7 @@
         %th.name=   User.human_attribute_name(:name)
         %th.instance=   Instance.model_name.human(count: 1)
         %th.email=  Suite.human_attribute_name(:email)
+        %th.admin_of=  User.human_attribute_name(:admin_instance)
         %th.actions &nbsp;
     %tbody
       - @users.each do |user|
@@ -20,6 +21,7 @@
           %td.name=  user.name
           %td.name=  user.instances.map(&:name).join(",")
           %td.email= user.email
+          %td.admin_instance= user.admin_instance.name unless user.admin_instance.nil?
           %td.actions
             .btn-group
               - if can? :change, User

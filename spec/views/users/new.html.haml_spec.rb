@@ -25,8 +25,8 @@ describe "users/new" do
   context "for instance admin" do
     login_user(:user)
     before(:each) do
-      current_user.active_instance.admin = current_user
-      current_user.active_instance.save!
+      current_user.admin_instance = current_user.active_instance
+      current_user.save!
     end
     it                 { should     have_selector("input[id='user_name']") }
     it                 { should     have_selector("input[id='user_email']") }

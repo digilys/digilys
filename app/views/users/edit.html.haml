@@ -34,15 +34,25 @@
               as: :check_boxes,
               collection: Instance.authorized_instances(current_user)
 
-      - if can? :manage, Role
+      - if can? :manage, Role or can? :manage, User
         = f.inputs t(:".roles_title") do
-          = f.input :roles,
-            as: :select,
-            include_blank: User.model_name.human,
-            collection: Role.where(name: %w(admin superuser)).collect { |r| [ t(:"roles.#{r.name}"), r.id ] },
-            input_html: { multiple: false }
-          .alert.alert-box.alert-info
-            = t(:".roles_explanation_html")
+          - if can? :manage, User
+            = f.input :admin_instance_id,
+              label: User.human_attribute_name(:admin_instance),
+              as: :select,
+              input_html: { multiple: false },
+              collection: current_user.is_administrator? ? Instance.all : [current_user.admin_instance]
+            .alert.alert-box.alert-info
+              = t(:".admin_instance_explanation_html")
+
+          - if can? :manage, Role
+            = f.input :roles,
+              as: :select,
+              include_blank: User.model_name.human,
+              collection: Role.authorized_roles(current_user).collect { |r| [ t(:"roles.#{r.name}"), r.id ] },
+              input_html: { multiple: false }
+            .alert.alert-box.alert-info
+              = t(:".roles_explanation_html")
 
       = f.actions do
         = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary" }

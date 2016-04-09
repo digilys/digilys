@@ -25,8 +25,8 @@ describe "users/index" do
   login_user(:user)
   let(:users) { create_list(:user, 2) }
   before(:each) do
-    logged_in_user.active_instance.admin = logged_in_user
-    logged_in_user.active_instance.save
+    logged_in_user.admin_instance = logged_in_user.active_instance
+    logged_in_user.save
 
     users << logged_in_user
     assign(:users, Kaminari.paginate_array(users).page(1).per(10))
@@ -35,7 +35,7 @@ describe "users/index" do
   context "instance admin" do
     subject { rendered }
     it      { should have_selector(".users-table tbody tr", count: 3) }
-    it      { should have_selector(".users-table tbody a.btn-mini", count: 3) }
-    it      { should have_selector(".users-table tbody a.btn-danger", count: 0) }
+    it      { should have_selector(".users-table tbody a.btn-mini", count: 5) }
+    it      { should have_selector(".users-table tbody a.btn-danger", count: 2) }
   end
 end

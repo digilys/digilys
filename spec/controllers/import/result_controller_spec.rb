@@ -83,8 +83,8 @@ describe Import::ResultController, versioning: !ENV["debug_versioning"].blank? d
       context "as admin of instance" do
         login_user(:user)
         before(:each) do
-          logged_in_user.active_instance.admin = logged_in_user
-          logged_in_user.active_instance.save
+          logged_in_user.admin_instance = logged_in_user.active_instance
+          logged_in_user.save
         end
         it "redirects to root url" do
           post :create, filename: File.basename(temp_file), evaluation: evaluation

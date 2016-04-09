@@ -12,6 +12,7 @@ class User < ActiveRecord::Base
 
   has_many :settings, as: :customizer, dependent: :destroy
 
+  belongs_to :admin_instance, class_name: "Instance"
   belongs_to :active_instance, class_name: "Instance"
 
   # Setup accessible (or protected) attributes for your model
@@ -22,6 +23,7 @@ class User < ActiveRecord::Base
     :role_ids,
     :name,
     :active_instance_id,
+    :admin_instance_id,
     :instance_ids,
     :name_ordering
 
@@ -45,7 +47,6 @@ class User < ActiveRecord::Base
     end
   end
 
-
   def self.visible
     where(invisible: false)
   end
@@ -55,11 +56,7 @@ class User < ActiveRecord::Base
   end
 
   def is_admin_of?(instance)
-    return instance.admin == self unless instance.nil? || instance.admin.nil?
-  end
-
-  def is_admin?
-    return Instance.where(:user_id => self).any?
+    return self.admin_instance == instance unless self.admin_instance.nil?
   end
 
   def save_setting!(customizable, data)
@@ -75,7 +72,6 @@ class User < ActiveRecord::Base
     @instances ||= Instance.with_role(:member, self)
   end
 
-
   def name_ordering
     self.preferences ||= {}
     self.preferences["name_ordering"].try(:to_sym) || :first_name
@@ -89,7 +85,6 @@ class User < ActiveRecord::Base
       nil
     end
   end
-
 
   private
 
