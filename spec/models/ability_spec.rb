@@ -115,8 +115,6 @@ describe Ability do
       it              { should_not be_able_to(:destroy, template_suite) }
 
       # Instance
-      it              { should be_able_to(:control, Instance) }
-
       it              { should be_able_to(:view, instance) }
       it              { should be_able_to(:associate_users, instance) }
 
