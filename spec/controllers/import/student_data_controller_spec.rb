@@ -10,6 +10,13 @@ describe Import::StudentDataController, versioning: !ENV["debug_versioning"].bla
       get :new
       expect(response).to be_success
     end
+    context "as superuser" do
+      login_user(:superuser)
+      it "returns 401" do
+        get :new
+        expect(response.status).to be 401
+      end
+    end
   end
 
   describe "POST #confirm" do
@@ -34,11 +41,18 @@ describe Import::StudentDataController, versioning: !ENV["debug_versioning"].bla
       expect(assigns(:importer)).to be_a(Digilys::StudentDataImporter)
       expect(File.exist?(expected_file)).to be_true
     end
-    
+
     it "handles errors" do
       post :confirm, excel_file: nil
       expect(response).to redirect_to(new_import_student_data_url())
       expect(flash[:error]).not_to be_empty
+    end
+    context "as superuser" do
+      login_user(:superuser)
+      it "returns 401" do
+        post :confirm
+        expect(response.status).to be 401
+      end
     end
   end
 
@@ -83,6 +97,13 @@ describe Import::StudentDataController, versioning: !ENV["debug_versioning"].bla
         post :create, filename: File.basename(temp_file)
         expect(flash[:error]).not_to be_empty
         expect(response).to redirect_to(new_import_student_data_url())
+      end
+    end
+    context "as superuser" do
+      login_user(:superuser)
+      it "returns 401" do
+        post :create
+        expect(response.status).to be 401
       end
     end
   end

@@ -10,6 +10,13 @@ describe Import::EvaluationTemplatesController, versioning: !ENV["debug_versioni
       get :new
       expect(response).to be_success
     end
+    context "as superuser" do
+      login_user(:superuser)
+      it "returns 401" do
+        get :new
+        expect(response.status).to be 401
+      end
+    end
   end
 
   describe "POST #confirm" do
@@ -35,6 +42,13 @@ describe Import::EvaluationTemplatesController, versioning: !ENV["debug_versioni
       post :confirm, csv_file: nil
       expect(flash[:error]).not_to be_empty
       expect(response).to redirect_to(new_import_evaluation_template_url())
+    end
+    context "as superuser" do
+      login_user(:superuser)
+      it "returns 401" do
+        post :confirm
+        expect(response.status).to be 401
+      end
     end
   end
 
@@ -112,6 +126,13 @@ describe Import::EvaluationTemplatesController, versioning: !ENV["debug_versioni
       it "should not update existing by default" do
         post :create, filename: File.basename(temp_file)
         expect(Evaluation.count).to eq 2
+      end
+    end
+    context "as superuser" do
+      login_user(:superuser)
+      it "returns 401" do
+        post :create
+        expect(response.status).to be 401
       end
     end
   end

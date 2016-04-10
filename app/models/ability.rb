@@ -71,9 +71,6 @@ class Ability
 
       # Color tables
       can :create, ColorTable
-
-      # Import
-      can :import, Instance
     elsif is_instance_admin
       # Import
       can :import, Instance do |instance|

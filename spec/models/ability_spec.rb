@@ -125,6 +125,8 @@ describe Ability do
     it { should_not be_able_to(:destroy, suite_evaluation) }
 
     it { should     be_able_to(:create,  ColorTable) }
+
+    it { should_not be_able_to(:import, Instance) }
   end
 
   context "Suite roles" do
