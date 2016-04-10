@@ -18,8 +18,8 @@ FactoryGirl.define do
     factory :admin do
       after(:create) { |user| user.add_role :admin }
     end
-    factory :superuser do
-      after(:create) { |user| user.add_role :superuser }
+    factory :planner do
+      after(:create) { |user| user.add_role :planner }
     end
     factory(:invalid_user) do
       name nil

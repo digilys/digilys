@@ -39,6 +39,8 @@ GEM
       multi_json (~> 1.0)
     acts-as-taggable-on (2.4.1)
       rails (>= 3, < 5)
+    acts_as_list (0.7.2)
+      activerecord (>= 3.0)
     arel (3.0.3)
     bcrypt-ruby (3.0.1)
     bootstrap-datepicker-rails (1.0.0.5)
@@ -174,6 +176,8 @@ GEM
       activesupport (= 3.2.17)
       bundler (~> 1.0)
       railties (= 3.2.17)
+    rails-trash (2.0.0)
+      rails (>= 3.0.0)
     railties (3.2.17)
       actionpack (= 3.2.17)
       activesupport (= 3.2.17)
@@ -261,6 +265,7 @@ PLATFORMS
 
 DEPENDENCIES
   acts-as-taggable-on (~> 2.4.1)
+  acts_as_list
   bootstrap-datepicker-rails (~> 1.0.0.5)
   bootstrap-sass (~> 2.3.1.0)
   cancan (~> 1.6.9)
@@ -286,6 +291,7 @@ DEPENDENCIES
   pry (~> 0.9.12)
   pry-remote (~> 0.1.7)
   rails (= 3.2.17)
+  rails-trash
   ransack (~> 0.7.2)
   rolify (~> 3.2.0)
   roo (~> 1.13.2)
@@ -301,3 +307,6 @@ DEPENDENCIES
   uglifier (>= 1.0.3)
   yajl-ruby (~> 1.1.0)
   yubikey_database_authenticatable!
+
+BUNDLED WITH
+   1.11.2

@@ -10,8 +10,8 @@ describe Import::InstructionsController, versioning: !ENV["debug_versioning"].bl
       get :new
       expect(response).to be_success
     end
-    context "as superuser" do
-      login_user(:superuser)
+    context "as planner" do
+      login_user(:planner)
       it "returns 401" do
         get :new
         expect(response.status).to be 401
@@ -30,8 +30,8 @@ describe Import::InstructionsController, versioning: !ENV["debug_versioning"].bl
       expect(assigns(:uploaded_instructions)).to include(first_object)
       expect(assigns(:uploaded_instructions)).to include(second_object)
     end
-    context "as superuser" do
-      login_user(:superuser)
+    context "as planner" do
+      login_user(:planner)
       it "returns 401" do
         post :confirm
         expect(response.status).to be 401
@@ -81,8 +81,8 @@ describe Import::InstructionsController, versioning: !ENV["debug_versioning"].bl
       expect(existing.for_page).to eq new_instruction1[:for_page]
       expect(existing.title).to    eq new_instruction1[:title]
     end
-    context "as superuser" do
-      login_user(:superuser)
+    context "as planner" do
+      login_user(:planner)
       it "returns 401" do
         post :create
         expect(response.status).to be 401

@@ -61,7 +61,8 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
       let!(:users)           { create_list(:user, 3, active_instance: logged_in_user.active_instance) }
       before(:each) do
         users.first.add_role(:admin)
-        users.second.add_role(:superuser)
+        users.second.add_role(:planner)
+        users.second.save
         logged_in_user.admin_instance = logged_in_user.active_instance
         logged_in_user.save
       end
@@ -167,26 +168,26 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
       expect(response).to render_template("edit")
     end
     it "changes roles when applicable" do
-      user.add_role :superuser
+      user.add_role :planner
       user.save
 
       put :update, id: user.id, user: { role_ids: [Role.find_by_name("admin").id] }
 
-      expect(user.has_role?(:superuser)).to be_false
+      expect(user.has_role?(:planner)).to be_false
       expect(user.has_role?(:admin)).to     be_true
     end
     it "only touches global roles, not instance roles" do
-      user.add_role :superuser
+      user.add_role :planner
       user.add_role :resource, Instance
       user.add_role :instance, Instance.first
 
       put :update, id: user.id, user: { role_ids: [Role.find_by_name("admin").id] }
 
-      expect(user).not_to have_role(:superuser)
+      expect(user).not_to have_role(:planner)
       expect(user).to     have_role(:admin)
       expect(user).to     have_role(:resource, Instance)
       expect(user).to     have_role(:instance, Instance.first)
-      expect(Role.where(name: "superuser").exists?).to be_true
+      expect(Role.where(name: "planner").exists?).to be_true
     end
 
     context "instances" do

@@ -21,8 +21,8 @@ describe Import::ResultController, versioning: !ENV["debug_versioning"].blank? d
       expect(response).to be_success
     end
 
-    context "as superuser" do
-      login_user(:superuser)
+    context "as planner" do
+      login_user(:planner)
       it "returns 401" do
         get :new
         expect(response.status).to be 401
@@ -60,8 +60,8 @@ describe Import::ResultController, versioning: !ENV["debug_versioning"].blank? d
       expect(flash[:error]).not_to be_empty
       expect(response).to redirect_to(new_import_result_path())
     end
-    context "as superuser" do
-      login_user(:superuser)
+    context "as planner" do
+      login_user(:planner)
       it "returns 401" do
         post :confirm
         expect(response.status).to be 401
@@ -141,8 +141,8 @@ describe Import::ResultController, versioning: !ENV["debug_versioning"].blank? d
         expect(response).to redirect_to(suite_path(suite))
       end
     end
-    context "as superuser" do
-      login_user(:superuser)
+    context "as planner" do
+      login_user(:planner)
       it "returns 401" do
         post :create
         expect(response.status).to be 401

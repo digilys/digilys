@@ -1239,7 +1239,7 @@ describe Evaluation do
   end
 
   describe "#where_suite_member" do
-    let(:user)                     { create(:superuser) }
+    let(:user)                     { create(:planner) }
     let(:contributed_suite)        { create(:suite) }
     let(:managed_suite)            { create(:suite) }
     let(:not_allowed_suite)        { create(:suite) }

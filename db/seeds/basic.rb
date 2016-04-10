@@ -3,10 +3,10 @@
 # Run app:factory:students first
 #
 # 3 users:
-# - 1 superuser
+# - 1 planner
 # - 1 reader (regular user)
 # - 1 editor (regular user)
-# 
+#
 # 1 evaluation template
 #
 # 2 generic evaluations, booleans
@@ -19,17 +19,17 @@
 
 instance = Instance.order("id asc").first
 
-puts "Superuser"
+puts "planner"
 user = User.new do |u|
-  u.name                  = "Superuser"
-  u.email                 = "superuser@example.com"
+  u.name                  = "planner"
+  u.email                 = "planner@example.com"
   u.password              = "testtest"
   u.password_confirmation = "testtest"
   u.active_instance       = instance
 end
 
 user.save!
-user.add_role :superuser
+user.add_role :planner
 
 puts "Reader"
 user = User.new do |u|

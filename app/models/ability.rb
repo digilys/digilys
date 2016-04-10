@@ -47,7 +47,7 @@ class Ability
       can :restore, :all
       can :change_instance, User
       can :manage, Role
-    elsif user.has_role?(:superuser)
+    elsif user.has_role?(:planner)
       # Students
       can    :manage, Student
       cannot :destroy, Student
