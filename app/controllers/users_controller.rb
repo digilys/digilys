@@ -130,6 +130,11 @@ class UsersController < ApplicationController
     @users = User if @users.nil?
     @users = @users.with_role(:member, current_instance)
 
+    if current_user.has_role?(:admin)
+      @users.where("users.id IN (?) OR users.instances IS NULL", User.with_role(:member, current_instance))
+    else
+      @users.where("users.id IN (?)", User.with_role(:member, current_instance))
+    end
     @users = @users.where("users.id NOT IN (?)", User.with_any_role(:admin)) unless current_user.is_administrator?
     @users = @users.where("users.id NOT IN (?)", User.with_any_role(:superuser)) unless (current_user.is_administrator? || current_user.is_admin_of?(current_instance))
   end
