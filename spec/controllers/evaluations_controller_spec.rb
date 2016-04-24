@@ -114,6 +114,12 @@ describe EvaluationsController, versioning: !ENV["debug_versioning"].blank? do
       post :new_from_template, evaluation: { template_id: template.id, suite_id: other_suite.id }
       expect(response.status).to be 404
     end
+    it "builds an evaluation from a template without suite" do
+      post :new_from_template, evaluation: { template_id: template.id, suite_id: "" }
+      expect(response).to be_success
+      expect(assigns(:evaluation).template_id).to eq template.id
+      expect(assigns(:evaluation).suite_id).to    eq nil
+    end
   end
   describe "POST #create" do
     it "redirects to the newly created evaluation on success" do

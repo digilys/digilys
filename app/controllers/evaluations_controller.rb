@@ -185,11 +185,11 @@ class EvaluationsController < ApplicationController
   # Required as a before_filter so it works with cancan's auth
   def load_from_template(id=nil)
     ids = params[:evaluation][:template_id].split(",")
-    @suite = Suite.find(params[:evaluation][:suite_id])
-    if ids.size > 1 && !@suite.is_template?
+    @suite = Suite.find(params[:evaluation][:suite_id]) unless params[:evaluation][:suite_id].empty?
+    if ids.size > 1 && @suite && !@suite.is_template?
       @evaluations = []
       ids.each do |i|
-        template    = Evaluation.find(i)
+        template = Evaluation.find(i)
         evaluation = Evaluation.new_from_template(template, params[:evaluation])
         evaluation.instance = current_instance unless evaluation.type.try(:suite?)
         evaluation.save
