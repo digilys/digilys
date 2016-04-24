@@ -31,6 +31,18 @@ describe InstancesController, versioning: !ENV["debug_versioning"].blank? do
         expect(assigns(:instances)).to match_array([ logged_in_user.active_instance ])
       end
     end
+
+    context "as instance admin" do
+      login_user(:user)
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "is successful" do
+        get :index
+        expect(response).to be_success
+      end
+    end
   end
 
   describe "POST #select" do
@@ -48,6 +60,21 @@ describe InstancesController, versioning: !ENV["debug_versioning"].blank? do
       get :show, id: instance.id
       expect(response).to be_success
     end
+    context "as instance admin" do
+      login_user(:user)
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "is successful" do
+        get :show, id: logged_in_user.active_instance.id
+        expect(response).to be_success
+      end
+      it "returns 401 is user is not admin of instance" do
+        get :show, id: instance.id
+        expect(response.status).to be 401
+      end
+    end
   end
 
   describe "GET #new" do
@@ -55,7 +82,19 @@ describe InstancesController, versioning: !ENV["debug_versioning"].blank? do
       get :new
       expect(response).to be_success
     end
+    context "as instance admin" do
+      login_user(:user)
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "returns 401" do
+        get :new
+        expect(response.status).to be 401
+      end
+    end
   end
+
   describe "POST #create" do
     it "redirects to the instance when successful" do
       post :create, instance: valid_parameters_for(:instance)
@@ -65,12 +104,15 @@ describe InstancesController, versioning: !ENV["debug_versioning"].blank? do
       post :create, instance: invalid_parameters_for(:instance)
       expect(response).to render_template("new")
     end
-    context "with admin" do
-      let(:admin) { create(:user) }
-      it "add roles to admin" do
-        params = { name: "instans", user_id: admin.id }
-        post :create, instance: params
-        expect(admin.has_role?(:member, Instance.where(name: "instans").first)).to be_true
+    context "as instance admin" do
+      login_user(:user)
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "returns 401" do
+        post :create, instance: valid_parameters_for(:instance)
+        expect(response.status).to be 401
       end
     end
   end
@@ -80,7 +122,19 @@ describe InstancesController, versioning: !ENV["debug_versioning"].blank? do
       get :edit, id: instance.id
       expect(response).to be_success
     end
+    context "as instance admin" do
+      login_user(:user)
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "returns 401" do
+        get :edit, id: instance.id
+        expect(response.status).to be 401
+      end
+    end
   end
+
   describe "PUT #update" do
     it "redirects to the instance when successful" do
       new_name = "#{instance.name} updated"
@@ -92,50 +146,20 @@ describe InstancesController, versioning: !ENV["debug_versioning"].blank? do
       put :update, id: instance.id, instance: invalid_parameters_for(:instance)
       expect(response).to render_template("edit")
     end
-    context "with admin" do
-      let(:prev_admin) { create(:user) }
-      let(:new_admin) { create(:user) }
-      let(:instance) { create(:instance, admin: prev_admin) }
-      let!(:suite_1) { create(:suite, instance: instance) }
-      let!(:suite_2) { create(:suite, instance: instance) }
-      let(:instance_user) { create(:user, instances: [instance]) }
-      it "add roles to new admin" do
-        params = { name: "instans", user_id: new_admin.id }
-        put :update, id: instance.id, instance: params
-        expect(new_admin.has_role?(:member, Instance.where(name: "instans").first)).to be_true
+    context "as instance admin" do
+      login_user(:user)
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
       end
-      it "removes roles for previous admin" do
-        params = { name: "instans", user_id: new_admin.id }
-        put :update, id: instance.id, instance: params
-        expect(prev_admin.has_role?(:member, Instance.where(name: "instans").first)).to be_false
-      end
-      it "add suite roles to new admin" do
-        params = { name: "instans", user_id: new_admin.id }
-        put :update, id: instance.id, instance: params
-        expect(new_admin.has_role?(:suite_member, suite_1)).to be_true
-        expect(new_admin.has_role?(:suite_member, suite_1)).to be_true
-      end
-      it "removes suite roles for previous admin" do
-        params = { name: "instans", user_id: new_admin.id }
-        put :update, id: instance.id, instance: params
-        expect(prev_admin.has_role?(:suite_member, suite_1)).to be_false
-        expect(prev_admin.has_role?(:suite_member, suite_1)).to be_false
-      end
-      it "removes roles unless user is member of instance" do
-        params = { name: "instans", user_id: instance_user.id }
-        put :update, id: instance.id, instance: params
-        expect(instance_user.has_role?(:member, Instance.where(name: "instans").first)).to be_true
-        expect(instance_user.has_role?(:suite_member, suite_1)).to be_true
-        expect(instance_user.has_role?(:suite_member, suite_1)).to be_true
-
-        params = { name: "instans", user_id: new_admin.id }
-        put :update, id: instance.id, instance: params
-        expect(instance_user.has_role?(:member, Instance.where(name: "instans").first)).to be_true
-        expect(instance_user.has_role?(:suite_member, suite_1)).to be_true
-        expect(instance_user.has_role?(:suite_member, suite_1)).to be_true
+      it "returns 401" do
+        new_name = "#{instance.name} updated"
+        put :update, id: instance.id, instance: { name: new_name }
+        expect(response.status).to be 401
       end
     end
   end
+
   describe "add user" do
     let!(:instance)  { create(:instance) }
     let!(:user_1)    { create(:user) }
@@ -176,7 +200,41 @@ describe InstancesController, versioning: !ENV["debug_versioning"].blank? do
 
       expect(response).to redirect_to(instance)
     end
+    context "as instance admin" do
+      login_user(:user)
+      let!(:instance_suite_1) { create(:suite, instance: logged_in_user.active_instance) }
+      let!(:instance_suite_2) { create(:suite, instance: logged_in_user.active_instance) }
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "is successful" do
+        put :add_users, id: logged_in_user.active_instance.id, instance: { user_id: [user_1.id, user_2.id].join(",") }
+
+        expect(logged_in_user.active_instance.users.length).to eq 2
+        expect(logged_in_user.active_instance.users[0]).to eq user_1
+        expect(logged_in_user.active_instance.users[1]).to eq user_2
+        expect(response).to redirect_to(logged_in_user.active_instance)
+      end
+      it "adds users to suites" do
+        put :add_users, id: logged_in_user.active_instance.id, instance: { user_id: [user_1.id, user_2.id].join(",") }
+
+        expect(instance_suite_1.users.length).to eq 2
+        expect(instance_suite_1.users[0]).to eq user_1
+        expect(instance_suite_1.users[1]).to eq user_2
+        expect(instance_suite_2.users.length).to eq 2
+        expect(instance_suite_2.users[0]).to eq user_1
+        expect(instance_suite_2.users[1]).to eq user_2
+
+        expect(response).to redirect_to(logged_in_user.active_instance)
+      end
+      it "returns 401 is user is not admin of instance" do
+        put :add_users, id: instance.id, instance: { user_id: [user_1.id, user_2.id].join(",") }
+        expect(response.status).to be 401
+      end
+    end
   end
+
   describe "remove user" do
     let!(:instance)  { create(:instance) }
     let!(:user_1)    { create(:user) }
@@ -219,6 +277,39 @@ describe InstancesController, versioning: !ENV["debug_versioning"].blank? do
       expect(suite_2.reload.users.length).to eq 0
 
       expect(response).to redirect_to(instance)
+    end
+    context "as instance admin" do
+      login_user(:user)
+      let!(:instance_suite_1) { create(:suite, instance: logged_in_user.active_instance) }
+      let!(:instance_suite_2) { create(:suite, instance: logged_in_user.active_instance) }
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "removes user" do
+        put :add_users, id: logged_in_user.active_instance.id, instance: { user_id: [user_1.id, user_2.id].join(",") }
+        expect(logged_in_user.active_instance.users.length).to eq 2
+
+        put :remove_users, id: logged_in_user.active_instance.id, instance: { user_id: "#{user_1.id}" }
+        expect(logged_in_user.active_instance.reload.users.length).to eq 1
+
+        expect(response).to redirect_to(logged_in_user.active_instance)
+      end
+      it "removes users from suites" do
+        put :add_users, id: logged_in_user.active_instance.id, instance: { user_id: [user_1.id, user_2.id].join(",") }
+        expect(instance_suite_1.users.length).to eq 2
+        expect(instance_suite_2.users.length).to eq 2
+
+        put :remove_users, id: logged_in_user.active_instance.id, instance: { user_id: [user_1.id, user_2.id].join(",") }
+        expect(instance_suite_1.reload.users.length).to eq 0
+        expect(instance_suite_2.reload.users.length).to eq 0
+
+        expect(response).to redirect_to(logged_in_user.active_instance)
+      end
+      it "returns 401 is user is not admin of instance" do
+        put :remove_users, id: instance.id, instance: { }
+        expect(response.status).to be 401
+      end
     end
   end
 end

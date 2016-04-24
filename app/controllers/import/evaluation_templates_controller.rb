@@ -2,7 +2,7 @@ require "csv"
 require "digilys/evaluation_template_importer"
 
 class Import::EvaluationTemplatesController < ApplicationController
-  before_filter :authorize_import
+  before_filter { authorize_import("evaluation_template") }
 
   def new
   end

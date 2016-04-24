@@ -3,6 +3,13 @@ class Role < ActiveRecord::Base
   belongs_to :resource, polymorphic: true
 
   attr_accessible :name
-  
+
   scopify
+
+  def self.authorized_roles(current_user)
+    return Role.where(name: %w(admin superuser)).all if current_user.is_administrator?
+
+    return Role.where(name: "superuser").all if current_user.is_admin_of?(current_user.active_instance)
+    return []
+  end
 end

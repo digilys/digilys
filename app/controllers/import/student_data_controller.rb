@@ -3,7 +3,7 @@ require "digilys/excel_converter"
 require "digilys/student_data_importer"
 
 class Import::StudentDataController < ApplicationController
-  before_filter :authorize_import
+  before_filter { authorize_import("student_data") }
 
   def new
   end

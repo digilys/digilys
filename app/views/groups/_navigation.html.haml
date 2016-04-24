@@ -23,8 +23,9 @@
 
     %li.secondaries
       %ul.nav.nav-tabs.nav-split
-        %li{class: active_if(active == :new)}
-          %a{href:new_group_path(copy_from: group.id)}= t(:".copy_action")
+        - if can? :create, Group
+          %li{class: active_if(active == :new)}
+            %a{href:new_group_path(copy_from: group.id)}= t(:".copy_action")
         - if can? :edit, group
           %li{class: active_if(active == :edit)}
             %a{href:edit_group_path(group)}= t(:".edit_action")
@@ -43,5 +44,6 @@
           %a{href:groups_path()}= t(:".index_action")
         %li{class: active_if(active == :closed)}
           %a{href:closed_groups_path()}= t(:".closed_action")
-        %li{class: active_if(active == :new)}
-          %a{href:new_group_path()}= t(:".new_action")
+        - if can? :create_new, Group
+          %li{class: active_if(active == :new)}
+            %a{href:new_group_path()}= t(:".new_action")

@@ -442,6 +442,17 @@ sv:
         <li><strong>Planerare</strong> kan skapa planeringar och lägga till Deltagare</li>
         <li><strong>Användare</strong> kan arbeta i de planeringar de är Deltagare</li>
       </ul>
+    admin_instance_explanation_html: |
+      <p>En administrator kan för sin instans:</p>
+      <ul>
+      <li>Skapa, ändra och radera användare</li>
+      <li>Importera elevlistor</li>
+      <li>Ändra och avsluta alla planeringar (inte radera)</li>
+      <li>Kopiera, avsluta och flytta upp klasser</li>
+      <li>Byta lösenord</li>
+      <li>Se historik för sin instans</li>
+      <li>Lägga till deltagare till alla planeringar samtidigt</li>
+      </ul>
 
   visualizations:
     navigation:

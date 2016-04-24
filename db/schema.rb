@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140626082134) do
+ActiveRecord::Schema.define(:version => 20160403111046) do
 
   create_table "activities", :force => true do |t|
     t.integer  "suite_id"
@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(:version => 20140626082134) do
     t.datetime "updated_at",  :null => false
     t.date     "end_date"
     t.date     "start_date"
+    t.datetime "deleted_at"
   end
 
   create_table "activities_groups", :id => false, :force => true do |t|
@@ -55,6 +56,7 @@ ActiveRecord::Schema.define(:version => 20140626082134) do
     t.integer  "suite_id"
     t.datetime "created_at",                     :null => false
     t.datetime "updated_at",                     :null => false
+    t.datetime "deleted_at"
   end
 
   create_table "color_tables_evaluations", :id => false, :force => true do |t|
@@ -84,6 +86,8 @@ ActiveRecord::Schema.define(:version => 20140626082134) do
     t.integer  "series_id"
     t.boolean  "is_series_current",                 :default => false
     t.boolean  "imported",                          :default => false
+    t.integer  "position",                          :default => 0
+    t.datetime "deleted_at"
   end
 
   add_index "evaluations", ["status"], :name => "index_evaluations_on_status"
@@ -132,6 +136,13 @@ ActiveRecord::Schema.define(:version => 20140626082134) do
     t.datetime "updated_at", :null => false
   end
 
+  create_table "instances_users", :id => false, :force => true do |t|
+    t.integer "instance_id"
+    t.integer "user_id"
+  end
+
+  add_index "instances_users", ["instance_id", "user_id"], :name => "index_instances_users_on_ids"
+
   create_table "instructions", :force => true do |t|
     t.string   "title"
     t.string   "for_page"
@@ -152,6 +163,7 @@ ActiveRecord::Schema.define(:version => 20140626082134) do
     t.datetime "created_at",                    :null => false
     t.datetime "updated_at",                    :null => false
     t.text     "agenda"
+    t.datetime "deleted_at"
   end
 
   create_table "participants", :force => true do |t|
@@ -160,6 +172,7 @@ ActiveRecord::Schema.define(:version => 20140626082134) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
     t.integer  "group_id"
+    t.datetime "deleted_at"
   end
 
   create_table "rails_admin_histories", :force => true do |t|
@@ -184,6 +197,7 @@ ActiveRecord::Schema.define(:version => 20140626082134) do
     t.string   "color"
     t.integer  "stanine"
     t.boolean  "absent",        :default => false
+    t.datetime "deleted_at"
   end
 
   create_table "roles", :force => true do |t|
@@ -192,6 +206,7 @@ ActiveRecord::Schema.define(:version => 20140626082134) do
     t.string   "resource_type"
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
+    t.datetime "deleted_at"
   end
 
   add_index "roles", ["name", "resource_type", "resource_id"], :name => "index_roles_on_name_and_resource_type_and_resource_id"
@@ -202,6 +217,7 @@ ActiveRecord::Schema.define(:version => 20140626082134) do
     t.string   "name"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.datetime "deleted_at"
   end
 
   create_table "settings", :force => true do |t|
@@ -235,6 +251,7 @@ ActiveRecord::Schema.define(:version => 20140626082134) do
     t.string   "student_data",        :limit => 1024
     t.integer  "instance_id"
     t.string   "status",                              :default => "open"
+    t.datetime "deleted_at"
   end
 
   create_table "table_states", :force => true do |t|
@@ -244,6 +261,7 @@ ActiveRecord::Schema.define(:version => 20140626082134) do
     t.string   "base_type"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.datetime "deleted_at"
   end
 
   create_table "taggings", :force => true do |t|
@@ -254,6 +272,7 @@ ActiveRecord::Schema.define(:version => 20140626082134) do
     t.string   "tagger_type"
     t.string   "context",       :limit => 128
     t.datetime "created_at"
+    t.datetime "deleted_at"
   end
 
   add_index "taggings", ["tag_id"], :name => "index_taggings_on_tag_id"
@@ -282,6 +301,7 @@ ActiveRecord::Schema.define(:version => 20140626082134) do
     t.integer  "active_instance_id"
     t.boolean  "invisible",              :default => false
     t.text     "preferences",            :default => "{}"
+    t.integer  "admin_instance_id"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

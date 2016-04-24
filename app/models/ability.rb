@@ -55,7 +55,7 @@ class Ability
       can :manage, Role
 
       # Groups
-      can    :manage, Group
+      can :manage, Group
 
       # Suites
       can :create,            Suite
@@ -74,18 +74,25 @@ class Ability
 
       # Import
       can :import, Instance
+      can :import_instructions, Instance
+      can :import_student_data, Instance
+      can :import_evaluation_templates, Instance
+      can :import_results, Instance
     elsif is_instance_admin
       # Import
-      can :import, Instance do |instance|
-        user.is_admin_of?(instance)
-      end
+      can :import, Instance
+      can :import_student_data, Instance
 
-      can :manage, User
-      can [ :view, :edit, :change ], User do |u|
-        u.instances.include?(active_instance)
+      can :create, User
+      can [ :manage, :view, :edit, :change ], User do |u|
+        u.instances.include?(active_instance) && !u.is_administrator?
       end
-      cannot [ :destroy ], User
+      can [ :destroy ], User do |u|
+        u.instances.include?(active_instance) && !u.is_administrator?
+      end
       cannot :change_instance, User
+
+      can :manage, Role
 
       can :manage, Suite do |suite|
         !suite.is_template? && user.is_admin_of?(suite.instance)
@@ -93,9 +100,16 @@ class Ability
       cannot :create, Suite
       cannot :destroy, Suite
 
+      can :control, Instance
       # Groups
-      can    :manage, Group
-      cannot :destroy, Group
+      can [ :manage ], Group
+      cannot [ :edit, :update, :destroy, :create_new ], Group
+      cannot [ :select_students, :add_students, :remove_students ], Group
+      cannot [ :select_users, :add_users, :remove_users ], Group
+    end
+
+    can [ :view, :associate_users ], Instance do |inst|
+      user.is_admin_of?(inst)
     end
 
     can :list,    Suite

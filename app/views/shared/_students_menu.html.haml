@@ -2,7 +2,7 @@
   = t(:".title")
   %span.caret
 %ul.dropdown-menu
-  - if can? :create, Suite
+  - if can? :manage, Student
     %li= link_to Student.model_name.human(count: 2), students_path()
-  - if can? :manage, Evaluation
+  - if can? :manage, Group
     %li= link_to Group.model_name.human(count: 2), groups_path()

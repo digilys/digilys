@@ -5,8 +5,6 @@ class Instance < ActiveRecord::Base
   has_many :groups
   has_and_belongs_to_many :users
 
-  belongs_to :admin, :class_name => "User", :foreign_key => "user_id"
-
   attr_accessible :name, :user_id
 
   validates :name, presence: true
@@ -19,5 +17,9 @@ class Instance < ActiveRecord::Base
     return Instance.order(:name).all if user.is_administrator?
 
     return Instance.where(id: user.active_instance).all
+  end
+
+  def admins
+    User.where(admin_instance_id: self.id).all
   end
 end

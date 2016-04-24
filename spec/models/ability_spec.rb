@@ -47,34 +47,101 @@ describe Ability do
 
       it { should_not be_able_to(:select, not_member_of) }
       it { should     be_able_to(:select, member_of) }
+      it { should_not be_able_to(:import, Instance) }
+      it { should_not be_able_to(:control, Instance) }
     end
 
     context "Instance admin" do
-      let!(:user)      { create(:user) }
-      let!(:instance)  { create(:instance, admin: user) }
-      let!(:suite)     { create(:suite, instance: instance) }
-      let!(:template_suite)     { create(:suite, instance: instance, is_template: true) }
-      let!(:evaluation){ create(:suite_evaluation, suite: suite) }
+      let!(:instance)             { create(:instance) }
+      let!(:other_instance)       { create(:instance) }
+      let!(:user)                 { create(:user, admin_instance: instance) }
+      let!(:other_user)           { create(:user) }
+      let!(:instance_member)      { create(:user) }
+      let!(:admin)                { create(:admin) }
+      let!(:suite)                { create(:suite, instance: instance) }
+      let!(:other_suite)          { create(:suite, instance: other_instance) }
+      let!(:template_suite)       { create(:suite, instance: instance, is_template: true) }
+      let!(:evaluation)           { create(:suite_evaluation, suite: suite) }
       before(:each) do
         user.active_instance = instance
-        user.save
+        instance_member.add_role(:member, instance)
+        admin.add_role(:member, instance)
       end
       subject(:ability) { Ability.new(user) }
       it              { should be_able_to(:import, Instance) }
-      it              { should be_able_to(:manage, User) }
-      it              { should be_able_to(:view, User) }
-      it              { should be_able_to(:manage, User) }
-      it              { should be_able_to(:create, User) }
-      it              { should be_able_to(:change, User) }
-      it              { should be_able_to(:view, User) }
-      it              { should be_able_to(:edit, User) }
-      it              { should_not be_able_to(:destroy, User) }
-      it              { should_not be_able_to(:manage, Role) }
-      it              { should be_able_to(:edit, user) }
+      it              { should be_able_to(:import_student_data, Instance) }
+      it              { should_not be_able_to(:import_instructions, Instance) }
+      it              { should_not be_able_to(:import_evaluation_templates, Instance) }
+      it              { should_not be_able_to(:import_results, Instance) }
+
+      # User
+      it              { should be_able_to(:manage, instance_member) }
+      it              { should be_able_to(:view, instance_member) }
+      it              { should be_able_to(:edit, instance_member) }
+      it              { should be_able_to(:change, instance_member) }
+      it              { should be_able_to(:destroy, instance_member) }
+
+      it              { should_not be_able_to(:manage, other_user) }
+      it              { should_not be_able_to(:view, other_user) }
+      it              { should_not be_able_to(:edit, other_user) }
+      it              { should_not be_able_to(:change, other_user) }
+      it              { should_not be_able_to(:destroy, other_user) }
+
+      it              { should_not be_able_to(:manage, admin) }
+      it              { should_not be_able_to(:view, admin) }
+      it              { should_not be_able_to(:edit, admin) }
+      it              { should_not be_able_to(:change, admin) }
+      it              { should_not be_able_to(:destroy, admin) }
+
+      # Role
+      it              { should be_able_to(:manage, Role) }
+
+      # Suite
+      it              { should_not be_able_to(:create, Suite) }
+
       it              { should be_able_to(:manage, suite) }
+      it              { should be_able_to(:view, suite) }
+      it              { should be_able_to(:edit, suite) }
+      it              { should be_able_to(:change, suite) }
       it              { should_not be_able_to(:destroy, suite) }
+
+      it              { should_not be_able_to(:destroy, other_suite) }
+      it              { should_not be_able_to(:view, other_suite) }
+      it              { should_not be_able_to(:edit, other_suite) }
+      it              { should_not be_able_to(:change, other_suite) }
+
+      it              { should_not be_able_to(:destroy, template_suite) }
       it              { should_not be_able_to(:manage, template_suite) }
       it              { should_not be_able_to(:destroy, template_suite) }
+
+      # Instance
+      it              { should be_able_to(:view, instance) }
+      it              { should be_able_to(:associate_users, instance) }
+
+      it              { should_not be_able_to(:view, other_instance) }
+      it              { should_not be_able_to(:associate_users, other_instance) }
+
+      # Group
+      it              { should be_able_to(:manage, Group) }
+      it              { should be_able_to(:view, Group) }
+      it              { should be_able_to(:copy, Group) }
+      it              { should be_able_to(:create, Group) }
+      it              { should be_able_to(:move_students, Group) }
+
+      it              { should_not be_able_to(:edit, Group) }
+      it              { should_not be_able_to(:update, Group) }
+      it              { should_not be_able_to(:create_new, Group) }
+      it              { should_not be_able_to(:destroy, Group) }
+      it              { should_not be_able_to(:select_students, Group) }
+      it              { should_not be_able_to(:add_students, Group) }
+      it              { should_not be_able_to(:remove_students, Group) }
+      it              { should_not be_able_to(:select_users, Group) }
+      it              { should_not be_able_to(:add_users, Group) }
+      it              { should_not be_able_to(:remove_users, Group) }
+
+      # Log
+      it              { should be_able_to(:log, suite) }
+      it              { should_not be_able_to(:log, other_suite) }
     end
   end
 
@@ -83,6 +150,10 @@ describe Ability do
     it         { should be_able_to(:manage, :all) }
     it         { should be_able_to(:import, :all) }
     it         { should be_able_to(:import, Instance) }
+    it         { should be_able_to(:import_student_data, Instance) }
+    it         { should be_able_to(:import_instructions, Instance) }
+    it         { should be_able_to(:import_evaluation_templates, Instance) }
+    it         { should be_able_to(:import_results, Instance) }
     it         { should be_able_to(:manage, Role) }
   end
 

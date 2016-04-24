@@ -11,14 +11,16 @@
         %tr.name
           %th= Instance.human_attribute_name(:name)
           %td= @instance.name
-- if @instance.admin
+- if @instance.admins.any?
   .row-fluid
     .span6
+      %h3= t(:".instance_admin")
       %table.table.table-bordered.details-table.instance-details-table
         %tbody
-          %tr.admin
-            %th= t(:".instance_admin")
-            %td= @instance.admin.name
+          - @instance.admins.each do |admin|
+            %tr.admin
+              %td= User.human_attribute_name(:name)
+              %td= admin.name
       %small= t(:".instance_admin_message")
 .row-fluid
   .span6

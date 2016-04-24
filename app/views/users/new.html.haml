@@ -25,12 +25,21 @@
     = f.input :password_confirmation, :required => true
     = f.input :registered_yubikey, as: :password, hint: Conf.yubikey.hint if Conf.yubikey
 
+    - if can? :manage, User
+      = f.input :admin_instance_id,
+        label: User.human_attribute_name(:admin_instance),
+        as: :select,
+        input_html: { multiple: false },
+        collection: current_user.is_administrator? ? Instance.all : [current_user.admin_instance]
+      .alert.alert-box.alert-info
+        = t(:".admin_instance_explanation_html")
+
     - if can? :manage, Role
       = f.inputs do
         = f.input :roles,
           as: :select,
           include_blank: User.model_name.human,
-          collection: Role.where(name: %w(admin superuser)).collect { |r| [ t(:"roles.#{r.name}"), r.id ] },
+          collection: Role.authorized_roles(current_user).collect { |r| [ t(:"roles.#{r.name}"), r.id ] },
           input_html: { multiple: false }
         .alert.alert-box.alert-info
           = t(:".roles_explanation_html")

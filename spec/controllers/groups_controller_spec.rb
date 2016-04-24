@@ -25,8 +25,20 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       expect(response).to be_successful
       expect(assigns(:groups)).to eq [children.first]
     end
+    context "as instance admin" do
+      login_user(:user)
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "is successful" do
+        get :index
+        expect(response).to be_successful
+        expect(assigns(:groups)).to match_array(top_level)
+      end
+    end
   end
-  
+
   describe "GET #closed" do
     let!(:closed_groups) { create_list(:group, 2, status: :closed) }
     let!(:open_groups) { create_list(:group, 1, status: :open) }
@@ -42,6 +54,18 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       expect(response).to be_successful
       expect(assigns(:groups)).to eq [closed_groups.first]
     end
+    context "as instance admin" do
+      login_user(:user)
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "lists closed groups" do
+        get :closed
+        expect(response).to be_successful
+        expect(assigns(:groups)).to match_array(closed_groups)
+      end
+    end
   end
 
   describe "GET #show" do
@@ -52,6 +76,17 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
     it "gives a 404 if the instance does not match" do
       get :show, id: other_group.id
       expect(response.status).to be 404
+    end
+    context "as instance admin" do
+      login_user(:user)
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "is successful" do
+        get :show, id: group.id
+        expect(response).to be_success
+      end
     end
   end
 
@@ -85,6 +120,23 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       expect(json["results"]).to have(0).items
     end
 
+    context "as instance admin" do
+      login_user(:user)
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "returns the result as json" do
+        get :search, q: { name_cont: group.name }
+
+        expect(response).to be_success
+        json = JSON.parse(response.body)
+
+        expect(json["more"]).to be_false
+
+        expect(json["results"]).to have(1).items
+      end
+    end
   end
 
   describe "GET #new" do
@@ -96,6 +148,22 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       copy_from = create(:group)
       get :new, copy_from: copy_from.id
       expect(assigns(:copy_from)).to eq(copy_from)
+    end
+    context "as instance admin" do
+      login_user(:user)
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+      it "is successful" do
+        get :new
+        expect(response).to be_success
+      end
+      it "loads the group to copy from if specified" do
+        copy_from = create(:group)
+        get :new, copy_from: copy_from.id
+        expect(assigns(:copy_from)).to eq(copy_from)
+      end
     end
   end
   describe "POST #create" do
@@ -128,6 +196,29 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
         expect(assigns(:group).students).to match_array(students)
       end
     end
+
+    context "as instance admin" do
+      login_user(:user)
+      let(:copy_from) { create(:group) }
+      let(:students) { create_list(:student, 2) }
+
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+        copy_from.add_students(students)
+      end
+
+      it "redirects to the group when successful" do
+        post :create, group: valid_parameters_for(:group)
+        expect(response).to redirect_to(assigns(:group))
+      end
+
+      it "copies the students from the group" do
+        post :create, group: valid_parameters_for(:group), copy_from: copy_from.id
+        expect(response).to redirect_to(assigns(:group))
+        expect(assigns(:group).students).to match_array(students)
+      end
+    end
   end
 
   describe "GET #edit" do
@@ -139,10 +230,24 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       get :edit, id: other_group.id
       expect(response.status).to be 404
     end
+    context "as instance admin" do
+      login_user(:user)
+
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+
+      it "returns 401" do
+        get :edit, id: group.id
+        expect(response.status).to be 401
+      end
+    end
   end
+
   describe "PUT #update" do
     it "redirects to the group when successful" do
-      new_name = "#{group.name} updated" 
+      new_name = "#{group.name} updated"
       put :update, id: group.id, group: { name: new_name }
       expect(response).to redirect_to(group)
       expect(group.reload.name).to eq new_name
@@ -159,6 +264,20 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       put :update, id: group.id, group: { instance_id: instance.id }
       expect(group.reload.instance).not_to eq instance
     end
+    context "as instance admin" do
+      login_user(:user)
+
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+
+      it "returns 401" do
+        new_name = "#{group.name} updated"
+        put :update, id: group.id, group: { name: new_name }
+        expect(response.status).to be 401
+      end
+    end
   end
 
   describe "GET #confirm_status_change" do
@@ -172,7 +291,23 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       get :confirm_status_change, id: other_group.id
       expect(response.status).to be 404
     end
+    context "as instance admin" do
+      login_user(:user)
+
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+
+      it "switches the status without saving" do
+        get :confirm_status_change, id: group.id
+        expect(response).to be_success
+        expect(assigns(:group).status.to_sym).to be :closed
+        expect(assigns(:group)).to be_changed
+      end
+    end
   end
+
   describe "PUT #change_status" do
     it "updates the status and redirects to the group page" do
       put :change_status, id: group.id, group: { status: "closed" }
@@ -187,6 +322,20 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       put :change_status, id: other_group.id
       expect(response.status).to be 404
     end
+    context "as instance admin" do
+      login_user(:user)
+
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+
+      it "updates the status and redirects to the group page" do
+        put :change_status, id: group.id, group: { status: "closed" }
+        expect(response).to redirect_to(group)
+        expect(group.reload).to be_closed
+      end
+    end
   end
 
   describe "GET #confirm_destroy" do
@@ -198,7 +347,21 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       get :confirm_destroy, id: other_group.id
       expect(response.status).to be 404
     end
+    context "as instance admin" do
+      login_user(:user)
+
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+
+      it "returns 401" do
+        get :confirm_destroy, id: group.id
+        expect(response.status).to be 401
+      end
+    end
   end
+
   describe "DELETE #destroy" do
     it "redirects to the group list page" do
       delete :destroy, id: group.id
@@ -209,6 +372,19 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       delete :destroy, id: other_group.id
       expect(response.status).to be 404
     end
+    context "as instance admin" do
+      login_user(:user)
+
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+
+      it "returns 401" do
+        delete :destroy, id: group.id
+        expect(response.status).to be 401
+      end
+    end
   end
 
   describe "GET #select_students" do
@@ -216,7 +392,21 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       get :select_students, id: group.id
       expect(response).to be_success
     end
+    context "as instance admin" do
+      login_user(:user)
+
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+
+      it "returns 401" do
+        get :select_students, id: group.id
+        expect(response.status).to be 401
+      end
+    end
   end
+
   describe "PUT #add_students" do
     let(:students) { create_list(:student, 2) }
 
@@ -226,13 +416,42 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       expect(response).to redirect_to(group)
       expect(group.students(true)).to match_array(students)
     end
+    context "as instance admin" do
+      login_user(:user)
+
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+
+      it "returns 401" do
+        expect(group.students(true)).to be_blank
+        put :add_students, id: group.id, group: { students: students.collect(&:id).join(",") }
+        expect(response.status).to be 401
+      end
+    end
   end
+
   describe "GET #move_students" do
     it "is successful" do
       get :move_students, id: group.id
       expect(response).to be_success
     end
+    context "as instance admin" do
+      login_user(:user)
+
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+
+      it "is successful" do
+        get :move_students, id: group.id
+        expect(response).to be_success
+      end
+    end
   end
+
   describe "PUT #move_students" do
     let(:destination)    { create(:group) }
     let(:students)       { create_list(:student, 2) }
@@ -263,7 +482,24 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       put :move_students, id: group.id, group: { group: other_group.id }, student_ids: students_moved.collect(&:id)
       expect(response.status).to be 404
     end
+    context "as instance admin" do
+      login_user(:user)
+
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+
+      it "moves students from a group to another" do
+        put :move_students, id: group.id, group: { group: destination.id }, student_ids: students_moved.collect(&:id)
+        expect(response).to redirect_to(group)
+
+        expect(group.students(true)).to       match_array(students)
+        expect(destination.students(true)).to match_array(students_moved)
+      end
+    end
   end
+
   describe "DELETE #remove_students" do
     let(:students) { create_list(:student, 2) }
 
@@ -277,6 +513,20 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       delete :remove_students, id: other_group.id, student_ids: students.collect(&:id)
       expect(response.status).to be 404
     end
+    context "as instance admin" do
+      login_user(:user)
+
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+
+      it "returns 401" do
+        group.students = students
+        delete :remove_students, id: group.id, student_ids: students.collect(&:id)
+        expect(response.status).to be 401
+      end
+    end
   end
 
   describe "GET #select_users" do
@@ -288,7 +538,21 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       get :select_users, id: other_group.id
       expect(response.status).to be 404
     end
+    context "as instance admin" do
+      login_user(:user)
+
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+
+      it "returns 401" do
+        get :select_users, id: group.id
+        expect(response.status).to be 401
+      end
+    end
   end
+
   describe "PUT #add_users" do
     let(:users) { create_list(:user, 2) }
 
@@ -302,7 +566,22 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       put :add_users, id: other_group.id, group: { users: users.collect(&:id).join(",") }
       expect(response.status).to be 404
     end
+    context "as instance admin" do
+      login_user(:user)
+
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+
+      it "returns 401" do
+        expect(group.users(true)).to be_blank
+        put :add_users, id: group.id, group: { users: users.collect(&:id).join(",") }
+        expect(response.status).to be 401
+      end
+    end
   end
+
   describe "DELETE #remove_users" do
     let(:users) { create_list(:user, 2) }
 
@@ -315,6 +594,20 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
     it "gives a 404 if the instance does not match" do
       delete :remove_users, id: other_group.id, user_ids: users.collect(&:id)
       expect(response.status).to be 404
+    end
+    context "as instance admin" do
+      login_user(:user)
+
+      before(:each) do
+        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.save
+      end
+
+      it "returns 401" do
+        group.users = users
+        delete :remove_users, id: group.id, user_ids: users.collect(&:id)
+        expect(response.status).to be 401
+      end
     end
   end
 end
