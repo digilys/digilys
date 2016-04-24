@@ -46,9 +46,9 @@ class UsersController < ApplicationController
     if @user.send(update_method, params[:user])
 
       if can?(:manage, User)
-        assign_role(     @user, role_ids)     if role_ids
+        assign_role(@user, role_ids)     if role_ids
         assign_instances(@user, instance_ids) if instance_ids
-        assign_suites(@user, instance_ids) if instance_ids
+        remove_prev_suites(@user, instance_ids) if instance_ids
       end
 
       sign_in @user, bypass: true if is_self_update
@@ -70,7 +70,6 @@ class UsersController < ApplicationController
     if @user.save
       assign_role(@user, role_ids)     if role_ids
       assign_instances(@user, instance_ids) if instance_ids
-      assign_suites(@user, instance_ids) if instance_ids
       redirect_to users_path, notice: "User succesfully created!"
     else
       render :new
@@ -98,13 +97,11 @@ class UsersController < ApplicationController
     end
   end
 
-  def assign_suites(user, instance_ids)
+  def remove_prev_suites(user, instance_ids)
     incoming_suites = Suite.where(instance_id: instance_ids).all
     previous_suites = Suite.with_role(:suite_member, user).all
-    incoming_suites.each do |suite|
-      user.add_role(:suite_member, suite)
-    end
-    previous_suites.each do |suite|
+    removed = previous_suites - incoming_suites
+    removed.each do |suite|
       user.remove_role(:suite_member, suite) unless user.is_admin_of?(suite.instance)
     end
   end
@@ -146,7 +143,6 @@ class UsersController < ApplicationController
     instance_ids = [] if instance_ids.nil?
     if !current_user.has_role?(:admin)
       instance_ids = instance_ids & [current_user.active_instance.id.to_s]
-      # instance_ids.include?(current_user.active_instance.id.to_s) ? [current_user.active_instance.id] : []
     end
     return instance_ids
   end

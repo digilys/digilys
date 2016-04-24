@@ -215,15 +215,16 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
           admin.admin_instance = instances.first
           admin.save
           user.instances = [instances.first]
+          user.add_role(:suite_member, suite_1)
           user.save
         end
         it "adds roles to new instances" do
           put :update, id: user.id, user: { instance_ids: [instances.second] }
           expect(user.has_role?(:member, instances.second)).to be_true
         end
-        it "adds roles to new instance suites" do
+        it "does not add roles to new instance suites" do
           put :update, id: user.id, user: { instance_ids: [instances.second] }
-          expect(user.has_role?(:suite_member, suite_2)).to be_true
+          expect(user.has_role?(:suite_member, suite_2)).to be_false
         end
         it "removes roles from old instances" do
           put :update, id: user.id, user: { instance_ids: [instances.second] }
@@ -232,14 +233,6 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
         it "removes roles from old suites" do
           put :update, id: user.id, user: { instance_ids: [instances.second] }
           expect(user.has_role?(:suite_member, suite_1)).to be_false
-        end
-        it "do not remove roles if user is admin of instance" do
-          put :update, id: admin.id, user: { instance_ids: [instances.first] }
-          expect(admin.has_role?(:member, instances.first)).to be_true
-          expect(admin.has_role?(:suite_member, suite_1)).to be_true
-          put :update, id: admin.id, user: { instance_ids: [instances.second] }
-          expect(admin.has_role?(:member, instances.first)).to be_true
-          expect(admin.has_role?(:suite_member, suite_1)).to be_true
         end
       end
 
@@ -268,11 +261,14 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
     context "as instance admin" do
       login_user(:user)
       let!(:instance)     { create(:instance) }
+      let!(:suite)        { create(:suite, instance: logged_in_user.active_instance) }
       let!(:member)       { create(:user, active_instance: logged_in_user.active_instance) }
       let!(:admin)        { create(:admin, active_instance: logged_in_user.active_instance) }
       let!(:non_member)   { create(:user) }
       before(:each) do
         logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:member, logged_in_user.active_instance)
+        logged_in_user.add_role(:suite_member, suite)
         logged_in_user.save
       end
       it "can update instance members" do
@@ -294,6 +290,13 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
       it "can not add other instances" do
         put :update, id: member.id, user: { instance_ids: [instance.id] }
         expect(member.reload.active_instance).to be nil
+      end
+      it "does not remove roles if user is admin of instance" do
+        expect(logged_in_user.has_role?(:member, logged_in_user.active_instance)).to be_true
+        expect(logged_in_user.has_role?(:suite_member, suite)).to be_true
+        put :update, id: logged_in_user.id, user: { instance_ids: [instance] }
+        expect(logged_in_user.has_role?(:member, logged_in_user.active_instance)).to be_true
+        expect(logged_in_user.has_role?(:suite_member, suite)).to be_true
       end
     end
   end
@@ -369,12 +372,12 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
       expect(User.last.has_role?(:member, instance_1)).to be_true
       expect(User.last.has_role?(:member, instance_2)).to be_true
     end
-    it "add roles to instance suites" do
+    it "does not add roles to instance suites" do
       params = valid_parameters_for(:user)
       params["instance_ids"] = [instance_1.id, instance_2.id]
       post :create, user: params
-      expect(User.last.has_role?(:suite_member, suite_1)).to be_true
-      expect(User.last.has_role?(:suite_member, suite_2)).to be_true
+      expect(User.last.has_role?(:suite_member, suite_1)).to be_false
+      expect(User.last.has_role?(:suite_member, suite_2)).to be_false
     end
     it "add roles" do
       params = valid_parameters_for(:user)
@@ -396,7 +399,7 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
         params["instance_ids"] = [logged_in_user.active_instance.id]
         post :create, user: params
         expect(response).to redirect_to(users_path)
-        expect(User.last.has_role?(:suite_member, instance_suite)).to be_true
+        expect(User.last.has_role?(:suite_member, instance_suite)).to be_false
         expect(User.last.has_role?(:member, logged_in_user.active_instance)).to be_true
       end
       it "can only add own instance to instances" do
@@ -407,7 +410,7 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
         expect(User.last.has_role?(:member, logged_in_user.active_instance)).to be_true
         expect(User.last.has_role?(:member, instance_1)).to be_false
         expect(User.last.has_role?(:member, instance_2)).to be_false
-        expect(User.last.has_role?(:suite_member, instance_suite)).to be_true
+        expect(User.last.has_role?(:suite_member, instance_suite)).to be_false
         expect(User.last.has_role?(:suite_member, suite_1)).to be_false
         expect(User.last.has_role?(:suite_member, suite_2)).to be_false
       end
