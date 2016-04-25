@@ -243,7 +243,7 @@ sv:
   stanine: Stanine
   normal_distribution: Normalfördelning
   amount: Antal
-  absent: Frånvarande
+  absent: Deltog ej
 
   # Basic common actions
   # These are not put under a sub-key because we want i18n cascading to work
