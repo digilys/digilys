@@ -71,13 +71,6 @@ class Ability
 
       # Color tables
       can :create, ColorTable
-
-      # Import
-      can :import, Instance
-      can :import_instructions, Instance
-      can :import_student_data, Instance
-      can :import_evaluation_templates, Instance
-      can :import_results, Instance
     elsif is_instance_admin
       # Import
       can :import, Instance

@@ -10,20 +10,15 @@ describe Import::InstructionsController, versioning: !ENV["debug_versioning"].bl
       get :new
       expect(response).to be_success
     end
-
-    context "as instance admin" do
-      login_user(:user)
-      before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
-        logged_in_user.save
-      end
+    context "as superuser" do
+      login_user(:superuser)
       it "returns 401" do
         get :new
         expect(response.status).to be 401
       end
     end
-
   end
+
   describe "POST #confirm" do
     let(:first_object)   { { "foo" => 1 } }
     let(:second_object)  { { "bar" => 2 } }
@@ -35,18 +30,15 @@ describe Import::InstructionsController, versioning: !ENV["debug_versioning"].bl
       expect(assigns(:uploaded_instructions)).to include(first_object)
       expect(assigns(:uploaded_instructions)).to include(second_object)
     end
-    context "as instance admin" do
-      login_user(:user)
-      before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
-        logged_in_user.save
-      end
+    context "as superuser" do
+      login_user(:superuser)
       it "returns 401" do
-        post :confirm, export_file: export_file_io
+        post :confirm
         expect(response.status).to be 401
       end
     end
   end
+
   describe "POST #create" do
     let(:new_instruction1) { attributes_for(:instruction).merge(import: 1) }
     let(:new_instruction2) { attributes_for(:instruction).merge(import: 1) }
@@ -89,14 +81,10 @@ describe Import::InstructionsController, versioning: !ENV["debug_versioning"].bl
       expect(existing.for_page).to eq new_instruction1[:for_page]
       expect(existing.title).to    eq new_instruction1[:title]
     end
-    context "as instance admin" do
-      login_user(:user)
-      before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
-        logged_in_user.save
-      end
+    context "as superuser" do
+      login_user(:superuser)
       it "returns 401" do
-        post :create, instructions: { 0 => new_instruction1, 1 => new_instruction2 }
+        post :create
         expect(response.status).to be 401
       end
     end

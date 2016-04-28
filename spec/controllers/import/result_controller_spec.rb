@@ -21,12 +21,8 @@ describe Import::ResultController, versioning: !ENV["debug_versioning"].blank? d
       expect(response).to be_success
     end
 
-    context "as instance admin" do
-      login_user(:user)
-      before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
-        logged_in_user.save
-      end
+    context "as superuser" do
+      login_user(:superuser)
       it "returns 401" do
         get :new
         expect(response.status).to be 401
@@ -64,15 +60,10 @@ describe Import::ResultController, versioning: !ENV["debug_versioning"].blank? d
       expect(flash[:error]).not_to be_empty
       expect(response).to redirect_to(new_import_result_path())
     end
-
-    context "as instance admin" do
-      login_user(:user)
-      before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
-        logged_in_user.save
-      end
+    context "as superuser" do
+      login_user(:superuser)
       it "returns 401" do
-        post :confirm, csv_file: uploaded_file, evaluation: evaluation
+        post :confirm
         expect(response.status).to be 401
       end
     end
@@ -150,22 +141,10 @@ describe Import::ResultController, versioning: !ENV["debug_versioning"].blank? d
         expect(response).to redirect_to(suite_path(suite))
       end
     end
-
-    context "as instance admin" do
-      login_user(:user)
-      temp_file(
-        File.join(Rails.root, "tmp/uploads"),
-        <<-CSV.strip_heredoc
-        20000101-4321,7
-        CSV
-      )
-
-      before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
-        logged_in_user.save
-      end
+    context "as superuser" do
+      login_user(:superuser)
       it "returns 401" do
-        post :create, filename: File.basename(temp_file), evaluation: evaluation
+        post :create
         expect(response.status).to be 401
       end
     end
