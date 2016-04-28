@@ -10,15 +10,11 @@ describe Import::StudentDataController, versioning: !ENV["debug_versioning"].bla
       get :new
       expect(response).to be_success
     end
-    context "as instance admin" do
-      login_user(:user)
-      before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
-        logged_in_user.save
-      end
-      it "is successful" do
+    context "as superuser" do
+      login_user(:superuser)
+      it "returns 401" do
         get :new
-        expect(response).to be_successful
+        expect(response.status).to be 401
       end
     end
   end
@@ -51,25 +47,11 @@ describe Import::StudentDataController, versioning: !ENV["debug_versioning"].bla
       expect(response).to redirect_to(new_import_student_data_url())
       expect(flash[:error]).not_to be_empty
     end
-
-    context "as instance admin" do
-      login_user(:user)
-      before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
-        logged_in_user.save
-      end
-      it "is successful" do
-        Timecop.freeze(timestamp) do
-          post :confirm,
-            excel_file: fixture_file_upload(
-              "/student_data.xlsx",
-              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            )
-        end
-
-        expect(assigns(:filename)).to eq filename
-        expect(assigns(:importer)).to be_a(Digilys::StudentDataImporter)
-        expect(File.exist?(expected_file)).to be_true
+    context "as superuser" do
+      login_user(:superuser)
+      it "returns 401" do
+        post :confirm
+        expect(response.status).to be 401
       end
     end
   end
@@ -130,6 +112,13 @@ describe Import::StudentDataController, versioning: !ENV["debug_versioning"].bla
         post :create, filename: File.basename(temp_file)
         expect(flash[:error]).not_to be_empty
         expect(response).to redirect_to(new_import_student_data_url())
+      end
+    end
+    context "as superuser" do
+      login_user(:superuser)
+      it "returns 401" do
+        post :create
+        expect(response.status).to be 401
       end
     end
   end
