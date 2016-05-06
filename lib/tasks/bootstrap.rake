@@ -15,7 +15,7 @@ namespace :app do
       puts "Creating roles"
 
       puts Role.where(name: "admin").first_or_create.name
-      puts Role.where(name: "superuser").first_or_create.name
+      puts Role.where(name: "planner").first_or_create.name
     end
   end
 end

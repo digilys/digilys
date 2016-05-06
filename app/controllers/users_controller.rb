@@ -131,7 +131,7 @@ class UsersController < ApplicationController
     @users = @users.with_role(:member, current_instance)
 
     @users = @users.where("users.id NOT IN (?)", User.with_any_role(:admin)) unless current_user.is_administrator?
-    @users = @users.where("users.id NOT IN (?)", User.with_any_role(:superuser)) unless (current_user.is_administrator? || current_user.is_admin_of?(current_instance))
+    @users = @users.where("users.id NOT IN (?)", User.with_any_role(:planner)) unless (current_user.is_administrator? || current_user.is_admin_of?(current_instance))
   end
 
   def instance_filter

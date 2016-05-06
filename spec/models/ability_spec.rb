@@ -157,8 +157,8 @@ describe Ability do
     it         { should be_able_to(:manage, Role) }
   end
 
-  context "Superuser" do
-    let(:user)     { create(:superuser) }
+  context "Planner" do
+    let(:user)     { create(:planner) }
 
     it { should     be_able_to(:manage,  Student) }
     it { should_not be_able_to(:destroy, Student) }

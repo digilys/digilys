@@ -52,7 +52,7 @@ class User < ActiveRecord::Base
   end
 
   def is_administrator?
-    return has_any_role?(:admin, :superuser)
+    return has_any_role?(:admin, :planner)
   end
 
   def is_admin_of?(instance)

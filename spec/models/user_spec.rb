@@ -10,8 +10,8 @@ describe User do
       subject { build(:admin) }
       it { should be_valid }
     end
-    context "superuser" do
-      subject { build(:superuser) }
+    context "planner" do
+      subject { build(:planner) }
       it { should be_valid }
     end
     context "invalid" do
