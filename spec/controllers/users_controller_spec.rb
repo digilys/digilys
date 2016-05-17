@@ -78,6 +78,22 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
         expect(assigns(:users)).to match_array([ users.second, logged_in_user ])
       end
     end
+
+    context "as admin" do
+      login_user(:admin)
+      let!(:user)           { create(:user, active_instance: logged_in_user.active_instance) }
+      before(:each) do
+        logged_in_user.add_role(:admin)
+        user.remove_role(:member, logged_in_user.active_instance)
+        user.active_instance = nil
+        user.save
+      end
+      it "lists users without instance" do
+        get :index
+        expect(response).to be_successful
+        expect(assigns(:users)).to match_array([users.first, users.second, user, logged_in_user ])
+      end
+    end
   end
 
   describe "GET #search" do
