@@ -249,8 +249,9 @@ ActiveRecord::Schema.define(:version => 20160410092350) do
     t.integer  "template_id"
     t.string   "generic_evaluations", :limit => 1024
     t.string   "student_data",        :limit => 1024
-    t.string   "status",                              :default => "open"
     t.datetime "deleted_at"
+    t.integer  "instance_id"
+    t.string   "status",                              :default => "open"
   end
 
   create_table "table_states", :force => true do |t|

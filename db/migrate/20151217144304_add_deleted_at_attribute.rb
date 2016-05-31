@@ -8,7 +8,6 @@ class AddDeletedAtAttribute < ActiveRecord::Migration
     add_column :series, :deleted_at, :timestamp
     add_column :table_states, :deleted_at, :timestamp
 
-    # add_column :evaluations, :deleted_at, :timestamp
     add_column :results, :deleted_at, :timestamp
     add_column :taggings, :deleted_at, :timestamp
   end
@@ -22,7 +21,6 @@ class AddDeletedAtAttribute < ActiveRecord::Migration
     remove_column :series, :deleted_at
     remove_column :table_states, :deleted_at
 
-    # remove_column :evaluations, :deleted_at
     remove_column :results, :deleted_at
     remove_column :taggings, :deleted_at
   end

@@ -1,5 +1,7 @@
 class AddTypeToEvaluation < ActiveRecord::Migration
   def up
+    add_column :evaluations, :deleted_at, :timestamp
+
     add_column :evaluations, :type, :string, default: "template"
 
     Evaluation.reset_column_information
@@ -17,5 +19,7 @@ class AddTypeToEvaluation < ActiveRecord::Migration
   end
   def down
     remove_column :evaluations, :type
+    remove_column :evaluations, :deleted_at
+
   end
 end

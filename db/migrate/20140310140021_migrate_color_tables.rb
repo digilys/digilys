@@ -1,7 +1,5 @@
 class MigrateColorTables < ActiveRecord::Migration
   def up
-    add_column :suites, :deleted_at, :timestamp
-
     Suite.regular.find_each do |suite|
       color_table              = suite.create_color_table!(name: suite.name)
       color_table.evaluations  = suite.evaluations + suite.generic_evaluations(true)
@@ -17,8 +15,6 @@ class MigrateColorTables < ActiveRecord::Migration
   end
 
   def down
-    remove_column :suites, :deleted_at
-
     Suite.regular.find_each do |suite|
       color_table = suite.color_table
 

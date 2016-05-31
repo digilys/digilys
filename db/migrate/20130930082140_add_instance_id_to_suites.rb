@@ -1,5 +1,6 @@
 class AddInstanceIdToSuites < ActiveRecord::Migration
   def up
+    add_column :suites, :deleted_at, :timestamp
     add_column :suites, :instance_id, :integer
 
     Suite.reset_column_information
@@ -9,6 +10,7 @@ class AddInstanceIdToSuites < ActiveRecord::Migration
   end
 
   def down
+    remove_column :suites, :deleted_at
     remove_column :suites, :instance_id
   end
 end
