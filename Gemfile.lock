@@ -307,6 +307,3 @@ DEPENDENCIES
   uglifier (>= 1.0.3)
   yajl-ruby (~> 1.1.0)
   yubikey_database_authenticatable!
-
-BUNDLED WITH
-   1.11.2
