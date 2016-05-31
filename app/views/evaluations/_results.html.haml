@@ -19,7 +19,7 @@
           %th.group(colspan="3")= group
         - participants.sort_by{ |a| a.name }.each do |participant|
         %tr
-          %td.name= participant.name
+          %td.name= student_name(participant.student)
           - evaluations.each do |evaluation|
             %td.control-group
               - if result = evaluation.results.detect { |r| r.student_id == participant.student_id }
