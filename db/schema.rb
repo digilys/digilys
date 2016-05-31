@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160403111046) do
+ActiveRecord::Schema.define(:version => 20160410092350) do
 
   create_table "activities", :force => true do |t|
     t.integer  "suite_id"
@@ -75,6 +75,7 @@ ActiveRecord::Schema.define(:version => 20160403111046) do
     t.date     "date"
     t.integer  "template_id"
     t.string   "description",       :limit => 1024
+    t.datetime "deleted_at"
     t.string   "type",                              :default => "template"
     t.string   "target",                            :default => "all"
     t.text     "value_aliases"
@@ -87,7 +88,6 @@ ActiveRecord::Schema.define(:version => 20160403111046) do
     t.boolean  "is_series_current",                 :default => false
     t.boolean  "imported",                          :default => false
     t.integer  "position",                          :default => 0
-    t.datetime "deleted_at"
   end
 
   add_index "evaluations", ["status"], :name => "index_evaluations_on_status"
@@ -249,7 +249,6 @@ ActiveRecord::Schema.define(:version => 20160403111046) do
     t.integer  "template_id"
     t.string   "generic_evaluations", :limit => 1024
     t.string   "student_data",        :limit => 1024
-    t.integer  "instance_id"
     t.string   "status",                              :default => "open"
     t.datetime "deleted_at"
   end
