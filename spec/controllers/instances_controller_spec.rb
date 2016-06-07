@@ -35,7 +35,7 @@ describe InstancesController, versioning: !ENV["debug_versioning"].blank? do
     context "as instance admin" do
       login_user(:user)
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "is successful" do
@@ -63,7 +63,7 @@ describe InstancesController, versioning: !ENV["debug_versioning"].blank? do
     context "as instance admin" do
       login_user(:user)
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "is successful" do
@@ -85,7 +85,7 @@ describe InstancesController, versioning: !ENV["debug_versioning"].blank? do
     context "as instance admin" do
       login_user(:user)
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "returns 401" do
@@ -107,7 +107,7 @@ describe InstancesController, versioning: !ENV["debug_versioning"].blank? do
     context "as instance admin" do
       login_user(:user)
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "returns 401" do
@@ -125,7 +125,7 @@ describe InstancesController, versioning: !ENV["debug_versioning"].blank? do
     context "as instance admin" do
       login_user(:user)
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "returns 401" do
@@ -149,7 +149,7 @@ describe InstancesController, versioning: !ENV["debug_versioning"].blank? do
     context "as instance admin" do
       login_user(:user)
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "returns 401" do
@@ -205,7 +205,7 @@ describe InstancesController, versioning: !ENV["debug_versioning"].blank? do
       let!(:instance_suite_1) { create(:suite, instance: logged_in_user.active_instance) }
       let!(:instance_suite_2) { create(:suite, instance: logged_in_user.active_instance) }
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "is successful" do
@@ -283,7 +283,7 @@ describe InstancesController, versioning: !ENV["debug_versioning"].blank? do
       let!(:instance_suite_1) { create(:suite, instance: logged_in_user.active_instance) }
       let!(:instance_suite_2) { create(:suite, instance: logged_in_user.active_instance) }
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "removes user" do

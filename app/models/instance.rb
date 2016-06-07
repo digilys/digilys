@@ -20,6 +20,6 @@ class Instance < ActiveRecord::Base
   end
 
   def admins
-    User.where(admin_instance_id: self.id).all
+    User.with_role(:instance_admin, i).all
   end
 end

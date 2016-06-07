@@ -54,7 +54,7 @@ describe Ability do
     context "Instance admin" do
       let!(:instance)             { create(:instance) }
       let!(:other_instance)       { create(:instance) }
-      let!(:user)                 { create(:user, admin_instance: instance) }
+      let!(:user)                 { create(:user) }
       let!(:other_user)           { create(:user) }
       let!(:instance_member)      { create(:user) }
       let!(:admin)                { create(:admin) }
@@ -64,6 +64,7 @@ describe Ability do
       let!(:evaluation)           { create(:suite_evaluation, suite: suite) }
       before(:each) do
         user.active_instance = instance
+        user.add_role(:instance_admin, instance)
         instance_member.add_role(:member, instance)
         admin.add_role(:member, instance)
       end

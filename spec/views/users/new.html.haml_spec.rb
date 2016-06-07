@@ -25,7 +25,7 @@ describe "users/new" do
   context "for instance admin" do
     login_user(:user)
     before(:each) do
-      current_user.admin_instance = current_user.active_instance
+      current_user.add_role(:instance_admin, current_user.active_instance)
       current_user.save!
     end
     it                 { should     have_selector("input[id='user_name']") }

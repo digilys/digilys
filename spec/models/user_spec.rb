@@ -130,7 +130,10 @@ describe User do
   context "instance admin" do
     let(:instance)       { create(:instance) }
     let(:user)           { create(:user) }
-    let(:instance_admin) { create(:user, admin_instance: instance) }
+    let(:instance_admin) { create(:user) }
+    before(:each) do
+      instance_admin.add_role(:instance_admin, instance)
+    end
 
     it { expect(instance_admin.is_admin_of?(instance)).to be_true }
     it { expect(user.is_admin_of?(instance)).to be_false }

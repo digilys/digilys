@@ -28,7 +28,7 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
     context "as instance admin" do
       login_user(:user)
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "is successful" do
@@ -57,7 +57,7 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
     context "as instance admin" do
       login_user(:user)
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "lists closed groups" do
@@ -80,7 +80,7 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
     context "as instance admin" do
       login_user(:user)
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "is successful" do
@@ -123,7 +123,7 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
     context "as instance admin" do
       login_user(:user)
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "returns the result as json" do
@@ -152,7 +152,7 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
     context "as instance admin" do
       login_user(:user)
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "is successful" do
@@ -203,7 +203,7 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       let(:students) { create_list(:student, 2) }
 
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
         copy_from.add_students(students)
       end
@@ -234,7 +234,7 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       login_user(:user)
 
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
 
@@ -268,7 +268,7 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       login_user(:user)
 
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
 
@@ -295,7 +295,7 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       login_user(:user)
 
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
 
@@ -326,7 +326,7 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       login_user(:user)
 
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
 
@@ -351,7 +351,7 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       login_user(:user)
 
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
 
@@ -376,7 +376,7 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       login_user(:user)
 
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
 
@@ -396,7 +396,7 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       login_user(:user)
 
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
 
@@ -420,7 +420,7 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       login_user(:user)
 
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
 
@@ -441,7 +441,7 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       login_user(:user)
 
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
 
@@ -486,7 +486,7 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       login_user(:user)
 
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
 
@@ -517,7 +517,7 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       login_user(:user)
 
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
 
@@ -542,7 +542,7 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       login_user(:user)
 
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
 
@@ -570,7 +570,7 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       login_user(:user)
 
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
 
@@ -599,7 +599,7 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
       login_user(:user)
 
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
 
