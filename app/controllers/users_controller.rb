@@ -42,6 +42,7 @@ class UsersController < ApplicationController
 
     role_ids = params[:user].delete(:role_ids)
     instance_ids = filter_instance_ids(params[:user].delete(:instance_ids))
+    admin_instance_id = params[:user].delete(:admin_instance_id)
 
     if @user.send(update_method, params[:user])
 
@@ -49,6 +50,7 @@ class UsersController < ApplicationController
         assign_role(@user, role_ids)     if role_ids
         assign_instances(@user, instance_ids) if instance_ids
         remove_prev_suites(@user, instance_ids) if instance_ids
+        update_instance_admin(@user, admin_instance_id)
       end
 
       sign_in @user, bypass: true if is_self_update
@@ -64,11 +66,14 @@ class UsersController < ApplicationController
     instance_ids = filter_instance_ids(params[:user].delete(:instance_ids))
     role_ids = params[:user].delete(:role_ids)
 
+    admin_instance_id = params[:user].delete(:admin_instance_id)
+
     @user = User.new(params[:user])
     @user.active_instance = current_user.active_instance
 
     if @user.save
       assign_role(@user, role_ids)     if role_ids
+      add_instance_admin(@user, admin_instance_id)
       assign_instances(@user, instance_ids) if instance_ids
       redirect_to users_path, notice: "User succesfully created!"
     else
@@ -76,10 +81,31 @@ class UsersController < ApplicationController
     end
   end
 
+  def add_instance_admin(user, instance_id)
+    instance = Instance.find_by_id(instance_id)
+    return if instance.nil?
+    user.add_role(:instance_admin, instance)
+  end
+
+  def update_instance_admin(user, instance_id)
+    instance = Instance.find_by_id(instance_id)
+    if user.is_instance_admin?
+      return if user.admin_instance == instance
+
+      user.remove_role(:instance_admin, user.admin_instance)
+      add_instance_admin(user, instance_id)
+    else
+      add_instance_admin(user, instance_id)
+    end
+  end
+
   def confirm_destroy
   end
 
   def destroy
+    @user.roles.each do |r|
+      r.destroy
+    end
     @user.destroy
     flash[:success] = t(:"users.destroy.success")
     redirect_to users_url()

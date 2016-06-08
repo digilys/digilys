@@ -77,7 +77,7 @@ describe Import::StudentDataController, versioning: !ENV["debug_versioning"].bla
       context "as instance admin" do
         login_user(:user)
         before(:each) do
-          logged_in_user.admin_instance = logged_in_user.active_instance
+          logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
           logged_in_user.save
         end
         it "imports data from the file" do

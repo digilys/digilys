@@ -25,7 +25,7 @@ describe "users/index" do
   login_user(:user)
   let(:users) { create_list(:user, 2) }
   before(:each) do
-    logged_in_user.admin_instance = logged_in_user.active_instance
+    logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
     logged_in_user.save
 
     users << logged_in_user

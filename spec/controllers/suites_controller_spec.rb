@@ -59,7 +59,7 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
     context "as instance admin" do
       login_user(:user)
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "is successful" do
@@ -105,7 +105,7 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
     context "as instance admin" do
       login_user(:user)
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "lists regular suites accessible by the user" do
@@ -145,7 +145,7 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
     context "as instance admin" do
       login_user(:user)
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "searches suite participant students and groups" do
@@ -190,7 +190,7 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
       let(:suite)         { create(:suite, instance: logged_in_user.active_instance) }
       let(:other_suite)   { create(:suite, instance: other_instance) }
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "is successful" do
@@ -213,7 +213,7 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
     context "as instance admin" do
       login_user(:user)
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "returns 401 is user is not admin of instance" do
@@ -239,7 +239,7 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
     context "as instance admin" do
       login_user(:user)
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "returns 401 is user is not admin of instance" do
@@ -373,7 +373,7 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
     context "as instance admin" do
       login_user(:user)
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "returns 401 is user is not admin of instance" do
@@ -405,7 +405,7 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
       let(:instance_suite)  { create(:suite, instance: logged_in_user.active_instance) }
       let(:other_suite)     { create(:suite, instance: instance) }
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "is successful" do
@@ -443,7 +443,7 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
       let(:instance_suite)  { create(:suite, instance: logged_in_user.active_instance) }
       let(:other_suite)     { create(:suite, instance: instance) }
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "is successful" do
@@ -477,7 +477,7 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
       let(:instance_suite)  { create(:suite, instance: logged_in_user.active_instance) }
       let(:other_suite)     { create(:suite, instance: instance) }
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "is successful" do
@@ -512,7 +512,7 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
       let(:instance_suite)  { create(:suite, instance: logged_in_user.active_instance) }
       let(:other_suite)     { create(:suite, instance: instance) }
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "is successful" do
@@ -540,7 +540,7 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
       login_user(:user)
       let(:instance_suite)  { create(:suite, instance: logged_in_user.active_instance) }
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "returns 401 is user is not admin of instance" do
@@ -572,7 +572,7 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
       login_user(:user)
       let(:instance_suite)  { create(:suite, instance: logged_in_user.active_instance) }
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "returns 401 is user is not admin of instance" do
@@ -597,7 +597,7 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
       let(:instance_suite)  { create(:suite, instance: logged_in_user.active_instance) }
       let(:other_suite)     { create(:suite, instance: instance) }
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "is successful" do
@@ -640,7 +640,7 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
       let(:instance_suite)  { create(:suite, instance: logged_in_user.active_instance) }
       let(:other_suite)     { create(:suite, instance: instance) }
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "gives the users suite_member privileges for the suite" do
@@ -697,7 +697,7 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
       let(:instance_suite)  { create(:suite, instance: logged_in_user.active_instance) }
       let(:other_suite)     { create(:suite, instance: instance) }
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "removes the users' suite_member and suite_contributor privileges for the suite" do
@@ -759,7 +759,7 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
       let(:instance_suite)  { create(:suite, instance: logged_in_user.active_instance) }
       let(:other_suite)     { create(:suite, instance: instance) }
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "gives the users suite_contributor privileges for the suite" do
@@ -813,7 +813,7 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
       let(:instance_suite)  { create(:suite, instance: logged_in_user.active_instance) }
       let(:other_suite)     { create(:suite, instance: instance) }
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "removes the users suite_contributor privileges for the suite" do

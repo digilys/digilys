@@ -41,6 +41,7 @@
               label: User.human_attribute_name(:admin_instance),
               as: :select,
               input_html: { multiple: false },
+              selected: @user.is_instance_admin? ? @user.admin_instance.id : nil,
               collection: current_user.is_administrator? ? Instance.all : [current_user.admin_instance]
             .alert.alert-box.alert-info
               = t(:".admin_instance_explanation_html")

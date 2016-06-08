@@ -63,7 +63,7 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
         users.first.add_role(:admin)
         users.second.add_role(:planner)
         users.second.save
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "does not list admins" do
@@ -125,7 +125,7 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
       login_user(:user)
       before(:each) do
         users.second.remove_role(:member, logged_in_user.active_instance)
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "only lists instance members" do
@@ -154,7 +154,7 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
       let!(:admin)        { create(:admin, active_instance: logged_in_user.active_instance) }
       let!(:non_member)   { create(:user) }
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "is successful for instance member" do
@@ -173,6 +173,8 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
   end
 
   describe "PUT #update" do
+    let!(:instance_1) { create(:instance) }
+    let!(:instance_2) { create(:instance) }
     it "redirects to the user edit page when successful" do
       new_name = "#{user.name} updated"
       put :update, id: user.id, user: { name: new_name }
@@ -205,6 +207,13 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
       expect(user).to     have_role(:instance, Instance.first)
       expect(Role.where(name: "planner").exists?).to be_true
     end
+    it "removes previous instance_admin role" do
+      user.add_role(:instance_admin, instance_1)
+      expect(user.has_role?(:instance_admin, instance_1)).to be_true
+      put :update, id: user.id, user: { admin_instance_id: instance_2.id }
+      expect(User.last.has_role?(:instance_admin, instance_1)).to be_false
+      expect(User.last.has_role?(:instance_admin, instance_2)).to be_true
+    end
 
     context "instances" do
       let(:instances) { create_list(:instance, 2) }
@@ -229,7 +238,7 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
         let!(:suite_1) { create(:suite, instance: instances.first) }
         let!(:suite_2) { create(:suite, instance: instances.second) }
         before(:each) do
-          admin.admin_instance = instances.first
+          admin.add_role(:instance_admin, instances.first)
           admin.save
           user.instances = [instances.first]
           user.add_role(:suite_member, suite_1)
@@ -283,7 +292,7 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
       let!(:admin)        { create(:admin, active_instance: logged_in_user.active_instance) }
       let!(:non_member)   { create(:user) }
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.add_role(:member, logged_in_user.active_instance)
         logged_in_user.add_role(:suite_member, suite)
         logged_in_user.save
@@ -337,7 +346,7 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
       let!(:admin)        { create(:admin, active_instance: logged_in_user.active_instance) }
       let!(:non_member)   { create(:user) }
       before(:each) do
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "can delete instance member" do
@@ -402,13 +411,19 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
       post :create, user: params
       expect(User.last.has_role?(:admin)).to be_true
     end
+    it "adds instance_admin role" do
+      params = valid_parameters_for(:user)
+      params[:admin_instance_id] = instance_1.id
+      post :create, user: params
+      expect(User.last.has_role?(:instance_admin, instance_1)).to be_true
+    end
     context "as instance admin" do
       login_user(:user)
       let!(:instance)         { create(:instance) }
       let!(:instance_suite)   { create(:suite, instance: logged_in_user.active_instance) }
       before(:each) do
         logged_in_user.remove_role(:admin)
-        logged_in_user.admin_instance = logged_in_user.active_instance
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
         logged_in_user.save
       end
       it "can create for own instance" do

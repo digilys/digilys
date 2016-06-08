@@ -31,7 +31,7 @@ describe "users/edit" do
     let(:current_user) { create(:user) }
     let(:is_admin)     { false }
     before(:each) do
-      current_user.admin_instance = current_user.active_instance
+      current_user.add_role(:instance_admin, current_user.active_instance)
     end
     it                 { should     have_selector("h1", text: user.name) }
     it                 { should_not have_selector("input[name='user[current_password]']") }

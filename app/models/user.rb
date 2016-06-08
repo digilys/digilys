@@ -12,18 +12,18 @@ class User < ActiveRecord::Base
 
   has_many :settings, as: :customizer, dependent: :destroy
 
-  belongs_to :admin_instance, class_name: "Instance"
   belongs_to :active_instance, class_name: "Instance"
 
   # Setup accessible (or protected) attributes for your model
+  attr_accessor :admin_instance_id
   attr_accessible :email,
     :password,
     :password_confirmation,
     :remember_me,
     :role_ids,
+    :admin_instance_id,
     :name,
     :active_instance_id,
-    :admin_instance_id,
     :instance_ids,
     :name_ordering
 
@@ -55,8 +55,18 @@ class User < ActiveRecord::Base
     return has_any_role?(:admin, :planner)
   end
 
+  def is_instance_admin?
+    return self.roles.where(:name => :instance_admin).any?
+  end
+
+  def admin_instance
+    role = self.roles.where(:name => :instance_admin)
+    return nil if role.first.nil?
+    return Instance.find(role.first.resource_id)
+  end
+
   def is_admin_of?(instance)
-    return self.admin_instance == instance unless self.admin_instance.nil?
+    return self.has_role?(:instance_admin, instance)
   end
 
   def save_setting!(customizable, data)

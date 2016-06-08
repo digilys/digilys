@@ -413,10 +413,12 @@ sv:
         inquiry: Frågeställningen togs bort från planeringen
 
   users:
+    instance_admin: Administrator för
     index:
       new: Skapa ny användare
     new:
       create: Skapa användare
+      roles_title: Rättigheter
     edit:
       edit_self_title: Ändra användaruppgifter och inställningar
       details_title: Användaruppgifter
