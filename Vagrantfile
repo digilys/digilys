@@ -10,7 +10,7 @@ Vagrant.configure(2) do |config|
   # using a specific IP.
   config.vm.network "private_network", ip: "192.168.33.10"
 
-  config.vm.synced_folder ".", "/vagrant", nfs: true
+  config.vm.synced_folder ".", "/vagrant", nfs: false
 
   # Privileged false?
   config.vm.provision "shell", inline: <<-SHELL
@@ -30,6 +30,19 @@ Vagrant.configure(2) do |config|
     printf "install: --no-rdoc --no-ri\nupdate: --no-rdoc --no-ri\n" >> ~/.gemrc
     sudo -u postgres createuser -s vagrant
     sudo gem install bundler
+
+    # Encoding issues...
+
+    sudo su - postgres
+
+    psql
+
+    update pg_database set datistemplate=false where datname='template1';
+    drop database Template1;
+    create database template1 with owner=postgres encoding='UTF-8' lc_collate='en_US.utf8' lc_ctype='en_US.utf8' template template0;
+
+    update pg_database set datistemplate=true where datname='template1';
+
   SHELL
 end
 

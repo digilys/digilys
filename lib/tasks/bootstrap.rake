@@ -5,6 +5,7 @@ namespace :app do
   task :bootstrap do
     %w(
     create_roles
+    create_instance
     ).each do |task|
       Rake::Task["app:bootstrap:#{task}"].invoke
     end
@@ -16,6 +17,11 @@ namespace :app do
 
       puts Role.where(name: "admin").first_or_create.name
       puts Role.where(name: "planner").first_or_create.name
+    end
+
+    task create_instance: :environment do
+      puts "Creating base instance"
+      puts Instance.where(name:"root").first_or_create.name
     end
   end
 end
