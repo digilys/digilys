@@ -20,6 +20,6 @@ class Instance < ActiveRecord::Base
   end
 
   def admins
-    User.with_role(:instance_admin, i).all
+    User.with_role(:instance_admin, self).all
   end
 end
