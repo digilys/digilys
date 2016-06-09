@@ -25,10 +25,11 @@
               = t(:".upcoming_meetings")
         %tbody
           - @meetings.each do |meeting|
-            %tr
-              %td= link_to meeting.suite.name, meeting.suite
-              %td.date= l meeting.date
-              %td.main= link_to meeting.name, meeting
+            - if meeting.suite
+              %tr
+                %td= link_to meeting.suite.name, meeting.suite
+                %td.date= l meeting.date
+                %td.main= link_to meeting.name, meeting
 
   .span6
     - if !@activities.blank?
