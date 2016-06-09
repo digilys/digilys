@@ -167,6 +167,13 @@ class Ability
       user.has_role?(:member, instance) || user.is_admin_of?(instance)
     end
 
+
+    # explicit denies
+    if user.has_role?(:member)
+      cannot :list_closed_suites, Suite
+    end
+
+
     # Updating the user's details
     can :update, User, id: user.id
   end
