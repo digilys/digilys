@@ -15,7 +15,7 @@
                 %small= t(:".can_change")
 
         %td.actions
-          - if can_change and !user.has_role? :admin
+          - if can_change and !user.has_role? :admin and !user.is_admin_of?(current_user.active_instance)
             = form_for :suite,
               url: remove_users_suite_path(suite),
               method: :delete,
