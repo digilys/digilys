@@ -15,6 +15,7 @@ class IndexController < ApplicationController
       where(instance_id: current_instance_id).
       with_role([:suite_manager, :suite_member], current_user).
       order(:updated_at).
+      uniq.
       limit(10)
 
     evaluations = Evaluation.
