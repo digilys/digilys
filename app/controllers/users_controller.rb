@@ -156,10 +156,11 @@ class UsersController < ApplicationController
     @users = User if @users.nil?
 
     if current_user.has_role?(:admin)
-      if current_instance.id == 1
+      if current_instance.id == Conf.lost_and_found_instance.to_i
         @users = @users
       else
-        @users = @users.where("users.id IN (?) OR users.active_instance_id IS NULL", User.with_role(:member, current_instance))
+        @users = @users.where("users.id IN (?)",User.with_role(:member,current_instance))
+        # @users = @users.where("users.id IN (?) OR users.active_instance_id IS NULL", User.with_role(:member, current_instance))
       end
     else
       @users = @users.where("users.id IN (?)", User.with_role(:member, current_instance))
