@@ -45,6 +45,9 @@ Dependencies: Virtualbox and Vagrant
 * `rake db:create db:setup`
 * Follow the instructions above
 
+#### If vagrant keeps disconnect due to timeouts
+From console, run `vboxmanage list runningvms` and then `digilys_default_1465479952726_13223` replacing the last part with the ID from the first step.
+
 ## Configuration
 
 Configuration of the application is done using YAML files in `config/app/`.
