@@ -62,6 +62,7 @@ class Ability
       can [ :view, :change ], Suite do |suite|
         suite.is_template
       end
+      can :list_closed_suites, Suite
 
       # Evaluations
       can :manage,                         Evaluation
