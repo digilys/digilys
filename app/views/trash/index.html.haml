@@ -31,14 +31,15 @@
       %th.restore= t(:".restore")
   %tbody
     - @evaluations.each do |evaluation|
-      %tr
-        %td.instance= evaluation.suite.instance.try(:name)
-        %td.description= link_to evaluation.suite.try(:name), suite_path(evaluation.suite)
-        %td.name
-          = evaluation.name
-          - evaluation.category_list.each do |category|
-            %span.label.label-info= category
-        %td.template= evaluation.type.template? ?  t(:yes) : t(:no)
-        %td.description= evaluation.description
-        %td.deleted_at= evaluation.deleted_at
-        %td.restore= link_to t(:".restore"), restore_evaluation_path(evaluation), method: :put, class: "btn btn-mini"
+      - if evaluation.suite
+        %tr
+          %td.instance= evaluation.suite.instance.try(:name)
+          %td.description= link_to evaluation.suite.try(:name), suite_path(evaluation.suite)
+          %td.name
+            = evaluation.name
+            - evaluation.category_list.each do |category|
+              %span.label.label-info= category
+          %td.template= evaluation.type.template? ?  t(:yes) : t(:no)
+          %td.description= evaluation.description
+          %td.deleted_at= evaluation.deleted_at
+          %td.restore= link_to t(:".restore"), restore_evaluation_path(evaluation), method: :put, class: "btn btn-mini"
