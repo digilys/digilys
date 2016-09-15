@@ -31,20 +31,22 @@ class UsersController < ApplicationController
   def update
     is_self_update = current_user == @user
 
-    if params[:user][:password].blank?
-      params[:user].delete(:current_password)
-      params[:user].delete(:password)
-      params[:user].delete(:password_confirmation)
+    par = params.dup
+
+    if par[:user][:password].blank?
+      par[:user].delete(:current_password)
+      par[:user].delete(:password)
+      par[:user].delete(:password_confirmation)
       update_method = :update_attributes
     else
       update_method = is_self_update ? :update_with_password : :update_attributes
     end
 
-    role_ids = params[:user].delete(:role_ids)
-    instance_ids = filter_instance_ids(params[:user].delete(:instance_ids))
-    admin_instance_id = params[:user].delete(:admin_instance_id)
+    role_ids = par[:user].delete(:role_ids)
+    instance_ids = filter_instance_ids(par[:user].delete(:instance_ids))
+    admin_instance_id = par[:user].delete(:admin_instance_id)
 
-    if @user.send(update_method, params[:user])
+    if @user.send(update_method, par[:user])
 
       if can?(:manage, User)
         assign_role(@user, role_ids)     if role_ids
@@ -64,6 +66,7 @@ class UsersController < ApplicationController
 
   def create
     instance_ids = filter_instance_ids(params[:user].delete(:instance_ids))
+    puts "INSTANCE IDS: #{instance_ids}"
     role_ids = params[:user].delete(:role_ids)
 
     admin_instance_id = params[:user].delete(:admin_instance_id)
@@ -103,9 +106,6 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    @user.roles.each do |r|
-      r.destroy
-    end
     @user.destroy
     flash[:success] = t(:"users.destroy.success")
     redirect_to users_url()
