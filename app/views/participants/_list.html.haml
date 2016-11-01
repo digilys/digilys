@@ -1,5 +1,5 @@
 - can_change ||= false
-- participants = participants.order("groups.name nulls first, #{current_name_order(:students)}")
+- participants = participants.order("groups.name nulls first, #{current_name_order(:students)}").uniq
 
 %table.table.table-striped.participants-table
   %tbody
