@@ -1,4 +1,4 @@
-source "https://rubygems.org"
+lssource "https://rubygems.org"
 
 gem "rails",               "3.2.17"
 gem "pg",                  "~> 0.15.1"
@@ -16,8 +16,6 @@ gem "paper_trail",         "~> 3.0.0"
 gem "jbuilder",            "~> 2.0.4"
 gem "acts_as_list"
 gem "rails-trash"
-gem "puma"
-
 
 gem "yubikey_database_authenticatable",
   git: "https://github.com/mort666/yubikey_database_authenticatable",

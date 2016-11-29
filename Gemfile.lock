@@ -161,6 +161,7 @@ GEM
     pry-remote (0.1.7)
       pry (~> 0.9)
       slop (~> 3.0)
+    puma (3.6.2)
     rack (1.4.5)
     rack-cache (1.2)
       rack (>= 0.4)
@@ -290,6 +291,7 @@ DEPENDENCIES
   pg (~> 0.15.1)
   pry (~> 0.9.12)
   pry-remote (~> 0.1.7)
+  puma
   rails (= 3.2.17)
   rails-trash
   ransack (~> 0.7.2)
@@ -307,3 +309,6 @@ DEPENDENCIES
   uglifier (>= 1.0.3)
   yajl-ruby (~> 1.1.0)
   yubikey_database_authenticatable!
+
+BUNDLED WITH
+   1.12.5
