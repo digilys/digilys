@@ -286,7 +286,7 @@ class Evaluation < ActiveRecord::Base
   end
 
   def participant_count(force_reload = false)
-    self.participants(force_reload).size.to_f
+    self.participants(force_reload).length.to_f
   end
 
   def participants_without_result(force_reload = true)

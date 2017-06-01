@@ -21,7 +21,7 @@ class Series < ActiveRecord::Base
   end
 
   def destroy_on_empty!
-    destroy if self.evaluations.empty?
+    destroy if !self.evaluations || self.evaluations.empty?
   end
 
 
