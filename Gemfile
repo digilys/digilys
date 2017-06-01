@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 gem "rails",               "3.2.17"
-gem "pg",                  "~> 0.15.1"
+gem "pg",                  "~> 0.20.0"
 gem "dalli",               "~> 2.6.4"
 gem "haml-rails",          "~> 0.4"
 gem "devise",              "~> 2.2.3"
@@ -53,6 +53,8 @@ group :development do
   gem "capistrano", "~> 2.14.2"
 end
 group :test, :development do
+  gem "minitest"
+  gem "test-unit"
   gem "pry",                "~> 0.9.12"
   gem "pry-remote",         "~> 0.1.7"
   gem "rspec-rails",        "~> 2.14.2"

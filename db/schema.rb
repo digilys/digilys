@@ -75,6 +75,7 @@ ActiveRecord::Schema.define(:version => 20160607162136) do
     t.date     "date"
     t.integer  "template_id"
     t.string   "description",       :limit => 1024
+    t.datetime "deleted_at"
     t.string   "type",                              :default => "template"
     t.string   "target",                            :default => "all"
     t.text     "value_aliases"
@@ -87,7 +88,6 @@ ActiveRecord::Schema.define(:version => 20160607162136) do
     t.boolean  "is_series_current",                 :default => false
     t.boolean  "imported",                          :default => false
     t.integer  "position",                          :default => 0
-    t.datetime "deleted_at"
   end
 
   add_index "evaluations", ["status"], :name => "index_evaluations_on_status"
@@ -249,9 +249,9 @@ ActiveRecord::Schema.define(:version => 20160607162136) do
     t.integer  "template_id"
     t.string   "generic_evaluations", :limit => 1024
     t.string   "student_data",        :limit => 1024
+    t.datetime "deleted_at"
     t.integer  "instance_id"
     t.string   "status",                              :default => "open"
-    t.datetime "deleted_at"
   end
 
   create_table "table_states", :force => true do |t|
