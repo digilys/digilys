@@ -6,7 +6,7 @@ multiple_instances: true
 
 yubikey: false
 
-lost_and_found_instance: 1
+# lost_and_found_instance: 1
 # yubikey:
 #   api_id: Your API ID
 #   api_key: Your API key
