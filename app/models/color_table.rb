@@ -13,14 +13,6 @@ class ColorTable < ActiveRecord::Base
     source: :results
 
   has_and_belongs_to_many :evaluations
-  has_and_belongs_to_many :generic_evaluations,
-    conditions: { type: "generic" },
-    class_name: "Evaluation",
-    order: "id asc"
-  has_and_belongs_to_many :suite_evaluations,
-    conditions: { type: "suite" },
-    class_name: "Evaluation",
-    order: "date asc, id asc"
 
   has_many :table_states,
     as: :base,
@@ -74,6 +66,14 @@ class ColorTable < ActiveRecord::Base
   before_save  :ensure_unique_student_data
   after_create :add_suite_evaluations
 
+
+  def generic_evaluations
+    evaluations.select {|e| e.type == 'generic'}
+  end
+
+  def suite_evaluations
+    evaluations.select {|e| e.type == 'suite'}
+  end
 
   def student_data
     if read_attribute(:student_data).nil?
