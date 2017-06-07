@@ -45,6 +45,7 @@ feature "Creating evaluations from templates" do
         :type,        # Differs, one is suite, one is
         :instance_id, # The suite evaluation has no instance
         :imported,    # Suite templates cannot be imported
+        :position,    # FIXME: position ?!
       ]
     ).ignore_associations(
       Evaluation => [
