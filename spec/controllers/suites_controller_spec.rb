@@ -885,17 +885,14 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
       suite.destroy
     end
     it "redirects to trash" do
-      pending "undefined method `fnew' for Arel::Table:Class"
       put :restore, id: suite.id
       expect(response).to redirect_to(trash_index_path)
     end
     it "restores suite" do
-      pending "undefined method `fnew' for Arel::Table:Class"
       put :restore, id: suite.id
       expect(suite.reload.deleted_at?).to be_false
     end
     it "restores all evaluations" do
-      pending "undefined method `fnew' for Arel::Table:Class"
       put :restore, id: suite.id
       expect(evaluation_1.reload.deleted_at?).to be_false
       expect(evaluation_2.reload.deleted_at?).to be_false

@@ -118,6 +118,7 @@ FactoryGirl.define do
     status            :empty
     is_series_current false
     imported          false
+    deleted_at        nil
 
     ignore do
       _yellow   15..35

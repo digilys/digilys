@@ -110,6 +110,7 @@ class Evaluation < ActiveRecord::Base
   validate  :validate_suite
   validate  :validate_series
   validate  :validate_date
+  validate  :validate_deleted_at
 
   validates :name, presence: true
 
@@ -206,6 +207,20 @@ class Evaluation < ActiveRecord::Base
   after_save        :destroy_empty_series!
   after_destroy     :destroy_empty_series!
 
+
+  # Avoiding silly "undefined method `fnew' for Arel::Table:Class"
+  def self.deleted(field = nil, value = nil)
+    deleted_at = Arel::Table.new(self.table_name)[:deleted_at]
+    data = unscoped
+    data = data.where(field => value) if field && value
+    data.where(deleted_at.not_eq(nil))
+  end
+
+  # ActiveRecord refusing to set deleted_at to nil => override Rails' rails-trash.rb
+  def restore
+    sql = "UPDATE evaluations SET deleted_at = null WHERE id = #{self.id}"
+    ActiveRecord::Base.connection.execute(sql)
+  end
 
   def colors_serialized
     self.colors.try(:to_json)
@@ -660,6 +675,12 @@ class Evaluation < ActiveRecord::Base
       end
     else
       errors.add(:date, :not_nil) if !self.date_before_type_cast.blank?
+    end
+  end
+
+  def validate_deleted_at
+    unless !self.deleted_at || DateTime.parse(self.deleted_at.to_s)
+      errors.add(:deleted_at, :invalid)
     end
   end
 

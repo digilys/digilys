@@ -89,6 +89,20 @@ class Suite < ActiveRecord::Base
   serialize :student_data,        JSON
 
 
+  # Avoiding silly "undefined method `fnew' for Arel::Table:Class"
+  def self.deleted(field = nil, value = nil)
+    deleted_at = Arel::Table.new(self.table_name)[:deleted_at]
+    data = unscoped
+    data = data.where(field => value) if field && value
+    data.where(deleted_at.not_eq(nil))
+  end
+
+  # ActiveRecord refusing to set deleted_at to nil => override Rails' rails-trash.rb
+  def restore
+    sql = "UPDATE suites SET deleted_at = null WHERE id = #{self.id}"
+    ActiveRecord::Base.connection.execute(sql)
+  end
+
   def generic_evaluations(fetch = false)
     if read_attribute(:generic_evaluations).nil?
       write_attribute(:generic_evaluations, [])
