@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-gem "rails",               "3.2.22"
+gem "rails",               "3.2.22.5"
 gem "pg",                  "~> 0.20.0"
 gem "dalli",               "~> 2.6.4"
 gem "haml-rails",          "~> 0.4"
