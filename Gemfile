@@ -4,12 +4,12 @@ gem "rails",               "3.2.22"
 gem "pg",                  "~> 0.20.0"
 gem "dalli",               "~> 2.6.4"
 gem "haml-rails",          "~> 0.4"
-gem "devise",              "~> 2.2.3"
+gem "devise"
 gem "cancan",              "~> 1.6.9"
-gem "rolify",              "~> 3.2.0"
+gem "rolify"
 gem "kaminari",            "~> 0.14.1"
 gem "config_spartan",      "~> 1.0.1"
-gem "ransack",             "~> 0.7.2"
+gem "ransack"
 gem "acts-as-taggable-on", "~> 2.4.1"
 gem "enumerize",           "~> 0.6.1"
 gem "paper_trail",         "~> 3.0.0"
@@ -19,9 +19,7 @@ gem "rails-trash"
 gem "puma"
 
 
-gem "yubikey_database_authenticatable",
-  git: "https://github.com/mort666/yubikey_database_authenticatable",
-  ref: "a8d2ff86928fc342a99dc4974e7f3cbee390f01b"
+gem "yubikey_database_authenticatable"
 
 gem "roo", "~> 1.13.2"
 
@@ -31,8 +29,8 @@ gem "passenger", "~> 4.0.37", require: false
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
-  gem "sass-rails",   "~> 3.2.3"
-  gem "coffee-rails", "~> 3.2.1"
+  gem "sass-rails"
+  gem "coffee-rails"
   gem "uglifier",     ">= 1.0.3"
   gem "therubyracer", "~> 0.11.4", require: "v8"
 end

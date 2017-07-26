@@ -135,6 +135,10 @@ class GroupsController < ApplicationController
 
   private
 
+  def find_group
+    @group = Group.find(params[:group_id])
+  end
+
   def instance_filter
     if @groups
       @groups = @groups.where(instance_id: current_instance_id)
