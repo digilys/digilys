@@ -68,11 +68,11 @@ class ColorTable < ActiveRecord::Base
 
 
   def generic_evaluations
-    evaluations.select {|e| e.type == 'generic'}
+    evaluations.where(type: :generic)
   end
 
   def suite_evaluations
-    evaluations.select {|e| e.type == 'suite'}
+    evaluations.where(type: :suite)
   end
 
   def student_data
