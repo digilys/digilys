@@ -155,7 +155,8 @@ class UsersController < ApplicationController
   def authorized_users
     @users = User if @users.nil?
 
-    if current_user.has_role?(:admin)
+    if current_user.has_role?(:admin) && current_instance.virtual?
+      # Virtual instance (current_instance.virtual?) denoting all users
       @users = @users
     else
       @users = @users.where("users.id IN (?)", User.with_role(:member, current_instance))

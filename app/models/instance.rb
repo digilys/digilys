@@ -22,4 +22,9 @@ class Instance < ActiveRecord::Base
   def admins
     User.with_role(:instance_admin, self).all
   end
+
+  # No students, groups, or users imply virtual instance representing all users
+  def virtual?
+    students.empty? && groups.empty? && users.empty?
+  end
 end
