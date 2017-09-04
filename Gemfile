@@ -23,9 +23,6 @@ gem "yubikey_database_authenticatable"
 
 gem "roo", "~> 1.13.2"
 
-# Servers
-gem "passenger", "~> 4.0.37", require: false
-
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
