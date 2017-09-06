@@ -74,11 +74,11 @@ describe Import::EvaluationTemplatesController, versioning: !ENV["debug_versioni
           logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
           logged_in_user.save
         end
-        it "imports data from the file" do
+        it "does not import evaluation data from file" do
           expect(Evaluation.count).to eq 0
           post :create, filename: File.basename(temp_file)
-          expect(response).to redirect_to(template_evaluations_url())
-          expect(Evaluation.count).to eq 1
+          expect(response.status).to be 401
+          expect(Evaluation.count).to eq 0
         end
       end
     end

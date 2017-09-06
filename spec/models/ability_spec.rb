@@ -72,7 +72,6 @@ describe Ability do
       it              { should be_able_to(:import, Instance) }
       it              { should be_able_to(:import_student_data, Instance) }
       it              { should be_able_to(:import_instructions, Instance) }
-      it              { should be_able_to(:import_evaluation_templates, Instance) }
       it              { should be_able_to(:import_results, Instance) }
 
       # User

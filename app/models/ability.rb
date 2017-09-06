@@ -76,7 +76,6 @@ class Ability
       # Import
       can :import, Instance
       can :import_student_data, Instance
-      can :import_evaluation_templates, Instance
       can :import_instructions, Instance
       can :import_results, Instance
 
