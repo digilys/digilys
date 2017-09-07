@@ -211,7 +211,7 @@ Digilys::Application.routes.draw do
 
   resources :trash, only: [ :index ]
 
-  devise_for :users, path: "authenticate"
+  devise_for :users, controllers: { sessions: "users/sessions" }, path: "authenticate"
 
   mount JasmineRails::Engine => "/specs"   if defined?(JasmineRails)
 
