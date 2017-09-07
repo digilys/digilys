@@ -14,7 +14,7 @@ class Instance < ActiveRecord::Base
   end
 
   def self.authorized_instances(user)
-    return Instance.order(:name).all if user.is_administrator?
+    return Instance.order(:name).all.reject {|i| i.virtual?} if user.is_administrator?
 
     return Instance.where(id: user.active_instance).all
   end

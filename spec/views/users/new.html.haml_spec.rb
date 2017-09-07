@@ -20,7 +20,7 @@ describe "users/new" do
     it                 { should     have_selector("input[id='user_password']") }
     it                 { should_not have_selector("input[name='user[current_password]']") }
     it                 { should_not have_selector("select[name='user[role_ids][]']") }
-    it                 { should have_selector("input[name='user[instance_ids][]']", count: Instance.count + 1) }
+    it                 { should have_selector("input[name='user[instance_ids][]']", count: (Instance.all.reject {|i| i.virtual?}).count + 1) }
   end
   context "for instance admin" do
     login_user(:user)
