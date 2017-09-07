@@ -46,14 +46,17 @@
             .alert.alert-box.alert-info
               = t(:".admin_instance_explanation_html")
 
-          - if can? :manage, Role
+          - if current_user.has_role?(:admin)
             = f.input :roles,
               as: :select,
               include_blank: User.model_name.human,
               collection: Role.authorized_roles(current_user).collect { |r| [ t(:"roles.#{r.name}"), r.id ] },
               input_html: { multiple: false }
-            .alert.alert-box.alert-info
-              = t(:".roles_explanation_html")
+          - else
+            - Role.authorized_roles(current_user).each do |role|
+              = t(:"roles.#{role.name}")
+          .alert.alert-box.alert-info
+            = t(:".roles_explanation_html")
 
       = f.actions do
         = f.action :submit, label: t(:".save_action"), button_html: { class: "btn btn-primary" }

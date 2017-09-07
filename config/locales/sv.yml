@@ -266,6 +266,7 @@ sv:
 
   roles:
     admin: Administratör
+    member: Användare
     planner: Planerare
 
   eula_confirmation: Jag har läst och förstått

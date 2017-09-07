@@ -7,9 +7,15 @@ class Role < ActiveRecord::Base
   scopify
 
   def self.authorized_roles(current_user)
-    return Role.where(name: %w(admin planner)).all if current_user.is_administrator?
-
-    return Role.where(name: "planner").all if current_user.is_admin_of?(current_user.active_instance)
-    return []
+    retval = []
+    if current_user.has_role?(:admin)
+      retval = Role.where(name: %w(admin planner)).all
+    elsif current_user.has_role?(:planner)
+      retval = [Role.where(name: "planner").first]
+    else
+      retval = [Role.where(name: "member").first]
+    end
+    return retval
   end
+
 end
