@@ -7,11 +7,11 @@
     = f.hidden_field :type
 
     .control-group
-      = f.label :template_id, class: "control-label"
+      = f.label :template_id, class: "control-label", onmouseover: "noTemplateChosen();"
       .controls
         = f.hidden_field :template_id,
           class: "evaluation-template-autocomplete-field",
           data: { url: search_template_evaluations_path(),
             placeholder: t(:".template_placeholder"),
             multiple: true }
-        = f.submit t(:".use_template_action"), class: "btn btn-primary", data: { "loading-text" => t(:wait) }
+        = f.submit t(:".use_template_action"), class: "btn btn-primary", id: "use_template_action", disabled: true, onmouseover: "noTemplateChosen();", data: { "loading-text" => t(:wait) }

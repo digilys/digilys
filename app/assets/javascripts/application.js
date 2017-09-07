@@ -28,3 +28,11 @@
 //= require_tree ./defaults
 //= require core
 //= require_tree .
+
+/** Enable/Disable template button when creating new evaluation. **/
+function noTemplateChosen() {
+  selections = document.getElementsByClassName("select2-search-choice");
+  disabled = !(selections != null && 0 < selections.length);
+  button = document.getElementById("use_template_action");
+  button.disabled = disabled;
+}
