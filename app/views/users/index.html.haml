@@ -24,9 +24,9 @@
           %td.admin_instance= user.admin_instance.name if user.is_instance_admin?
           %td.actions
             .btn-group
-              - if can? :change, User
+              - if manageable?(user)
                 %a.btn.btn-mini{href: edit_user_path(user)}= t(:".edit_action")
-              - if (can? :destroy, User) && current_user != user
+              - if manageable?(user) && current_user != user
                 %a.btn.btn-danger.btn-mini{href: confirm_destroy_user_path(user)}= t(:".destroy_action")
 
   = paginate(@users)

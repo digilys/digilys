@@ -12,8 +12,8 @@ describe "users/index" do
 
   subject { rendered }
   it      { should have_selector(".users-table tbody tr", count: 3) }
-  it      { should have_selector(".users-table tbody a.btn-mini", count: 5) }
-  it      { should have_selector(".users-table tbody a.btn-danger", count: 2) }
+  it      { should have_selector(".users-table tbody a.btn-mini", count: 3) }
+  it      { should have_selector(".users-table tbody a.btn-danger", count: 1) }
 
   context "rendered fragments" do
     subject { view }
