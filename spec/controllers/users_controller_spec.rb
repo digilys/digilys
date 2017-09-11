@@ -194,18 +194,21 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
       expect(user.has_role?(:planner)).to be_false
       expect(user.has_role?(:admin)).to     be_true
     end
-    it "only touches global roles, not instance roles" do
-      user.add_role :planner
-      user.add_role :resource, Instance
-      user.add_role :instance, Instance.first
+    context "as admin" do
+      login_user(:admin)
+      it "only touches global roles, not instance roles" do
+        user.add_role :planner
+        user.add_role :resource, Instance
+        user.add_role :instance, Instance.first
 
-      put :update, id: user.id, user: { role_ids: [Role.find_by_name("admin").id] }
+        put :update, id: user.id, user: { role_ids: [Role.find_by_name("admin").id] }
 
-      expect(user).not_to have_role(:planner)
-      expect(user).to     have_role(:admin)
-      expect(user).to     have_role(:resource, Instance)
-      expect(user).to     have_role(:instance, Instance.first)
-      expect(Role.where(name: "planner").exists?).to be_true
+        expect(user).not_to have_role(:planner)
+        expect(user).to     have_role(:admin)
+        expect(user).to     have_role(:resource, Instance)
+        expect(user).to     have_role(:instance, Instance.first)
+        expect(Role.where(name: "planner").exists?).to be_true
+      end
     end
     it "removes previous instance_admin role" do
       user.add_role(:instance_admin, instance_1)
@@ -284,6 +287,25 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
         end
       end
     end
+    context "as admin" do
+      login_user(:admin)
+      let!(:instance)     { create(:instance) }
+      let!(:suite)        { create(:suite, instance: logged_in_user.active_instance) }
+      let!(:member)       { create(:user, active_instance: logged_in_user.active_instance) }
+      let!(:admin)        { create(:admin, active_instance: logged_in_user.active_instance) }
+      let!(:non_member)   { create(:user) }
+      before(:each) do
+        logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
+        logged_in_user.add_role(:member, logged_in_user.active_instance)
+        logged_in_user.add_role(:suite_member, suite)
+        logged_in_user.save
+      end
+      it "can add other instances" do
+        previous = member.active_instance
+        put :update, id: member.id, user: { instance_ids: [instance.id] }
+        expect(member.reload.active_instance).to_not eq previous
+      end
+    end
     context "as instance admin" do
       login_user(:user)
       let!(:instance)     { create(:instance) }
@@ -314,8 +336,9 @@ describe UsersController, versioning: !ENV["debug_versioning"].blank? do
         expect(response.status).to be 401
       end
       it "can not add other instances" do
+        previous = member.active_instance
         put :update, id: member.id, user: { instance_ids: [instance.id] }
-        expect(member.reload.active_instance).to be nil
+        expect(member.reload.active_instance).to eq previous
       end
       it "does not remove roles if user is admin of instance" do
         expect(logged_in_user.has_role?(:member, logged_in_user.active_instance)).to be_true

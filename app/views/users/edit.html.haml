@@ -36,7 +36,7 @@
 
       - if can? :manage, Role or can? :manage, User
         = f.inputs t(:".roles_title") do
-          - if can? :manage, User
+          - if current_user.has_role?(:admin)
             = f.input :admin_instance_id,
               label: User.human_attribute_name(:admin_instance),
               as: :select,

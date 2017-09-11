@@ -48,7 +48,7 @@ class UsersController < ApplicationController
 
     if @user.send(update_method, par[:user])
 
-      if can?(:manage, User)
+      if current_user.has_role?(:admin)
         assign_role(@user, role_ids)     if role_ids
         assign_instances(@user, instance_ids) if instance_ids
         remove_prev_suites(@user, instance_ids) if instance_ids
