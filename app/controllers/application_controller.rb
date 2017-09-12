@@ -109,7 +109,7 @@ class ApplicationController < ActionController::Base
   end
 
   def authorize_restore
-    authorize! :restore, :all
+    authorize! :restore, Suite
   end
 
   def timestamp_prefix(s)

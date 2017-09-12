@@ -59,14 +59,14 @@ class Ability
 
       # Suites
       can :create,            Suite
-      can [ :view, :change ], Suite do |suite|
+      can [ :view, :change, :restore ], Suite do |suite|
         suite.is_template
       end
       can :list_closed_suites, Suite
 
       # Evaluations
       can :manage,                         Evaluation
-      cannot [ :view, :change, :destroy ], Evaluation do |evaluation|
+      cannot [ :view, :change, :destroy, :restore ], Evaluation do |evaluation|
         evaluation.type_suite?
       end
 
@@ -90,10 +90,11 @@ class Ability
 
       can :manage, Role
 
-      can [:manage, :create, :destroy], Suite do |suite|
+      can [:manage, :create, :destroy, :restore], Suite do |suite|
         # No suite instance yet if create
         !suite.is_template? && (!suite.instance || user.is_admin_of?(suite.instance))
       end
+      can :restore, Evaluation
 
       can :control, Instance
       # Groups
@@ -177,7 +178,6 @@ class Ability
     unless user.has_role?(:admin) || user.has_role?(:planner) || user.is_instance_admin?
       cannot [:create, :destroy], Suite
     end
-
 
     # Updating the user's details
     can :update, User, id: user.id

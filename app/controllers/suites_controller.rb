@@ -58,15 +58,14 @@ class SuitesController < ApplicationController
     if @suite.save
       current_user.add_role :suite_manager, @suite
       flash[:success] = t(:"suites.create.success.#{@suite.is_template? ? "template" : "regular"}")
+      current_instance.users.each do |user|
+        user.add_role :suite_member, @suite
+      end
       redirect_to @suite
     else
       @suite.participants.clear
       @suite.participants.build
       render action: "new"
-    end
-
-    current_instance.users.each do |user|
-      user.add_role :suite_member, @suite
     end
   end
 

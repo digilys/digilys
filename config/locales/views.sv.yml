@@ -359,7 +359,7 @@ sv:
         generic: Elevdata raderades
     restore:
       success:
-        suite: Tested återställdes
+        suite: Testet återställdes
         template: Testmallen återställdes
     report_all:
       title: Rapportera resultat
