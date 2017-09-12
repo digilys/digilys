@@ -22,6 +22,6 @@
           class: "suite-template-autocomplete-field",
           data: { url: search_template_suites_path(),
             placeholder: t(:".template_placeholder")}
-        = f.submit t(:".use_template_action"), class: "btn btn-primary", data: { "loading-text" => t(:wait) }
+        = f.submit t(:".use_template_action"), class: "btn btn-primary", disabled: true, data: { "loading-text" => t(:wait) }
 
 = render partial: "suites/form", locals: { suite: @suite }
