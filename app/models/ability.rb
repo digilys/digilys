@@ -90,11 +90,10 @@ class Ability
 
       can :manage, Role
 
-      can :manage, Suite do |suite|
-        !suite.is_template? && user.is_admin_of?(suite.instance)
+      can [:manage, :create, :destroy], Suite do |suite|
+        # No suite instance yet if create
+        !suite.is_template? && (!suite.instance || user.is_admin_of?(suite.instance))
       end
-      cannot :create, Suite
-      cannot :destroy, Suite
 
       can :control, Instance
       # Groups
@@ -174,6 +173,9 @@ class Ability
     # explicit denies
     if user.has_role?(:member)
       cannot :list_closed_suites, Suite
+    end
+    unless user.has_role?(:admin) || user.has_role?(:planner) || user.is_instance_admin?
+      cannot [:create, :destroy], Suite
     end
 
 

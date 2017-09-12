@@ -97,13 +97,13 @@ describe Ability do
       it              { should be_able_to(:manage, Role) }
 
       # Suite
-      it              { should_not be_able_to(:create, Suite) }
+      it              { should be_able_to(:create, Suite) }
 
       it              { should be_able_to(:manage, suite) }
       it              { should be_able_to(:view, suite) }
       it              { should be_able_to(:edit, suite) }
       it              { should be_able_to(:change, suite) }
-      it              { should_not be_able_to(:destroy, suite) }
+      it              { should be_able_to(:destroy, suite) }
 
       it              { should_not be_able_to(:destroy, other_suite) }
       it              { should_not be_able_to(:view, other_suite) }

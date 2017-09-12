@@ -476,7 +476,7 @@ class Evaluation < ActiveRecord::Base
       self.status = :empty
     end
 
-    if self.suite && prev_status == "empty" && self.status != "empty"
+    if self.suite && prev_status == "empty" && self.status != "empty" && self.suite.color_table
       self.suite.color_table.table_states.each do |state|
         state.data["hiddenColumns"] << "evaluation-#{self.id}" unless state.data["hiddenColumns"].include?("evaluation-#{self.id}")
         state.save!
