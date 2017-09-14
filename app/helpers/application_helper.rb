@@ -32,6 +32,11 @@ module ApplicationHelper
     render partial: "shared/instance_indicator"
   end
 
+  # Duplicate from application_controller to allow (user/new) view testing
+  def current_instance
+    current_user.active_instance
+  end
+
   def templates_menu
     render partial: "shared/templates_menu"
   end

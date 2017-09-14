@@ -1,4 +1,7 @@
 %h2= t("devise.registrations.sign_up")
+:javascript
+  instance_id = "#{current_instance.virtual? ? nil : current_instance.id}";
+  window.onload = function () { checkCurrentInstance(instance_id); }
 
 = semantic_form_for @user,
   :url => users_path,

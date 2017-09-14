@@ -36,3 +36,15 @@ function noTemplateChosen() {
   button = document.getElementById("use_template_action");
   button.disabled = disabled;
 }
+
+/** Check non-virtual current instance in check-box list of instances. **/
+function checkCurrentInstance(instance_id) {
+  if (instance_id.length != 0) {
+    check_boxes = document.getElementsByClassName("choice checkbox");
+    for (i = 0; i < check_boxes.length; ++i) {
+      if (check_boxes[i].children[0].value == instance_id) {
+        check_boxes[i].children[0].checked = true;
+      }
+    }
+  }
+}
