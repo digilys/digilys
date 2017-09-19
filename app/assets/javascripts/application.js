@@ -13,6 +13,8 @@
 //= require jquery
 //= require error_handling
 //= require jquery_ujs
+//= require jquery-ui/widgets/sortable
+//= require rails_sortable
 //= require bootstrap
 //= require select2
 //= require bootstrap-datepicker/core
@@ -28,6 +30,11 @@
 //= require_tree ./defaults
 //= require core
 //= require_tree .
+
+$(".sortable").railsSortable({
+  // Table headers are not to be dragged and sorted
+  cancel: "th"
+});
 
 /** Enable/Disable template button when creating new evaluation. **/
 function noTemplateChosen() {

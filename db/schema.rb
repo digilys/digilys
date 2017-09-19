@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160607162136) do
+ActiveRecord::Schema.define(:version => 20170914160307) do
 
   create_table "activities", :force => true do |t|
     t.integer  "suite_id"
@@ -75,7 +75,6 @@ ActiveRecord::Schema.define(:version => 20160607162136) do
     t.date     "date"
     t.integer  "template_id"
     t.string   "description",       :limit => 1024
-    t.datetime "deleted_at"
     t.string   "type",                              :default => "template"
     t.string   "target",                            :default => "all"
     t.text     "value_aliases"
@@ -84,10 +83,12 @@ ActiveRecord::Schema.define(:version => 20160607162136) do
     t.text     "stanines"
     t.string   "status",                            :default => "empty"
     t.integer  "instance_id"
+    t.boolean  "imported",                          :default => false
     t.integer  "series_id"
     t.boolean  "is_series_current",                 :default => false
-    t.boolean  "imported",                          :default => false
     t.integer  "position",                          :default => 0
+    t.datetime "deleted_at"
+    t.integer  "sort"
   end
 
   add_index "evaluations", ["status"], :name => "index_evaluations_on_status"
@@ -249,9 +250,9 @@ ActiveRecord::Schema.define(:version => 20160607162136) do
     t.integer  "template_id"
     t.string   "generic_evaluations", :limit => 1024
     t.string   "student_data",        :limit => 1024
-    t.datetime "deleted_at"
     t.integer  "instance_id"
     t.string   "status",                              :default => "open"
+    t.datetime "deleted_at"
   end
 
   create_table "table_states", :force => true do |t|
@@ -298,8 +299,8 @@ ActiveRecord::Schema.define(:version => 20160607162136) do
     t.string   "name"
     t.boolean  "use_yubikey",            :default => true
     t.string   "registered_yubikey"
-    t.integer  "active_instance_id"
     t.boolean  "invisible",              :default => false
+    t.integer  "active_instance_id"
     t.text     "preferences",            :default => "{}"
   end
 

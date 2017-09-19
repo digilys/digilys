@@ -33,6 +33,8 @@ group :assets do
 end
 
 gem "jquery-rails",                    "~> 2.2.1"
+gem 'jquery-ui-rails'
+gem 'rails_sortable'
 gem "bootstrap-sass",                  "~> 2.3.1.0"
 gem "kaminari-bootstrap",              "~> 0.1.3"
 gem "formtastic-bootstrap",            "~> 2.1.1"

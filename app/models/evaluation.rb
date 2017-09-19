@@ -1,5 +1,6 @@
 class Evaluation < ActiveRecord::Base
   extend Enumerize
+  include RailsSortable::Model
 
   has_trash
   default_scope where(arel_table[:deleted_at].eq(nil)) if arel_table[:deleted_at]
@@ -30,6 +31,8 @@ class Evaluation < ActiveRecord::Base
   has_many   :suite_participants, through:    :suite,       source: :participants
   has_many   :results,            include:    :student,     dependent: :destroy
   has_many   :students,           through:    :results
+
+  set_sortable :sort
 
   acts_as_taggable_on :categories
 

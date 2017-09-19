@@ -9,7 +9,6 @@ class EvaluationsController < ApplicationController
 
   before_filter :instance_filter
 
-
   def search
     search_params = Hash[
       params[:q].collect do |k, v|

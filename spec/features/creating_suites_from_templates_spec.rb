@@ -51,6 +51,7 @@ feature "Creating suites from templates" do
         :series_id,         # The evaluations' series id will differ...
         :is_series_current, # ... as will the current flag
         :status,
+        :sort,
       ],
       Meeting => [
         :suite_id, # The meetings' suite id will differ

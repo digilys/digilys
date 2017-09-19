@@ -1,9 +1,9 @@
 %table.table.table-bordered.table-hover.table-striped.suite-associations-table
-  %tbody
+  %tbody.sortable
     %tr
       %th(colspan="3")= Evaluation.model_name.human(count: 2)
     - suite.evaluations.order(:created_at).each do |evaluation|
-      %tr
+      %tr{id: "evaluation_#{evaluation.id}"}
         %td.name
           = evaluation.name
           - if evaluation.series_id
@@ -25,6 +25,8 @@
             - unless suite.evaluations.first.position == evaluation.position
               = link_to t(:".move_to_top"), suite_evaluation_move_to_top_path(suite, evaluation), { :action => :move_to_top, :method => :put, :class => "btn btn-mini" }
 
+%table.table.table-bordered.table-hover.table-striped.suite-associations-table
+  %tbody
     %tr
       %th(colspan="3")= Meeting.model_name.human(count: 2)
     - suite.meetings.order(:created_at).each do |meeting|
