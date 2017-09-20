@@ -46,6 +46,10 @@ describe InstancesController, versioning: !ENV["debug_versioning"].blank? do
   end
 
   describe "POST #select" do
+    before(:each) do
+      # It shouldn't matter where we come from. With real site we always com from somewhere...
+      request.env['HTTP_REFERER'] = "/"
+    end
     it "sets the current user's active instance" do
       expect(logged_in_user.active_instance).not_to eq instance
       post :select, id: instance.id

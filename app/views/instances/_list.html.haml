@@ -1,3 +1,6 @@
-- @instances.each do |instance|
+- (@instances.select {|i| i.virtual?}).each do |instance|
+  %li
+    = link_to instance.name, select_instance_path(instance), method: :post
+- (@instances.reject {|i| i.virtual?}).each do |instance|
   %li
     = link_to instance.name, select_instance_path(instance), method: :post

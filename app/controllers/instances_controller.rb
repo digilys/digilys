@@ -18,7 +18,7 @@ class InstancesController < ApplicationController
     current_user.active_instance = @instance
     current_user.save!
 
-    redirect_to root_url()
+    redirect_to :back
   end
 
   def show
