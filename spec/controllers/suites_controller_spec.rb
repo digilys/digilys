@@ -854,43 +854,6 @@ describe SuitesController, versioning: !ENV["debug_versioning"].blank? do
     end
   end
 
-  describe "PUT #move" do
-    let!(:suite)           { create(:suite) }
-    let!(:evaluation_1)    { create(:suite_evaluation, suite: suite, position: 1) }
-    let!(:evaluation_2)    { create(:suite_evaluation, suite: suite, position: 2) }
-    let!(:evaluation_3)    { create(:suite_evaluation, suite: suite, position: 3) }
-
-    it "moves up" do
-      put :move_up, suite_id: suite.id, evaluation_id: evaluation_2.id
-      expect(response).to redirect_to(suite)
-      expect(evaluation_2.reload.position).to eq 1
-      expect(evaluation_1.reload.position).to eq 2
-    end
-
-    it "moves to top" do
-      put :move_to_top, suite_id: suite.id, evaluation_id: evaluation_3.id
-      expect(response).to redirect_to(suite)
-      expect(evaluation_3.reload.position).to eq 1
-      expect(evaluation_1.reload.position).to eq 2
-      expect(evaluation_2.reload.position).to eq 3
-    end
-
-    it "moves down" do
-      put :move_down, suite_id: suite.id, evaluation_id: evaluation_2.id
-      expect(response).to redirect_to(suite)
-      expect(evaluation_1.reload.position).to eq 1
-      expect(evaluation_3.reload.position).to eq 2
-      expect(evaluation_2.reload.position).to eq 3
-    end
-
-    it "moves to bottom" do
-      put :move_to_bottom, suite_id: suite.id, evaluation_id: evaluation_1.id
-      expect(response).to redirect_to(suite)
-      expect(evaluation_2.reload.position).to eq 1
-      expect(evaluation_3.reload.position).to eq 2
-      expect(evaluation_1.reload.position).to eq 3
-    end
-  end
   describe "PUT #restore" do
     let!(:suite)    { create(:suite) }
     let!(:evaluation_1)    { create(:suite_evaluation, suite: suite) }

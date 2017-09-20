@@ -14,16 +14,6 @@
             %a.btn.btn-mini{href: evaluation_path(evaluation)}=                            t(:".show_action")
             %a.btn.btn-mini{href: edit_evaluation_path(evaluation)}=                       t(:".edit_action")
             %a.btn.btn-mini.btn-danger{href: confirm_destroy_evaluation_path(evaluation)}= t(:".destroy_action")
-        %td.position
-          .btn-group
-            - unless evaluation.last?
-              = link_to t(:".move_down"), suite_evaluation_move_down_path(suite, evaluation), { :action => :move_down, :method => :put, :class => "btn btn-mini" }
-            - unless suite.evaluations.first.position == evaluation.position
-              = link_to t(:".move_up"), suite_evaluation_move_up_path(suite, evaluation), { :action => :move_up, :method => :put, :class => "btn btn-mini" }
-            - unless evaluation.last?
-              = link_to t(:".move_to_bottom"), suite_evaluation_move_to_bottom_path(suite, evaluation), { :action => :move_to_bottom, :method => :put, :class => "btn btn-mini" }
-            - unless suite.evaluations.first.position == evaluation.position
-              = link_to t(:".move_to_top"), suite_evaluation_move_to_top_path(suite, evaluation), { :action => :move_to_top, :method => :put, :class => "btn btn-mini" }
 
 %table.table.table-bordered.table-hover.table-striped.suite-associations-table
   %tbody

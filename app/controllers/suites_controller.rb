@@ -158,6 +158,7 @@ class SuitesController < ApplicationController
 
     render json: {status: "ok"}
   end
+
   def remove_contributors
     users = User.where(id: params[:user_ids]).all
     users.each do |user|
@@ -167,26 +168,6 @@ class SuitesController < ApplicationController
     @suite.touch
 
     render json: {status: "ok"}
-  end
-
-  def move_down
-    Evaluation.find(params[:evaluation_id]).move_lower
-    redirect_to Suite.find(params[:suite_id])
-  end
-
-  def move_up
-    Evaluation.find(params[:evaluation_id]).move_higher
-    redirect_to Suite.find(params[:suite_id])
-  end
-
-  def move_to_top
-    Evaluation.find(params[:evaluation_id]).move_to_top
-    redirect_to Suite.find(params[:suite_id])
-  end
-
-  def move_to_bottom
-    Evaluation.find(params[:evaluation_id]).move_to_bottom
-    redirect_to Suite.find(params[:suite_id])
   end
 
   private
