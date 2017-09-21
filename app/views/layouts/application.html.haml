@@ -25,6 +25,9 @@
 
           %a.brand{href: root_url()}
             DigiLys
+            %br
+            .version
+              = File.read('VERSION')
 
           .nav-collapse.collapse
             %ul.nav
