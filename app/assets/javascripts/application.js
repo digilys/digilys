@@ -44,6 +44,14 @@ function noTemplateChosen() {
   button.disabled = disabled;
 }
 
+/** Enable/Disable save button when adding users to suite. **/
+function noUserSelected() {
+  selections = document.getElementsByClassName("select2-search-choice")
+  disabled = !(selections != null && 0 < selections.length);
+  button = document.getElementById("select_user_action");
+  button.disabled = disabled;
+}
+
 /** Check non-virtual current instance in check-box list of instances. **/
 function checkCurrentInstance(instance_id) {
   if (instance_id.length != 0) {
