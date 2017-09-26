@@ -7,6 +7,21 @@ class TrashController < ApplicationController
     @evaluations = deleted_evaluations
   end
 
+  def confirm_empty
+    @suites = deleted_suites
+    @evaluations = deleted_evaluations
+  end
+
+  def confirmed_empty
+    deleted_evaluations.each do |e|
+      e.destroy_without_trash
+    end
+    deleted_suites.each do |s|
+      s.destroy_without_trash
+    end
+    redirect_to trash_index_path
+  end
+
   private
 
   def deleted_suites

@@ -1,0 +1,14 @@
+= semantic_form_for @suites.first do |f|
+  = hidden_field_tag :return_to, params[:return_to]
+  .alert.alert-block.alert-error
+    %p
+      = "#{@suites.count}"
+      = t(:"activerecord.models.suite.other").downcase
+      = t(:'.permanently_deleting')
+    %p
+      = "#{@evaluations.count}"
+      = t(:"activerecord.models.evaluation.other").downcase
+      = t(:'.permanently_deleting')
+  = f.actions do
+    %a.btn.btn-danger{href: trash_confirmed_empty_path}= t(:".destroy_action")
+    %a.btn{href: trash_index_path}= t(:".cancel_action")

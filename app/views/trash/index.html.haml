@@ -1,5 +1,8 @@
-%h1= t(:".title")
-
+%h1
+  = t(:".title")
+  - unless @suites.empty? && @evaluations.empty?
+    = button_to t(:".empty_trash"), trash_confirm_empty_path, {class: 'btn pull-right'}
+     
 %h2= Suite.model_name.human(count: 2)
 %table.table.table-striped.suites-table
   %thead

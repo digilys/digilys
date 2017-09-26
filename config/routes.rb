@@ -1,5 +1,7 @@
 Digilys::Application.routes.draw do
   get "trash/index"
+  post "trash/confirm_empty"
+  get "trash/confirmed_empty"
 
   # Landing page
   get "index/index"

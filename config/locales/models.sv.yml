@@ -3,7 +3,7 @@ sv:
     models:
       evaluation:
         one: Test
-        other: Test
+        other: Tester
       student:
         one: Elev
         other: Elever

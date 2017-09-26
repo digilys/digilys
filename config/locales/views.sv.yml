@@ -677,3 +677,5 @@ sv:
       template: Mall
       title: Papperskorg
       restore: Återställ
+    empty_trash: Töm Papperskorg
+    permanently_deleting: kommer att permanent raderas
