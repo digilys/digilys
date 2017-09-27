@@ -413,7 +413,8 @@ sv:
         inquiry: Frågeställningen togs bort från planeringen
 
   users:
-    instance_admin: Administrator för
+    roles: Roller
+    instance_admin: Administratör för
     index:
       new: Skapa ny användare
     new:
@@ -501,8 +502,8 @@ sv:
       title: Lägg till deltagare
       info: Deltagare för en instans läggs automatiskt till som deltagare för alla planeringar för instansen.
     show:
-      instance_admin: "Administrator för denna instans*"
-      instance_admin_message: "*Administratorn för en instans kan importera till instansen"
+      instance_admin: "Administratör för denna instans*"
+      instance_admin_message: "*Administratören för en instans kan importera till instansen"
       users:
         title: Deltagare
         add: Lägg till deltagare

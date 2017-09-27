@@ -13,7 +13,7 @@
         %th.name=   User.human_attribute_name(:name)
         %th.instance=   Instance.model_name.human(count: 1)
         %th.email=  Suite.human_attribute_name(:email)
-        %th.admin_of=  t(:".instance_admin")
+        %th.admin_of=  t(:".roles")
         %th.actions &nbsp;
     %tbody
       - @users.each do |user|
@@ -21,7 +21,17 @@
           %td.name=  user.name
           %td.name=  user.instances.map(&:name).join(",")
           %td.email= user.email
-          %td.admin_instance= user.admin_instance.name if user.is_instance_admin?
+          %td.admin_instance
+            - if user.has_role?(:admin)
+              = t(:"roles.admin")
+              %br
+            - if user.has_role?(:planner)
+              = t(:"roles.planner")
+              %br
+            - if user.is_instance_admin?
+              = t(:".instance_admin")
+              = user.admin_instance.name
+              %br
           %td.actions
             .btn-group
               - if manageable?(user)
