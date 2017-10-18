@@ -18,7 +18,19 @@ class InstancesController < ApplicationController
     current_user.active_instance = @instance
     current_user.save!
 
-    redirect_to :back
+    s = request.env["HTTP_REFERER"]
+    # Switching instance may result in back no longer available. Resort to index.
+    if s && s.include?('/groups/')
+      redirect_to s.gsub(/\/groups\/.*/,'/groups')
+    elsif s && s.include?('/students/')
+      redirect_to s.gsub(/\/students\/.*/,'/students')
+    elsif s && s.include?('/suites/')
+      redirect_to s.gsub(/\/suites\/.*/,'/suites')
+    elsif s && s.include?('/color_tables/')
+      redirect_to s.gsub(/\/color_tables\/.*/,'/color_tables')
+    else
+      redirect_to :back
+    end
   end
 
   def show
