@@ -61,8 +61,13 @@ class Student < ActiveRecord::Base
   def name
     "#{self.first_name} #{self.last_name}"
   end
-  def name_was
-    "#{self.first_name_was} #{self.last_name_was}"
+
+  def ordered_name(order = nil)
+    if order && order.ends_with?('first_name')
+      "#{self.last_name} #{self.first_name}"
+    else
+      "#{self.first_name} #{self.last_name}"
+    end
   end
 
   def data_humanized

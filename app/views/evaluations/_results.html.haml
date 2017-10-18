@@ -17,7 +17,7 @@
       - participants = @groups[group]
         %tr
           %th.group(colspan="3")= group
-        - participants.sort_by{ |a| a.name }.each do |participant|
+        - participants.sort_by{ |a| a.ordered_name(current_name_order) }.each do |participant|
         %tr
           %td.name= student_name(participant.student)
           - evaluations.each do |evaluation|

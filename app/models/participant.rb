@@ -27,6 +27,10 @@ class Participant < ActiveRecord::Base
   def name
     self.student.name
   end
+
+  def ordered_name(order = nil)
+    self.student.ordered_name(order)
+  end
   
   def group_names(status = nil)
     if status.nil?
