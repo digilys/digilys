@@ -26,6 +26,8 @@ class InstancesController < ApplicationController
       redirect_to s.gsub(/\/students\/.*/,'/students')
     elsif s && s.include?('/suites/')
       redirect_to s.gsub(/\/suites\/.*/,'/suites')
+    elsif s && s.include?('/evaluations/')
+      redirect_to s.gsub(/\/evaluations\/.*/,'/suites')
     elsif s && s.include?('/color_tables/')
       redirect_to s.gsub(/\/color_tables\/.*/,'/color_tables')
     else
