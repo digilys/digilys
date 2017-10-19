@@ -80,13 +80,13 @@ describe Import::StudentDataController, versioning: !ENV["debug_versioning"].bla
           logged_in_user.add_role(:instance_admin, logged_in_user.active_instance)
           logged_in_user.save
         end
-        it "imports data from the file" do
+        it "does not import data from the file" do
           expect(Student.count).to eq 0
           expect(Group.count).to   eq 0
           post :create, filename: File.basename(temp_file)
-          expect(response).to redirect_to(students_url())
-          expect(Student.count).to eq 1
-          expect(Group.count).to   eq 2
+          expect(response).not_to redirect_to(students_url())
+          expect(Student.count).to eq 0
+          expect(Group.count).to   eq 0
         end
       end
     end

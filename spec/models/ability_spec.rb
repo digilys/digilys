@@ -69,10 +69,10 @@ describe Ability do
         admin.add_role(:member, instance)
       end
       subject(:ability) { Ability.new(user) }
-      it              { should be_able_to(:import, Instance) }
-      it              { should be_able_to(:import_student_data, Instance) }
-      it              { should be_able_to(:import_instructions, Instance) }
-      it              { should be_able_to(:import_results, Instance) }
+      it              { should_not be_able_to(:import, Instance) }
+      it              { should_not be_able_to(:import_student_data, Instance) }
+      it              { should_not be_able_to(:import_instructions, Instance) }
+      it              { should_not be_able_to(:import_results, Instance) }
 
       # User
       it              { should be_able_to(:manage, instance_member) }
