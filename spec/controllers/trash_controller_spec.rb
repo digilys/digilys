@@ -30,7 +30,7 @@ describe TrashController do
     end
     it "returns http success" do
       get :index
-      expect(response).to be_success
+      expect(response.status).to be 401
     end
   end
 

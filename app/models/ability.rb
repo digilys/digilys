@@ -63,12 +63,14 @@ class Ability
         suite.is_template
       end
       can :list_closed_suites, Suite
+      cannot [:restore], Suite
 
       # Evaluations
       can :manage,                         Evaluation
-      cannot [ :view, :change, :destroy, :restore ], Evaluation do |evaluation|
+      cannot [ :view, :change, :destroy ], Evaluation do |evaluation|
         evaluation.type_suite?
       end
+      cannot [:restore], Evaluation
 
       # Color tables
       can :create, ColorTable
