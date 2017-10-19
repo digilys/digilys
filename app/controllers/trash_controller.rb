@@ -45,12 +45,12 @@ class TrashController < ApplicationController
     if current_user.has_role?(:admin) || current_user.has_role?(:planner) || current_user.is_instance_admin?
       evaluations = Evaluation.deleted.joins("LEFT OUTER JOIN suites ON evaluations.suite_id = suites.id").where("evaluations.suite_id IS NULL OR suites.deleted_at IS NULL").order("suites.deleted_at desc").all.to_a
       unless current_instance.virtual?
-        evaluations.select! {|e| e.suite && e.suite.instance && e.suite.instance == current_instance}
+        evaluations.select! {|e| e.instance && e.instance == current_instance}
       end
       if current_user.is_instance_admin?
-        evaluations.select! {|e| e.suite && e.suite.instance && current_user.has_role?(:instance_admin, e.suite.instance)}
+        evaluations.select! {|e| e.instance && current_user.has_role?(:instance_admin, e.instance)}
       elsif current_user.has_role?(:planner)
-        evaluations.select! {|e| e.suite && e.suite.instance && current_user.instances.index(e.suite.instance)}
+        evaluations.select! {|e| e.instance && current_user.instances.index(e.instance)}
       end
     end
     evaluations
