@@ -13,7 +13,7 @@
     .alert.alert-info= t(:".template_notice")
 
   .row-fluid
-    - if @suite.is_template?
+    - if @suite.is_template? && can_change
       .btn-group.suite-actions
         %a.btn.btn-small{href: new_suite_evaluation_path(@suite)}= t(:".evaluation.add")
         %a.btn.btn-small{href: new_suite_meeting_path(@suite)}=    t(:".meeting.add")

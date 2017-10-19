@@ -94,6 +94,9 @@ class Ability
         # No suite instance yet if create
         !suite.is_template? && (!suite.instance || user.is_admin_of?(suite.instance))
       end
+      can [:view], Suite do |suite|
+        user.is_admin_of?(suite.instance)
+      end
       can :restore, Evaluation
 
       can :control, Instance
