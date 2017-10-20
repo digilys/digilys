@@ -9,7 +9,7 @@ sv:
     templates_menu:
       title: Mallar
       suites: Planeringsmallar
-      evaluations: Testmallar
+      evaluations: Kartläggningsmallar
     import: Importera
     back_action:       Ta mig tillbaka
     continue_action:   Fortsätt leta
@@ -17,7 +17,7 @@ sv:
     import_menu:
       title: Importera
       instructions: Instruktioner
-      evaluation_templates: Testmallar
+      evaluation_templates: Kartläggningsmallar
       student_data: Elevinformation
       results: Resultat
     students_menu:
@@ -44,15 +44,15 @@ sv:
       title: Välkommen till DigiLys!
       more: Se fler
       my_suites: Mina planeringar
-      overdue_evaluations: Sena test
-      upcoming_evaluations: Kommande test
+      overdue_evaluations: Sena kartläggningar
+      upcoming_evaluations: Kommande kartläggningar
       upcoming_meetings: Kommande möten
       active_activities: Pågående insatser/frågeställningar
     admin:
       title: Administrationssektion
       body_html: |
         <p>Det här är administrationssektionen i DigiLys. Här kan du skapa
-        planeringar, test och hantera registret över elever.</p>
+        planeringar, kartläggningar och hantera registret över elever.</p>
         <h3>Börja genom att göra ett val till vänster!</h3>
 
   return_to_suite: Återvänd till planeringen
@@ -162,7 +162,7 @@ sv:
       participant:
         add: Lägg till elever
       evaluation:
-        add: Lägg till test
+        add: Lägg till kartläggning
       meeting:
         add: Lägg till möte
       users:
@@ -174,8 +174,8 @@ sv:
     calendar:
       open_title: Kommande/försenade
       closed_title: Genomförda
-      no_open_entities: Det finns inga kommande eller försenade tester eller möten
-      no_closed_entities: Det finns inga genomförda tester eller möten
+      no_open_entities: Det finns inga kommande eller försenade kartläggningar eller möten
+      no_closed_entities: Det finns inga genomförda kartläggningar eller möten
       report_all: Rapportera alla markerade
     connected_users:
       can_change: Kan ändra i planeringen
@@ -209,7 +209,7 @@ sv:
         template: Planeringsmallen uppdaterades
     confirm_destroy:
       confirmation:
-        regular: Om du raderar planeringen raderas även alla tillhörande tester och testresultat.
+        regular: Om du raderar planeringen raderas även alla tillhörande kartläggningar och resultat.
         template: Är du säker på att du vill radera planeringsmallen?
     destroy:
       success:
@@ -236,11 +236,11 @@ sv:
     navigation:
       fullscreen_action: Visa i fullskärm
     form:
-      evaluations_placeholder: Sök och välj tester och elevdata
+      evaluations_placeholder: Sök och välj kartläggning och elevdata
       missing_evaluations_info: >
-        Om någon av testerna eller elevdata ovan inte syns i färgkartan kan det
-        bero på att det inte finns något resultat registrerat för testet.
-        Färgkartan visar endast tester och elevdata som har resultat.
+        Om någon av kartläggningarna eller elevdata ovan inte syns i färgkartan kan det
+        bero på att det inte finns något resultat registrerat för kartläggningen.
+        Färgkartan visar endast kartläggningar och elevdata som har resultat.
     show:
       averages: Medelvärde
       hide_column_action: Dölj kolumn
@@ -287,15 +287,15 @@ sv:
   evaluations:
     show_action: Översikt
     titles:
-      template: Testmall
+      template: Kartläggningsmall
       suite: "%{suite}"
       generic: Elevdata
       templates:
-        html: Testmallar
-        text: Testmallar
+        html: Kartläggningsmallar
+        text: Kartläggningsmallar
       suites:
-        html: Test <small>%{suite}</small>
-        text: Test - %{suite}
+        html: Kartläggning <small>%{suite}</small>
+        text: Kartläggning - %{suite}
       generics:
         html: Elevdata
         text: Elevdata
@@ -307,21 +307,21 @@ sv:
     result_error_message: Resultatet måste vara mellan 0 och maxresultatet
 
     show:
-      template_notice: Detta är en mall för test.
+      template_notice: Detta är en mall för kartläggning.
       participants: Elever
       users: Deltagare
     select_template:
       template_placeholder: Sök och välj en mall
       use_template_action: Använd mall
     form:
-      for_suite: Detta test tillhör %{suite_name}.
+      for_suite: Denna kartläggning tillhör %{suite_name}.
       from_template: Använder mallen %{template_name}.
       basic_info: Grundinformation
       result_info: Resultatinformation
       category_help: Välj befintliga eller skriv in nya kategorier
       series_help: Välj en befintlig serie, eller skriv en titel om du vill skapa en ny
       stanines: Stanine-värden <small>Lämna alla värden tomma om du inte vill använda staninevärden</small>
-      assign_to_help: Tilldela specifika elever, grupper och deltagare till testet om bara en del av eleverna i planeringen ska göra testet, eller om specifika deltagare ska handha testet. Lämna fälten tomma om du vill använda de elever, grupper och deltagare som tillhör planeringen.
+      assign_to_help: Tilldela specifika elever, grupper och deltagare till kartläggning om bara en del av eleverna i planeringen ska delta i kartläggningen, eller om specifika deltagare ska handha kartläggningen. Lämna fälten tomma om du vill använda de elever, grupper och deltagare som tillhör planeringen.
     numeric_fields:
       color_range_help_html: Lägg till "%" efter numret för att ange intervallet som procent.<br>För att ändra ordning på färgintervallen, ange det gula intervallet i omvänd ordning, t.ex. "30-20".
       color_range_error_text: Intervallet måste vara giltiga heltal och ligga mellan 0 och maxresultatet
@@ -337,30 +337,30 @@ sv:
       stanine9: Stanine 9
     create:
       success:
-        suite: Testet skapades
-        template: Testmallen skapades
+        suite: Kartläggningen skapades
+        template: Kartläggningsmallen skapades
         generic: Elevdata skapades
     update:
       success:
-        suite: Testet uppdaterades
-        template: Testmallen uppdaterades
+        suite: Kartläggningen uppdaterades
+        template: Kartläggningsmallen uppdaterades
         generic: Elevdata uppdaterades
     confirm_destroy:
       confirmation:
-        suite: Om du raderar testet raderas även alla tillhörande testresultat.
-        template_test: Är du säker på att du vill radera testet för planeringsmallen?
-        template: Är du säker på att du vill radera testmallen?
+        suite: Om du raderar kartläggningen raderas även alla tillhörande resultat.
+        template_test: Är du säker på att du vill radera kartläggningen för planeringsmallen?
+        template: Är du säker på att du vill radera kartläggningsmallen?
         generic: Om du raderar elevdata raderas även alla tillhörande resultat.
         confirm_destroy_evaluation_msg: Är du säker på att du vill ta bort planeringen?
     destroy:
       success:
-        suite: Testet och tillhörande information raderades
-        template: Testmallen raderades
+        suite: Kartläggningen och tillhörande information raderades
+        template: Kartläggningsmallen raderades
         generic: Elevdata raderades
     restore:
       success:
-        suite: Testet återställdes
-        template: Testmallen återställdes
+        suite: Kartläggningen återställdes
+        template: Kartläggningsmallen återställdes
     report_all:
       title: Rapportera resultat
       absent: Deltog ej
@@ -526,7 +526,7 @@ sv:
       use_template_action: Använd mall
       template_placeholder: Sök och välj en mall
     evaluations:
-      title: Testmallar
+      title: Kartläggningsmallar
 
   generic:
     evaluations:
@@ -544,16 +544,16 @@ sv:
       create:
         success: Instruktionerna importerades
     evaluation_templates:
-      evaluation_templates: Testmallar
+      evaluation_templates: Kartläggningsmallar
       instruction_html: |
-        <h5>Instruktioner för import av testmallar</h5>
+        <h5>Instruktioner för import av kartläggningsmallar</h5>
         <ul>
         <li>Importen kräver en CSV-fil, alltså en textfil med kommaseparerade värden.</li>
         <li>
         För att få en CSV-fil från Google-dokumentet gör man följande:
           <ol>
           <li>Öppna Google-dokumentet</li>
-          <li>Gå till det blad som innehåller testmallarna som ska importeras</li>
+          <li>Gå till det blad som innehåller kartläggningsmallarna som ska importeras</li>
           <li>Välj File &gt; Download as &gt; Comma separated values (.csv, current sheet)</li>
           <li>Filen som laddas ner är den som ska anges nedan.</li>
           </ol>
@@ -563,8 +563,8 @@ sv:
       format_specification_html: |
         <p>Kolumnerna i Google-dokumentet måste vara följande:</p>
         <ol>
-        <li>Testets namn</li>
-        <li>En beskrivning på testet</li>
+        <li>Kartläggningens namn</li>
+        <li>En beskrivning av kartläggningen</li>
         <li>Kategorier, en kommaseparerad lista, t.ex. matematik, grammatik</li>
         <li>Maxvärde</li>
         <li>Värde för rött, se intervallangivelse nedan för detaljer</li>
@@ -582,7 +582,7 @@ sv:
         <li>Kommentar, används inte i DigiLys</li>
         </ol>
         <p>Ordningen på kolumnerna <b>måste</b> vara enligt ovanstående. Ordningen får inte ändras och man får inte lägga in ytterligare kolumner.</p>
-        <p>Första raden i filen måste vara en rubrikrad. Vid import hoppas alltid första raden över, och om det inte är en rubrikrad kommer testet inte att importeras.</p>
+        <p>Första raden i filen måste vara en rubrikrad. Vid import hoppas alltid första raden över, och om det inte är en rubrikrad kommer kartläggningen inte att importeras.</p>
         <p>Intervall kan anges enligt följande format:</p>
         <ul>
         <li>Ett värde, ex 10</li>
@@ -597,8 +597,8 @@ sv:
         found_existing: Befintlig mall hittades
         existing_not_found: Befintlig mall hittades inte
       create:
-        success: "%{count} testmallar importerades"
-        error: "Fel uppstod när testmallarna skulle importeras. Vid felrapport, var god att ange följande till utvecklarna: %{filename} - samt följande information: %{errmsg}"
+        success: "%{count} kartläggningsmallar importerades"
+        error: "Fel uppstod när kartläggnigsmallarna skulle importeras. Vid felrapport, var god att ange följande till utvecklarna: %{filename} - samt följande information: %{errmsg}"
     student_data:
       student_data: Elevinformation
       instruction_html: |
@@ -633,14 +633,14 @@ sv:
     result:
       result: Resultat
       instruction_html: |
-        <h5>Instruktioner för import av testresultat</h5>
+        <h5>Instruktioner för import av kartläggningsresultat</h5>
         <ul>
         <li>Importen kräver en CSV-fil, alltså en textfil med kommaseparerade värden.</li>
         <li>
         För att få en CSV-fil från Google-dokumentet gör man följande:
           <ol>
           <li>Öppna Google-dokumentet</li>
-          <li>Gå till det blad som innehåller testmallarna som ska importeras</li>
+          <li>Gå till det blad som innehåller kartläggningsmallarna som ska importeras</li>
           <li>Välj File &gt; Download as &gt; Comma separated values (.csv, current sheet)</li>
           <li>Filen som laddas ner är den som ska anges nedan.</li>
           </ol>
