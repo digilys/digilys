@@ -13,9 +13,9 @@ sv:
       target_changed: Målgruppen ändrades från %{from} till %{to}.
       colors_changed: Färgintervallen uppdaterades.
       stanines_changed: Stanineintervallen uppdaterades.
-      status_empty: Testresultatet raderades.
-      status_partial: Testresultatet rapporterades delvis.
-      status_complete: Testresultatet rapporterades.
+      status_empty: Kartläggningsresultatet raderades.
+      status_partial: Kartläggningsresultatet rapporterades delvis.
+      status_complete: Kartläggningsresultatet rapporterades.
     meeting:
       created: Lades till i planeringen
       destroyed: Togs bort från planeringen
