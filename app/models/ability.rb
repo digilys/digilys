@@ -94,7 +94,10 @@ class Ability
       can [:view], Suite do |suite|
         user.is_admin_of?(suite.instance)
       end
-      can :restore, Evaluation
+      can [:manage, :restore], Evaluation
+      cannot [:edit, :update, :destroy, :create], Evaluation do |evaluation|
+        evaluation.type == 'template'
+      end
 
       can :control, Instance
       # Groups

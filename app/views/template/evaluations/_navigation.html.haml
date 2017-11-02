@@ -3,9 +3,10 @@
 - content_for :title do
   - t(:".title")
 
-.row-fluid
-  .span6
-    .btn-group
-      %a.btn.btn-small{href: new_template_evaluation_path()}= t(:".new_action")
+- if can? :create, Evaluation.new(type: 'template')
+  .row-fluid
+    .span6
+      .btn-group
+        %a.btn.btn-small{href: new_template_evaluation_path()}= t(:".new_action")
 %br
 
