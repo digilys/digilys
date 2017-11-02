@@ -105,6 +105,8 @@ class Ability
       cannot [ :edit, :update, :destroy, :create_new ], Group
       cannot [ :select_students, :add_students, :remove_students ], Group
       cannot [ :select_users, :add_users, :remove_users ], Group
+      can [:manage], Student
+      cannot [:edit, :update, :destroy, :create], Student
     end
 
     can [ :view, :associate_users ], Instance do |inst|
