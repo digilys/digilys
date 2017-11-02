@@ -10,6 +10,8 @@ class Role < ActiveRecord::Base
     retval = []
     if current_user.has_role?(:admin)
       retval = Role.where(name: %w(admin planner)).all
+    elsif current_user.is_admin_of?(current_user.active_instance)
+      retval = [Role.where(name: "planner").first]
     elsif current_user.has_role?(:planner)
       retval = [Role.where(name: "planner").first]
     else
