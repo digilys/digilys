@@ -107,6 +107,8 @@ class Ability
       cannot [ :select_users, :add_users, :remove_users ], Group
       can [:manage], Student
       cannot [:edit, :update, :destroy, :create], Student
+      # Color tables
+      can :create, ColorTable
     end
 
     can [ :view, :associate_users ], Instance do |inst|
