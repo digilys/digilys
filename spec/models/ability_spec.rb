@@ -128,16 +128,16 @@ describe Ability do
       it              { should be_able_to(:create, Group) }
       it              { should be_able_to(:move_students, Group) }
 
-      it              { should_not be_able_to(:edit, Group) }
-      it              { should_not be_able_to(:update, Group) }
-      it              { should_not be_able_to(:create_new, Group) }
-      it              { should_not be_able_to(:destroy, Group) }
-      it              { should_not be_able_to(:select_students, Group) }
-      it              { should_not be_able_to(:add_students, Group) }
-      it              { should_not be_able_to(:remove_students, Group) }
-      it              { should_not be_able_to(:select_users, Group) }
-      it              { should_not be_able_to(:add_users, Group) }
-      it              { should_not be_able_to(:remove_users, Group) }
+      it              { should be_able_to(:edit, Group) }
+      it              { should be_able_to(:update, Group) }
+      it              { should be_able_to(:create_new, Group) }
+      it              { should be_able_to(:destroy, Group) }
+      it              { should be_able_to(:select_students, Group) }
+      it              { should be_able_to(:add_students, Group) }
+      it              { should be_able_to(:remove_students, Group) }
+      it              { should be_able_to(:select_users, Group) }
+      it              { should be_able_to(:add_users, Group) }
+      it              { should be_able_to(:remove_users, Group) }
 
       # Log
       it              { should be_able_to(:log, suite) }

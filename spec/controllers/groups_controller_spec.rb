@@ -238,9 +238,9 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
         logged_in_user.save
       end
 
-      it "returns 401" do
+      it "returns 200" do
         get :edit, id: group.id
-        expect(response.status).to be 401
+        expect(response.status).to be 200
       end
     end
   end
@@ -272,10 +272,10 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
         logged_in_user.save
       end
 
-      it "returns 401" do
+      it "returns 302" do
         new_name = "#{group.name} updated"
         put :update, id: group.id, group: { name: new_name }
-        expect(response.status).to be 401
+        expect(response.status).to be 302
       end
     end
   end
@@ -355,9 +355,9 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
         logged_in_user.save
       end
 
-      it "returns 401" do
+      it "returns 200" do
         get :confirm_destroy, id: group.id
-        expect(response.status).to be 401
+        expect(response.status).to be 200
       end
     end
   end
@@ -380,9 +380,9 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
         logged_in_user.save
       end
 
-      it "returns 401" do
+      it "returns 302" do
         delete :destroy, id: group.id
-        expect(response.status).to be 401
+        expect(response.status).to be 302
       end
     end
   end
@@ -400,9 +400,9 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
         logged_in_user.save
       end
 
-      it "returns 401" do
+      it "returns 200" do
         get :select_students, id: group.id
-        expect(response.status).to be 401
+        expect(response.status).to be 200
       end
     end
   end
@@ -424,10 +424,10 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
         logged_in_user.save
       end
 
-      it "returns 401" do
+      it "returns 302" do
         expect(group.students(true)).to be_blank
         put :add_students, id: group.id, group: { students: students.collect(&:id).join(",") }
-        expect(response.status).to be 401
+        expect(response.status).to be 302
       end
     end
   end
@@ -521,10 +521,10 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
         logged_in_user.save
       end
 
-      it "returns 401" do
+      it "returns 302" do
         group.students = students
         delete :remove_students, id: group.id, student_ids: students.collect(&:id)
-        expect(response.status).to be 401
+        expect(response.status).to be 302
       end
     end
   end
@@ -546,9 +546,9 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
         logged_in_user.save
       end
 
-      it "returns 401" do
+      it "returns 200" do
         get :select_users, id: group.id
-        expect(response.status).to be 401
+        expect(response.status).to be 200
       end
     end
   end
@@ -574,10 +574,10 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
         logged_in_user.save
       end
 
-      it "returns 401" do
+      it "returns 302" do
         expect(group.users(true)).to be_blank
         put :add_users, id: group.id, group: { users: users.collect(&:id).join(",") }
-        expect(response.status).to be 401
+        expect(response.status).to be 302
       end
     end
   end
@@ -603,10 +603,10 @@ describe GroupsController, versioning: !ENV["debug_versioning"].blank? do
         logged_in_user.save
       end
 
-      it "returns 401" do
+      it "returns 302" do
         group.users = users
         delete :remove_users, id: group.id, user_ids: users.collect(&:id)
-        expect(response.status).to be 401
+        expect(response.status).to be 302
       end
     end
   end

@@ -3,7 +3,7 @@
 - content_for :title do
   - t(:".title")
 
-- if current_user && current_user.is_administrator?
+- if current_user && (current_user.is_administrator? || current_user.is_admin_of?(current_instance))
   .row-fluid
     .span6
       .btn-group

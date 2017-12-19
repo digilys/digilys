@@ -101,12 +101,14 @@ class Ability
 
       can :control, Instance
       # Groups
-      can [ :manage ], Group
-      cannot [ :edit, :update, :destroy, :create_new ], Group
-      cannot [ :select_students, :add_students, :remove_students ], Group
-      cannot [ :select_users, :add_users, :remove_users ], Group
-      can [:manage], Student
-      cannot [:edit, :update, :destroy, :create], Student
+      can [ :manage, :create_new ], Group
+      can [ :edit, :update, :destroy ], Group do |g|
+        g.instance && user.is_admin_of?(g.instance)
+      end
+      can [:manage, :create_new ], Student
+      can [ :edit, :update, :destroy ], Student do |s|
+        s.instance && user.is_admin_of?(s.instance)
+      end
       # Color tables
       can :create, ColorTable
     end
