@@ -110,9 +110,9 @@ describe Ability do
       it              { should_not be_able_to(:edit, other_suite) }
       it              { should_not be_able_to(:change, other_suite) }
 
-      it              { should_not be_able_to(:destroy, template_suite) }
-      it              { should_not be_able_to(:manage, template_suite) }
-      it              { should_not be_able_to(:destroy, template_suite) }
+      it              { should be_able_to(:destroy, template_suite) }
+      it              { should be_able_to(:manage, template_suite) }
+      it              { should be_able_to(:destroy, template_suite) }
 
       # Instance
       it              { should be_able_to(:view, instance) }
