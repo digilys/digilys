@@ -46,6 +46,8 @@ gem "tinymce-rails-langs",             "~> 4.20130625"
 gem "jasny_bootstrap_extension_rails", "~> 0.0.1"
 
 gem "yajl-ruby", ">= 1.3.1", require: "yajl"
+gem "nokogiri", "~> 1.8.3"
+gem "rubyzip", "~> 1.2.1"
 
 group :development do
   gem "capistrano", "~> 2.14.2"
