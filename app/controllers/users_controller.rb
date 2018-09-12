@@ -66,7 +66,6 @@ class UsersController < ApplicationController
 
   def create
     instance_ids = filter_instance_ids(params[:user].delete(:instance_ids))
-    puts "INSTANCE IDS: #{instance_ids}"
     role_ids = params[:user].delete(:role_ids)
 
     admin_instance_id = params[:user].delete(:admin_instance_id)
