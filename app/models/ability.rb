@@ -60,7 +60,7 @@ class Ability
       # Suites
       can :create,            Suite
       can [ :view, :change, :restore ], Suite do |suite|
-        suite.is_template
+        suite.is_template || suite.instance.admins.include?(user)
       end
       can :list_closed_suites, Suite
       cannot [:restore], Suite
