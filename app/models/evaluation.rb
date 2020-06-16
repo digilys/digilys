@@ -111,7 +111,6 @@ class Evaluation < ActiveRecord::Base
 
   validate  :validate_instance
   validate  :validate_suite
-  validate  :validate_series
   validate  :validate_date
   validate  :validate_deleted_at
 
@@ -650,23 +649,15 @@ class Evaluation < ActiveRecord::Base
 
 
   def validate_instance
-    if self.type.try(:suite?)
-      errors.add(:instance, :not_nil) if !self.instance.blank?
-    else
+    if !self.type.try(:suite?)
       errors.add_on_blank(:instance)
     end
   end
 
   def validate_suite
-    if self.type.try(:suite?)
-      errors.add_on_blank(:suite)
-    else
-      errors.add(:suite, :not_nil) if !self.suite.blank?
+    if !(self.type.try(:suite?) || self.suite.blank?)
+      errors.add(:suite, :not_nil)
     end
-  end
-
-  def validate_series
-    errors.add(:series, :not_nil) if !self.type.try(:suite?) && !self.series.blank?
   end
 
   def validate_date
@@ -676,8 +667,6 @@ class Evaluation < ActiveRecord::Base
       elsif !self.date_before_type_cast.is_a?(Date) && self.date_before_type_cast !~ /^\d{4}-\d{2}-\d{2}$/
         errors.add(:date, :invalid)
       end
-    else
-      errors.add(:date, :not_nil) if !self.date_before_type_cast.blank?
     end
   end
 

@@ -165,7 +165,7 @@ describe Evaluation do
     context "with type" do
       context "suite" do
         subject { build(:suite_evaluation) }
-        it { should     validate_presence_of(:suite) }
+        # it { should     validate_presence_of(:suite) }
         it { should     validate_presence_of(:date) }
         it { should     allow_value("2013-04-29").for(:date) }
         it { should_not allow_value("201304-29").for(:date) }
@@ -176,8 +176,8 @@ describe Evaluation do
         context "and with suite template" do
           subject { build(:suite_evaluation, suite: create(:suite, is_template: true)) }
           it { should_not validate_presence_of(:date) }
-          it { should_not allow_value("2013-04-29").for(:date) }
-          it { should_not allow_value("201304-29").for(:date) }
+          # it { should_not allow_value("2013-04-29").for(:date) }
+          # it { should_not allow_value("201304-29").for(:date) }
         end
       end
       context "template" do
@@ -185,18 +185,18 @@ describe Evaluation do
         it { should_not validate_presence_of(:suite) }
         it { should_not allow_value(create(:suite)).for(:suite) }
         it { should_not validate_presence_of(:suite) }
-        it { should_not allow_value("2013-04-29").for(:date) }
+        # it { should_not allow_value("2013-04-29").for(:date) }
         it { should     validate_presence_of(:instance) }
-        it { should_not allow_value(build(:series)).for(:series) }
+        # it { should_not allow_value(build(:series)).for(:series) }
       end
       context "generic" do
         subject { build(:generic_evaluation) }
         it { should_not validate_presence_of(:suite) }
         it { should_not allow_value(create(:suite)).for(:suite) }
         it { should_not validate_presence_of(:suite) }
-        it { should_not allow_value("2013-04-29").for(:date) }
+        # it { should_not allow_value("2013-04-29").for(:date) }
         it { should     validate_presence_of(:instance) }
-        it { should_not allow_value(build(:series)).for(:series) }
+        # it { should_not allow_value(build(:series)).for(:series) }
       end
     end
   end
